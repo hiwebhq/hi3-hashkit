@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.28.0
+
+- Stock Bitmain (Antminer) monitoring now includes chip temperature, fans,
+  frequency, expected hashrate and ASIC count (verified against an Antminer S21
+  Pro). Power is shown as unavailable — Bitmain does not expose it over the
+  cgminer API.
+
 ## 0.26.0
 
 - Polish batch: first-run onboarding, System/Dark/Light theme, pull-to-refresh
