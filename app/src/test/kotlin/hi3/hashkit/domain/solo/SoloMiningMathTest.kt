@@ -13,9 +13,9 @@ class SoloMiningMathTest {
     @Test
     fun `expected blocks matches closed form`() {
         // 1 TH/s for 1 day at difficulty 100e12:
-        // 1e12 * 86400 / (100e12 * 2^32) = 8.64e16 / 4.295e26 ≈ 2.0117e-10
+        // 1e12 * 86400 / (100e12 * 2^32) = 8.64e16 / 4.29497e23 ≈ 2.01166e-7
         val lambda = SoloMiningMath.expectedBlocks(1000.0, 100e12, 86_400.0)
-        assertEquals(2.0117e-10, lambda, 1e-13)
+        assertEquals(2.01166e-7, lambda, 1e-11)
     }
 
     @Test

@@ -2,8 +2,9 @@
 
 | Family | Devices | Local API | Monitoring | Controls | Notes |
 |---|---|---|---|---|---|
-| ESP-Miner / AxeOS | Bitaxe (Ultra/Supra/Gamma/GammaHex…), NerdAxe-style boards, dual-chip boards | HTTP `GET /api/system/info` | ✅ v1 | Phase 2 (`PATCH /api/system`, `POST /api/system/restart`) | Verified against real devices on fw v1.1.0, v2.14.0-x, v2.14.2, v2.15.1, v2.15.2rc0 |
-| ESP-Miner forks | Lucky Miner-style firmware ("2.0.0" line) | Same endpoint, different field set (`DeviceModel`, `sn_str`, string `bestDiff`) | ✅ v1 | Not planned until verified | Real fixture recorded |
+| ESP-Miner / AxeOS official v2.x | Bitaxe (Ultra/Supra/Gamma/GammaHex…), dual-chip boards | `GET /api/system/info`, `GET /api/system/asic`, `PATCH /api/system`, `POST /api/system/restart` | ✅ | ✅ Reboot, primary-pool change, fan (auto/manual), tune limited to firmware-approved option lists, with audit + rollback | Endpoints verified against tagged firmware source (v2.14.2, v2.15.1) and real devices. v2.15+ pool edits echo the `"*****"` password mask (omitting it wipes the stored password — verified in source, locked by test) |
+| NerdQAxe (fork) | NerdQAxe++ etc. | `GET /api/system/info`, `GET /api/system/asic` | ✅ | ❌ Monitoring-only (its `autofanspeed` is a mode enum, not a bool; control API unverified) | Real device fixture recorded |
+| ESP-Miner forks | Lucky Miner-style firmware ("2.0.0" line) | `GET /api/system/info` only | ✅ | ❌ Monitoring-only until verified | Real fixture recorded; adapter defensively refuses control calls |
 | Canaan Nano 3 / 3S | Nano 3, Nano 3S | To be captured from real devices | Phase 3 | After verification only | No endpoint is guessed |
 | Canaan Avalon Q | Avalon Q | To be captured from real devices | Phase 3 | After verification only | Work modes/fan only if verifiable |
 | Demo | Synthetic | — | ✅ (demo mode only) | — | Never mixed with real miners |

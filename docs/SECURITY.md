@@ -2,12 +2,18 @@
 
 ## What leaves the Android device
 
-In this build: **only HTTP GET requests to the miner addresses you add or scan**, all
-of which must be private (RFC 1918), link-local, or CGNAT/Tailscale (100.64/10)
-addresses. There is no analytics SDK, no advertising, no account, and no contact with
-pool.hi3.cc, mmp.hi3.cc, or any other Hi3 or third-party server. Future external
-fetches (BTC price, network difficulty) will be individually documented and
-disableable before they ship.
+In this build:
+
+1. **HTTP requests to the miner addresses you add or scan** (GET for telemetry; PATCH/
+   POST for controls you explicitly confirm), all of which must be private (RFC 1918),
+   link-local, or CGNAT/Tailscale (100.64/10) addresses.
+2. **Optional, off by default:** one HTTPS GET to `mempool.space` to fetch network
+   difficulty for solo-mining odds. It carries no miner data, no identifiers beyond
+   the connection itself, and runs only while "Fetch network difficulty" is enabled in
+   Settings (manual difficulty entry works without it).
+
+There is no analytics SDK, no advertising, no account, and no contact with
+pool.hi3.cc, mmp.hi3.cc, or any other Hi3 server.
 
 ## Permissions
 
@@ -16,8 +22,20 @@ disableable before they ship.
 | `INTERNET` | HTTP polling of miners on the LAN/tailnet |
 | `ACCESS_NETWORK_STATE` | Detect the active network before scanning |
 | `ACCESS_WIFI_STATE` | Read the Wi-Fi interface address to derive the default scan /24 |
+| `POST_NOTIFICATIONS` | Miner alert notifications (requested contextually when alerts/background monitoring are enabled) |
 
 No location, no camera, no contacts, no background-location, no foreground service (yet).
+
+## Control-action safety
+
+Every control (reboot, pool change, fan, tune) requires an in-app confirmation showing
+current → proposed values and risks; is capability-gated per device and re-verified
+against the live firmware immediately before sending; and is recorded in a local audit
+table with the previous values. Tuning offers only the frequency/voltage values the
+device's own firmware publishes as valid (`GET /api/system/asic`) and supports one-tap
+rollback to the audited previous values. Pool edits on v2.15+ echo the firmware's
+password mask so stored pool passwords are never read, displayed, or overwritten by
+the app (locked in by a request-payload test).
 
 ## Cleartext HTTP tradeoff
 

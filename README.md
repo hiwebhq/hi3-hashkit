@@ -5,9 +5,11 @@ controlling) Bitcoin miners in home labs and small mining environments. Works en
 on your local network — no account, no cloud — and reaches miners over an existing
 Tailscale VPN when your Android device is on the tailnet.
 
-**Status: Phase 1 vertical slice.** Bitaxe / ESP-Miner monitoring is live; Canaan
-support and controls arrive in later phases. See `docs/` for architecture, device
-support, build, and security details.
+**Status: Phase 2.** Bitaxe / ESP-Miner monitoring plus safe controls (reboot, pool
+change, fan, firmware-bounded tuning with rollback), explainable health scores,
+alerts with recovery notifications, background monitoring (WorkManager), solo-mining
+odds, and mDNS discovery. Canaan support arrives in Phase 3. See `docs/` for
+architecture, device support, build, and security details.
 
 ## Quick start
 
