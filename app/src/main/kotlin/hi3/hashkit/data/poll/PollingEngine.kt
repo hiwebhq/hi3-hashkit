@@ -1,5 +1,6 @@
 package hi3.hashkit.data.poll
 
+import androidx.glance.appwidget.updateAll
 import hi3.hashkit.data.alerts.AlertRepository
 import hi3.hashkit.domain.alerts.withOverrides
 import hi3.hashkit.data.prefs.SettingsRepository
@@ -25,6 +26,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class PollingEngine @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val alertRepository: AlertRepository,
     private val settingsRepository: SettingsRepository,
@@ -98,6 +100,7 @@ class PollingEngine @Inject constructor(
         lastPollDurationMs = (System.nanoTime() - startedAt) / 1_000_000
         totalPollMs += lastPollDurationMs
         pollCount += 1
+        runCatching { hi3.hashkit.widget.HashkitWidget().updateAll(appContext) }
         runCatching { scheduleEngine.runDueSchedules() }
         pruneIfDue(settings.retentionDays)
     }
