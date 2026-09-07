@@ -24,8 +24,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 34
-        versionName = "0.31.0"
+        versionCode = 35
+        versionName = "0.32.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -118,6 +118,9 @@ dependencies {
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
+
+    // Offline QR scanning for payout-address entry (no Google dependency, on-device).
+    implementation(libs.zxing.android.embedded)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

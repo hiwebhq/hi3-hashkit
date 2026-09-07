@@ -105,7 +105,7 @@ class SettingsRepository @Inject constructor(
         AppSettings(
             useFahrenheit = p[Keys.useFahrenheit] ?: false,
             demoModeEnabled = p[Keys.demoMode] ?: false,
-            pollIntervalMs = (p[Keys.pollIntervalMs] ?: 15_000).coerceIn(5_000, 300_000),
+            pollIntervalMs = (p[Keys.pollIntervalMs] ?: 15_000).coerceIn(5_000, 86_400_000),
             backgroundMonitoringEnabled = p[Keys.backgroundMonitoring] ?: false,
             electricityRatePerKwh = p[Keys.electricityRate] ?: 0.0,
             currencyCode = p[Keys.currencyCode] ?: "USD",

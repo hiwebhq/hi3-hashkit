@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warehouse
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.Badge
@@ -83,6 +84,7 @@ fun DashboardScreen(
     onNetworkScan: () -> Unit,
     onFarms: () -> Unit,
     onAbout: () -> Unit,
+    onPrivacy: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -184,6 +186,11 @@ fun DashboardScreen(
                                 text = { Text("About") },
                                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null) },
                                 onClick = { menuOpen = false; onAbout() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Privacy Policy") },
+                                leadingIcon = { Icon(Icons.Filled.Shield, contentDescription = null) },
+                                onClick = { menuOpen = false; onPrivacy() },
                             )
                         }
                     }

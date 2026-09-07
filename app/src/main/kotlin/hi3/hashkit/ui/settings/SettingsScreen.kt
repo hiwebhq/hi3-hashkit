@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -189,9 +191,10 @@ fun SettingsScreen(
                 ) { viewModel.setHi3PoolEnabled(it) }
                 if (settings.hi3PoolEnabled) {
                     NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
-                    NumberRow("Payout address (account key)", settings.hi3PoolPayoutAddress) {
-                        viewModel.setHi3PoolPayoutAddress(it)
-                    }
+                    PayoutAddressRow(
+                        value = settings.hi3PoolPayoutAddress,
+                        onChange = { viewModel.setHi3PoolPayoutAddress(it) },
+                    )
                 }
                 Text(
                     "What is transmitted while enabled: your payout address, inside an " +
@@ -216,10 +219,25 @@ fun SettingsScreen(
                         notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
                 }
-                NumberRow(
-                    "Foreground poll interval (s)",
-                    (settings.pollIntervalMs / 1000).toString(),
-                ) { it.toLongOrNull()?.let { s -> viewModel.setPollIntervalSeconds(s) } }
+                val farms by viewModel.farms.collectAsStateWithLifecycle()
+                IntervalRow(
+                    label = if (farms.isEmpty()) "Refresh interval" else "Default refresh interval",
+                    currentMs = settings.pollIntervalMs,
+                ) { viewModel.setDefaultRefreshIntervalMs(it) }
+                if (farms.isNotEmpty()) {
+                    Text(
+                        "Each farm refreshes at its own interval while you're viewing it; the " +
+                            "default applies when no farm is active.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    farms.forEach { farm ->
+                        IntervalRow(
+                            label = "· ${farm.name}",
+                            currentMs = farm.refreshIntervalMs,
+                        ) { viewModel.setFarmRefreshIntervalMs(farm.id, it) }
+                    }
+                }
                 NumberRow("Keep history (days)", settings.retentionDays.toString()) {
                     it.toIntOrNull()?.let { d -> viewModel.setRetentionDays(d) }
                 }
@@ -403,6 +421,81 @@ private fun ToggleRow(
             Text(subtitle, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
         }
         Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+/** Payout-address field with an on-demand QR scanner (offline; no image leaves the device). */
+@Composable
+private fun PayoutAddressRow(value: String, onChange: (String) -> Unit) {
+    var text by remember(value) { mutableStateOf(value) }
+    val scan = rememberLauncherForActivityResult(
+        com.journeyapps.barcodescanner.ScanContract()
+    ) { result ->
+        result.contents?.trim()?.takeIf { it.isNotEmpty() }?.let {
+            // QR payloads are often "bitcoin:<addr>?..."; keep just the address.
+            val addr = it.removePrefix("bitcoin:").substringBefore("?").trim()
+            text = addr
+            onChange(addr)
+        }
+    }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it; onChange(it.trim()) },
+        label = { Text("Payout address (account key)") },
+        singleLine = true,
+        trailingIcon = {
+            IconButton(onClick = {
+                scan.launch(
+                    com.journeyapps.barcodescanner.ScanOptions()
+                        .setDesiredBarcodeFormats(com.journeyapps.barcodescanner.ScanOptions.QR_CODE)
+                        .setPrompt("Scan your payout-address QR")
+                        .setBeepEnabled(false)
+                        .setOrientationLocked(false)
+                )
+            }) {
+                Icon(Icons.Filled.QrCodeScanner, contentDescription = "Scan QR code")
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+/** Preset refresh intervals from 5 seconds to 1 day. */
+private val INTERVAL_PRESETS: List<Pair<String, Long>> = listOf(
+    "5 sec" to 5_000L, "10 sec" to 10_000L, "15 sec" to 15_000L, "30 sec" to 30_000L,
+    "1 min" to 60_000L, "2 min" to 120_000L, "5 min" to 300_000L, "15 min" to 900_000L,
+    "30 min" to 1_800_000L, "1 hour" to 3_600_000L, "6 hours" to 21_600_000L,
+    "12 hours" to 43_200_000L, "1 day" to 86_400_000L,
+)
+
+private fun intervalLabel(ms: Long): String =
+    INTERVAL_PRESETS.firstOrNull { it.second == ms }?.first
+        ?: when {
+            ms % 86_400_000L == 0L -> "${ms / 86_400_000L} day"
+            ms % 3_600_000L == 0L -> "${ms / 3_600_000L} hour"
+            ms % 60_000L == 0L -> "${ms / 60_000L} min"
+            else -> "${ms / 1000L} sec"
+        }
+
+@Composable
+private fun IntervalRow(label: String, currentMs: Long, onSelect: (Long) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Box {
+            androidx.compose.material3.AssistChip(
+                onClick = { open = true },
+                label = { Text(intervalLabel(currentMs)) },
+            )
+            androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+                INTERVAL_PRESETS.forEach { (text, ms) ->
+                    androidx.compose.material3.DropdownMenuItem(
+                        text = { Text(text) },
+                        onClick = { open = false; onSelect(ms) },
+                    )
+                }
+            }
+        }
     }
 }
 

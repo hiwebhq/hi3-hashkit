@@ -31,6 +31,7 @@ class PollingEngine @Inject constructor(
     private val alertRepository: AlertRepository,
     private val settingsRepository: SettingsRepository,
     private val scheduleEngine: hi3.hashkit.data.schedule.ScheduleEngine,
+    private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
 ) {
     private var job: Job? = null
     private val lastPrune = AtomicLong(0)
@@ -54,7 +55,7 @@ class PollingEngine @Inject constructor(
             try {
                 while (isActive) {
                     pollAllOnce()
-                    delay(settingsRepository.current().pollIntervalMs)
+                    delay(currentIntervalMs())
                 }
             } finally {
                 _isPolling.value = false
@@ -65,6 +66,16 @@ class PollingEngine @Inject constructor(
     fun stop() {
         job?.cancel()
         job = null
+    }
+
+    /**
+     * Foreground cadence follows the active farm's per-farm interval; when no farm is
+     * active it falls back to the global default. Clamped to 5s..1d.
+     */
+    private suspend fun currentIntervalMs(): Long {
+        val farmInterval = runCatching { farmRepository.activeOrDefaultFarm()?.refreshIntervalMs }.getOrNull()
+        val interval = farmInterval ?: settingsRepository.current().pollIntervalMs
+        return interval.coerceIn(5_000L, 86_400_000L)
     }
 
     suspend fun pollAllOnce() {

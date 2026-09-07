@@ -22,9 +22,24 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repo: SettingsRepository,
     private val exporter: hi3.hashkit.data.export.Exporter,
+    private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
 ) : ViewModel() {
 
     val restoreMessage = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+
+    /** Farms, so Settings can show a per-farm refresh-interval control for each. */
+    val farms: StateFlow<List<hi3.hashkit.data.db.FarmEntity>> =
+        farmRepository.observeFarms()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** Global default cadence used when no farm is active (5s..1d). */
+    fun setDefaultRefreshIntervalMs(ms: Long) = viewModelScope.launch {
+        repo.setPollIntervalMs(ms.coerceIn(5_000L, 86_400_000L))
+    }
+
+    fun setFarmRefreshIntervalMs(farmId: Long, ms: Long) = viewModelScope.launch {
+        farmRepository.setRefreshInterval(farmId, ms)
+    }
 
     fun setExtraSubnets(csv: String) = viewModelScope.launch { repo.setExtraSubnets(csv) }
 

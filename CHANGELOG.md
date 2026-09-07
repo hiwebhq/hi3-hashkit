@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.32.0
+
+- **Per-farm refresh interval (5s–1d).** Settings → Monitoring now has a preset picker
+  for a global default plus one per farm; the foreground poll cadence follows whichever
+  farm you're viewing. (DB migrated to v8, additive.)
+- **QR scan for the pool payout address.** A scan icon on the payout field opens an
+  offline scanner (ZXing — no Google dependency, nothing leaves the device) and strips
+  any `bitcoin:` prefix/params. Adds an optional camera permission (feature not required).
+- **About page:** added **Share app** (opens the Android share sheet with
+  https://mmp.hi3.cc/hashkit) and **Feature request** (opens https://hi3.cc/contact).
+- **Privacy Policy** — new in-app page, the last item in the ⋮ menu, covering local-first
+  storage, the opt-in connections, camera-for-QR, and notifications.
+
 ## 0.31.0
 
 - **About moved to the ⋮ menu**, and now includes a step-by-step "How to use" guide

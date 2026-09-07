@@ -18,6 +18,8 @@ data class FarmEntity(
     val subnetsCsv: String,
     val notes: String?,
     val createdAtEpochMs: Long,
+    /** Foreground refresh cadence for this farm, 5s..1d. Drives polling while it's active. */
+    @androidx.room.ColumnInfo(defaultValue = "15000") val refreshIntervalMs: Long = 15_000,
 )
 
 @Entity(

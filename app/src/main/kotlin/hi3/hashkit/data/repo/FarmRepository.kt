@@ -46,6 +46,12 @@ class FarmRepository @Inject constructor(
 
     suspend fun updateFarm(farm: FarmEntity) = farmDao.update(farm)
 
+    /** Set a farm's foreground refresh cadence, clamped to 5s..1d. */
+    suspend fun setRefreshInterval(farmId: Long, intervalMs: Long) {
+        val farm = farmDao.byId(farmId) ?: return
+        farmDao.update(farm.copy(refreshIntervalMs = intervalMs.coerceIn(5_000L, 86_400_000L)))
+    }
+
     /** Make [id] the sole default farm. */
     suspend fun setDefault(id: Long) {
         farmDao.clearDefaults()

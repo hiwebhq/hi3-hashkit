@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!-- Required to show miner alert notifications (offline, overheat, fan failure...). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Optional: only used on-demand to scan a payout-address QR code. No image leaves the device. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:name=".HashkitApplication"

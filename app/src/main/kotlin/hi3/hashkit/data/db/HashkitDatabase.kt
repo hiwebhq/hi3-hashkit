@@ -18,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         TelemetryHourlyEntity::class,
         FarmEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -116,6 +116,13 @@ abstract class HashkitDatabase : RoomDatabase() {
                         "`createdAtEpochMs` INTEGER NOT NULL)"
                 )
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `farmId` INTEGER DEFAULT NULL")
+            }
+        }
+
+        /** v7 -> v8: per-farm foreground refresh interval (additive; defaults to 15s). */
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `farms` ADD COLUMN `refreshIntervalMs` INTEGER NOT NULL DEFAULT 15000")
             }
         }
 

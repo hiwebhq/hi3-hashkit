@@ -100,6 +100,23 @@ fun AboutScreen(onBack: () -> Unit) {
             )
         }
     }
+    fun shareApp() {
+        val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(android.content.Intent.EXTRA_SUBJECT, "${HiBrand.appName} — local-first Bitcoin miner dashboard")
+            putExtra(
+                android.content.Intent.EXTRA_TEXT,
+                "Check out ${HiBrand.appName}, a local-first Android app for monitoring and " +
+                    "safely controlling Bitcoin miners: https://mmp.hi3.cc/hashkit",
+            )
+        }
+        runCatching {
+            context.startActivity(
+                android.content.Intent.createChooser(send, "Share ${HiBrand.appName}")
+                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -152,6 +169,18 @@ fun AboutScreen(onBack: () -> Unit) {
                         linkLabel = "mmp.hi3.cc",
                         highlight = false,
                     ) { open("https://mmp.hi3.cc") }
+                    LinkRow(
+                        title = "Share app",
+                        subtitle = "Send a friend the download link",
+                        linkLabel = "Share",
+                        highlight = false,
+                    ) { shareApp() }
+                    LinkRow(
+                        title = "Feature request",
+                        subtitle = "Suggest an improvement or report an issue",
+                        linkLabel = "hi3.cc/contact",
+                        highlight = false,
+                    ) { open("https://hi3.cc/contact") }
                 }
             }
             item {

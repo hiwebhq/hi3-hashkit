@@ -207,6 +207,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onNetworkScan = { nav.navigate("network") },
                 onFarms = { nav.navigate("farms") },
                 onAbout = { nav.navigate("about") },
+                onPrivacy = { nav.navigate("privacy") },
                 onExit = onExit,
             )
         }
@@ -221,6 +222,9 @@ private fun AppNavHost(onExit: () -> Unit) {
         }
         composable("about") {
             hi3.hashkit.ui.about.AboutScreen(onBack = { nav.popBackStack() })
+        }
+        composable("privacy") {
+            hi3.hashkit.ui.privacy.PrivacyPolicyScreen(onBack = { nav.popBackStack() })
         }
         composable("flow") {
             hi3.hashkit.ui.flow.FlowScreen(
