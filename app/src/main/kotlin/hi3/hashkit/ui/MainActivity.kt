@@ -39,7 +39,10 @@ class MainActivity : ComponentActivity() {
             Hi3MinerWatchTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     PollingLifecycle()
-                    AppNavHost()
+                    AppNavHost(onExit = {
+                        pollingEngine.stop()
+                        finishAndRemoveTask()
+                    })
                 }
             }
         }
@@ -67,7 +70,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun AppNavHost() {
+private fun AppNavHost(onExit: () -> Unit) {
     val nav = rememberNavController()
     NavHost(navController = nav, startDestination = "dashboard") {
         composable("dashboard") {
@@ -77,6 +80,7 @@ private fun AppNavHost() {
                 onAlerts = { nav.navigate("alerts") },
                 onSettings = { nav.navigate("settings") },
                 onSchedules = { nav.navigate("schedules") },
+                onExit = onExit,
             )
         }
         composable("schedules") {

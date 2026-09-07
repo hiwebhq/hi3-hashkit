@@ -18,6 +18,8 @@ import javax.inject.Singleton
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
 
+enum class CardDensity { LARGE, MEDIUM, COMPACT }
+
 data class AppSettings(
     val useFahrenheit: Boolean = false,
     val demoModeEnabled: Boolean = false,
@@ -35,6 +37,8 @@ data class AppSettings(
     val retentionDays: Int = 30,
     /** User-defined extra scan subnets (CSV of CIDRs), e.g. remote Tailscale-routed LANs. */
     val extraSubnetsCsv: String = "",
+    /** Miner-card size on the dashboard. */
+    val cardDensity: CardDensity = CardDensity.LARGE,
     val alertThresholds: AlertThresholds = AlertThresholds(),
     val alertsEnabled: Boolean = true,
 )
@@ -54,6 +58,7 @@ class SettingsRepository @Inject constructor(
         val difficultyAutoFetch = booleanPreferencesKey("difficulty_auto_fetch")
         val retentionDays = intPreferencesKey("retention_days")
         val extraSubnets = stringPreferencesKey("extra_subnets")
+        val cardDensity = stringPreferencesKey("card_density")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
         val thChipTempC = doublePreferencesKey("th_chip_temp_c")
@@ -74,6 +79,8 @@ class SettingsRepository @Inject constructor(
             difficultyAutoFetch = p[Keys.difficultyAutoFetch] ?: false,
             retentionDays = (p[Keys.retentionDays] ?: 30).coerceIn(1, 3650),
             extraSubnetsCsv = p[Keys.extraSubnets] ?: "",
+            cardDensity = runCatching { CardDensity.valueOf(p[Keys.cardDensity] ?: "LARGE") }
+                .getOrDefault(CardDensity.LARGE),
             alertsEnabled = p[Keys.alertsEnabled] ?: true,
             alertThresholds = AlertThresholds(
                 hashrateBelowPercent = p[Keys.thHashBelowPct] ?: 80.0,
@@ -97,6 +104,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setDifficultyAutoFetch(value: Boolean) = edit { it[Keys.difficultyAutoFetch] = value }
     suspend fun setRetentionDays(value: Int) = edit { it[Keys.retentionDays] = value }
     suspend fun setExtraSubnets(value: String) = edit { it[Keys.extraSubnets] = value }
+    suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
     suspend fun setAlertsEnabled(value: Boolean) = edit { it[Keys.alertsEnabled] = value }
     suspend fun setHashrateBelowPercent(value: Double) = edit { it[Keys.thHashBelowPct] = value }
     suspend fun setChipTempThreshold(value: Double) = edit { it[Keys.thChipTempC] = value }

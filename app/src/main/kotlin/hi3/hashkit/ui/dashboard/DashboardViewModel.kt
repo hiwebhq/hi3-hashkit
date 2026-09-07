@@ -138,6 +138,10 @@ class DashboardViewModel @Inject constructor(
         searchQuery.value = query
     }
 
+    fun setDensity(density: hi3.hashkit.data.prefs.CardDensity) {
+        viewModelScope.launch { settingsRepository.setCardDensity(density) }
+    }
+
     fun toggleSelect(id: Long) {
         selection.value = selection.value.let { if (id in it) it - id else it + id }
     }

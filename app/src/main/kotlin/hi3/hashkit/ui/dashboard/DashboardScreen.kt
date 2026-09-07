@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
@@ -61,6 +62,7 @@ fun DashboardScreen(
     onAlerts: () -> Unit,
     onSettings: () -> Unit,
     onSchedules: () -> Unit,
+    onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -93,6 +95,13 @@ fun DashboardScreen(
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
                     }
+                    IconButton(onClick = onExit) {
+                        Icon(
+                            Icons.Filled.PowerSettingsNew,
+                            contentDescription = "Exit app",
+                            tint = HiBrand.statusOffline,
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = HiBrand.background,
@@ -116,13 +125,23 @@ fun DashboardScreen(
             item { FleetSummary(state) }
             state.solo?.let { solo -> item { SoloCard(solo) } }
             item {
-                androidx.compose.material3.OutlinedTextField(
-                    value = state.searchQuery,
-                    onValueChange = viewModel::setSearch,
-                    label = { Text("Search name, model, host, group, tag") },
-                    singleLine = true,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth(),
-                )
+                ) {
+                    androidx.compose.material3.OutlinedTextField(
+                        value = state.searchQuery,
+                        onValueChange = viewModel::setSearch,
+                        label = { Text("Search") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    DensitySelector(
+                        current = state.settings.cardDensity,
+                        onSelect = viewModel::setDensity,
+                    )
+                }
             }
             if (state.miners.isEmpty() && state.searchQuery.isBlank()) {
                 item { EmptyState(onAddMiner, onEnableDemo = { viewModel.setDemoMode(true) }) }
@@ -141,6 +160,7 @@ fun DashboardScreen(
                     items(groupMiners, key = { it.id }) { miner ->
                         MinerCard(
                             miner = miner,
+                            density = state.settings.cardDensity,
                             selected = miner.id in state.selection,
                             selectionMode = state.selection.isNotEmpty(),
                             onClick = {
@@ -363,26 +383,138 @@ private fun lastRefreshLabel(instant: Instant?): String {
     }
 }
 
+@Composable
+private fun DensitySelector(
+    current: hi3.hashkit.data.prefs.CardDensity,
+    onSelect: (hi3.hashkit.data.prefs.CardDensity) -> Unit,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        listOf(
+            hi3.hashkit.data.prefs.CardDensity.LARGE to "L",
+            hi3.hashkit.data.prefs.CardDensity.MEDIUM to "M",
+            hi3.hashkit.data.prefs.CardDensity.COMPACT to "C",
+        ).forEach { (density, label) ->
+            Text(
+                label,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = if (density == current) HiBrand.accent else HiBrand.textSecondary,
+                modifier = Modifier
+                    .background(
+                        if (density == current) HiBrand.accent.copy(alpha = 0.15f)
+                        else HiBrand.surface,
+                        RoundedCornerShape(8.dp),
+                    )
+                    .clickable { onSelect(density) }
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+            )
+        }
+    }
+}
+
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun MinerCard(
     miner: Miner,
+    density: hi3.hashkit.data.prefs.CardDensity,
     selected: Boolean,
     selectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
     val t = miner.lastTelemetry
+    val clickMod = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
+    val colors = CardDefaults.cardColors(
+        containerColor = if (selected) HiBrand.surfaceRaised else HiBrand.surface,
+    )
+    val border =
+        if (selected) androidx.compose.foundation.BorderStroke(2.dp, HiBrand.accent) else null
+
+    when (density) {
+        hi3.hashkit.data.prefs.CardDensity.COMPACT -> {
+            Card(colors = colors, border = border, shape = RoundedCornerShape(8.dp), modifier = clickMod) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 7.dp),
+                ) {
+                    hi3.hashkit.ui.components.StatusDot(miner.status)
+                    Text(
+                        miner.name + if (miner.isDemo) " ᴰᴱᴹᴼ" else "",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        Units.formatHashrate(t?.hashrateGhs?.value),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = HiBrand.accent,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        Units.formatTemp(t?.chipTempC?.value),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    Text(
+                        Units.formatPower(t?.powerW?.value),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
+            }
+            return
+        }
+        hi3.hashkit.data.prefs.CardDensity.MEDIUM -> {
+            Card(colors = colors, border = border, shape = RoundedCornerShape(10.dp), modifier = clickMod) {
+                Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        hi3.hashkit.ui.components.StatusDot(miner.status)
+                        Text(
+                            miner.name + if (miner.isDemo) " ᴰᴱᴹᴼ" else "",
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Text(
+                            Units.formatHashrate(t?.hashrateGhs?.value),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = HiBrand.accent,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        listOfNotNull(
+                            Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
+                            Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
+                            Units.formatEfficiency(t?.efficiencyJTh?.value).takeIf { it != "—" },
+                            t?.attainmentPercent?.let { "${it.toInt()}% of exp." },
+                        ).joinToString("  ·  ").ifEmpty { "no telemetry" },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
+            }
+            return
+        }
+        hi3.hashkit.data.prefs.CardDensity.LARGE -> Unit // falls through to the full card below
+    }
+
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (selected) HiBrand.surfaceRaised else HiBrand.surface,
-        ),
-        border = if (selected) androidx.compose.foundation.BorderStroke(2.dp, HiBrand.accent) else null,
+        colors = colors,
+        border = border,
         shape = RoundedCornerShape(14.dp),
-        modifier = Modifier.combinedClickable(
-            onClick = onClick,
-            onLongClick = onLongClick,
-        ),
+        modifier = clickMod,
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(
