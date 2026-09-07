@@ -183,11 +183,15 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onAlerts = { nav.navigate("alerts") },
                 onSettings = { nav.navigate("settings") },
                 onSchedules = { nav.navigate("schedules") },
+                onFlow = { nav.navigate("flow") },
                 onExit = onExit,
             )
         }
         composable("schedules") {
             hi3.hashkit.ui.schedules.SchedulesScreen(onBack = { nav.popBackStack() })
+        }
+        composable("flow") {
+            hi3.hashkit.ui.flow.FlowScreen(onBack = { nav.popBackStack() })
         }
         composable("alerts") {
             hi3.hashkit.ui.alerts.AlertsScreen(onBack = { nav.popBackStack() })

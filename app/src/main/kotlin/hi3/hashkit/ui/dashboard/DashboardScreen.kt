@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
@@ -62,6 +63,7 @@ fun DashboardScreen(
     onAlerts: () -> Unit,
     onSettings: () -> Unit,
     onSchedules: () -> Unit,
+    onFlow: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -85,6 +87,9 @@ fun DashboardScreen(
                         ) {
                             Icon(Icons.Filled.Notifications, contentDescription = "Alerts")
                         }
+                    }
+                    IconButton(onClick = onFlow) {
+                        Icon(Icons.Filled.AccountTree, contentDescription = "Flow view")
                     }
                     IconButton(onClick = { viewModel.refreshNow() }) {
                         Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
