@@ -51,6 +51,8 @@ data class AppSettings(
     val mmpKeyConfigured: Boolean = false,
     /** Show the solo-mining odds card on the dashboard. */
     val showSoloCard: Boolean = true,
+    /** Require device biometric/PIN to open the app. */
+    val appLockEnabled: Boolean = false,
     val alertThresholds: AlertThresholds = AlertThresholds(),
     val alertsEnabled: Boolean = true,
 )
@@ -78,6 +80,7 @@ class SettingsRepository @Inject constructor(
         val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
         val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
         val showSoloCard = booleanPreferencesKey("show_solo_card")
+        val appLockEnabled = booleanPreferencesKey("app_lock_enabled")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
         val thChipTempC = doublePreferencesKey("th_chip_temp_c")
@@ -107,6 +110,7 @@ class SettingsRepository @Inject constructor(
             mmpBaseUrl = p[Keys.mmpBaseUrl] ?: "https://mmp.hi3.cc",
             mmpKeyConfigured = !p[Keys.mmpApiKeyEncrypted].isNullOrBlank(),
             showSoloCard = p[Keys.showSoloCard] ?: true,
+            appLockEnabled = p[Keys.appLockEnabled] ?: false,
             alertsEnabled = p[Keys.alertsEnabled] ?: true,
             alertThresholds = AlertThresholds(
                 hashrateBelowPercent = p[Keys.thHashBelowPct] ?: 80.0,
@@ -137,6 +141,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setMmpEnabled(value: Boolean) = edit { it[Keys.mmpEnabled] = value }
     suspend fun setMmpBaseUrl(value: String) = edit { it[Keys.mmpBaseUrl] = value.trim() }
     suspend fun setShowSoloCard(value: Boolean) = edit { it[Keys.showSoloCard] = value }
+    suspend fun setAppLockEnabled(value: Boolean) = edit { it[Keys.appLockEnabled] = value }
 
     /** Store the MMP API key encrypted with the Android Keystore; blank clears it. */
     suspend fun setMmpApiKey(plaintext: String) = edit {

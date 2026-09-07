@@ -1,15 +1,31 @@
 package hi3.hashkit.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
@@ -19,33 +35,120 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import hi3.hashkit.core.AppLockManager
 import hi3.hashkit.data.poll.PollingEngine
+import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.ui.dashboard.DashboardScreen
 import hi3.hashkit.ui.detail.MinerDetailScreen
 import hi3.hashkit.ui.discovery.AddMinerScreen
 import hi3.hashkit.ui.theme.Hi3MinerWatchTheme
+import hi3.hashkit.ui.theme.HiBrand
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var pollingEngine: PollingEngine
 
+    @Inject
+    lateinit var appLockManager: AppLockManager
+
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        lifecycleScope.launch {
+            if (savedInstanceState == null && settingsRepository.current().appLockEnabled) {
+                appLockManager.lockOnLaunch()
+                showUnlockPrompt()
+            }
+        }
         setContent {
             Hi3MinerWatchTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     PollingLifecycle()
-                    AppNavHost(onExit = {
-                        pollingEngine.stop()
-                        finishAndRemoveTask()
-                    })
+                    LockLifecycle()
+                    val locked by appLockManager.locked.collectAsState()
+                    if (locked) {
+                        LockScreen(onUnlock = { showUnlockPrompt() })
+                    } else {
+                        AppNavHost(onExit = {
+                            pollingEngine.stop()
+                            finishAndRemoveTask()
+                        })
+                    }
                 }
             }
         }
+    }
+
+    private fun showUnlockPrompt() {
+        val prompt = BiometricPrompt(
+            this,
+            ContextCompat.getMainExecutor(this),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    appLockManager.unlock()
+                }
+            },
+        )
+        prompt.authenticate(
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Unlock Hi3 Hashkit")
+                .setAllowedAuthenticators(BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
+                .build()
+        )
+    }
+
+    /** Track background time so the app relocks after the grace period. */
+    @Composable
+    private fun LockLifecycle() {
+        val owner = LocalLifecycleOwner.current
+        DisposableEffect(owner) {
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_STOP -> appLockManager.onBackground()
+                    Lifecycle.Event.ON_START -> lifecycleScope.launch {
+                        val enabled = settingsRepository.settings.first().appLockEnabled
+                        val wasLocked = appLockManager.locked.value
+                        appLockManager.onForeground(enabled)
+                        if (!wasLocked && appLockManager.locked.value) showUnlockPrompt()
+                    }
+                    else -> Unit
+                }
+            }
+            owner.lifecycle.addObserver(observer)
+            onDispose { owner.lifecycle.removeObserver(observer) }
+        }
+    }
+
+    @Composable
+    private fun LockScreen(onUnlock: () -> Unit) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                HiBrand.appName,
+                style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
+                color = HiBrand.textPrimary,
+            )
+            Spacer(Modifier.height(24.dp))
+            Button(onClick = onUnlock) { Text("Unlock") }
+        }
+    }
+
+    companion object {
+        fun canUseAppLock(activity: FragmentActivity): Boolean =
+            BiometricManager.from(activity)
+                .canAuthenticate(BIOMETRIC_WEAK or DEVICE_CREDENTIAL) ==
+                BiometricManager.BIOMETRIC_SUCCESS
     }
 
     /** Poll only while the app is visible — no pretend background monitoring in v1. */

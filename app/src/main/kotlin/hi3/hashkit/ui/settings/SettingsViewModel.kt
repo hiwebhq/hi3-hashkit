@@ -45,6 +45,7 @@ class SettingsViewModel @Inject constructor(
         }
 
     fun setShowSoloCard(v: Boolean) = viewModelScope.launch { repo.setShowSoloCard(v) }
+    fun setAppLockEnabled(v: Boolean) = viewModelScope.launch { repo.setAppLockEnabled(v) }
     fun setMmpEnabled(v: Boolean) = viewModelScope.launch { repo.setMmpEnabled(v) }
     fun setMmpBaseUrl(v: String) = viewModelScope.launch { repo.setMmpBaseUrl(v) }
     fun setMmpApiKey(v: String) = viewModelScope.launch { repo.setMmpApiKey(v) }

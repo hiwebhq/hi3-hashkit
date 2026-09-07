@@ -273,6 +273,31 @@ fun SettingsScreen(
                     settings.showSoloCard,
                 ) { viewModel.setShowSoloCard(it) }
             }
+
+            Section("SECURITY") {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val canLock = remember {
+                    androidx.biometric.BiometricManager.from(context).canAuthenticate(
+                        androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                            androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                    ) == androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
+                }
+                ToggleRow(
+                    "App lock",
+                    if (canLock)
+                        "Require fingerprint/face or your device PIN to open the app " +
+                            "(relocks after 1 minute in the background)."
+                    else
+                        "Unavailable: set up a screen lock (PIN/biometric) on this device first.",
+                    settings.appLockEnabled && canLock,
+                ) { if (canLock) viewModel.setAppLockEnabled(it) }
+                Text(
+                    "Protects the app UI. Note: exported backups and the on-disk database " +
+                        "are protected by Android's standard app sandboxing, not by this lock.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
         }
     }
 }
