@@ -209,6 +209,8 @@ fun DashboardScreen(
                             onReboot = { bulkKind = BulkActionKind.REBOOT },
                             onPool = { bulkKind = BulkActionKind.POOL },
                             onFan = { bulkKind = BulkActionKind.FAN },
+                            onPause = { bulkKind = BulkActionKind.PAUSE },
+                            onResume = { bulkKind = BulkActionKind.RESUME },
                             onClear = viewModel::clearSelection,
                         )
                     }
@@ -275,12 +277,15 @@ private fun BulkDialogs(
     }
 }
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun BulkBar(
     count: Int,
     onReboot: () -> Unit,
     onPool: () -> Unit,
     onFan: () -> Unit,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
     onClear: () -> Unit,
 ) {
     Card(
@@ -294,10 +299,14 @@ private fun BulkBar(
                 color = HiBrand.textSecondary,
             )
             Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            androidx.compose.foundation.layout.FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 androidx.compose.material3.OutlinedButton(onClick = onReboot) { Text("Restart") }
                 androidx.compose.material3.OutlinedButton(onClick = onPool) { Text("Pool") }
                 androidx.compose.material3.OutlinedButton(onClick = onFan) { Text("Fan") }
+                androidx.compose.material3.OutlinedButton(onClick = onPause) { Text("Pause") }
+                androidx.compose.material3.OutlinedButton(onClick = onResume) { Text("Resume") }
                 androidx.compose.material3.TextButton(onClick = onClear) { Text("Clear") }
             }
         }

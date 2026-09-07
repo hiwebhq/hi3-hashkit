@@ -30,6 +30,14 @@ sealed interface BulkAction {
             is FanControl.Manual -> "Set fan to ${config.percent}%"
         }
     }
+
+    data class Power(val action: hi3.hashkit.domain.adapter.PowerAction) : BulkAction {
+        override val capability = Capability.POWER_CONTROL
+        override val label = when (action) {
+            hi3.hashkit.domain.adapter.PowerAction.PAUSE -> "Pause hashing"
+            hi3.hashkit.domain.adapter.PowerAction.RESUME -> "Resume hashing"
+        }
+    }
 }
 
 data class BulkPlan(
@@ -90,6 +98,7 @@ class FleetControl @Inject constructor(
                     is BulkAction.SetPool ->
                         controlRepository.setPrimaryPool(entity, action.url, action.port, action.worker)
                     is BulkAction.SetFan -> controlRepository.setFan(entity, action.config)
+                    is BulkAction.Power -> controlRepository.powerControl(entity, action.action)
                 }
             }.getOrElse { ActionResult.Failure(it.message ?: "Unexpected error") }
             BulkOutcome(entity.id, entity.name, result)

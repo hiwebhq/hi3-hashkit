@@ -32,7 +32,7 @@ import hi3.hashkit.ui.theme.HiBrand
 import kotlin.math.roundToInt
 
 /** Which bulk action the user is configuring (params step, before plan preview). */
-enum class BulkActionKind { REBOOT, POOL, FAN }
+enum class BulkActionKind { REBOOT, POOL, FAN, PAUSE, RESUME }
 
 @Composable
 fun BulkParamsDialog(
@@ -41,10 +41,16 @@ fun BulkParamsDialog(
     onDismiss: () -> Unit,
 ) {
     when (kind) {
-        BulkActionKind.REBOOT -> {
-            // No params: go straight to plan (as an effect, not during composition).
+        BulkActionKind.REBOOT ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onPlan(BulkAction.Reboot) }
-        }
+        BulkActionKind.PAUSE ->
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                onPlan(BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.PAUSE))
+            }
+        BulkActionKind.RESUME ->
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                onPlan(BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.RESUME))
+            }
         BulkActionKind.POOL -> {
             var url by rememberSaveable { mutableStateOf("") }
             var port by rememberSaveable { mutableStateOf("3333") }
