@@ -47,14 +47,21 @@ A /24 scan probes 254 hosts × 2 adapter ports (HTTP 80, CGMiner 4028) at concur
 ≈ 45–50 s; typical home LANs answer or refuse quickly and finish in a few seconds.
 Ranges wider than /22 are refused. Scans are cancelable at any time.
 
-## Battery (qualitative — not yet measured on-device)
+## Battery
 
 - Foreground polling runs only while the app is visible; closing the app stops it.
 - Background monitoring is WorkManager-based (≥15 min, deferrable by Android) and is
   off by default.
 - No wake locks, no foreground service, no GPS. The dominant cost while open is the
   poll interval — raise it if the app lives on a wall-mounted tablet.
-- On-device battery measurement is an open item for a future release.
+
+**Measuring it on your device:** the app now records real poll-cycle timing and current
+battery state in the diagnostics bundle (Settings → Data & Exports → Export
+diagnostics). For a drain figure, note the battery %, leave the app open on the
+dashboard for a measured interval, and read Android's own Settings → Battery → app
+usage for Hi3 Hashkit. Because per-device drain varies with poll interval, screen, and
+miner count, this reference intentionally does not publish a single fabricated number —
+the diagnostics give you the inputs to measure your own.
 
 ## Practical v1 guidance
 

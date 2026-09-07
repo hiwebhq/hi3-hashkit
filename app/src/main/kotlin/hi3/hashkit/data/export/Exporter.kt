@@ -31,6 +31,7 @@ class Exporter @Inject constructor(
     private val minerDao: MinerDao,
     private val telemetryDao: TelemetryDao,
     private val scheduleDao: ScheduleDao,
+    private val pollingEngine: hi3.hashkit.data.poll.PollingEngine? = null,
 ) {
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
@@ -226,7 +227,7 @@ class Exporter @Inject constructor(
     suspend fun diagnostics(includeAddresses: Boolean): File = withContext(Dispatchers.IO) {
         val miners = minerDao.observeAll().first()
         val sb = StringBuilder()
-        sb.appendLine("Hi3 Miner Watch diagnostics — ${Instant.now()}")
+        sb.appendLine("Hi3 Hashkit diagnostics — ${Instant.now()}")
         sb.appendLine("App version: ${runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }.getOrDefault("?")}")
@@ -235,6 +236,19 @@ class Exporter @Inject constructor(
         sb.appendLine("Notifications permitted: ${
             androidx.core.app.NotificationManagerCompat.from(context).areNotificationsEnabled()
         }")
+        // Battery state + poll timing — the inputs for real on-device drain analysis.
+        runCatching {
+            val bm = context.getSystemService(android.content.Context.BATTERY_SERVICE) as android.os.BatteryManager
+            val level = bm.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY)
+            val charging = bm.isCharging
+            sb.appendLine("Battery: $level%${if (charging) " (charging)" else ""}")
+        }
+        pollingEngine?.let {
+            sb.appendLine(
+                "Poll timing: last ${it.lastPollDurationMs} ms, avg ${it.avgPollDurationMs} ms " +
+                    "over ${it.pollCount} cycles"
+            )
+        }
         val db = context.getDatabasePath("hashkit.db")
         sb.appendLine("Database size: ${db.length() / 1024} KB")
         sb.appendLine()

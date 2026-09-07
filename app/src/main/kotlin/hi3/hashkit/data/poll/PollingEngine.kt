@@ -39,6 +39,12 @@ class PollingEngine @Inject constructor(
     private val _isPolling = MutableStateFlow(false)
     val isPolling: StateFlow<Boolean> = _isPolling
 
+    /** Rolling poll-cycle timing, exposed in the diagnostics bundle. */
+    @Volatile var lastPollDurationMs: Long = 0L; private set
+    @Volatile var pollCount: Long = 0L; private set
+    private var totalPollMs: Long = 0L
+    val avgPollDurationMs: Long get() = if (pollCount == 0L) 0L else totalPollMs / pollCount
+
     fun start(scope: CoroutineScope) {
         if (job?.isActive == true) return
         job = scope.launch {
@@ -60,6 +66,7 @@ class PollingEngine @Inject constructor(
     }
 
     suspend fun pollAllOnce() {
+        val startedAt = System.nanoTime()
         val settings = settingsRepository.current()
         val miners = repository.observeMinerEntities().first()
         supervisorScope {
@@ -88,6 +95,9 @@ class PollingEngine @Inject constructor(
             }.forEach { it.join() }
         }
         _lastRefresh.value = Instant.now()
+        lastPollDurationMs = (System.nanoTime() - startedAt) / 1_000_000
+        totalPollMs += lastPollDurationMs
+        pollCount += 1
         runCatching { scheduleEngine.runDueSchedules() }
         pruneIfDue(settings.retentionDays)
     }
