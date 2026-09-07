@@ -24,13 +24,31 @@ class AlertNotifier @Inject constructor(
 ) {
     init {
         val manager = context.getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(
-            NotificationChannel(
-                CHANNEL_ALERTS,
-                "Miner alerts",
-                NotificationManager.IMPORTANCE_DEFAULT,
-            ).apply { description = "Offline miners, overheating, fan failures, and recoveries" }
-        )
+        // Per-category channels so users can tune (or silence) each type in system settings.
+        listOf(
+            CHANNEL_OFFLINE to "Offline miners",
+            CHANNEL_THERMAL to "Temperature",
+            CHANNEL_FAN to "Fans",
+            CHANNEL_SHARES to "Rejected shares",
+            CHANNEL_STATUS to "Status changes",
+            CHANNEL_RECOVERY to "Recoveries",
+        ).forEach { (id, name) ->
+            manager.createNotificationChannel(
+                NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
+            )
+        }
+    }
+
+    private fun channelFor(signal: AlertSignal): String {
+        if (!signal.active) return CHANNEL_RECOVERY
+        return when (signal.type) {
+            hi3.hashkit.domain.alerts.AlertType.MINER_OFFLINE -> CHANNEL_OFFLINE
+            hi3.hashkit.domain.alerts.AlertType.CHIP_OVER_TEMP,
+            hi3.hashkit.domain.alerts.AlertType.VR_OVER_TEMP -> CHANNEL_THERMAL
+            hi3.hashkit.domain.alerts.AlertType.FAN_STOPPED -> CHANNEL_FAN
+            hi3.hashkit.domain.alerts.AlertType.REJECT_RATE_HIGH -> CHANNEL_SHARES
+            else -> CHANNEL_STATUS
+        }
     }
 
     fun canNotify(): Boolean =
@@ -47,7 +65,7 @@ class AlertNotifier @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val title = if (signal.active) "Alert: ${signal.minerName}" else "Recovered: ${signal.minerName}"
-        val notification = NotificationCompat.Builder(context, CHANNEL_ALERTS)
+        val notification = NotificationCompat.Builder(context, channelFor(signal))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
             .setContentText(signal.message)
@@ -61,6 +79,11 @@ class AlertNotifier @Inject constructor(
     }
 
     companion object {
-        const val CHANNEL_ALERTS = "alerts"
+        const val CHANNEL_OFFLINE = "alerts_offline"
+        const val CHANNEL_THERMAL = "alerts_thermal"
+        const val CHANNEL_FAN = "alerts_fan"
+        const val CHANNEL_SHARES = "alerts_shares"
+        const val CHANNEL_STATUS = "alerts_status"
+        const val CHANNEL_RECOVERY = "alerts_recovery"
     }
 }

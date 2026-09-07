@@ -83,6 +83,8 @@ class DashboardViewModel @Inject constructor(
     private val fleetControl: hi3.hashkit.data.repo.FleetControl,
     private val hi3PoolRepository: hi3.hashkit.integrations.hi3.Hi3PoolRepository,
     private val mmpRepository: hi3.hashkit.integrations.hi3.MmpRepository,
+    private val scanner: hi3.hashkit.discovery.MinerScanner,
+    private val networkInspector: hi3.hashkit.discovery.NetworkInspector,
     alertDao: AlertDao,
 ) : ViewModel() {
 
@@ -215,13 +217,60 @@ class DashboardViewModel @Inject constructor(
         bulkFlow.value = BulkFlowState()
     }
 
+    private val _refreshing = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> = _refreshing
+
     fun refreshNow() {
         viewModelScope.launch {
-            pollingEngine.pollAllOnce()
-            difficultyRepository.refreshIfEnabled()
-            refreshPool()
+            _refreshing.value = true
+            try {
+                pollingEngine.pollAllOnce()
+                difficultyRepository.refreshIfEnabled()
+                refreshPool()
+            } finally {
+                _refreshing.value = false
+            }
         }
     }
+
+    private val _rescanMessage = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+    val rescanMessage: StateFlow<String?> = _rescanMessage
+
+    /** Re-scan the current Wi-Fi/Ethernet /24 for new miners, from the dashboard. */
+    fun rescanLocalNetwork() {
+        viewModelScope.launch {
+            val cidr = networkInspector.defaultScanCidr()
+            if (cidr == null) {
+                _rescanMessage.value = "No local network detected to scan."
+                return@launch
+            }
+            val hosts = hi3.hashkit.discovery.SubnetUtils.expand(cidr)
+            if (hosts == null) {
+                _rescanMessage.value = "Local range too large to auto-scan; use Add → Scan."
+                return@launch
+            }
+            _rescanMessage.value = "Scanning ${hosts.size} hosts…"
+            var found = 0
+            scanner.scan(hosts).collect { event ->
+                when (event) {
+                    is hi3.hashkit.discovery.ScanEvent.Found -> {
+                        repository.upsertDiscovered(
+                            host = event.host, port = 0,
+                            adapterType = event.probe.adapterType, identity = event.probe.identity,
+                        )
+                        found++
+                    }
+                    is hi3.hashkit.discovery.ScanEvent.Finished -> {
+                        _rescanMessage.value = "Rescan done — $found miner(s) found."
+                        pollingEngine.pollAllOnce()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    fun clearRescanMessage() { _rescanMessage.value = null }
 
     fun setDemoMode(enabled: Boolean) {
         viewModelScope.launch {

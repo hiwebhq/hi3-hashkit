@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -71,8 +73,18 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
+    val rescanMessage by viewModel.rescanMessage.collectAsStateWithLifecycle()
     var bulkKind by androidx.compose.runtime.remember {
         androidx.compose.runtime.mutableStateOf<BulkActionKind?>(null)
+    }
+    rescanMessage?.let { msg ->
+        val ctx = androidx.compose.ui.platform.LocalContext.current
+        androidx.compose.runtime.LaunchedEffect(msg) {
+            android.widget.Toast.makeText(ctx, msg, android.widget.Toast.LENGTH_SHORT).show()
+            kotlinx.coroutines.delay(2500)
+            viewModel.clearRescanMessage()
+        }
     }
 
     Scaffold(
@@ -123,10 +135,13 @@ fun DashboardScreen(
         },
         containerColor = HiBrand.background,
     ) { padding ->
+        androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+            isRefreshing = refreshing,
+            onRefresh = { viewModel.refreshNow() },
+            modifier = Modifier.fillMaxSize().padding(padding),
+        ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -163,6 +178,15 @@ fun DashboardScreen(
                         current = state.settings.cardDensity,
                         onSelect = viewModel::setDensity,
                     )
+                }
+            }
+            if (state.miners.isNotEmpty()) {
+                item {
+                    androidx.compose.material3.TextButton(onClick = { viewModel.rescanLocalNetwork() }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Rescan network for new miners")
+                    }
                 }
             }
             if (state.miners.isEmpty() && state.searchQuery.isBlank()) {
@@ -247,6 +271,7 @@ fun DashboardScreen(
                     }
                 }
             }
+        }
         }
     }
 
