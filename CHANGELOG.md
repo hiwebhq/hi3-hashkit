@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.32.1
+
+- Payout-address QR scan now accepts only a bare address; a `bitcoin:` URI or one with
+  query params is rejected with a prompt to scan the plain address.
+
 ## 0.32.0
 
 - **Per-farm refresh interval (5s–1d).** Settings → Monitoring now has a preset picker

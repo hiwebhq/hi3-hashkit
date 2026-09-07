@@ -428,14 +428,24 @@ private fun ToggleRow(
 @Composable
 private fun PayoutAddressRow(value: String, onChange: (String) -> Unit) {
     var text by remember(value) { mutableStateOf(value) }
+    val context = androidx.compose.ui.platform.LocalContext.current
     val scan = rememberLauncherForActivityResult(
         com.journeyapps.barcodescanner.ScanContract()
     ) { result ->
-        result.contents?.trim()?.takeIf { it.isNotEmpty() }?.let {
-            // QR payloads are often "bitcoin:<addr>?..."; keep just the address.
-            val addr = it.removePrefix("bitcoin:").substringBefore("?").trim()
-            text = addr
-            onChange(addr)
+        val scanned = result.contents?.trim()
+        when {
+            scanned.isNullOrEmpty() -> Unit // cancelled
+            // Accept bare addresses only — reject bitcoin: URIs, query params or whitespace.
+            scanned.contains(':') || scanned.contains('?') || scanned.any { it.isWhitespace() } ->
+                android.widget.Toast.makeText(
+                    context,
+                    "That QR isn't a bare payout address (looks like a bitcoin: URI). Scan the plain address.",
+                    android.widget.Toast.LENGTH_LONG,
+                ).show()
+            else -> {
+                text = scanned
+                onChange(scanned)
+            }
         }
     }
     OutlinedTextField(
