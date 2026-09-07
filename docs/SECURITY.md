@@ -4,9 +4,11 @@
 
 In this build:
 
-1. **HTTP requests to the miner addresses you add or scan** (GET for telemetry; PATCH/
-   POST for controls you explicitly confirm), all of which must be private (RFC 1918),
-   link-local, or CGNAT/Tailscale (100.64/10) addresses.
+1. **Requests to the miner addresses you add or scan** — HTTP on port 80 for
+   ESP-Miner devices (GET for telemetry; PATCH/POST for controls you explicitly
+   confirm) and read-only CGMiner TCP API queries on port 4028 for Canaan/Avalon
+   devices. All destinations must be private (RFC 1918), link-local, or
+   CGNAT/Tailscale (100.64/10) addresses; discovery probes only these two ports.
 2. **Optional, off by default:** one HTTPS GET to `mempool.space` to fetch network
    difficulty for solo-mining odds. It carries no miner data, no identifiers beyond
    the connection itself, and runs only while "Fetch network difficulty" is enabled in

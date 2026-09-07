@@ -36,7 +36,7 @@ object AppModule {
     @Singleton
     fun database(@ApplicationContext context: Context): HashkitDatabase =
         Room.databaseBuilder(context, HashkitDatabase::class.java, "hashkit.db")
-            .addMigrations(HashkitDatabase.MIGRATION_1_2)
+            .addMigrations(HashkitDatabase.MIGRATION_1_2, HashkitDatabase.MIGRATION_2_3)
             .build()
 
     @Provides
@@ -59,6 +59,10 @@ abstract class AdapterModule {
     @Binds
     @IntoSet
     abstract fun espMiner(adapter: EspMinerAdapter): MinerAdapter
+
+    @Binds
+    @IntoSet
+    abstract fun canaan(adapter: hi3.hashkit.adapters.canaan.CanaanAdapter): MinerAdapter
 
     @Binds
     @IntoSet

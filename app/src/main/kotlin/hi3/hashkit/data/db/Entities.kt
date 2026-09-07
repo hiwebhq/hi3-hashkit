@@ -74,6 +74,7 @@ data class TelemetrySampleEntity(
     val bestDifficulty: Double?,
     val bestSessionDifficulty: Double?,
     val uptimeSeconds: Long?,
+    val networkDifficulty: Double?,
     val poolUrl: String?,
     val poolPort: Int?,
     val workerName: String?,

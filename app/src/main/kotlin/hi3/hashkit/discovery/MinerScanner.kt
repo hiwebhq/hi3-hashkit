@@ -43,14 +43,15 @@ class MinerScanner @Inject constructor(
             val probes = safeHosts.map { host ->
                 launch {
                     semaphore.withPermit {
+                        // Try every adapter: they use different transports/ports (HTTP 80,
+                        // CGMiner TCP 4028), so one being unreachable says nothing about the rest.
                         for (adapter in registry.probeable()) {
-                            val result = adapter.probe(MinerHost(host))
+                            val result = adapter.probe(MinerHost(host, adapter.defaultPort))
                             if (result is ProbeResult.Supported) {
                                 found.incrementAndGet()
                                 trySend(ScanEvent.Found(host, result))
                                 break
                             }
-                            if (result is ProbeResult.Unreachable) break // port closed; skip other adapters
                         }
                         trySend(ScanEvent.Progress(scanned.incrementAndGet(), safeHosts.size))
                     }

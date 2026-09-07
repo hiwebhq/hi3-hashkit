@@ -49,13 +49,14 @@ class MinerRepository @Inject constructor(
     suspend fun toDomain(entity: MinerEntity, now: Instant = Instant.now()): Miner =
         entity.toDomain(latestTelemetry(entity.id), staleAfterMs, now)
 
-    /** Probe a host with every real adapter and register the miner if supported. */
-    suspend fun addByHost(host: String, port: Int = 80): AddMinerResult {
+    /** Probe a host with every real adapter (each on its own port) and register if supported. */
+    suspend fun addByHost(host: String, port: Int = 0): AddMinerResult {
         var lastUnreachable: String? = null
         for (adapter in registry.probeable()) {
-            when (val probe = adapter.probe(MinerHost(host, port))) {
+            val probePort = if (port > 0) port else adapter.defaultPort
+            when (val probe = adapter.probe(MinerHost(host, probePort))) {
                 is ProbeResult.Supported ->
-                    return upsertDiscovered(host, port, probe.adapterType, probe.identity)
+                    return upsertDiscovered(host, probePort, probe.adapterType, probe.identity)
                 is ProbeResult.Unreachable -> lastUnreachable = probe.cause
                 ProbeResult.NotThisDevice -> Unit
             }
@@ -72,6 +73,7 @@ class MinerRepository @Inject constructor(
         isDemo: Boolean = false,
     ): AddMinerResult {
         val now = System.currentTimeMillis()
+        val resolvedPort = if (port > 0) port else registry.byType(adapterType)?.defaultPort ?: port
         val stableKey = (if (isDemo) "demo:" else "") + identity.stableKey(host)
         val existing = minerDao.byStableKey(stableKey)
         if (existing != null) {
@@ -87,7 +89,7 @@ class MinerRepository @Inject constructor(
                 adapterType = adapterType,
                 name = identity.hostname ?: identity.model ?: host,
                 host = host,
-                port = port,
+                port = resolvedPort,
                 macAddress = identity.macAddress,
                 serialNumber = identity.serialNumber,
                 hostname = identity.hostname,

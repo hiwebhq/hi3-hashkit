@@ -47,6 +47,9 @@ interface MinerAdapter {
     /** Human name shown in the UI. */
     val displayName: String
 
+    /** Port this adapter's API lives on (80 for HTTP miners, 4028 for CGMiner-API miners). */
+    val defaultPort: Int
+
     suspend fun probe(host: MinerHost): ProbeResult
     suspend fun getIdentity(host: MinerHost): MinerIdentity?
     suspend fun getTelemetry(host: MinerHost): TelemetryResult

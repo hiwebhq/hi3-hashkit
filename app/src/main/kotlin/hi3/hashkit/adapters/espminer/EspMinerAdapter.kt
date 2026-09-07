@@ -53,6 +53,7 @@ class EspMinerAdapter @Inject constructor(
 
     override val adapterType: String = TYPE
     override val displayName: String = "Bitaxe / ESP-Miner"
+    override val defaultPort: Int = 80
 
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 

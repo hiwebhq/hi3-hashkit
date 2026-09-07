@@ -149,7 +149,13 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun soloOf(miners: List<Miner>, settings: AppSettings): SoloSummary? {
-        val difficulty = settings.networkDifficulty
+        // Prefer difficulty reported by a miner itself (Canaan `coin`); fall back to
+        // the manually entered / opt-in-fetched value in settings.
+        val minerReported = miners
+            .filter { !it.isDemo }
+            .mapNotNull { it.lastTelemetry?.networkDifficulty }
+            .maxOrNull()
+        val difficulty = minerReported ?: settings.networkDifficulty
         if (difficulty <= 0) return null
         val real = miners.filter { !it.isDemo }
         val hash = real

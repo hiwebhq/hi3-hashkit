@@ -28,6 +28,7 @@ class DemoMinerAdapter @Inject constructor() : MinerAdapter {
 
     override val adapterType: String = AdapterRegistry.DEMO_ADAPTER_TYPE
     override val displayName: String = "Demo miner (synthetic)"
+    override val defaultPort: Int = 0
 
     override suspend fun probe(host: MinerHost): ProbeResult = ProbeResult.NotThisDevice
 

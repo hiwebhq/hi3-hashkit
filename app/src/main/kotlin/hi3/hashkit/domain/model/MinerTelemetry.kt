@@ -41,6 +41,8 @@ data class MinerTelemetry(
     val bestSessionDifficulty: Double? = null,
 
     val uptimeSeconds: Long? = null,
+    /** Bitcoin network difficulty when the miner itself reports it (e.g. Canaan `coin`). */
+    val networkDifficulty: Double? = null,
     val poolUrl: String? = null,
     val poolPort: Int? = null,
     val workerName: String? = null,

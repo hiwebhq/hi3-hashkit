@@ -117,7 +117,7 @@ class AddMinerViewModel @Inject constructor(
                     is ScanEvent.Found -> {
                         val result = repository.upsertDiscovered(
                             host = event.host,
-                            port = 80,
+                            port = 0, // resolved to the adapter's API port
                             adapterType = event.probe.adapterType,
                             identity = event.probe.identity,
                         )

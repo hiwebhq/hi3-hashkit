@@ -15,7 +15,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         AlertStateEntity::class,
         AuditEventEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -63,6 +63,13 @@ abstract class HashkitDatabase : RoomDatabase() {
                     "CREATE INDEX IF NOT EXISTS `index_audit_events_minerId_atEpochMs` " +
                         "ON `audit_events` (`minerId`, `atEpochMs`)"
                 )
+            }
+        }
+
+        /** v2 -> v3: miner-reported network difficulty column (Canaan support). */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `networkDifficulty` REAL")
             }
         }
     }
