@@ -24,8 +24,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 28
-        versionName = "0.25.0"
+        versionCode = 29
+        versionName = "0.26.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,8 +75,16 @@ android {
     }
     testOptions {
         unitTests {
-            isIncludeAndroidResources = false
+            isIncludeAndroidResources = true // Robolectric needs merged resources
         }
+    }
+}
+
+// Unit tests run on the debug variant only; the release unit-test variant is redundant
+// and its resource merge trips Robolectric Compose tests.
+androidComponents {
+    beforeVariants(selector().withBuildType("release")) { variant ->
+        (variant as? com.android.build.api.variant.HasUnitTestBuilder)?.enableUnitTest = false
     }
 }
 
@@ -120,7 +128,14 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
