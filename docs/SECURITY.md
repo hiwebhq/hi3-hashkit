@@ -13,11 +13,15 @@ In this build:
    difficulty for solo-mining odds. It carries no miner data, no identifiers beyond
    the connection itself, and runs only while "Fetch network difficulty" is enabled in
    Settings (manual difficulty entry works without it).
-3. **Optional, off by default — Hi3 Pool:** while "Hi3 Pool stats" is enabled in
-   Settings, the app sends read-only GETs (`/api/client/{payoutAddress}`,
-   `/api/network`) to the configured pool URL (default `https://pool.hi3.cc`) about
-   once a minute while the app is open. The only user data transmitted is the
-   configured payout address in the request path. No miner telemetry, local IPs, or
+3. **Optional, off by default — Pool stats:** while "Pool stats" is enabled in
+   Settings, the app sends read-only GETs to the pool you select, about once a minute
+   while the app is open. Verified endpoints per pool:
+   - **Hi3 / Public Pool** (public-pool software): `/api/client/{address}`, `/api/network`
+     (Hi3 also `/sproxy-api/api/v1/sessions` for per-rig correlation).
+   - **CKPool**: `raw.stats.ckpool.org/users/{address}`.
+   - **OCEAN**: `api.ocean.xyz/v1/user_hashrate_full/{address}`.
+   The only user data transmitted is the configured address/subaccount (and an optional
+   watcher token if you set one) in the request path. No miner telemetry, local IPs, or
    worker passwords are sent. Public pool hosts must be HTTPS; plain HTTP is accepted
    only toward private/Tailscale addresses (local stage instances). Disabling the
    toggle stops all pool requests immediately.

@@ -30,6 +30,7 @@ data class WorkerComparison(
 
 data class Hi3PoolState(
     val enabled: Boolean = false,
+    val poolType: PoolType = PoolType.HI3,
     val lastUpdated: Instant? = null,
     val error: String? = null,
     val workersCount: Int = 0,
@@ -61,39 +62,91 @@ class Hi3PoolRepository @Inject constructor(
 
     suspend fun refresh(localMiners: List<Miner>) {
         val settings = settingsRepository.current()
+        val poolType = settings.poolType
         if (!settings.hi3PoolEnabled) {
-            _state.value = Hi3PoolState(enabled = false)
+            _state.value = Hi3PoolState(enabled = false, poolType = poolType)
             return
         }
         if (settings.hi3PoolPayoutAddress.isBlank()) {
             _state.value = Hi3PoolState(
                 enabled = true,
-                error = "Set your payout address in Settings to load pool stats.",
+                poolType = poolType,
+                error = "Set your ${poolType.identifierLabel.lowercase()} in Settings to load pool stats.",
             )
             return
         }
+        val baseUrl = settings.hi3PoolBaseUrl
+        val id = settings.hi3PoolPayoutAddress
+        val realMiners = localMiners.filter { !it.isDemo }
 
-        val account = client.fetchAccount(settings.hi3PoolBaseUrl, settings.hi3PoolPayoutAddress)
-        val network = client.fetchNetwork(settings.hi3PoolBaseUrl)
-        // Per-rig sessions if the proxy exposes them; 403/unavailable -> empty (fallback).
-        val sessions = (client.fetchSessions(settings.hi3PoolBaseUrl, settings.hi3PoolPayoutAddress)
-            as? Hi3PoolClient.PoolResult.Ok)?.value.orEmpty()
-
-        when (account) {
-            is Hi3PoolClient.PoolResult.Error ->
-                _state.value = _state.value.copy(enabled = true, error = account.message)
-            is Hi3PoolClient.PoolResult.Ok -> {
-                val net = (network as? Hi3PoolClient.PoolResult.Ok)?.value
-                val realMiners = localMiners.filter { !it.isDemo }
-                _state.value = if (sessions.isNotEmpty()) {
-                    // Rich path: match each proxy rig to a local miner by peer LAN IP.
-                    buildFromSessions(sessions, realMiners, account.value, net)
-                } else {
-                    // Public path: pool aggregates the proxy into few workers -> compare totals.
-                    buildAggregate(account.value, realMiners, net)
-                }
+        // Hi3 has a stratum-proxy endpoint that exposes per-rig sessions by LAN IP; other
+        // pools are correlated by worker name from their per-worker account response.
+        if (poolType == PoolType.HI3) {
+            val account = client.fetchAccount(baseUrl, id)
+            val net = (client.fetchNetwork(baseUrl) as? Hi3PoolClient.PoolResult.Ok)?.value
+            val sessions = (client.fetchSessions(baseUrl, id)
+                as? Hi3PoolClient.PoolResult.Ok)?.value.orEmpty()
+            _state.value = when (account) {
+                is Hi3PoolClient.PoolResult.Error -> _state.value.copy(enabled = true, poolType = poolType, error = account.message)
+                is Hi3PoolClient.PoolResult.Ok ->
+                    if (sessions.isNotEmpty()) buildFromSessions(sessions, realMiners, account.value, net)
+                    else buildAggregate(account.value, realMiners, net)
             }
+            return
         }
+
+        val account = client.fetchAccountFor(poolType, baseUrl, id)
+        // Only public-pool exposes /api/network; skip for ckpool/OCEAN.
+        val net = if (poolType == PoolType.PUBLIC_POOL)
+            (client.fetchNetwork(baseUrl) as? Hi3PoolClient.PoolResult.Ok)?.value else null
+        _state.value = when (account) {
+            is Hi3PoolClient.PoolResult.Error -> _state.value.copy(enabled = true, poolType = poolType, error = account.message)
+            is Hi3PoolClient.PoolResult.Ok -> buildFromWorkers(poolType, account.value, realMiners, net)
+        }
+    }
+
+    /** Per-worker correlation for non-Hi3 pools: match each pool worker to a local miner by name. */
+    private fun buildFromWorkers(
+        poolType: PoolType,
+        account: Hi3PoolClient.PoolAccount,
+        miners: List<Miner>,
+        net: Hi3PoolClient.PoolNetwork?,
+    ): Hi3PoolState {
+        val matched = mutableSetOf<String>()
+        val comparisons = account.workers.map { w ->
+            val local = miners.firstOrNull { m -> matchesWorker(m, w.name) }
+            local?.let { matched += it.name }
+            WorkerComparison(
+                poolWorkerName = local?.name ?: w.name,
+                poolHashrateGhs = w.hashRateGhs,
+                poolBestDifficulty = w.bestDifficulty,
+                localMinerName = local?.name,
+                localHashrateGhs = local?.lastTelemetry?.hashrateGhs?.value,
+            )
+        }.sortedByDescending { it.poolHashrateGhs ?: 0.0 }
+        return Hi3PoolState(
+            enabled = true,
+            poolType = poolType,
+            lastUpdated = Instant.now(),
+            workersCount = account.workersCount,
+            totalPoolHashrateGhs = account.totalHashRateGhs,
+            networkDifficulty = net?.difficulty,
+            blockHeight = net?.blockHeight,
+            comparisons = comparisons,
+            unmatchedLocal = miners
+                .filter { it.status == MinerStatus.ONLINE && it.name !in matched }
+                .map { it.name },
+            aggregatedViaProxy = false,
+        )
+    }
+
+    /** Match a local miner to a pool worker name (rig suffix), by worker suffix, name, or hostname. */
+    private fun matchesWorker(miner: Miner, poolWorkerName: String): Boolean {
+        val target = poolWorkerName.substringAfterLast('.').trim()
+        if (target.isEmpty()) return false
+        return localKeyOf(miner)?.equals(target, ignoreCase = true) == true ||
+            miner.name.equals(target, ignoreCase = true) ||
+            miner.identity.hostname?.equals(target, ignoreCase = true) == true
     }
 
     private fun buildFromSessions(

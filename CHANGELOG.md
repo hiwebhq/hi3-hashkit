@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.34.0
+
+- **Choose your pool.** The Hi3 Pool card/settings are now a generic "Pool" integration
+  with a selector for **Hi3 Pool, Public Pool (web.public-pool.io), CKPool
+  (raw.stats.ckpool.org) and OCEAN (api.ocean.xyz)**. Pick your pool, enter your
+  address/subaccount (QR-scannable), and the dashboard correlates pool-side workers with
+  your local miners per rig. An optional API-key/watcher-token field is provided for
+  pools that need one. Each endpoint was verified against the pool's real API — no
+  invented routes. (Luxor's GraphQL/API-key integration is planned next.)
+
 ## 0.33.0
 
 - **Dedicated Fleet page.** Tap the Fleet card on the dashboard to open a focused view:

@@ -182,26 +182,33 @@ fun SettingsScreen(
                 )
             }
 
-            Section("HI3 POOL") {
+            Section("POOL") {
                 ToggleRow(
-                    "Hi3 Pool stats",
-                    "Read-only pool-side view of your workers, compared against local " +
-                        "miner readings on the dashboard.",
+                    "Pool stats",
+                    "Read-only pool-side view of your workers, correlated with local miner " +
+                        "readings on the dashboard.",
                     settings.hi3PoolEnabled,
                 ) { viewModel.setHi3PoolEnabled(it) }
                 if (settings.hi3PoolEnabled) {
-                    NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                    PoolTypeRow(current = settings.poolType, onSelect = { viewModel.setPoolType(it) })
+                    if (settings.poolType.baseUrlEditable) {
+                        NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                    }
                     PayoutAddressRow(
+                        label = settings.poolType.identifierLabel,
                         value = settings.hi3PoolPayoutAddress,
                         onChange = { viewModel.setHi3PoolPayoutAddress(it) },
                     )
+                    NumberRow("API key / watcher token (optional)", settings.poolApiToken) {
+                        viewModel.setPoolApiToken(it)
+                    }
                 }
                 Text(
-                    "What is transmitted while enabled: your payout address, inside an " +
-                        "HTTPS request to the pool URL above, about once a minute while the " +
-                        "app is open. Nothing else — no miner telemetry, no local IPs, no " +
-                        "worker passwords. Off by default; turning it off stops all pool " +
-                        "requests immediately.",
+                    "What is transmitted while enabled: your ${settings.poolType.identifierLabel.lowercase()} " +
+                        "(and token if set), inside an HTTPS request to ${settings.poolType.displayName}, " +
+                        "about once a minute while the app is open. Nothing else — no miner telemetry, " +
+                        "no local IPs, no worker passwords. Off by default; turning it off stops all " +
+                        "pool requests immediately.",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -426,7 +433,32 @@ private fun ToggleRow(
 
 /** Payout-address field with an on-demand QR scanner (offline; no image leaves the device). */
 @Composable
-private fun PayoutAddressRow(value: String, onChange: (String) -> Unit) {
+private fun PoolTypeRow(
+    current: hi3.hashkit.integrations.hi3.PoolType,
+    onSelect: (hi3.hashkit.integrations.hi3.PoolType) -> Unit,
+) {
+    var open by remember { mutableStateOf(false) }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Text("Pool", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Box {
+            androidx.compose.material3.AssistChip(
+                onClick = { open = true },
+                label = { Text(current.displayName) },
+            )
+            androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+                hi3.hashkit.integrations.hi3.PoolType.entries.forEach { type ->
+                    androidx.compose.material3.DropdownMenuItem(
+                        text = { Text(type.displayName) },
+                        onClick = { open = false; onSelect(type) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PayoutAddressRow(label: String, value: String, onChange: (String) -> Unit) {
     var text by remember(value) { mutableStateOf(value) }
     val context = androidx.compose.ui.platform.LocalContext.current
     val scan = rememberLauncherForActivityResult(
@@ -451,7 +483,7 @@ private fun PayoutAddressRow(value: String, onChange: (String) -> Unit) {
     OutlinedTextField(
         value = text,
         onValueChange = { text = it; onChange(it.trim()) },
-        label = { Text("Payout address (account key)") },
+        label = { Text(label) },
         singleLine = true,
         trailingIcon = {
             IconButton(onClick = {

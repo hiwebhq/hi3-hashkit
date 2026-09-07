@@ -43,11 +43,15 @@ data class AppSettings(
     val activeFarmId: Long = -1,
     /** Miner-card size on the dashboard. */
     val cardDensity: CardDensity = CardDensity.LARGE,
-    /** Hi3 Pool integration — OPT-IN; nothing is contacted while false. */
+    /** Pool stats integration — OPT-IN; nothing is contacted while false. */
     val hi3PoolEnabled: Boolean = false,
     val hi3PoolBaseUrl: String = "https://pool.hi3.cc",
-    /** Payout address used as the read-only account key on the pool. */
+    /** Payout address / subaccount used as the read-only account key on the pool. */
     val hi3PoolPayoutAddress: String = "",
+    /** Which pool the stats come from. */
+    val poolType: hi3.hashkit.integrations.hi3.PoolType = hi3.hashkit.integrations.hi3.PoolType.HI3,
+    /** Optional read-only API key / watcher token, for pools that require one. */
+    val poolApiToken: String = "",
     /** Hi3 MMP integration — OPT-IN; nothing is contacted while false. */
     val mmpEnabled: Boolean = false,
     val mmpBaseUrl: String = "https://mmp.hi3.cc",
@@ -86,6 +90,8 @@ class SettingsRepository @Inject constructor(
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
         val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
+        val poolType = stringPreferencesKey("pool_type")
+        val poolApiToken = stringPreferencesKey("pool_api_token")
         val mmpEnabled = booleanPreferencesKey("mmp_enabled")
         val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
         val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
@@ -120,6 +126,8 @@ class SettingsRepository @Inject constructor(
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
             hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
             hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
+            poolType = hi3.hashkit.integrations.hi3.PoolType.fromName(p[Keys.poolType]),
+            poolApiToken = p[Keys.poolApiToken] ?: "",
             mmpEnabled = p[Keys.mmpEnabled] ?: false,
             mmpBaseUrl = p[Keys.mmpBaseUrl] ?: "https://mmp.hi3.cc",
             mmpKeyConfigured = !p[Keys.mmpApiKeyEncrypted].isNullOrBlank(),
@@ -158,6 +166,8 @@ class SettingsRepository @Inject constructor(
     suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }
     suspend fun setHi3PoolBaseUrl(value: String) = edit { it[Keys.hi3PoolBaseUrl] = value.trim() }
     suspend fun setHi3PoolPayoutAddress(value: String) = edit { it[Keys.hi3PoolPayoutAddress] = value.trim() }
+    suspend fun setPoolType(value: hi3.hashkit.integrations.hi3.PoolType) = edit { it[Keys.poolType] = value.name }
+    suspend fun setPoolApiToken(value: String) = edit { it[Keys.poolApiToken] = value.trim() }
     suspend fun setMmpEnabled(value: Boolean) = edit { it[Keys.mmpEnabled] = value }
     suspend fun setMmpBaseUrl(value: String) = edit { it[Keys.mmpBaseUrl] = value.trim() }
     suspend fun setShowSoloCard(value: Boolean) = edit { it[Keys.showSoloCard] = value }

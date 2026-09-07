@@ -82,6 +82,86 @@ class Hi3PoolClient @Inject constructor(
         return null
     }
 
+    /**
+     * Fetch a normalized per-worker account for any supported pool. Endpoints verified
+     * against each pool's real API (public-pool source, ckpool user JSON, OCEAN's
+     * documented api.ocean.xyz used by the DeepSea dashboard).
+     */
+    suspend fun fetchAccountFor(
+        poolType: PoolType,
+        baseUrl: String,
+        identifier: String,
+    ): PoolResult<PoolAccount> = when (poolType) {
+        PoolType.HI3, PoolType.PUBLIC_POOL -> fetchAccount(baseUrl, identifier)
+        PoolType.CKPOOL -> fetchCkpoolAccount(baseUrl, identifier)
+        PoolType.OCEAN -> fetchOceanAccount(baseUrl, identifier)
+    }
+
+    /** ckpool: raw.stats.ckpool.org/users/{address}; hashrates are suffix strings ("1.5T"). */
+    private suspend fun fetchCkpoolAccount(baseUrl: String, address: String): PoolResult<PoolAccount> {
+        val addr = address.trim()
+        if (addr.isEmpty()) return PoolResult.Error("No address configured.")
+        return get(baseUrl, "/users/$addr") { body ->
+            val obj = json.parseToJsonElement(body).jsonObject
+            val workers = (obj["worker"] as? JsonArray)?.mapNotNull { el ->
+                val w = el as? JsonObject ?: return@mapNotNull null
+                val name = w.str("workername") ?: return@mapNotNull null
+                PoolWorker(
+                    sessionId = null,
+                    // ckpool worker names are "address.rig"; keep the rig suffix as the label.
+                    name = name.substringAfter('.', name),
+                    bestDifficulty = w.num("bestever") ?: w.num("bestshare"),
+                    hashRateGhs = ckHashToGhs(w.str("hashrate1hr") ?: w.str("hashrate5m") ?: w.str("hashrate1m")),
+                    startTime = null,
+                    lastSeen = w.num("lastshare")?.toLong()?.toString(),
+                )
+            }.orEmpty()
+            PoolAccount(
+                workersCount = (obj["workers"] as? JsonPrimitive)?.content?.toIntOrNull() ?: workers.size,
+                workers = workers,
+                totalHashRateGhs = ckHashToGhs(obj.str("hashrate1hr") ?: obj.str("hashrate5m"))
+                    ?: workers.sumOf { it.hashRateGhs ?: 0.0 },
+            )
+        }
+    }
+
+    /** OCEAN: api.ocean.xyz/v1/user_hashrate_full/{address}; per-worker hashrate in H/s. */
+    private suspend fun fetchOceanAccount(baseUrl: String, address: String): PoolResult<PoolAccount> {
+        val addr = address.trim()
+        if (addr.isEmpty()) return PoolResult.Error("No address configured.")
+        return get(baseUrl, "/v1/user_hashrate_full/$addr") { body ->
+            val root = json.parseToJsonElement(body).jsonObject
+            // OCEAN wraps the payload under "result"/"data" on some versions; tolerate both.
+            val data = (root["result"] as? JsonObject) ?: (root["data"] as? JsonObject) ?: root
+            val workersEl = data["workers"]
+            val workerObjs: List<Pair<String?, JsonObject>> = when (workersEl) {
+                is JsonArray -> workersEl.mapNotNull { (it as? JsonObject)?.let { o -> null to o } }
+                is JsonObject -> workersEl.entries.mapNotNull { e -> (e.value as? JsonObject)?.let { e.key to it } }
+                else -> emptyList()
+            }
+            val workers = workerObjs.mapNotNull { (key, w) ->
+                val name = w.str("workername") ?: w.str("name") ?: key ?: return@mapNotNull null
+                PoolWorker(
+                    sessionId = null,
+                    name = name.substringAfter('.', name),
+                    bestDifficulty = null,
+                    // Values are H/s; normalize to GH/s. Prefer the shortest window present.
+                    hashRateGhs = (w.num("hashrate_60s") ?: w.num("hashrate_3600") ?: w.num("hashrate_10800"))
+                        ?.div(1e9),
+                    startTime = null,
+                    lastSeen = null,
+                )
+            }
+            PoolAccount(
+                workersCount = workers.size,
+                workers = workers,
+                totalHashRateGhs = workers.sumOf { it.hashRateGhs ?: 0.0 },
+            )
+        }
+    }
+
+    private fun ckHashToGhs(raw: String?): Double? = parseCkHashToGhs(raw)
+
     suspend fun fetchAccount(baseUrl: String, payoutAddress: String): PoolResult<PoolAccount> {
         val address = payoutAddress.trim()
         if (address.isEmpty()) return PoolResult.Error("No payout address configured.")
@@ -172,4 +252,20 @@ class Hi3PoolClient @Inject constructor(
 
     private fun JsonObject.num(key: String): Double? =
         (this[key] as? JsonPrimitive)?.content?.toDoubleOrNull()
+
+    companion object {
+        /**
+         * Parse a ckpool suffix-encoded hashrate string (H/s, e.g. "1.5T", "500G", "0")
+         * to GH/s. ckpool encodes worker hashrates as a number with a K/M/G/T/P/E suffix.
+         */
+        fun parseCkHashToGhs(raw: String?): Double? {
+            val t = raw?.trim()?.takeIf { it.isNotEmpty() && it != "null" } ?: return null
+            if (t == "0") return 0.0
+            val mult = when (t.last().uppercaseChar()) {
+                'K' -> 1e3; 'M' -> 1e6; 'G' -> 1e9; 'T' -> 1e12; 'P' -> 1e15; 'E' -> 1e18; else -> 1.0
+            }
+            val num = (if (t.last().isLetter()) t.dropLast(1) else t).toDoubleOrNull() ?: return null
+            return num * mult / 1e9
+        }
+    }
 }

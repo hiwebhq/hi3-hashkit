@@ -827,7 +827,7 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("HI3 POOL", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                Text(pool.poolType.displayName.uppercase(), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 Text(
                     pool.lastUpdated?.let { "pool view · updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: "",
                     style = MaterialTheme.typography.labelSmall,

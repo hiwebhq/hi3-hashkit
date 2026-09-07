@@ -72,6 +72,13 @@ class SettingsViewModel @Inject constructor(
     fun setHi3PoolEnabled(v: Boolean) = viewModelScope.launch { repo.setHi3PoolEnabled(v) }
     fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
     fun setHi3PoolPayoutAddress(v: String) = viewModelScope.launch { repo.setHi3PoolPayoutAddress(v) }
+    fun setPoolApiToken(v: String) = viewModelScope.launch { repo.setPoolApiToken(v) }
+
+    /** Switch pools; reset the base URL to the new pool's default so requests hit the right host. */
+    fun setPoolType(v: hi3.hashkit.integrations.hi3.PoolType) = viewModelScope.launch {
+        repo.setPoolType(v)
+        repo.setHi3PoolBaseUrl(v.defaultBaseUrl)
+    }
 
     fun restoreFrom(uri: android.net.Uri, passphrase: String? = null) = viewModelScope.launch {
         val content = runCatching {
