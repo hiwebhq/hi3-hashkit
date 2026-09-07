@@ -19,8 +19,9 @@ object HiBrand {
     val surfaceRaised = Color(0xFF1A222D)
     val outline = Color(0xFF2A3542)
 
-    val accent = Color(0xFF2BD97C)      // Hi3 green
-    val accentAlt = Color(0xFF37B6FF)   // telemetry blue
+    // Hi3 logo ink (dark variant, from mmp.hi3.cc --logo-ink) — the app's primary color.
+    val accent = Color(0xFF3987E5)
+    val accentAlt = Color(0xFF6FB1FF)   // lighter blue for secondary emphasis
 
     val textPrimary = Color(0xFFE8EEF4)
     val textSecondary = Color(0xFF93A3B4)
@@ -34,9 +35,13 @@ object HiBrand {
 
 private val DarkScheme = darkColorScheme(
     primary = HiBrand.accent,
-    onPrimary = Color(0xFF06130B),
+    onPrimary = Color(0xFFF2F7FF),
+    primaryContainer = Color(0xFF1C4A8C),
+    onPrimaryContainer = Color(0xFFD6E5FB),
     secondary = HiBrand.accentAlt,
     onSecondary = Color(0xFF071219),
+    secondaryContainer = Color(0xFF14355F),
+    onSecondaryContainer = Color(0xFFD6E5FB),
     background = HiBrand.background,
     onBackground = HiBrand.textPrimary,
     surface = HiBrand.surface,

@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
 
-enum class CardDensity { LARGE, MEDIUM, COMPACT }
+enum class CardDensity { LARGE, MEDIUM, COMPACT, GRID }
 
 data class AppSettings(
     val useFahrenheit: Boolean = false,

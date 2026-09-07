@@ -167,7 +167,28 @@ fun DashboardScreen(
                             )
                         }
                     }
-                    items(groupMiners, key = { it.id }) { miner ->
+                    if (state.settings.cardDensity == hi3.hashkit.data.prefs.CardDensity.GRID) {
+                        items(groupMiners.chunked(2), key = { it.first().id }) { pair ->
+                            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                pair.forEach { miner ->
+                                    Box(Modifier.weight(1f)) {
+                                        MinerCard(
+                                            miner = miner,
+                                            density = state.settings.cardDensity,
+                                            selected = miner.id in state.selection,
+                                            selectionMode = state.selection.isNotEmpty(),
+                                            onClick = {
+                                                if (state.selection.isNotEmpty()) viewModel.toggleSelect(miner.id)
+                                                else onMinerClick(miner.id)
+                                            },
+                                            onLongClick = { viewModel.toggleSelect(miner.id) },
+                                        )
+                                    }
+                                }
+                                if (pair.size == 1) Spacer(Modifier.weight(1f))
+                            }
+                        }
+                    } else items(groupMiners, key = { it.id }) { miner ->
                         MinerCard(
                             miner = miner,
                             density = state.settings.cardDensity,
@@ -291,46 +312,50 @@ private fun FleetSummary(state: DashboardUiState) {
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("FLEET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
-            Spacer(Modifier.height(6.dp))
-            Text(
-                Units.formatHashrate(totals?.totalHashrateGhs),
-                style = MaterialTheme.typography.headlineLarge,
-                color = HiBrand.accent,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Metric("Power", Units.formatPower(totals?.totalMeasuredPowerW))
-                Metric("Efficiency", Units.formatEfficiency(totals?.fleetEfficiencyJTh))
-                Metric("Hottest", Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
-            }
-            Spacer(Modifier.height(12.dp))
+        Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Counter(totals?.online ?: 0, "online", HiBrand.statusOnline)
-                Counter(totals?.degraded ?: 0, "degraded", HiBrand.statusDegraded)
-                Counter(totals?.offline ?: 0, "offline", HiBrand.statusOffline)
-                Counter(totals?.unknown ?: 0, "stale", HiBrand.statusUnknown)
-            }
-            totals?.dailyCost?.let { cost ->
-                Spacer(Modifier.height(8.dp))
+                Text("FLEET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 Text(
-                    "Est. electricity: ${"%.2f".format(cost)} ${totals.currencyCode}/day " +
-                        "(from measured power and your configured rate)",
+                    lastRefreshLabel(state.lastRefresh),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
             }
-            Spacer(Modifier.height(8.dp))
-            Text(
-                lastRefreshLabel(state.lastRefresh),
-                style = MaterialTheme.typography.labelSmall,
-                color = HiBrand.textSecondary,
-            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    Units.formatHashrate(totals?.totalHashrateGhs),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = HiBrand.accent,
+                    fontWeight = FontWeight.Bold,
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 4.dp),
+                ) {
+                    Counter(totals?.online ?: 0, "on", HiBrand.statusOnline)
+                    (totals?.degraded ?: 0).takeIf { it > 0 }?.let { Counter(it, "deg", HiBrand.statusDegraded) }
+                    (totals?.offline ?: 0).takeIf { it > 0 }?.let { Counter(it, "off", HiBrand.statusOffline) }
+                    (totals?.unknown ?: 0).takeIf { it > 0 }?.let { Counter(it, "stale", HiBrand.statusUnknown) }
+                }
+            }
+            Spacer(Modifier.height(6.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                Metric("Power", Units.formatPower(totals?.totalMeasuredPowerW))
+                Metric("Efficiency", Units.formatEfficiency(totals?.fleetEfficiencyJTh))
+                Metric("Hottest", Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
+                totals?.dailyCost?.let { cost ->
+                    Metric("Est. cost", "%.2f %s/d".format(cost, totals.currencyCode))
+                }
+            }
         }
     }
 }
@@ -540,12 +565,12 @@ private fun Counter(count: Int, label: String, color: androidx.compose.ui.graphi
 }
 
 private fun lastRefreshLabel(instant: Instant?): String {
-    if (instant == null) return "No successful refresh yet"
+    if (instant == null) return "no refresh yet"
     val secs = Duration.between(instant, Instant.now()).seconds
     return when {
-        secs < 5 -> "Refreshed just now"
-        secs < 120 -> "Refreshed ${secs}s ago"
-        else -> "Refreshed ${secs / 60}m ago — data may be stale"
+        secs < 5 -> "just now"
+        secs < 120 -> "${secs}s ago"
+        else -> "${secs / 60}m ago — stale"
     }
 }
 
@@ -559,6 +584,7 @@ private fun DensitySelector(
             hi3.hashkit.data.prefs.CardDensity.LARGE to "L",
             hi3.hashkit.data.prefs.CardDensity.MEDIUM to "M",
             hi3.hashkit.data.prefs.CardDensity.COMPACT to "C",
+            hi3.hashkit.data.prefs.CardDensity.GRID to "▦",
         ).forEach { (density, label) ->
             Text(
                 label,
@@ -597,6 +623,46 @@ private fun MinerCard(
         if (selected) androidx.compose.foundation.BorderStroke(2.dp, HiBrand.accent) else null
 
     when (density) {
+        hi3.hashkit.data.prefs.CardDensity.GRID -> {
+            Card(
+                colors = colors, border = border, shape = RoundedCornerShape(12.dp),
+                modifier = clickMod.fillMaxWidth(),
+            ) {
+                Column(Modifier.padding(12.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        hi3.hashkit.ui.components.StatusDot(miner.status)
+                        Text(
+                            miner.name + if (miner.isDemo) " ᴰᴱᴹᴼ" else "",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        Units.formatHashrate(t?.hashrateGhs?.value),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = HiBrand.accent,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        listOfNotNull(
+                            Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
+                            Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
+                        ).joinToString(" · ").ifEmpty { "no telemetry" },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                        maxLines = 1,
+                    )
+                }
+            }
+            return
+        }
         hi3.hashkit.data.prefs.CardDensity.COMPACT -> {
             Card(colors = colors, border = border, shape = RoundedCornerShape(8.dp), modifier = clickMod) {
                 Row(
@@ -713,7 +779,10 @@ private fun MinerCard(
                         }
                     }
                     Text(
-                        listOfNotNull(miner.identity.model, miner.host).joinToString(" · "),
+                        listOfNotNull(
+                            miner.identity.model?.takeIf { it != miner.name },
+                            miner.host,
+                        ).joinToString(" · "),
                         style = MaterialTheme.typography.bodySmall,
                         color = HiBrand.textSecondary,
                     )
