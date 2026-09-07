@@ -4,6 +4,22 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * A farm (site): a named group of miners with its own scan subnet(s). One farm is the
+ * default — the one selected on a fresh launch. Miners reference a farm via [MinerEntity.farmId]
+ * (null = unassigned). Designed to be reused by future ASIC-discovery and log-audit tooling.
+ */
+@Entity(tableName = "farms")
+data class FarmEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val isDefault: Boolean,
+    /** CSV of CIDRs to scan for this farm, e.g. "10.0.0.0/24,192.168.1.0/24". */
+    val subnetsCsv: String,
+    val notes: String?,
+    val createdAtEpochMs: Long,
+)
+
 @Entity(
     tableName = "miners",
     indices = [Index(value = ["stableKey"], unique = true)],
@@ -28,6 +44,8 @@ data class MinerEntity(
     val location: String?,
     val notes: String?,
     val tagsCsv: String,
+    /** Owning farm/site; null = unassigned. */
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val farmId: Long? = null,
     val expectedHashrateGhs: Double?,
     val isDemo: Boolean,
     val createdAtEpochMs: Long,

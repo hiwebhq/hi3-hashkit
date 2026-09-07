@@ -8,6 +8,40 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
+interface FarmDao {
+    @Query("SELECT * FROM farms ORDER BY name COLLATE NOCASE")
+    fun observeAll(): Flow<List<FarmEntity>>
+
+    @Query("SELECT * FROM farms ORDER BY name COLLATE NOCASE")
+    suspend fun all(): List<FarmEntity>
+
+    @Query("SELECT * FROM farms WHERE id = :id")
+    suspend fun byId(id: Long): FarmEntity?
+
+    @Query("SELECT * FROM farms WHERE isDefault = 1 LIMIT 1")
+    suspend fun defaultFarm(): FarmEntity?
+
+    @Query("SELECT COUNT(*) FROM farms")
+    suspend fun count(): Int
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(farm: FarmEntity): Long
+
+    @Update
+    suspend fun update(farm: FarmEntity)
+
+    @Query("DELETE FROM farms WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    /** Clear the default flag on every farm, so exactly one can be set afterward. */
+    @Query("UPDATE farms SET isDefault = 0")
+    suspend fun clearDefaults()
+
+    @Query("UPDATE farms SET isDefault = 1 WHERE id = :id")
+    suspend fun markDefault(id: Long)
+}
+
+@Dao
 interface MinerDao {
     @Query("SELECT * FROM miners ORDER BY name COLLATE NOCASE")
     fun observeAll(): Flow<List<MinerEntity>>
@@ -32,6 +66,16 @@ interface MinerDao {
 
     @Query("UPDATE miners SET host = :host, lastSeenAtEpochMs = :seenAt WHERE id = :id")
     suspend fun updateHostAndSeen(id: Long, host: String, seenAt: Long)
+
+    @Query("UPDATE miners SET farmId = :farmId WHERE id = :id")
+    suspend fun assignFarm(id: Long, farmId: Long?)
+
+    /** Detach every miner from a farm being deleted (they become unassigned). */
+    @Query("UPDATE miners SET farmId = NULL WHERE farmId = :farmId")
+    suspend fun clearFarm(farmId: Long)
+
+    @Query("SELECT COUNT(*) FROM miners WHERE farmId = :farmId")
+    suspend fun countInFarm(farmId: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAddress(address: MinerAddressEntity)

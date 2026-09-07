@@ -39,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import hi3.hashkit.core.AppLockManager
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
+import hi3.hashkit.discovery.AutoScanManager
 import hi3.hashkit.ui.dashboard.DashboardScreen
 import hi3.hashkit.ui.detail.MinerDetailScreen
 import hi3.hashkit.ui.discovery.AddMinerScreen
@@ -60,13 +61,22 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
 
+    @Inject
+    lateinit var autoScanManager: AutoScanManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         lifecycleScope.launch {
-            if (savedInstanceState == null && settingsRepository.current().appLockEnabled) {
+            val settings = settingsRepository.current()
+            if (savedInstanceState == null && settings.appLockEnabled) {
                 appLockManager.lockOnLaunch()
                 showUnlockPrompt()
+            }
+            // Kick off the local-subnet scan at launch so miners are discovered while the
+            // user reads the dashboard — but never behind the lock screen or onboarding.
+            if (savedInstanceState == null && settings.onboardingComplete && !settings.appLockEnabled) {
+                autoScanManager.startIfEnabled()
             }
         }
         setContent {
@@ -83,6 +93,7 @@ class MainActivity : FragmentActivity() {
                         !settings.onboardingComplete -> hi3.hashkit.ui.onboarding.OnboardingScreen(
                             onDone = {
                                 lifecycleScope.launch { settingsRepository.setOnboardingComplete(true) }
+                                autoScanManager.startIfEnabled()
                                 if (android.os.Build.VERSION.SDK_INT >= 33) {
                                     requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
                                 }
@@ -105,6 +116,8 @@ class MainActivity : FragmentActivity() {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     appLockManager.unlock()
+                    // Start discovery once, after the app is actually unlocked.
+                    autoScanManager.startIfEnabled()
                 }
             },
         )
@@ -191,11 +204,19 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onSettings = { nav.navigate("settings") },
                 onSchedules = { nav.navigate("schedules") },
                 onFlow = { nav.navigate("flow") },
+                onNetworkScan = { nav.navigate("network") },
+                onFarms = { nav.navigate("farms") },
                 onExit = onExit,
             )
         }
         composable("schedules") {
             hi3.hashkit.ui.schedules.SchedulesScreen(onBack = { nav.popBackStack() })
+        }
+        composable("network") {
+            hi3.hashkit.ui.network.NetworkScanScreen(onBack = { nav.popBackStack() })
+        }
+        composable("farms") {
+            hi3.hashkit.ui.farms.FarmsScreen(onBack = { nav.popBackStack() })
         }
         composable("flow") {
             hi3.hashkit.ui.flow.FlowScreen(

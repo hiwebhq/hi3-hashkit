@@ -24,15 +24,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warehouse
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -73,6 +78,8 @@ fun DashboardScreen(
     onSettings: () -> Unit,
     onSchedules: () -> Unit,
     onFlow: () -> Unit,
+    onNetworkScan: () -> Unit,
+    onFarms: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -83,6 +90,7 @@ fun DashboardScreen(
         androidx.compose.runtime.mutableStateOf<BulkActionKind?>(null)
     }
     var confirmExit by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var menuOpen by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
     rescanMessage?.let { msg ->
         val ctx = androidx.compose.ui.platform.LocalContext.current
@@ -98,6 +106,8 @@ fun DashboardScreen(
             TopAppBar(
                 title = { hi3.hashkit.ui.theme.HiLogo() },
                 actions = {
+                    // Header keeps only Notifications, Setup and Exit; everything else
+                    // lives in the overflow menu.
                     IconButton(onClick = onAlerts) {
                         BadgedBox(
                             badge = {
@@ -106,20 +116,11 @@ fun DashboardScreen(
                                 }
                             }
                         ) {
-                            Icon(Icons.Filled.Notifications, contentDescription = "Alerts")
+                            Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
                         }
                     }
-                    IconButton(onClick = onFlow) {
-                        Icon(Icons.Filled.AccountTree, contentDescription = "Flow view")
-                    }
-                    IconButton(onClick = { viewModel.refreshNow() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
-                    }
-                    IconButton(onClick = onSchedules) {
-                        Icon(Icons.Filled.Schedule, contentDescription = "Schedules")
-                    }
                     IconButton(onClick = onSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                        Icon(Icons.Filled.Settings, contentDescription = "Setup")
                     }
                     IconButton(onClick = { confirmExit = true }) {
                         Icon(
@@ -127,6 +128,38 @@ fun DashboardScreen(
                             contentDescription = "Exit app",
                             tint = HiBrand.statusOffline,
                         )
+                    }
+                    Box {
+                        IconButton(onClick = { menuOpen = true }) {
+                            Icon(Icons.Filled.MoreVert, contentDescription = "More")
+                        }
+                        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                            DropdownMenuItem(
+                                text = { Text("Refresh") },
+                                leadingIcon = { Icon(Icons.Filled.Refresh, contentDescription = null) },
+                                onClick = { menuOpen = false; viewModel.refreshNow() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Flow view") },
+                                leadingIcon = { Icon(Icons.Filled.AccountTree, contentDescription = null) },
+                                onClick = { menuOpen = false; onFlow() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Farms") },
+                                leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = null) },
+                                onClick = { menuOpen = false; onFarms() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Network scan") },
+                                leadingIcon = { Icon(Icons.Filled.Wifi, contentDescription = null) },
+                                onClick = { menuOpen = false; onNetworkScan() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Schedules") },
+                                leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
+                                onClick = { menuOpen = false; onSchedules() },
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -158,6 +191,9 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            if (state.farms.isNotEmpty()) {
+                item { FarmSelector(state, viewModel::setActiveFarm) }
+            }
             item {
                 val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
                 val window by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
@@ -326,6 +362,32 @@ fun DashboardScreen(
                 androidx.compose.material3.TextButton(onClick = { confirmExit = false }) { Text("Cancel") }
             },
         )
+    }
+}
+
+/** Compact farm/site switcher: taps open a menu of farms plus "All farms". */
+@Composable
+private fun FarmSelector(state: DashboardUiState, onSelect: (Long) -> Unit) {
+    var open by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    val activeName = state.farms.firstOrNull { it.id == state.activeFarmId }?.name ?: "All farms"
+    Box {
+        androidx.compose.material3.AssistChip(
+            onClick = { open = true },
+            label = { Text(activeName) },
+            leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = "Farm", modifier = Modifier.size(18.dp)) },
+        )
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            DropdownMenuItem(
+                text = { Text("All farms") },
+                onClick = { open = false; onSelect(-1) },
+            )
+            state.farms.forEach { farm ->
+                DropdownMenuItem(
+                    text = { Text(farm.name) },
+                    onClick = { open = false; onSelect(farm.id) },
+                )
+            }
+        }
     }
 }
 

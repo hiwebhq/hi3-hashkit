@@ -72,6 +72,10 @@ data class DashboardUiState(
     val searchQuery: String = "",
     val selection: Set<Long> = emptySet(),
     val bulk: BulkFlowState = BulkFlowState(),
+    /** Farms/sites, for the dashboard farm switcher (empty until any are created). */
+    val farms: List<hi3.hashkit.data.db.FarmEntity> = emptyList(),
+    /** Currently viewed farm; -1 = All farms. */
+    val activeFarmId: Long = -1,
 )
 
 @HiltViewModel
@@ -85,6 +89,7 @@ class DashboardViewModel @Inject constructor(
     private val mmpRepository: hi3.hashkit.integrations.hi3.MmpRepository,
     private val scanner: hi3.hashkit.discovery.MinerScanner,
     private val networkInspector: hi3.hashkit.discovery.NetworkInspector,
+    private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     alertDao: AlertDao,
 ) : ViewModel() {
 
@@ -148,10 +153,17 @@ class DashboardViewModel @Inject constructor(
                 pollingEngine.lastRefresh,
                 settingsRepository.settings,
                 alertDao.observeUnresolvedCount(),
-            ) { entities, refresh, settings, unresolved ->
+                farmRepository.observeFarms(),
+            ) { entities, refresh, settings, unresolved, farms ->
                 val now = Instant.now()
+                // When a farm is active, show only its miners (demo miners always show in demo mode).
+                val activeFarm = settings.activeFarmId
                 val miners = entities
-                    .filter { settings.demoModeEnabled || !it.isDemo }
+                    .filter { e ->
+                        val demoOk = settings.demoModeEnabled || !e.isDemo
+                        val farmOk = activeFarm <= 0 || e.farmId == activeFarm || e.isDemo
+                        demoOk && farmOk
+                    }
                     .map { repository.toDomain(it, now) }
                 DashboardUiState(
                     miners = miners,
@@ -160,6 +172,8 @@ class DashboardViewModel @Inject constructor(
                     unresolvedAlerts = unresolved,
                     lastRefresh = refresh,
                     settings = settings,
+                    farms = farms,
+                    activeFarmId = activeFarm,
                 )
             },
             searchQuery,
@@ -187,6 +201,11 @@ class DashboardViewModel @Inject constructor(
 
     fun setSearch(query: String) {
         searchQuery.value = query
+    }
+
+    /** Switch the dashboard to a farm (-1 = All farms). */
+    fun setActiveFarm(id: Long) {
+        viewModelScope.launch { farmRepository.setActive(id) }
     }
 
     fun setDensity(density: hi3.hashkit.data.prefs.CardDensity) {

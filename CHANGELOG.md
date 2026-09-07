@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.30.0
+
+- **Auto-scan at launch.** The app now scans your local subnet in the background as
+  soon as it opens, so miners on the same network are already on the list by the time
+  you reach the dashboard or Add screen. Runs off-screen and survives navigation.
+- **Network scan controls** (overflow menu → Network scan): shows this device's current
+  LAN IP, lets you change the scan range (CIDR), and start / stop / restart the scan
+  with live progress. A toggle turns auto-scan-at-launch on or off.
+- **Multiple farms / sites.** Group miners into farms, each with its own scan subnet,
+  and mark one as the default (opens on launch). A farm switcher on the dashboard filters
+  the view to one site or "All farms". Adding a farm offers an immediate scan of its
+  subnet, and discovered miners are tagged to that farm. Deleting a farm keeps its
+  miners (they become unassigned) and never loses history. (DB migrated to v7, additive.)
+- **Header cleanup.** The top bar now carries only Notifications, Setup and Exit;
+  Refresh, Flow view, Farms, Network scan and Schedules moved into an overflow (⋮) menu.
+
 ## 0.29.0
 
 - VNish (Antminer) monitoring now includes chip temperature, fans, frequency,

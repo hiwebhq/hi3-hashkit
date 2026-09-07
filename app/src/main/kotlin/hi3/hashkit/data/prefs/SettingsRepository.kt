@@ -37,6 +37,10 @@ data class AppSettings(
     val retentionDays: Int = 30,
     /** User-defined extra scan subnets (CSV of CIDRs), e.g. remote Tailscale-routed LANs. */
     val extraSubnetsCsv: String = "",
+    /** Automatically scan the local subnet on launch so miners appear before you open Add. */
+    val autoScanOnStartup: Boolean = true,
+    /** Currently viewed farm/site; -1 means "All farms" (no filter). */
+    val activeFarmId: Long = -1,
     /** Miner-card size on the dashboard. */
     val cardDensity: CardDensity = CardDensity.LARGE,
     /** Hi3 Pool integration — OPT-IN; nothing is contacted while false. */
@@ -76,6 +80,8 @@ class SettingsRepository @Inject constructor(
         val difficultyAutoFetch = booleanPreferencesKey("difficulty_auto_fetch")
         val retentionDays = intPreferencesKey("retention_days")
         val extraSubnets = stringPreferencesKey("extra_subnets")
+        val autoScanOnStartup = booleanPreferencesKey("auto_scan_on_startup")
+        val activeFarmId = longPreferencesKey("active_farm_id")
         val cardDensity = stringPreferencesKey("card_density")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
@@ -107,6 +113,8 @@ class SettingsRepository @Inject constructor(
             difficultyAutoFetch = p[Keys.difficultyAutoFetch] ?: false,
             retentionDays = (p[Keys.retentionDays] ?: 30).coerceIn(1, 3650),
             extraSubnetsCsv = p[Keys.extraSubnets] ?: "",
+            autoScanOnStartup = p[Keys.autoScanOnStartup] ?: true,
+            activeFarmId = p[Keys.activeFarmId] ?: -1,
             cardDensity = runCatching { CardDensity.valueOf(p[Keys.cardDensity] ?: "LARGE") }
                 .getOrDefault(CardDensity.LARGE),
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
@@ -144,6 +152,8 @@ class SettingsRepository @Inject constructor(
     suspend fun setDifficultyAutoFetch(value: Boolean) = edit { it[Keys.difficultyAutoFetch] = value }
     suspend fun setRetentionDays(value: Int) = edit { it[Keys.retentionDays] = value }
     suspend fun setExtraSubnets(value: String) = edit { it[Keys.extraSubnets] = value }
+    suspend fun setAutoScanOnStartup(value: Boolean) = edit { it[Keys.autoScanOnStartup] = value }
+    suspend fun setActiveFarmId(value: Long) = edit { it[Keys.activeFarmId] = value }
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
     suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }
     suspend fun setHi3PoolBaseUrl(value: String) = edit { it[Keys.hi3PoolBaseUrl] = value.trim() }

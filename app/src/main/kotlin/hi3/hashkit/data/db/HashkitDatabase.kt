@@ -16,8 +16,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         AuditEventEntity::class,
         ScheduleEntity::class,
         TelemetryHourlyEntity::class,
+        FarmEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -27,6 +28,7 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun auditDao(): AuditDao
     abstract fun scheduleDao(): ScheduleDao
     abstract fun hourlyDao(): HourlyDao
+    abstract fun farmDao(): FarmDao
 
     companion object {
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
@@ -100,6 +102,20 @@ abstract class HashkitDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertVrTempC` REAL DEFAULT NULL")
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertRejectPct` REAL DEFAULT NULL")
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertsMuted` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        /** v6 -> v7: farms/sites table + miners.farmId (additive; existing miners stay unassigned). */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `farms` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`name` TEXT NOT NULL, `isDefault` INTEGER NOT NULL, " +
+                        "`subnetsCsv` TEXT NOT NULL, `notes` TEXT, " +
+                        "`createdAtEpochMs` INTEGER NOT NULL)"
+                )
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `farmId` INTEGER DEFAULT NULL")
             }
         }
 
