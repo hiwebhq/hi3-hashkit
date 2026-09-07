@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.22.0
+
+- Added monitoring for Antminer-class cgminer firmware: stock Bitmain, VNish, and
+  LuxOS. Shows hashrate, shares, uptime, and pool. Temperatures, fans, power, and
+  controls for these firmwares are pending verification against real units and are not
+  shown until confirmed.
+
 ## 0.21.0 — first public release
 
 First release of Hi3 Hashkit for download, a local-first Android dashboard for
