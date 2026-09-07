@@ -15,6 +15,7 @@ import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.domain.model.MinerTelemetry
 import hi3.hashkit.domain.model.Sourced
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 import javax.inject.Inject
@@ -32,6 +33,7 @@ class MinerRepository @Inject constructor(
     private val minerDao: MinerDao,
     private val telemetryDao: TelemetryDao,
     private val registry: AdapterRegistry,
+    private val hourlyDao: hi3.hashkit.data.db.HourlyDao? = null,
 ) {
     /** Telemetry older than this renders as stale/UNKNOWN rather than pretending freshness. */
     val staleAfterMs: Long = 120_000
@@ -204,6 +206,29 @@ class MinerRepository @Inject constructor(
             hashrateGhs = Sourced.unavailable(),
         )
 
+    /**
+     * Roll completed hours of raw telemetry into hourly aggregates (idempotent via a
+     * per-miner high-water mark), then prune raw samples past retention and hourly
+     * rows past two years. Called from the periodic maintenance tick.
+     */
+    suspend fun downsampleAndPrune(rawRetentionDays: Int) {
+        val hourly = hourlyDao ?: return
+        val currentHourStart = Downsampler.hourStartOf(System.currentTimeMillis())
+        for (miner in minerDao.observeAll().first()) {
+            if (miner.isDemo) continue
+            val from = hourly.highWaterMark(miner.id)?.plus(Downsampler.HOUR_MS)
+                ?: telemetryDao.oldestSampleTimestamp(miner.id)?.let { Downsampler.hourStartOf(it) }
+                ?: continue
+            if (from >= currentHourStart) continue
+            val samples = telemetryDao.samplesBetween(miner.id, from, currentHourStart)
+            if (samples.isEmpty()) continue
+            hourly.upsertAll(Downsampler.aggregate(miner.id, samples))
+        }
+        val now = System.currentTimeMillis()
+        telemetryDao.pruneBefore(now - rawRetentionDays * 86_400_000L)
+        hourly.pruneBefore(now - 730L * 86_400_000L)
+    }
+
     suspend fun pruneTelemetryBefore(beforeEpochMs: Long) {
         telemetryDao.pruneBefore(beforeEpochMs)
     }
@@ -211,4 +236,34 @@ class MinerRepository @Inject constructor(
     fun observeTelemetrySince(minerId: Long, sinceEpochMs: Long): Flow<List<MinerTelemetry>> =
         telemetryDao.observeSince(minerId, sinceEpochMs)
             .map { rows -> rows.map { it.toDomain() } }
+
+    /**
+     * Chart history: raw samples where they exist, hourly aggregates for older spans.
+     * Hourly points are placed mid-hour and sourced CALCULATED so the UI can tell
+     * summaries from live readings.
+     */
+    fun observeHistoryMerged(minerId: Long, sinceEpochMs: Long): Flow<List<MinerTelemetry>> {
+        val hourly = hourlyDao
+            ?: return observeTelemetrySince(minerId, sinceEpochMs)
+        return kotlinx.coroutines.flow.combine(
+            telemetryDao.observeSince(minerId, sinceEpochMs),
+            hourly.observeSince(minerId, sinceEpochMs),
+        ) { raw, hours ->
+            val oldestRaw = raw.firstOrNull()?.timestampEpochMs ?: Long.MAX_VALUE
+            val fromHourly = hours
+                .filter { it.hourStartEpochMs + Downsampler.HOUR_MS <= oldestRaw }
+                .map { it.toDomainPoint() }
+            fromHourly + raw.map { it.toDomain() }
+        }
+    }
+
+    private fun hi3.hashkit.data.db.TelemetryHourlyEntity.toDomainPoint(): MinerTelemetry =
+        MinerTelemetry(
+            timestamp = Instant.ofEpochMilli(hourStartEpochMs + Downsampler.HOUR_MS / 2),
+            status = if (onlineSamples > 0) MinerStatus.ONLINE else MinerStatus.OFFLINE,
+            hashrateGhs = Sourced.calculated(avgHashrateGhs),
+            powerW = Sourced.calculated(avgPowerW),
+            chipTempC = Sourced.calculated(avgChipTempC),
+            vrTempC = Sourced.calculated(maxVrTempC),
+        )
 }

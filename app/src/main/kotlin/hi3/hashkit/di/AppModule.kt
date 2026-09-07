@@ -41,6 +41,7 @@ object AppModule {
                 HashkitDatabase.MIGRATION_2_3,
                 HashkitDatabase.MIGRATION_3_4,
                 HashkitDatabase.MIGRATION_4_5,
+                HashkitDatabase.MIGRATION_5_6,
             )
             .build()
 
@@ -58,6 +59,9 @@ object AppModule {
 
     @Provides
     fun scheduleDao(db: HashkitDatabase): hi3.hashkit.data.db.ScheduleDao = db.scheduleDao()
+
+    @Provides
+    fun hourlyDao(db: HashkitDatabase): hi3.hashkit.data.db.HourlyDao = db.hourlyDao()
 }
 
 @Module

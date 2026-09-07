@@ -59,6 +59,16 @@ interface TelemetryDao {
     @Query("DELETE FROM telemetry_samples WHERE timestampEpochMs < :beforeEpochMs")
     suspend fun pruneBefore(beforeEpochMs: Long)
 
+    @Query(
+        "SELECT * FROM telemetry_samples WHERE minerId = :minerId " +
+            "AND timestampEpochMs >= :fromEpochMs AND timestampEpochMs < :toEpochMs " +
+            "ORDER BY timestampEpochMs"
+    )
+    suspend fun samplesBetween(minerId: Long, fromEpochMs: Long, toEpochMs: Long): List<TelemetrySampleEntity>
+
+    @Query("SELECT MIN(timestampEpochMs) FROM telemetry_samples WHERE minerId = :minerId")
+    suspend fun oldestSampleTimestamp(minerId: Long): Long?
+
     @Insert
     suspend fun insertRaw(raw: RawResponseEntity)
 

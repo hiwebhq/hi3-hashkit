@@ -92,14 +92,12 @@ class PollingEngine @Inject constructor(
         pruneIfDue(settings.retentionDays)
     }
 
-    /** Retention: prune old telemetry at most once per 6h of app use. */
+    /** Maintenance: downsample completed hours + prune, at most once per 6h of use. */
     private suspend fun pruneIfDue(retentionDays: Int) {
         val now = System.currentTimeMillis()
         val last = lastPrune.get()
         if (now - last < 6 * 3_600_000) return
         if (!lastPrune.compareAndSet(last, now)) return
-        runCatching {
-            repository.pruneTelemetryBefore(now - retentionDays * 86_400_000L)
-        }
+        runCatching { repository.downsampleAndPrune(retentionDays) }
     }
 }

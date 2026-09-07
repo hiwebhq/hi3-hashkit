@@ -74,8 +74,8 @@ class MinerDetailViewModel @Inject constructor(
         combine(
             repository.observeMinerEntity(minerId),
             windowMs.flatMapLatest { w ->
-                // Room re-emits on new samples; only the window start needs recomputing.
-                repository.observeTelemetrySince(minerId, System.currentTimeMillis() - w)
+                // Raw where available, hourly aggregates beyond raw retention.
+                repository.observeHistoryMerged(minerId, System.currentTimeMillis() - w)
             },
             pollingEngine.lastRefresh,
             settingsRepository.settings,
