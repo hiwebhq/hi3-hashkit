@@ -53,6 +53,16 @@ diagnostics bundle redacts IP addresses (opt-in to include) and never contains
 passwords, wallets, or Tailscale material. The JSON backup contains miner addresses
 and worker names (it exists for the user's own restore) and the UI says so.
 
+## Canaan/Avalon controls
+
+Avalon control uses the miner's own CGMiner `ascset` API on port 4028, which requires
+privileged API access (granted to LAN clients by the miner's `api-allow` config). The
+app only issues commands whose behavior was verified against a real device: pause
+(`softoff`), resume (`softon`), and reboot (`reboot,0`). Fan speed, work level, and
+frequency are deliberately withheld because their argument ranges are unverified and a
+wrong value could change power or thermal state — exactly the guessing the project
+forbids. The app never sends the miner's web-UI password.
+
 ## Control-action safety
 
 Every control (reboot, pool change, fan, tune) requires an in-app confirmation showing

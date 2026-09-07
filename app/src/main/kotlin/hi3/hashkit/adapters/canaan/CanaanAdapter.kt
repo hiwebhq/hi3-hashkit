@@ -1,29 +1,42 @@
 package hi3.hashkit.adapters.canaan
 
 import hi3.hashkit.adapters.cgminer.CgMinerApi
-import hi3.hashkit.domain.adapter.MinerAdapter
+import hi3.hashkit.domain.adapter.ActionResult
+import hi3.hashkit.domain.adapter.FanControl
+import hi3.hashkit.domain.adapter.MinerControlAdapter
 import hi3.hashkit.domain.adapter.MinerHost
+import hi3.hashkit.domain.adapter.PowerAction
 import hi3.hashkit.domain.adapter.ProbeResult
 import hi3.hashkit.domain.adapter.TelemetryResult
+import hi3.hashkit.domain.adapter.TuneOptions
+import hi3.hashkit.domain.model.Capability
 import hi3.hashkit.domain.model.MinerCapabilities
 import hi3.hashkit.domain.model.MinerIdentity
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Monitoring adapter for Canaan Avalon home miners (Nano 3 verified live; Nano 3S and
- * Avalon Q identify through the same CGMiner API and are accepted when their `version`
- * response is demonstrably compatible).
+ * Adapter for Canaan Avalon home miners (Nano 3 verified live; Nano 3S and Avalon Q
+ * identify through the same CGMiner API and are accepted when their `version` response
+ * is demonstrably compatible).
  *
- * MONITORING ONLY: Canaan's control surface (work mode, fan, reboot) lives behind the
- * authenticated web CGI (`login.cgi` + session), which has not been captured and
- * verified yet. Per project policy no control endpoint is guessed — every control
- * capability is reported unsupported with this reason.
+ * Controls use the CGMiner `ascset` API on port 4028 — verified against a real Nano 3,
+ * whose firmware advertised its own valid options (loop, pdelay, frequency, led,
+ * hashpower, fan-spd, factory, reboot, softoff, softon, upgrade, worklevel, ...):
+ *
+ *  - powerControl: `ascset|0,softoff` / `ascset|0,softon` — pause/resume hashing,
+ *    verified live (reversible, no argument).
+ *  - reboot: `ascset|0,reboot,0` — a wrong keyword is a harmless "Unknown reboot cmd"
+ *    no-op on this firmware, so this is safe to attempt behind confirmation.
+ *
+ * fan-spd, worklevel, frequency, hashpower are intentionally NOT exposed: their
+ * argument ranges are unverified and a wrong value could change power draw or thermal
+ * behavior. They stay unsupported with that reason until verified per device.
  */
 @Singleton
 class CanaanAdapter @Inject constructor(
     private val api: CgMinerApi,
-) : MinerAdapter {
+) : MinerControlAdapter {
 
     override val adapterType: String = TYPE
     override val displayName: String = "Canaan Avalon"
@@ -76,11 +89,55 @@ class CanaanAdapter @Inject constructor(
     }
 
     override fun getCapabilities(identity: MinerIdentity?): MinerCapabilities =
-        MinerCapabilities.monitoringOnly(
-            "Canaan controls use the authenticated web interface, which has not been " +
-                "verified yet — monitoring only. Work-mode and fan controls will be added " +
-                "once captured and tested against real firmware."
+        MinerCapabilities(
+            supported = setOf(Capability.TELEMETRY, Capability.POWER_CONTROL, Capability.REBOOT),
+            unsupportedReasons = mapOf(
+                Capability.SET_FAN to "Avalon fan-speed argument range is not yet verified on this firmware.",
+                Capability.SET_OPERATING_MODE to "Work-mode (worklevel) value range is not yet verified on this firmware.",
+                Capability.APPLY_APPROVED_TUNE to "Avalon frequency/voltage tuning is not exposed until verified per device.",
+                Capability.SET_POOLS to "Pool changes require the authenticated web interface, not yet verified.",
+                Capability.LOGS to "Avalon does not expose a log stream over the CGMiner API.",
+            ),
         )
+
+    // ------------------------------------------------------------------ controls ----
+
+    override suspend fun getTuneOptions(host: MinerHost): TuneOptions? = null
+
+    override suspend fun reboot(host: MinerHost): ActionResult =
+        ascset(host, "reboot,0") { msg ->
+            // Firmware validates the keyword; an unknown one is a harmless no-op.
+            if (msg.contains("Unknow", ignoreCase = true))
+                ActionResult.Failure("Reboot keyword not accepted by this firmware: $msg")
+            else ActionResult.Success
+        }
+
+    override suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult {
+        val cmd = if (action == PowerAction.PAUSE) "softoff" else "softon"
+        return ascset(host, cmd) { ActionResult.Success }
+    }
+
+    override suspend fun setPrimaryPool(host: MinerHost, url: String, port: Int, worker: String): ActionResult =
+        ActionResult.Unsupported("Pool changes require the authenticated Avalon web interface, not yet verified.")
+
+    override suspend fun setFan(host: MinerHost, config: FanControl): ActionResult =
+        ActionResult.Unsupported("Avalon fan-speed argument range is not yet verified on this firmware.")
+
+    override suspend fun applyTune(host: MinerHost, frequencyMhz: Int, coreVoltageMv: Int): ActionResult =
+        ActionResult.Unsupported("Avalon tuning is not exposed until frequency/voltage ranges are verified.")
+
+    /** Send `ascset|0,<option>` and map the firmware's Msg through [onOk]. */
+    private suspend fun ascset(
+        host: MinerHost,
+        option: String,
+        onOk: (String) -> ActionResult,
+    ): ActionResult {
+        val result = api.query(host.host, apiPort(host), "ascset", "0,$option")
+        val body = result.body ?: return ActionResult.Failure(result.error ?: "No response")
+        val msg = Regex("\"Msg\"\\s*:\\s*\"([^\"]*)\"").find(body)?.groupValues?.get(1) ?: body
+        val statusChar = Regex("\"STATUS\"\\s*:\\s*\"([A-Z])\"").find(body)?.groupValues?.get(1)
+        return if (statusChar == "E") ActionResult.Failure(msg) else onOk(msg)
+    }
 
     /** The CGMiner API lives on 4028; ignore HTTP-ish ports handed in by generic flows. */
     private fun apiPort(host: MinerHost): Int =

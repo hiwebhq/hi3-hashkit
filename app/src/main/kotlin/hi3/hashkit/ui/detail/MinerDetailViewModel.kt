@@ -164,6 +164,14 @@ class MinerDetailViewModel @Inject constructor(
 
     fun reboot() = runAction("restarting") { controlRepository.reboot(it) }
 
+    fun pauseHashing() = runAction("pausing hashing") {
+        controlRepository.powerControl(it, hi3.hashkit.domain.adapter.PowerAction.PAUSE)
+    }
+
+    fun resumeHashing() = runAction("resuming hashing") {
+        controlRepository.powerControl(it, hi3.hashkit.domain.adapter.PowerAction.RESUME)
+    }
+
     fun setPool(url: String, port: Int, worker: String) =
         runAction("changing pool") { controlRepository.setPrimaryPool(it, url, port, worker) }
 

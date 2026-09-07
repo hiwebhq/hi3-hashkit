@@ -272,6 +272,8 @@ fun MinerDetailScreen(
                         onSetFanManual = viewModel::setFanManual,
                         onApplyTune = viewModel::applyTune,
                         onRollbackTune = viewModel::rollbackTune,
+                        onPause = viewModel::pauseHashing,
+                        onResume = viewModel::resumeHashing,
                     )
                 }
             }

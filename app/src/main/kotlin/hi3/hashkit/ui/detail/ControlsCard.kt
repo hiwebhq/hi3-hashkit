@@ -57,6 +57,8 @@ fun ControlsCard(
     onSetFanManual: (Int) -> Unit,
     onApplyTune: (freq: Int, volt: Int) -> Unit,
     onRollbackTune: () -> Unit,
+    onPause: () -> Unit = {},
+    onResume: () -> Unit = {},
 ) {
     var dialog by remember { mutableStateOf<ControlDialog?>(null) }
 
@@ -95,6 +97,12 @@ fun ControlsCard(
                     onClick = { dialog = ControlDialog.Tune },
                     enabled = busyAction == null,
                 ) { Text("Tune") }
+            }
+            if (Capability.POWER_CONTROL in capabilities) {
+                OutlinedButton(
+                    onClick = { dialog = ControlDialog.Power },
+                    enabled = busyAction == null,
+                ) { Text("Power") }
             }
         }
 
@@ -146,11 +154,34 @@ fun ControlsCard(
             onRollback = { dialog = null; onRollbackTune() },
             onDismiss = { dialog = null },
         )
+        ControlDialog.Power -> AlertDialog(
+            onDismissRequest = { dialog = null },
+            title = { Text("Pause or resume hashing") },
+            text = {
+                Text(
+                    "Pause sends the miner's soft-off command (stops it taking new work, " +
+                        "for load-shedding or curtailment) without a reboot; Resume sends " +
+                        "soft-on to restart it. Watch the hashrate after applying to confirm " +
+                        "the effect on your firmware.",
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { dialog = null; onPause() }) {
+                    Text("Pause", color = HiBrand.statusDegraded)
+                }
+            },
+            dismissButton = {
+                Row {
+                    TextButton(onClick = { dialog = null; onResume() }) { Text("Resume") }
+                    TextButton(onClick = { dialog = null }) { Text("Cancel") }
+                }
+            },
+        )
         null -> Unit
     }
 }
 
-private enum class ControlDialog { Reboot, Pool, Fan, Tune }
+private enum class ControlDialog { Reboot, Pool, Fan, Tune, Power }
 
 @Composable
 private fun ConfirmDialog(

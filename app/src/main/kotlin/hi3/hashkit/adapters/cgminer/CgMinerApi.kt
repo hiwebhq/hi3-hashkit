@@ -20,7 +20,7 @@ class CgMinerApi @Inject constructor() {
 
     class CgResult(val body: String?, val error: String?)
 
-    suspend fun query(host: String, port: Int, command: String): CgResult =
+    suspend fun query(host: String, port: Int, command: String, parameter: String? = null): CgResult =
         withContext(Dispatchers.IO) {
             if (!MinerHostValidator.resolvesToAllowed(host)) {
                 return@withContext CgResult(null, "Refused: $host is not a private/Tailscale address")
@@ -29,7 +29,14 @@ class CgMinerApi @Inject constructor() {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), CONNECT_TIMEOUT_MS)
                     socket.soTimeout = READ_TIMEOUT_MS
-                    socket.getOutputStream().write("""{"command":"$command"}""".toByteArray())
+                    // ascset etc. take a "parameter" field; JSON-escape it minimally.
+                    val payload = if (parameter == null) {
+                        """{"command":"$command"}"""
+                    } else {
+                        val safe = parameter.replace("\\", "\\\\").replace("\"", "\\\"")
+                        """{"command":"$command","parameter":"$safe"}"""
+                    }
+                    socket.getOutputStream().write(payload.toByteArray())
                     socket.getOutputStream().flush()
                     val buffer = ByteArrayOutputStream()
                     val chunk = ByteArray(8192)

@@ -45,6 +45,17 @@ class ControlRepository @Inject constructor(
         return result
     }
 
+    suspend fun powerControl(
+        entity: MinerEntity,
+        action: hi3.hashkit.domain.adapter.PowerAction,
+    ): ActionResult {
+        val adapter = controlAdapter(entity)
+            ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")
+        val result = adapter.powerControl(MinerHost(entity.host, entity.port), action)
+        audit(entity.id, "power_${action.name.lowercase()}", "{}", "{}", result)
+        return result
+    }
+
     suspend fun setPrimaryPool(entity: MinerEntity, url: String, port: Int, worker: String): ActionResult {
         val adapter = controlAdapter(entity)
             ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")

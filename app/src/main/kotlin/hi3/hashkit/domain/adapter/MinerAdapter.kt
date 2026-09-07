@@ -73,6 +73,9 @@ sealed interface FanControl {
     data class Manual(val percent: Int) : FanControl
 }
 
+/** Soft power control: pause or resume hashing without a full reboot. */
+enum class PowerAction { PAUSE, RESUME }
+
 /**
  * Write path. Implemented only where a control endpoint is verified against real
  * firmware. Every call must be gated on [MinerAdapter.getCapabilities] by the caller,
@@ -88,4 +91,8 @@ interface MinerControlAdapter : MinerAdapter {
 
     /** Apply a tune; values MUST be members of [getTuneOptions] lists. */
     suspend fun applyTune(host: MinerHost, frequencyMhz: Int, coreVoltageMv: Int): ActionResult
+
+    /** Pause/resume hashing. Default: unsupported (most families expose no such control). */
+    suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult =
+        ActionResult.Unsupported("This device has no pause/resume control.")
 }
