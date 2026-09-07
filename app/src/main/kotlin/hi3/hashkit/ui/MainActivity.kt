@@ -70,15 +70,25 @@ class MainActivity : FragmentActivity() {
             }
         }
         setContent {
-            Hi3MinerWatchTheme {
+            val settings by settingsRepository.settings.collectAsState(
+                initial = hi3.hashkit.data.prefs.AppSettings()
+            )
+            Hi3MinerWatchTheme(themeMode = settings.themeMode) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     PollingLifecycle()
                     LockLifecycle()
                     val locked by appLockManager.locked.collectAsState()
-                    if (locked) {
-                        LockScreen(onUnlock = { showUnlockPrompt() })
-                    } else {
-                        AppNavHost(onExit = {
+                    when {
+                        locked -> LockScreen(onUnlock = { showUnlockPrompt() })
+                        !settings.onboardingComplete -> hi3.hashkit.ui.onboarding.OnboardingScreen(
+                            onDone = {
+                                lifecycleScope.launch { settingsRepository.setOnboardingComplete(true) }
+                                if (android.os.Build.VERSION.SDK_INT >= 33) {
+                                    requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
+                                }
+                            },
+                        )
+                        else -> AppNavHost(onExit = {
                             pollingEngine.stop()
                             finishAndRemoveTask()
                         })

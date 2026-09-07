@@ -171,6 +171,20 @@ fun SettingsScreen(
             }
 
             Section("DISPLAY") {
+                Text("Theme", style = MaterialTheme.typography.bodyMedium)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        hi3.hashkit.ui.theme.ThemeMode.SYSTEM to "System",
+                        hi3.hashkit.ui.theme.ThemeMode.DARK to "Dark",
+                        hi3.hashkit.ui.theme.ThemeMode.LIGHT to "Light",
+                    ).forEach { (mode, label) ->
+                        androidx.compose.material3.FilterChip(
+                            selected = settings.themeMode == mode,
+                            onClick = { viewModel.setThemeMode(mode) },
+                            label = { Text(label) },
+                        )
+                    }
+                }
                 ToggleRow(
                     "Solo odds card",
                     "Show block-finding probability on the dashboard.",
