@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         AuditEventEntity::class,
         ScheduleEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -72,6 +72,17 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `networkDifficulty` REAL")
+            }
+        }
+
+        /** v4 -> v5: per-miner alert override columns (additive). */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertHashBelowPct` REAL DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertChipTempC` REAL DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertVrTempC` REAL DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertRejectPct` REAL DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `alertsMuted` INTEGER NOT NULL DEFAULT 0")
             }
         }
 

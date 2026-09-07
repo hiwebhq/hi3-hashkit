@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
  * defined here so official Hi3 branding can be swapped in without touching screens.
  */
 object HiBrand {
-    val appName = "Hi3 Miner Watch"
+    val appName = "Hi3 Hashkit"
 
     // Dark command-center palette (original design, not derived from any other product).
     val background = Color(0xFF0B0F14)

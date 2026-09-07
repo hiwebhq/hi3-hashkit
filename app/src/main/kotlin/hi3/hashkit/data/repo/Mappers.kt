@@ -50,6 +50,13 @@ fun MinerEntity.toDomain(lastTelemetry: MinerTelemetry?, staleAfterMs: Long, now
         notes = notes,
         tags = tagsCsv.split(",").map { it.trim() }.filter { it.isNotEmpty() },
         expectedHashrateGhs = expectedHashrateGhs,
+        alertOverrides = hi3.hashkit.domain.alerts.AlertOverrides(
+            hashrateBelowPercent = alertHashBelowPct,
+            chipTempC = alertChipTempC,
+            vrTempC = alertVrTempC,
+            rejectRatePercent = alertRejectPct,
+            muted = alertsMuted,
+        ),
         isDemo = isDemo,
         status = status,
         lastSeenAt = lastSeenAtEpochMs?.let(Instant::ofEpochMilli),

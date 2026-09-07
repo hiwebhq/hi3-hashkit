@@ -1,6 +1,7 @@
 package hi3.hashkit.data.poll
 
 import hi3.hashkit.data.alerts.AlertRepository
+import hi3.hashkit.domain.alerts.withOverrides
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.MinerRepository
 import kotlinx.coroutines.CoroutineScope
@@ -66,13 +67,20 @@ class PollingEngine @Inject constructor(
                 launch {
                     runCatching {
                         val telemetry = repository.pollMiner(entity)
-                        if (settings.alertsEnabled && !entity.isDemo) {
+                        if (settings.alertsEnabled && !entity.isDemo && !entity.alertsMuted) {
                             alertRepository.processTelemetry(
                                 minerId = entity.id,
                                 minerName = entity.name,
                                 telemetry = telemetry,
                                 expectedHashrateGhs = entity.expectedHashrateGhs,
-                                thresholds = settings.alertThresholds,
+                                thresholds = settings.alertThresholds.withOverrides(
+                                    hi3.hashkit.domain.alerts.AlertOverrides(
+                                        hashrateBelowPercent = entity.alertHashBelowPct,
+                                        chipTempC = entity.alertChipTempC,
+                                        vrTempC = entity.alertVrTempC,
+                                        rejectRatePercent = entity.alertRejectPct,
+                                    )
+                                ),
                             )
                         }
                     }

@@ -137,18 +137,29 @@ class MinerRepository @Inject constructor(
         notes: String?,
         tags: List<String>,
         expectedHashrateGhs: Double?,
+        alertOverrides: hi3.hashkit.domain.alerts.AlertOverrides? = null,
     ) {
         val entity = minerDao.byId(id) ?: return
-        minerDao.update(
-            entity.copy(
-                name = name.ifBlank { entity.name },
-                groupName = group?.takeIf { it.isNotBlank() },
-                location = location?.takeIf { it.isNotBlank() },
-                notes = notes?.takeIf { it.isNotBlank() },
-                tagsCsv = tags.joinToString(","),
-                expectedHashrateGhs = expectedHashrateGhs?.takeIf { it > 0 },
-            )
+        var updated = entity.copy(
+            name = name.ifBlank { entity.name },
+            groupName = group?.takeIf { it.isNotBlank() },
+            location = location?.takeIf { it.isNotBlank() },
+            notes = notes?.takeIf { it.isNotBlank() },
+            tagsCsv = tags.joinToString(","),
+            expectedHashrateGhs = expectedHashrateGhs?.takeIf { it > 0 },
         )
+        // A non-null overrides object replaces the stored overrides wholesale, so
+        // blanking a field in the edit dialog clears that override back to global.
+        if (alertOverrides != null) {
+            updated = updated.copy(
+                alertHashBelowPct = alertOverrides.hashrateBelowPercent,
+                alertChipTempC = alertOverrides.chipTempC,
+                alertVrTempC = alertOverrides.vrTempC,
+                alertRejectPct = alertOverrides.rejectRatePercent,
+                alertsMuted = alertOverrides.muted,
+            )
+        }
+        minerDao.update(updated)
     }
 
     /** Poll one miner, persist the outcome (including honest OFFLINE samples). */

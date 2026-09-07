@@ -15,7 +15,7 @@ enum class AlertType {
     NEW_BEST_DIFFICULTY,
 }
 
-/** Global alert thresholds (per-miner overrides are a later phase; documented limitation). */
+/** Global alert thresholds; per-miner values override via [AlertOverrides]. */
 data class AlertThresholds(
     val offlineAfterFailures: Int = 2,
     val hashrateBelowPercent: Double = 80.0,
@@ -25,6 +25,29 @@ data class AlertThresholds(
     /** Suppress duplicate alerts of the same type per miner for this long. */
     val cooldownMs: Long = 30 * 60_000L,
 )
+
+/** Per-miner overrides; null fields fall back to the global threshold. */
+data class AlertOverrides(
+    val hashrateBelowPercent: Double? = null,
+    val chipTempC: Double? = null,
+    val vrTempC: Double? = null,
+    val rejectRatePercent: Double? = null,
+    /** Muted miners are still polled and charted but raise no alerts. */
+    val muted: Boolean = false,
+) {
+    val isEmpty: Boolean
+        get() = hashrateBelowPercent == null && chipTempC == null &&
+            vrTempC == null && rejectRatePercent == null && !muted
+}
+
+/** Effective thresholds for one miner: global values with per-miner overrides applied. */
+fun AlertThresholds.withOverrides(overrides: AlertOverrides?): AlertThresholds =
+    if (overrides == null) this else copy(
+        hashrateBelowPercent = overrides.hashrateBelowPercent ?: hashrateBelowPercent,
+        chipTempC = overrides.chipTempC ?: chipTempC,
+        vrTempC = overrides.vrTempC ?: vrTempC,
+        rejectRatePercent = overrides.rejectRatePercent ?: rejectRatePercent,
+    )
 
 /** A newly raised or resolved condition produced by one evaluation pass. */
 data class AlertSignal(

@@ -309,8 +309,8 @@ fun MinerDetailScreen(
     if (editing && miner != null) {
         EditMinerDialog(
             miner = miner,
-            onSave = { name, group, location, notes, tags, expected ->
-                viewModel.saveMeta(name, group, location, notes, tags, expected)
+            onSave = { name, group, location, notes, tags, expected, overrides ->
+                viewModel.saveMeta(name, group, location, notes, tags, expected, overrides)
                 editing = false
             },
             onDismiss = { editing = false },
@@ -390,7 +390,7 @@ private fun historyStats(history: List<hi3.hashkit.domain.model.MinerTelemetry>)
 @Composable
 private fun EditMinerDialog(
     miner: hi3.hashkit.domain.model.Miner,
-    onSave: (String, String?, String?, String?, String, Double?) -> Unit,
+    onSave: (String, String?, String?, String?, String, Double?, hi3.hashkit.domain.alerts.AlertOverrides) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf(miner.name) }
@@ -399,6 +399,12 @@ private fun EditMinerDialog(
     var notes by remember { mutableStateOf(miner.notes ?: "") }
     var tags by remember { mutableStateOf(miner.tags.joinToString(", ")) }
     var expected by remember { mutableStateOf(miner.expectedHashrateGhs?.toString() ?: "") }
+    val ov = miner.alertOverrides
+    var ovHash by remember { mutableStateOf(ov.hashrateBelowPercent?.toString() ?: "") }
+    var ovChip by remember { mutableStateOf(ov.chipTempC?.toString() ?: "") }
+    var ovVr by remember { mutableStateOf(ov.vrTempC?.toString() ?: "") }
+    var ovReject by remember { mutableStateOf(ov.rejectRatePercent?.toString() ?: "") }
+    var muted by remember { mutableStateOf(ov.muted) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -419,12 +425,43 @@ private fun EditMinerDialog(
                     singleLine = true,
                 )
                 androidx.compose.material3.OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("Notes") })
+                Text(
+                    "ALERT OVERRIDES (blank = global default)",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                androidx.compose.material3.OutlinedTextField(value = ovHash, onValueChange = { ovHash = it }, label = { Text("Hashrate alert below (%)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovChip, onValueChange = { ovChip = it }, label = { Text("Chip temp alert (°C)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovVr, onValueChange = { ovVr = it }, label = { Text("VR temp alert (°C)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovReject, onValueChange = { ovReject = it }, label = { Text("Reject-rate alert (%)") }, singleLine = true)
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Mute alerts for this miner", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Still polled and charted; raises no alerts.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
+                        )
+                    }
+                    androidx.compose.material3.Switch(checked = muted, onCheckedChange = { muted = it })
+                }
             }
         },
         confirmButton = {
             TextButton(
                 enabled = name.isNotBlank(),
-                onClick = { onSave(name.trim(), group, location, notes, tags, expected.toDoubleOrNull()) },
+                onClick = {
+                    onSave(
+                        name.trim(), group, location, notes, tags, expected.toDoubleOrNull(),
+                        hi3.hashkit.domain.alerts.AlertOverrides(
+                            hashrateBelowPercent = ovHash.toDoubleOrNull(),
+                            chipTempC = ovChip.toDoubleOrNull(),
+                            vrTempC = ovVr.toDoubleOrNull(),
+                            rejectRatePercent = ovReject.toDoubleOrNull(),
+                            muted = muted,
+                        ),
+                    )
+                },
             ) { Text("Save") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },

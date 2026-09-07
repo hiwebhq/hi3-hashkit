@@ -138,6 +138,7 @@ class MinerDetailViewModel @Inject constructor(
         notes: String?,
         tagsCsv: String,
         expectedHashrateGhs: Double?,
+        alertOverrides: hi3.hashkit.domain.alerts.AlertOverrides,
     ) {
         viewModelScope.launch {
             repository.updateMinerMeta(
@@ -148,6 +149,7 @@ class MinerDetailViewModel @Inject constructor(
                 notes = notes,
                 tags = tagsCsv.split(",").map { it.trim() }.filter { it.isNotEmpty() },
                 expectedHashrateGhs = expectedHashrateGhs,
+                alertOverrides = alertOverrides,
             )
         }
     }

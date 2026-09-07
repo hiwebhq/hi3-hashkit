@@ -32,6 +32,12 @@ data class MinerEntity(
     val isDemo: Boolean,
     val createdAtEpochMs: Long,
     val lastSeenAtEpochMs: Long?,
+    // Per-miner alert overrides (null = use the global threshold).
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val alertHashBelowPct: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val alertChipTempC: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val alertVrTempC: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val alertRejectPct: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "0") val alertsMuted: Boolean = false,
 )
 
 @Entity(
