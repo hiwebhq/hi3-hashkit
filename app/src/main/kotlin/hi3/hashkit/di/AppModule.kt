@@ -73,5 +73,9 @@ abstract class AdapterModule {
 
     @Binds
     @IntoSet
+    abstract fun braiins(adapter: hi3.hashkit.adapters.braiins.BraiinsAdapter): MinerAdapter
+
+    @Binds
+    @IntoSet
     abstract fun demo(adapter: DemoMinerAdapter): MinerAdapter
 }

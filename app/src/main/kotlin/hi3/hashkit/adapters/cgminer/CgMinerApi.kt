@@ -1,4 +1,4 @@
-package hi3.hashkit.adapters.canaan
+package hi3.hashkit.adapters.cgminer
 
 import hi3.hashkit.discovery.MinerHostValidator
 import kotlinx.coroutines.Dispatchers
@@ -10,13 +10,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Canaan Avalon devices (Nano 3 family, Avalon Q) expose the classic CGMiner TCP API
- * on port 4028: connect, send {"command":"<cmd>"}, read one JSON response, socket
- * closes. Verified live against a real Avalon Nano 3 (fw 24071801, cgminer 4.11.1,
- * API 3.7). Read-only commands only — this client sends no privileged commands.
+ * Shared transport for the classic CGMiner TCP API on port 4028: connect, send
+ * {"command":"<cmd>"}, read one JSON response, socket closes. Used by the Canaan
+ * (verified: Avalon Nano 3) and Braiins OS (verified: BOSer/BMM 100) adapters.
+ * Read-only commands only — this client sends no privileged commands.
  */
 @Singleton
-class CanaanCgApi @Inject constructor() {
+class CgMinerApi @Inject constructor() {
 
     class CgResult(val body: String?, val error: String?)
 

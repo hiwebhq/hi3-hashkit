@@ -1,4 +1,4 @@
-package hi3.hashkit.adapters.canaan
+package hi3.hashkit.adapters.braiins
 
 import hi3.hashkit.adapters.cgminer.CgMinerApi
 import hi3.hashkit.domain.adapter.MinerAdapter
@@ -11,22 +11,22 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Monitoring adapter for Canaan Avalon home miners (Nano 3 verified live; Nano 3S and
- * Avalon Q identify through the same CGMiner API and are accepted when their `version`
- * response is demonstrably compatible).
+ * Monitoring adapter for Braiins OS devices via the BOSer CGMiner-compatible TCP API
+ * (verified live: Braiins Mini Miner BMM 100).
  *
- * MONITORING ONLY: Canaan's control surface (work mode, fan, reboot) lives behind the
- * authenticated web CGI (`login.cgi` + session), which has not been captured and
- * verified yet. Per project policy no control endpoint is guessed — every control
- * capability is reported unsupported with this reason.
+ * MONITORING ONLY: Braiins OS control surfaces (its gRPC Public API and web UI) are
+ * not yet captured and verified, so every control capability is reported unsupported
+ * with that reason. Larger Braiins OS+ units (converted Antminers) speak the same
+ * cgminer-style API family and will be accepted for monitoring when they identify as
+ * BOSer, but are unverified until a real unit answers.
  */
 @Singleton
-class CanaanAdapter @Inject constructor(
+class BraiinsAdapter @Inject constructor(
     private val api: CgMinerApi,
 ) : MinerAdapter {
 
     override val adapterType: String = TYPE
-    override val displayName: String = "Canaan Avalon"
+    override val displayName: String = "Braiins OS"
     override val defaultPort: Int = CgMinerApi.DEFAULT_PORT
 
     override suspend fun probe(host: MinerHost): ProbeResult {
@@ -34,13 +34,11 @@ class CanaanAdapter @Inject constructor(
         val result = api.query(host.host, port, "version")
         val body = result.body
             ?: return ProbeResult.Unreachable(result.error ?: "No response")
-        val version = CanaanParser.parseVersion(body)
-        if (!CanaanParser.isAvalon(version)) return ProbeResult.NotThisDevice
-        // estats enriches identity with the hardware DNA serial when available.
-        val mm = CanaanParser.mmFieldsOf(api.query(host.host, port, "estats").body)
+        if (!BraiinsParser.isBoser(body)) return ProbeResult.NotThisDevice
+        val details = api.query(host.host, port, "devdetails").body
         return ProbeResult.Supported(
             adapterType = TYPE,
-            identity = CanaanParser.identityOf(version!!, mm),
+            identity = BraiinsParser.identityOf(body, details),
             rawResponse = body,
         )
     }
@@ -53,23 +51,27 @@ class CanaanAdapter @Inject constructor(
         val version = api.query(host.host, port, "version")
         val versionBody = version.body
             ?: return TelemetryResult.Offline(version.error ?: "No response")
-        if (!CanaanParser.isAvalon(CanaanParser.parseVersion(versionBody))) {
-            return TelemetryResult.ParseError("Host is not an Avalon device", versionBody)
+        if (!BraiinsParser.isBoser(versionBody)) {
+            return TelemetryResult.ParseError("Host is not a Braiins OS device", versionBody)
         }
         val summary = api.query(host.host, port, "summary").body
-        val estats = api.query(host.host, port, "estats").body
+        val devs = api.query(host.host, port, "devs").body
+        val temps = api.query(host.host, port, "temps").body
+        val fans = api.query(host.host, port, "fans").body
+        val details = api.query(host.host, port, "devdetails").body
         val pools = api.query(host.host, port, "pools").body
-        val coin = api.query(host.host, port, "coin").body
-        if (summary == null && estats == null) {
-            return TelemetryResult.Offline("Device answered version but not summary/estats")
+        if (summary == null && devs == null) {
+            return TelemetryResult.Offline("Device answered version but not summary/devs")
         }
-        val telemetry = CanaanParser.parseTelemetry(summary, estats, pools, coin)
+        val telemetry = BraiinsParser.parseTelemetry(summary, devs, temps, fans, details, pools)
         val raw = buildString {
             append("{\"version\":").append(versionBody)
             summary?.let { append(",\"summary\":").append(it) }
-            estats?.let { append(",\"estats\":").append(it) }
+            devs?.let { append(",\"devs\":").append(it) }
+            temps?.let { append(",\"temps\":").append(it) }
+            fans?.let { append(",\"fans\":").append(it) }
+            details?.let { append(",\"devdetails\":").append(it) }
             pools?.let { append(",\"pools\":").append(it) }
-            coin?.let { append(",\"coin\":").append(it) }
             append("}")
         }
         return TelemetryResult.Success(telemetry, raw)
@@ -77,16 +79,14 @@ class CanaanAdapter @Inject constructor(
 
     override fun getCapabilities(identity: MinerIdentity?): MinerCapabilities =
         MinerCapabilities.monitoringOnly(
-            "Canaan controls use the authenticated web interface, which has not been " +
-                "verified yet — monitoring only. Work-mode and fan controls will be added " +
-                "once captured and tested against real firmware."
+            "Braiins OS controls use its gRPC/web APIs, which have not been verified " +
+                "yet — monitoring only."
         )
 
-    /** The CGMiner API lives on 4028; ignore HTTP-ish ports handed in by generic flows. */
     private fun apiPort(host: MinerHost): Int =
         if (host.port == 0 || host.port == 80) CgMinerApi.DEFAULT_PORT else host.port
 
     companion object {
-        const val TYPE = "canaan-cgminer"
+        const val TYPE = "braiins-boser"
     }
 }
