@@ -78,7 +78,7 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(HiBrand.appName, fontWeight = FontWeight.Bold) },
+                title = { hi3.hashkit.ui.theme.HiLogo() },
                 actions = {
                     IconButton(onClick = onAlerts) {
                         BadgedBox(

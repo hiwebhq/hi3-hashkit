@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -134,11 +135,7 @@ class MainActivity : FragmentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                HiBrand.appName,
-                style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
-                color = HiBrand.textPrimary,
-            )
+            hi3.hashkit.ui.theme.HiLogo(markSize = 40.dp, fontSize = 28.sp)
             Spacer(Modifier.height(24.dp))
             Button(onClick = onUnlock) { Text("Unlock") }
         }
