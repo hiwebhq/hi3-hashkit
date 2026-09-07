@@ -33,10 +33,14 @@ class SettingsViewModel @Inject constructor(
         onReady(exporter.shareIntent(file, "text/csv"))
     }
 
-    fun exportBackup(onReady: (android.content.Intent) -> Unit) = viewModelScope.launch {
-        val file = exporter.backupJson()
-        onReady(exporter.shareIntent(file, "application/json"))
+    fun exportBackup(passphrase: String?, onReady: (android.content.Intent) -> Unit) = viewModelScope.launch {
+        val file = exporter.backupJson(passphrase)
+        val mime = if (file.name.endsWith(".hi3enc")) "application/octet-stream" else "application/json"
+        onReady(exporter.shareIntent(file, mime))
     }
+
+    /** Set when a restore needs a passphrase; the UI shows a prompt and calls restoreFrom again. */
+    val pendingEncryptedRestore = kotlinx.coroutines.flow.MutableStateFlow<android.net.Uri?>(null)
 
     fun exportDiagnostics(includeAddresses: Boolean, onReady: (android.content.Intent) -> Unit) =
         viewModelScope.launch {
@@ -53,13 +57,21 @@ class SettingsViewModel @Inject constructor(
     fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
     fun setHi3PoolPayoutAddress(v: String) = viewModelScope.launch { repo.setHi3PoolPayoutAddress(v) }
 
-    fun restoreFrom(uri: android.net.Uri) = viewModelScope.launch {
+    fun restoreFrom(uri: android.net.Uri, passphrase: String? = null) = viewModelScope.launch {
         val content = runCatching {
             context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
         }.getOrNull()
-        restoreMessage.value =
-            if (content == null) "Could not read the selected file."
-            else exporter.restore(content)
+        if (content == null) {
+            restoreMessage.value = "Could not read the selected file."
+            return@launch
+        }
+        val result = exporter.restore(content, passphrase)
+        if (result == "ENCRYPTED") {
+            pendingEncryptedRestore.value = uri // ask the UI for a passphrase
+        } else {
+            pendingEncryptedRestore.value = null
+            restoreMessage.value = result
+        }
     }
 
     val uiState: StateFlow<SettingsUiState> = repo.settings

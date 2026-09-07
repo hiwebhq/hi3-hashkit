@@ -305,6 +305,8 @@ fun SettingsScreen(
             Section("DATA & EXPORTS") {
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val restoreMessage by viewModel.restoreMessage.collectAsStateWithLifecycle()
+                val pendingEnc by viewModel.pendingEncryptedRestore.collectAsStateWithLifecycle()
+                var backupPassPrompt by remember { mutableStateOf(false) }
                 val restorePicker = rememberLauncherForActivityResult(
                     ActivityResultContracts.OpenDocument()
                 ) { uri -> uri?.let { viewModel.restoreFrom(it) } }
@@ -315,11 +317,9 @@ fun SettingsScreen(
                 ActionRow("Export fleet telemetry CSV (last 7 days)") {
                     viewModel.exportFleetCsv { share(it, "Export CSV") }
                 }
-                ActionRow("Backup miners & schedules (JSON)") {
-                    viewModel.exportBackup { share(it, "Export backup") }
-                }
+                ActionRow("Backup miners & schedules") { backupPassPrompt = true }
                 ActionRow("Restore from backup…") {
-                    restorePicker.launch(arrayOf("application/json", "text/plain", "*/*"))
+                    restorePicker.launch(arrayOf("application/json", "application/octet-stream", "text/plain", "*/*"))
                 }
                 ActionRow("Export diagnostics bundle (addresses redacted)") {
                     viewModel.exportDiagnostics(includeAddresses = false) { share(it, "Export diagnostics") }
@@ -328,12 +328,71 @@ fun SettingsScreen(
                     Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.accentAlt)
                 }
                 Text(
-                    "Backups include miner addresses and worker names for your own restore — " +
-                        "share the file only with yourself. CSV and diagnostics redact wallets; " +
+                    "Backups contain miner addresses and worker names. Encrypt with a " +
+                        "passphrase (AES-256) to share or store safely; a plaintext backup is " +
+                        "for your own device only. CSV and diagnostics redact wallets; " +
                         "diagnostics also redact IP addresses.",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
+
+                if (backupPassPrompt) {
+                    var pass by remember { mutableStateOf("") }
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { backupPassPrompt = false },
+                        title = { Text("Backup passphrase") },
+                        text = {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    "Enter a passphrase to encrypt the backup (AES-256), or " +
+                                        "leave blank for a plaintext JSON backup.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                                OutlinedTextField(
+                                    value = pass,
+                                    onValueChange = { pass = it },
+                                    label = { Text("Passphrase (optional)") },
+                                    singleLine = true,
+                                    visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            androidx.compose.material3.TextButton(onClick = {
+                                backupPassPrompt = false
+                                viewModel.exportBackup(pass) { share(it, "Export backup") }
+                            }) { Text("Export") }
+                        },
+                        dismissButton = {
+                            androidx.compose.material3.TextButton(onClick = { backupPassPrompt = false }) { Text("Cancel") }
+                        },
+                    )
+                }
+
+                pendingEnc?.let { uri ->
+                    var pass by remember { mutableStateOf("") }
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { viewModel.pendingEncryptedRestore.value = null },
+                        title = { Text("Encrypted backup") },
+                        text = {
+                            OutlinedTextField(
+                                value = pass,
+                                onValueChange = { pass = it },
+                                label = { Text("Passphrase") },
+                                singleLine = true,
+                                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                            )
+                        },
+                        confirmButton = {
+                            androidx.compose.material3.TextButton(onClick = {
+                                viewModel.restoreFrom(uri, pass)
+                            }) { Text("Restore") }
+                        },
+                        dismissButton = {
+                            androidx.compose.material3.TextButton(onClick = { viewModel.pendingEncryptedRestore.value = null }) { Text("Cancel") }
+                        },
+                    )
+                }
             }
 
             Section("DEMO") {

@@ -126,8 +126,12 @@ class Exporter @Inject constructor(
         val schedules: List<BackupSchedule>,
     )
 
-    /** Configuration backup: miners + schedules. Telemetry history is not included. */
-    suspend fun backupJson(): File = withContext(Dispatchers.IO) {
+    /**
+     * Configuration backup: miners + schedules. Telemetry history is not included.
+     * When [passphrase] is non-blank the file is encrypted with [BackupCrypto] and
+     * gets a .hi3enc extension; otherwise it is plaintext JSON.
+     */
+    suspend fun backupJson(passphrase: String? = null): File = withContext(Dispatchers.IO) {
         val miners = minerDao.observeAll().first().filter { !it.isDemo }
         val schedules = scheduleDao.observeAll().first()
         val backup = Backup(
@@ -146,14 +150,31 @@ class Exporter @Inject constructor(
                 )
             },
         )
-        val file = exportFile("hi3-backup-${timestamp()}.json")
-        file.writeText(json.encodeToString(backup))
+        val plain = json.encodeToString(backup)
+        val pass = passphrase?.trim().orEmpty()
+        val file: File
+        if (pass.isNotEmpty()) {
+            file = exportFile("hi3-backup-${timestamp()}.hi3enc")
+            file.writeText(hi3.hashkit.core.BackupCrypto.encrypt(plain, pass))
+        } else {
+            file = exportFile("hi3-backup-${timestamp()}.json")
+            file.writeText(plain)
+        }
         file
     }
 
-    /** Restore miners (by stableKey, non-destructive merge) and schedules (appended). */
-    suspend fun restore(content: String): String = withContext(Dispatchers.IO) {
-        val backup = runCatching { json.decodeFromString<Backup>(content) }.getOrNull()
+    /**
+     * Restore miners (by stableKey, non-destructive merge) and schedules (appended).
+     * Encrypted backups require the [passphrase] used at export.
+     */
+    suspend fun restore(content: String, passphrase: String? = null): String = withContext(Dispatchers.IO) {
+        val decoded = if (hi3.hashkit.core.BackupCrypto.isEncrypted(content)) {
+            val pass = passphrase?.trim().orEmpty()
+            if (pass.isEmpty()) return@withContext "ENCRYPTED"
+            hi3.hashkit.core.BackupCrypto.decrypt(content, pass)
+                ?: return@withContext "Wrong passphrase, or the backup file is corrupt."
+        } else content
+        val backup = runCatching { json.decodeFromString<Backup>(decoded) }.getOrNull()
             ?: return@withContext "Not a valid Hi3 Miner Watch backup file."
         var minersAdded = 0
         var minersUpdated = 0
