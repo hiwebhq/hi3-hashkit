@@ -69,7 +69,11 @@ interface TelemetryDao {
     @Query("SELECT MIN(timestampEpochMs) FROM telemetry_samples WHERE minerId = :minerId")
     suspend fun oldestSampleTimestamp(minerId: Long): Long?
 
-    /** All miners' hashrate samples since [since], for the fleet trend chart. */
+    /**
+     * All miners' hashrate samples since [since], for the fleet trend chart. One-shot
+     * (recomputed per poll cycle) rather than a Flow, to avoid rebucketing on every
+     * per-miner insert.
+     */
     @Query(
         "SELECT s.minerId AS minerId, s.timestampEpochMs AS timestampEpochMs, " +
             "s.hashrateGhs AS hashrateGhs FROM telemetry_samples s " +
@@ -77,7 +81,7 @@ interface TelemetryDao {
             "WHERE s.timestampEpochMs >= :since AND (m.isDemo = 0 OR :includeDemo = 1) " +
             "ORDER BY s.timestampEpochMs"
     )
-    fun observeFleetSamplesSince(since: Long, includeDemo: Boolean): Flow<List<FleetSamplePoint>>
+    suspend fun fleetSamplesSince(since: Long, includeDemo: Boolean): List<FleetSamplePoint>
 
     @Insert
     suspend fun insertRaw(raw: RawResponseEntity)

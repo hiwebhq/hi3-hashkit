@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -88,15 +89,20 @@ class DashboardViewModel @Inject constructor(
     val poolState = hi3PoolRepository.state
     val mmpState = mmpRepository.state
 
-    /** Fleet-total hashrate over the last 2h for the dashboard trend chart. */
+    private val fleetWindow = kotlinx.coroutines.flow.MutableStateFlow(6 * 3_600_000L)
+    val fleetWindowMs: StateFlow<Long> = fleetWindow
+
+    fun setFleetWindow(ms: Long) { fleetWindow.value = ms }
+
+    /** Fleet-total hashrate trend, recomputed each poll cycle (or when window/demo change). */
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val fleetTrend: StateFlow<List<hi3.hashkit.data.repo.FleetTrendPoint>> =
-        settingsRepository.settings
-            .map { it.demoModeEnabled }
-            .distinctUntilChanged()
-            .flatMapLatest { demo ->
-                repository.observeFleetHashrateTrend(windowMs = 2 * 3_600_000L, includeDemo = demo)
-            }
+        combine(
+            pollingEngine.lastRefresh,
+            fleetWindow,
+            settingsRepository.settings.map { it.demoModeEnabled }.distinctUntilChanged(),
+        ) { _, window, demo -> window to demo }
+            .mapLatest { (window, demo) -> repository.fleetHashrateTrend(window, demo) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val searchQuery = kotlinx.coroutines.flow.MutableStateFlow("")

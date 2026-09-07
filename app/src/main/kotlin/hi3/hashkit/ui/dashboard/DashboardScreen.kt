@@ -30,6 +30,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -131,7 +132,8 @@ fun DashboardScreen(
         ) {
             item {
                 val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
-                FleetSummary(state, trend)
+                val window by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
+                FleetSummary(state, trend, window, viewModel::setFleetWindow)
             }
             if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
@@ -323,10 +325,13 @@ private fun BulkBar(
     }
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 private fun FleetSummary(
     state: DashboardUiState,
     trend: List<hi3.hashkit.data.repo.FleetTrendPoint>,
+    windowMs: Long,
+    onWindow: (Long) -> Unit,
 ) {
     val totals = state.totals
     Card(
@@ -378,13 +383,36 @@ private fun FleetSummary(
                     Metric("Est. cost", "%.2f %s/d".format(cost, totals.currencyCode))
                 }
             }
-            if (trend.size >= 2) {
-                Spacer(Modifier.height(12.dp))
-                FleetTrendChart(trend, Modifier.fillMaxWidth().height(72.dp))
+            Spacer(Modifier.height(12.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 Text(
-                    "Fleet hashrate · last 2h",
+                    "Fleet hashrate",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    listOf("1h" to 3_600_000L, "6h" to 21_600_000L, "24h" to 86_400_000L).forEach { (label, ms) ->
+                        FilterChip(
+                            selected = windowMs == ms,
+                            onClick = { onWindow(ms) },
+                            label = { Text(label, style = MaterialTheme.typography.labelSmall) },
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(6.dp))
+            if (trend.size >= 2) {
+                FleetTrendChart(trend, Modifier.fillMaxWidth().height(72.dp))
+            } else {
+                Text(
+                    "Collecting data…",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                    modifier = Modifier.height(72.dp),
                 )
             }
         }

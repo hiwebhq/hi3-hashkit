@@ -238,14 +238,14 @@ class MinerRepository @Inject constructor(
             .map { rows -> rows.map { it.toDomain() } }
 
     /** Fleet-total hashrate trend over [windowMs], bucketed for a compact chart. */
-    fun observeFleetHashrateTrend(
+    suspend fun fleetHashrateTrend(
         windowMs: Long,
         includeDemo: Boolean,
         buckets: Int = 60,
-    ): Flow<List<FleetTrendPoint>> {
-        val start = System.currentTimeMillis() - windowMs
-        return telemetryDao.observeFleetSamplesSince(start, includeDemo)
-            .map { pts -> FleetSeries.bucket(pts, start, System.currentTimeMillis(), buckets) }
+    ): List<FleetTrendPoint> {
+        val now = System.currentTimeMillis()
+        val start = now - windowMs
+        return FleetSeries.bucket(telemetryDao.fleetSamplesSince(start, includeDemo), start, now, buckets)
     }
 
     /**

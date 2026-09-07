@@ -94,7 +94,7 @@ private object FailingMinerDao : hi3.hashkit.data.db.MinerDao {
 private object FailingTelemetryDao : hi3.hashkit.data.db.TelemetryDao {
     override suspend fun samplesBetween(minerId: Long, fromEpochMs: Long, toEpochMs: Long) = throw UnsupportedOperationException()
     override suspend fun oldestSampleTimestamp(minerId: Long) = throw UnsupportedOperationException()
-    override fun observeFleetSamplesSince(since: Long, includeDemo: Boolean) = throw UnsupportedOperationException()
+    override suspend fun fleetSamplesSince(since: Long, includeDemo: Boolean) = throw UnsupportedOperationException()
     override suspend fun insert(sample: hi3.hashkit.data.db.TelemetrySampleEntity) = throw UnsupportedOperationException()
     override fun observeSince(minerId: Long, sinceEpochMs: Long) = throw UnsupportedOperationException()
     override suspend fun latest(minerId: Long) = throw UnsupportedOperationException()
