@@ -2,6 +2,7 @@ package hi3.hashkit.adapters.cgminer
 
 import hi3.hashkit.domain.model.ValueSource
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -74,7 +75,7 @@ class CgMinerCommonTest {
         assertEquals(86330L, base.sharesAccepted)
         assertEquals("192.0.2.10", base.poolUrl)
 
-        val t = CgMinerCommon.enrichWithAntminerStats(base, fx("fixtures/cgminer/antminer_s21_stats.json"))
+        val t = CgMinerCommon.enrichWithStats(base, fx("fixtures/cgminer/antminer_s21_stats.json"))
         // Hottest chip across temp2_* (71,70,72) and temp_chip strings = 72.
         assertEquals(72.0, t.chipTempC.value!!, 0.001)
         assertEquals(ValueSource.MEASURED, t.chipTempC.source)
@@ -87,6 +88,31 @@ class CgMinerCommonTest {
         assertEquals(ValueSource.UNAVAILABLE, t.powerW.source)
         // Board temps (temp1/2/3 = 66/65/67) preserved for diagnostics; max = 67.
         assertEquals(67.0, t.unrecognizedFields["boardTempC"]!!.toDouble(), 0.001)
+    }
+
+    @Test
+    fun `VNish S21 - detected from stats, temps fans and wall power (real capture)`() {
+        // VNish's `version` errors; detection falls back to the stats Type field.
+        assertEquals(CgMinerCommon.Family.VNISH,
+            CgMinerCommon.familyFromStats(fx("fixtures/cgminer/vnish_s21_stats.json")))
+        val base = CgMinerCommon.parseStandardTelemetry(
+            fx("fixtures/cgminer/vnish_s21_summary.json"),
+            fx("fixtures/cgminer/vnish_s21_pools.json"),
+        )
+        val t = CgMinerCommon.enrichWithStats(base, fx("fixtures/cgminer/vnish_s21_stats.json"))
+        // GHS 5s = 162986.98 (a string in VNish stats) parsed to GH/s.
+        assertEquals(162986.98, t.hashrateGhs.value!!, 0.1)
+        // Chip temp max across temp2_*/temp3_*/temp_chip* = 67.
+        assertEquals(67.0, t.chipTempC.value!!, 0.001)
+        assertEquals(4, t.fans.size)
+        assertEquals(6390, t.fans[0].rpm)
+        // VNish DOES report wall power via chain_consumption (1114*3 = 3342 W).
+        assertEquals(3342.0, t.powerW.value!!, 0.1)
+        assertEquals(ValueSource.REPORTED, t.powerW.source)
+        assertEquals(236691.0, t.expectedHashrateGhs.value!!, 0.1)
+        assertEquals(595.0, t.frequencyMhz.value!!, 0.1) // avg of freq_avg*
+        assertEquals(195, t.asicCount)
+        assertNotNull(t.efficiencyJTh.value) // now computable — power is present
     }
 
     @Test

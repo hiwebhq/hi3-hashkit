@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.29.0
+
+- VNish (Antminer) monitoring now includes chip temperature, fans, frequency,
+  expected hashrate, ASIC count and — unlike stock Bitmain — **wall power**
+  (summed from per-chain `chain_consumption`), so efficiency in J/TH is computed.
+  Verified against a real Antminer S21 Pro running Vnish 1.3.4. VNish's `version`
+  command errors, so the firmware family is detected from the `stats` Type string.
+
 ## 0.28.0
 
 - Stock Bitmain (Antminer) monitoring now includes chip temperature, fans,

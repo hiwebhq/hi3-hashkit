@@ -32,16 +32,23 @@ class GenericCgMinerAdapter @Inject constructor(
     override val defaultPort: Int = CgMinerApi.DEFAULT_PORT
 
     override suspend fun probe(host: MinerHost): ProbeResult {
-        val result = api.query(host.host, apiPort(host), "version")
-        val body = result.body ?: return ProbeResult.Unreachable(result.error ?: "No response")
-        val family = CgMinerCommon.family(body)
+        val port = apiPort(host)
+        val result = api.query(host.host, port, "version")
+        val versionBody = result.body ?: return ProbeResult.Unreachable(result.error ?: "No response")
+        // VNish's `version` errors; fall back to `stats` (its Type carries the family).
+        var family = CgMinerCommon.family(versionBody)
+        var statsBody: String? = null
+        if (family == null || family == CgMinerCommon.Family.UNKNOWN) {
+            statsBody = api.query(host.host, port, "stats").body
+            family = CgMinerCommon.familyFromStats(statsBody)
+        }
         // Decline anything a specific adapter owns, or that isn't recognizably cgminer.
         if (family == null || family == CgMinerCommon.Family.AVALON ||
             family == CgMinerCommon.Family.BOSER || family == CgMinerCommon.Family.UNKNOWN
         ) {
             return ProbeResult.NotThisDevice
         }
-        return ProbeResult.Supported(TYPE, identity(body, family), body)
+        return ProbeResult.Supported(TYPE, identity(versionBody, statsBody, family), versionBody)
     }
 
     override suspend fun getIdentity(host: MinerHost): MinerIdentity? =
@@ -49,25 +56,25 @@ class GenericCgMinerAdapter @Inject constructor(
 
     override suspend fun getTelemetry(host: MinerHost): TelemetryResult {
         val port = apiPort(host)
-        val version = api.query(host.host, port, "version")
-        val versionBody = version.body ?: return TelemetryResult.Offline(version.error ?: "No response")
-        val family = CgMinerCommon.family(versionBody)
-        if (family == null || family == CgMinerCommon.Family.AVALON || family == CgMinerCommon.Family.BOSER) {
-            return TelemetryResult.ParseError("Not an Antminer-class cgminer device", versionBody)
-        }
+        val versionBody = api.query(host.host, port, "version").body
         val summary = api.query(host.host, port, "summary").body
         val pools = api.query(host.host, port, "pools").body
-        if (summary == null) return TelemetryResult.Offline("No summary from cgminer API")
+        val statsBody = api.query(host.host, port, "stats").body
+        val family = CgMinerCommon.family(versionBody ?: "")
+            ?: CgMinerCommon.familyFromStats(statsBody)
+        if (family == null || family == CgMinerCommon.Family.AVALON || family == CgMinerCommon.Family.BOSER) {
+            return TelemetryResult.ParseError("Not an Antminer-class cgminer device", versionBody ?: statsBody ?: "")
+        }
+        if (summary == null && statsBody == null) return TelemetryResult.Offline("No summary/stats from cgminer API")
         var telemetry = CgMinerCommon.parseStandardTelemetry(summary, pools)
-        // Stock Bitmain: enrich with verified stats fields (temps/fans/freq/expected).
-        var statsBody: String? = null
-        if (family == CgMinerCommon.Family.ANTMINER_STOCK) {
-            statsBody = api.query(host.host, port, "stats").body
-            telemetry = CgMinerCommon.enrichWithAntminerStats(telemetry, statsBody)
+        // Bitmain & VNish: enrich with verified stats fields (temps/fans/freq/expected/power).
+        if (family == CgMinerCommon.Family.ANTMINER_STOCK || family == CgMinerCommon.Family.VNISH) {
+            telemetry = CgMinerCommon.enrichWithStats(telemetry, statsBody)
         }
         val raw = buildString {
-            append("{\"version\":").append(versionBody)
-            append(",\"summary\":").append(summary)
+            append("{")
+            append("\"version\":").append(versionBody ?: "null")
+            summary?.let { append(",\"summary\":").append(it) }
             pools?.let { append(",\"pools\":").append(it) }
             statsBody?.let { append(",\"stats\":").append(it) }
             append("}")
@@ -86,15 +93,21 @@ class GenericCgMinerAdapter @Inject constructor(
                 },
         )
 
-    private fun identity(versionBody: String, family: CgMinerCommon.Family): MinerIdentity {
+    private fun identity(
+        versionBody: String,
+        statsBody: String?,
+        family: CgMinerCommon.Family,
+    ): MinerIdentity {
         val v = CgMinerCommon.firstRecord(versionBody, "VERSION")
+        // VNish carries model/fw in the stats record's Type, not version.
+        val statsType = statsBody?.let { CgMinerCommon.familyModelFromStats(it) }
+        fun s(o: kotlinx.serialization.json.JsonObject?, k: String) =
+            (o?.get(k) as? kotlinx.serialization.json.JsonPrimitive)?.content
         return MinerIdentity(
             manufacturer = CgMinerCommon.familyLabel(family),
-            model = v?.let { (it["Type"] as? kotlinx.serialization.json.JsonPrimitive)?.content },
+            model = s(v, "Type") ?: statsType,
             firmwareFamily = CgMinerCommon.familyLabel(family),
-            firmwareVersion = v?.let {
-                ((it["CGMiner"] ?: it["LUXminer"]) as? kotlinx.serialization.json.JsonPrimitive)?.content
-            },
+            firmwareVersion = s(v, "CGMiner") ?: s(v, "LUXminer") ?: statsType,
         )
     }
 

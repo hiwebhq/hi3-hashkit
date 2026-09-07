@@ -1,0 +1,42 @@
+{
+ "STATUS": [
+  {
+   "STATUS": "S",
+   "When": 1788774851,
+   "Code": 11,
+   "Msg": "Summary",
+   "Description": "cgminer 4.11.1"
+  }
+ ],
+ "DEVS": [
+  {
+   "ASC": 0,
+   "Name": "BTM_S21PRO",
+   "ID": 0,
+   "Enabled": "Y",
+   "Status": "Alive",
+   "Temperature": 0.0,
+   "MHS av": 205355760.0,
+   "MHS 5s": 162986990.0,
+   "MHS 1m": 205355760.0,
+   "MHS 5m": 205355760.0,
+   "MHS 15m": 205355760.0,
+   "Accepted": 3252,
+   "Rejected": 13,
+   "Hardware Errors": 474,
+   "Utility": 0.0,
+   "Last Share Pool": 3,
+   "Last Share Time": 41165,
+   "Total MH": 205355760.0,
+   "Diff1 Work": 0,
+   "Difficulty Accepted": 56852480.0,
+   "Difficulty Rejected": 212992.0,
+   "Last Share Difficulty": 16384.0,
+   "Last Valid Work": 0,
+   "Device Hardware%": 100.0,
+   "Device Rejected%": 0.0,
+   "Device Elapsed": 41346
+  }
+ ],
+ "id": 1
+}

@@ -42,6 +42,34 @@ object CgMinerCommon {
         }
     }
 
+    /** VNish's `version` errors, but its `stats` Type carries "Vnish"/"Antminer". */
+    fun familyFromStats(statsBody: String?): Family? {
+        val type = statsBody?.let {
+            runCatching {
+                (json.parseToJsonElement(it).jsonObject["STATS"] as? JsonArray)
+                    ?.mapNotNull { e -> e as? JsonObject }
+                    ?.firstNotNullOfOrNull { o -> o.str("Type") }
+            }.getOrNull()
+        } ?: return null
+        val lower = type.lowercase()
+        return when {
+            "vnish" in lower -> Family.VNISH
+            "luxos" in lower || "luxminer" in lower -> Family.LUXOS
+            "antminer" in lower -> Family.ANTMINER_STOCK
+            else -> Family.GENERIC
+        }
+    }
+
+    /** The stats-record Type string (e.g. "Antminer S21 Pro (Vnish 1.3.4)"), if present. */
+    fun familyModelFromStats(statsBody: String?): String? =
+        statsBody?.let {
+            runCatching {
+                (json.parseToJsonElement(it).jsonObject["STATS"] as? JsonArray)
+                    ?.mapNotNull { e -> e as? JsonObject }
+                    ?.firstNotNullOfOrNull { o -> o.str("Type") }
+            }.getOrNull()
+        }
+
     fun familyLabel(f: Family): String = when (f) {
         Family.ANTMINER_STOCK -> "Bitmain (stock cgminer)"
         Family.VNISH -> "VNish"
@@ -79,21 +107,24 @@ object CgMinerCommon {
     }
 
     /**
-     * Enrich telemetry with temps/fans/frequency/expected-hashrate from a stock Bitmain
-     * `stats` record. Verified against an Antminer S21 Pro (BMMiner 1.0.0): chip temps
-     * in temp2_1..N and temp_chipN strings, fans fan1..fan_num, expected in
-     * total_rateideal (GH), asic count in total_acn. Power is not in this API → stays
-     * unavailable (Bitmain exposes wall power only via the authenticated web API).
+     * Enrich telemetry with temps/fans/frequency/expected-hashrate from an Antminer-class
+     * `stats` record. Verified against:
+     *  - stock Bitmain (Antminer S21 Pro, BMMiner 1.0.0): chip temps in temp2_* /
+     *    temp_chip*, fans fan1..fan_num, expected in total_rateideal, freq `frequency`.
+     *    No power in the API → stays unavailable.
+     *  - VNish (Antminer S21 Pro, Vnish 1.3.4): same temp/fan/rateideal layout, freq in
+     *    freq_avg*, plus per-chain wall power in chain_consumption* → summed and reported.
      */
-    fun enrichWithAntminerStats(base: MinerTelemetry, statsBody: String?): MinerTelemetry {
+    fun enrichWithStats(base: MinerTelemetry, statsBody: String?): MinerTelemetry {
         val stats = statsBody?.let {
             runCatching { (json.parseToJsonElement(it).jsonObject["STATS"] as? JsonArray) }
                 .getOrNull()?.mapNotNull { e -> e as? JsonObject }
-                ?.firstOrNull { o -> o["GHS 5s"] != null || o["temp_num"] != null }
+                ?.firstOrNull { o -> o["GHS 5s"] != null || o["temp_num"] != null || o["total_acn"] != null }
         } ?: return base
 
         val chipTemps = buildList {
             for (i in 1..8) stats.num("temp2_$i")?.let { add(it) }
+            for (i in 1..8) stats.num("temp3_$i")?.let { add(it) }
             for (i in 1..8) stats.str("temp_chip$i")?.split("-")?.forEach { it.trim().toDoubleOrNull()?.let(::add) }
         }.filter { it > 0 }
         val boardTemps = buildList { for (i in 1..8) stats.num("temp$i")?.let { add(it) } }.filter { it > 0 }
@@ -101,13 +132,23 @@ object CgMinerCommon {
             val n = stats.num("fan_num")?.toInt() ?: 8
             for (i in 1..n.coerceAtMost(8)) stats.num("fan$i")?.toInt()?.takeIf { it > 0 }?.let { add(FanReading(i - 1, it, null)) }
         }
-        val hashrateGhs = stats.num("GHS 5s") ?: stats.num("GHS av") ?: base.hashrateGhs.value
+        // VNish reports per-chain wall power; Bitmain does not.
+        val powerW = (1..16).sumOf { stats.num("chain_consumption$it") ?: 0.0 }.takeIf { it > 0 }
+        // Frequency: Bitmain `frequency`, else average of VNish freq_avg*.
+        val freqs = (1..16).mapNotNull { stats.num("freq_avg$it") }
+        val frequency = stats.num("frequency") ?: freqs.average().takeIf { freqs.isNotEmpty() }
+        val hashrateGhs = stats.num("GHS 5s") ?: stats.num("GHS av") ?: stats.num("total_rate")
+            ?: base.hashrateGhs.value
 
         return base.copy(
             hashrateGhs = Sourced.reported(hashrateGhs),
             expectedHashrateGhs = Sourced.reported(stats.num("total_rateideal")),
+            powerW = if (powerW != null) Sourced.reported(powerW) else base.powerW,
+            efficiencyJTh = Sourced.calculated(
+                hi3.hashkit.core.Units.efficiencyJTh(powerW, hashrateGhs)
+            ),
             chipTempC = Sourced.measured(chipTemps.maxOrNull()),
-            frequencyMhz = Sourced.reported(stats.num("frequency")),
+            frequencyMhz = Sourced.reported(frequency),
             asicCount = stats.num("total_acn")?.toInt(),
             fans = fans.ifEmpty { base.fans },
             unrecognizedFields = base.unrecognizedFields + buildMap {
