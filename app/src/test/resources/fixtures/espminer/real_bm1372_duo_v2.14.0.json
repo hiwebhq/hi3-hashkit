@@ -1,0 +1,217 @@
+{
+ "power": 58.0738525,
+ "voltage": 12250,
+ "current": 29093.75,
+ "temp": 46.8273468,
+ "temp2": 49.9468193,
+ "vrTemp": 64,
+ "coreVoltageActual": 998,
+ "actualFrequency": 400,
+ "expectedHashrate": 5380,
+ "fanspeed": 52.32673645019531,
+ "fanrpm": 1683,
+ "fan2rpm": 0,
+ "hashRate": 5477.2880859,
+ "hashRate_1m": 5521.2841797,
+ "hashRate_10m": 5514.2246094,
+ "hashRate_1h": 5521.6323242,
+ "errorPercentage": 0.6271869,
+ "sharesAccepted": 46012,
+ "sharesRejected": 1779,
+ "sharesPending": 0,
+ "bestDiff": 3475689214,
+ "bestSessionDiff": 3475689214,
+ "poolDifficulty": 12531.03578740204,
+ "responseTime": 22.9139996,
+ "responseShareBatch": 0,
+ "processTime": 1.7869999,
+ "workReceived": 8395,
+ "blockFound": 0,
+ "showNewBlock": false,
+ "blockHeight": 965874,
+ "scriptsig": "Hi3-Pool",
+ "networkDifficulty": 127450789715843,
+ "coinbaseValueTotalSatoshis": 313639749,
+ "coinbaseValueUserSatoshis": 313639749,
+ "freeHeap": 7721644,
+ "freeHeapInternal": 63395,
+ "freeHeapSpiram": 7689704,
+ "minFreeHeap": 7639876,
+ "maxAllocHeap": 30720,
+ "uptimeSeconds": 360336,
+ "cpuUsage": 0,
+ "miningPaused": false,
+ "overheat_mode": 0,
+ "wifiStatus": "Connected!",
+ "wifiRSSI": -25,
+ "version": "v2.14.0-48-gc4796e2a-dirty",
+ "axeOSVersion": "Unified",
+ "idfVersion": "v5.5.2-dirty",
+ "boardVersion": "1201",
+ "maxPower": 60,
+ "nominalVoltage": 12,
+ "smallCoreCount": 6725,
+ "ASICModel": "BM1372/BM1373",
+ "isPSRAMAvailable": 1,
+ "resetReason": "Reset due to power-on event",
+ "runningPartition": "factory",
+ "macAddr": "02:00:00:00:00:05",
+ "hostname": "fixture-miner-5",
+ "ssid": "redacted-ssid",
+ "ipv4": "10.0.0.208",
+ "ipv6": "2601:600:9100:A40:DEB4:D9FF:FE2C:95D8",
+ "apEnabled": 0,
+ "poolConnectionInfo": "IPv4",
+ "isUsingFallbackStratum": 0,
+ "primaryPoolIndex": 0,
+ "secondaryPoolIndex": 1,
+ "useFallbackStratum": 0,
+ "pools": [
+  {
+   "id": 0,
+   "stratumProtocol": "SV1",
+   "stratumURL": "192.0.2.10",
+   "stratumPort": 3333,
+   "stratumUser": "bc1qredactedexampleaddress.worker",
+   "stratumPassword": "*****",
+   "stratumSuggestedDifficulty": 1000,
+   "stratumExtranonceSubscribe": false,
+   "stratumTLS": 0,
+   "stratumCert": "x",
+   "stratumDecodeCoinbase": true,
+   "stratumV2ChannelType": "extended",
+   "stratumV2AuthorityPubkey": ""
+  },
+  {
+   "id": 1,
+   "stratumProtocol": "SV1",
+   "stratumURL": "192.0.2.10",
+   "stratumPort": 3333,
+   "stratumUser": "bc1qredactedexampleaddress.worker",
+   "stratumPassword": "*****",
+   "stratumSuggestedDifficulty": 1000,
+   "stratumExtranonceSubscribe": false,
+   "stratumTLS": 0,
+   "stratumCert": "x",
+   "stratumDecodeCoinbase": true,
+   "stratumV2ChannelType": "extended",
+   "stratumV2AuthorityPubkey": ""
+  }
+ ],
+ "stratumURL": "192.0.2.10",
+ "stratumPort": 3333,
+ "stratumUser": "bc1qredactedexampleaddress.worker",
+ "stratumSuggestedDifficulty": 1000,
+ "stratumExtranonceSubscribe": false,
+ "stratumTLS": 0,
+ "stratumCert": "x",
+ "stratumDecodeCoinbase": true,
+ "stratumProtocol": "SV1",
+ "stratumV2AuthorityPubkey": "",
+ "stratumV2ChannelType": "extended",
+ "fallbackStratumURL": "192.0.2.10",
+ "fallbackStratumPort": 3333,
+ "fallbackStratumUser": "bc1qredactedexampleaddress.worker",
+ "fallbackStratumSuggestedDifficulty": 1000,
+ "fallbackStratumExtranonceSubscribe": false,
+ "fallbackStratumTLS": 0,
+ "fallbackStratumCert": "x",
+ "fallbackStratumDecodeCoinbase": true,
+ "fallbackStratumProtocol": "SV1",
+ "fallbackStratumV2AuthorityPubkey": "",
+ "fallbackStratumV2ChannelType": "extended",
+ "useCustomWWW": 0,
+ "overclockEnabled": 0,
+ "display": "SSD1306 (128x32)",
+ "rotation": 0,
+ "invertscreen": 0,
+ "displayTimeout": -1,
+ "autofanspeed": 1,
+ "manualFanSpeed": 100,
+ "minFanSpeed": 25,
+ "temptarget": 50,
+ "coreVoltage": 1000,
+ "frequency": 400,
+ "statsFrequency": 0,
+ "statsLimit": 720,
+ "hashrateMonitor": {
+  "asics": [
+   {
+    "total": 2764.45068359375,
+    "errorCount": 3055874,
+    "domains": [
+     652.9365234375,
+     739.5275268554688,
+     627.6919555664062,
+     752.375732421875
+    ]
+   },
+   {
+    "total": 2712.83740234375,
+    "errorCount": 1026555,
+    "domains": [
+     683.0497436523438,
+     679.3021240234375,
+     649.1807861328125,
+     653.4901123046875
+    ]
+   }
+  ]
+ },
+ "partitions": [
+  {
+   "label": "factory",
+   "isCurrent": true,
+   "isFactory": true,
+   "version": "v2.14.0-48-gc4796e2a-dirty",
+   "compileDate": "Aug 17 2026",
+   "compileTime": "14:52:03",
+   "usagePercent": 57
+  },
+  {
+   "label": "ota_0",
+   "isCurrent": false,
+   "isFactory": false,
+   "version": null,
+   "compileDate": null,
+   "compileTime": null,
+   "usagePercent": null
+  },
+  {
+   "label": "ota_1",
+   "isCurrent": false,
+   "isFactory": false,
+   "version": null,
+   "compileDate": null,
+   "compileTime": null,
+   "usagePercent": null
+  }
+ ],
+ "sharesRejectedReasons": [
+  {
+   "message": "duplicate share",
+   "count": 1770
+  },
+  {
+   "message": "job not found",
+   "count": 8
+  },
+  {
+   "message": "low difficulty share",
+   "count": 1
+  }
+ ],
+ "blockSignals": [],
+ "coinbaseOutputs": [
+  {
+   "value": 313639749,
+   "address": "redacted"
+  },
+  {
+   "value": 0,
+   "address": "OP_RETURN: .!..63.[.S.s0...{...$J.w.K..y...R..."
+  }
+ ],
+ "fullHostname": "Hi3-naja-duo.local",
+ "mdnsHostname": "Hi3-naja-duo"
+}

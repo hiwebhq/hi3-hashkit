@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder Hi3 mark: stylized pickaxe/pulse glyph. Swap via the branding layer when
+     official Hi3 assets are provided. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M24,58 L38,58 L44,40 L52,72 L60,48 L66,58 L84,58"
+        android:strokeColor="#2BD97C"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M54,20 L58,28 L50,28 Z"
+        android:fillColor="#F0B429" />
+</vector>

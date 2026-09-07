@@ -1,0 +1,105 @@
+package hi3.hashkit.data.prefs
+
+import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import hi3.hashkit.domain.alerts.AlertThresholds
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
+
+private val Context.dataStore by preferencesDataStore(name = "settings")
+
+data class AppSettings(
+    val useFahrenheit: Boolean = false,
+    val demoModeEnabled: Boolean = false,
+    val pollIntervalMs: Long = 15_000,
+    /** Background polling via WorkManager (>=15-minute Android minimum). */
+    val backgroundMonitoringEnabled: Boolean = false,
+    /** Electricity price per kWh in [currencyCode]; 0 disables cost estimates. */
+    val electricityRatePerKwh: Double = 0.0,
+    val currencyCode: String = "USD",
+    /** Manually entered network difficulty for solo probability (no network fetch by default). */
+    val networkDifficulty: Double = 0.0,
+    /** Opt-in fetch of network difficulty from mempool.space (documented external request). */
+    val difficultyAutoFetch: Boolean = false,
+    /** Days of telemetry history to keep. */
+    val retentionDays: Int = 30,
+    val alertThresholds: AlertThresholds = AlertThresholds(),
+    val alertsEnabled: Boolean = true,
+)
+
+@Singleton
+class SettingsRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
+) {
+    private object Keys {
+        val useFahrenheit = booleanPreferencesKey("use_fahrenheit")
+        val demoMode = booleanPreferencesKey("demo_mode")
+        val pollIntervalMs = longPreferencesKey("poll_interval_ms")
+        val backgroundMonitoring = booleanPreferencesKey("background_monitoring")
+        val electricityRate = doublePreferencesKey("electricity_rate")
+        val currencyCode = stringPreferencesKey("currency_code")
+        val networkDifficulty = doublePreferencesKey("network_difficulty")
+        val difficultyAutoFetch = booleanPreferencesKey("difficulty_auto_fetch")
+        val retentionDays = intPreferencesKey("retention_days")
+        val alertsEnabled = booleanPreferencesKey("alerts_enabled")
+        val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
+        val thChipTempC = doublePreferencesKey("th_chip_temp_c")
+        val thVrTempC = doublePreferencesKey("th_vr_temp_c")
+        val thRejectPct = doublePreferencesKey("th_reject_pct")
+        val thCooldownMin = longPreferencesKey("th_cooldown_min")
+    }
+
+    val settings: Flow<AppSettings> = context.dataStore.data.map { p ->
+        AppSettings(
+            useFahrenheit = p[Keys.useFahrenheit] ?: false,
+            demoModeEnabled = p[Keys.demoMode] ?: false,
+            pollIntervalMs = (p[Keys.pollIntervalMs] ?: 15_000).coerceIn(5_000, 300_000),
+            backgroundMonitoringEnabled = p[Keys.backgroundMonitoring] ?: false,
+            electricityRatePerKwh = p[Keys.electricityRate] ?: 0.0,
+            currencyCode = p[Keys.currencyCode] ?: "USD",
+            networkDifficulty = p[Keys.networkDifficulty] ?: 0.0,
+            difficultyAutoFetch = p[Keys.difficultyAutoFetch] ?: false,
+            retentionDays = (p[Keys.retentionDays] ?: 30).coerceIn(1, 3650),
+            alertsEnabled = p[Keys.alertsEnabled] ?: true,
+            alertThresholds = AlertThresholds(
+                hashrateBelowPercent = p[Keys.thHashBelowPct] ?: 80.0,
+                chipTempC = p[Keys.thChipTempC] ?: 70.0,
+                vrTempC = p[Keys.thVrTempC] ?: 90.0,
+                rejectRatePercent = p[Keys.thRejectPct] ?: 3.0,
+                cooldownMs = ((p[Keys.thCooldownMin] ?: 30L).coerceIn(1, 1440)) * 60_000,
+            ),
+        )
+    }
+
+    suspend fun current(): AppSettings = settings.first()
+
+    suspend fun setUseFahrenheit(value: Boolean) = edit { it[Keys.useFahrenheit] = value }
+    suspend fun setDemoMode(value: Boolean) = edit { it[Keys.demoMode] = value }
+    suspend fun setPollIntervalMs(value: Long) = edit { it[Keys.pollIntervalMs] = value }
+    suspend fun setBackgroundMonitoring(value: Boolean) = edit { it[Keys.backgroundMonitoring] = value }
+    suspend fun setElectricityRate(value: Double) = edit { it[Keys.electricityRate] = value }
+    suspend fun setCurrencyCode(value: String) = edit { it[Keys.currencyCode] = value }
+    suspend fun setNetworkDifficulty(value: Double) = edit { it[Keys.networkDifficulty] = value }
+    suspend fun setDifficultyAutoFetch(value: Boolean) = edit { it[Keys.difficultyAutoFetch] = value }
+    suspend fun setRetentionDays(value: Int) = edit { it[Keys.retentionDays] = value }
+    suspend fun setAlertsEnabled(value: Boolean) = edit { it[Keys.alertsEnabled] = value }
+    suspend fun setHashrateBelowPercent(value: Double) = edit { it[Keys.thHashBelowPct] = value }
+    suspend fun setChipTempThreshold(value: Double) = edit { it[Keys.thChipTempC] = value }
+    suspend fun setVrTempThreshold(value: Double) = edit { it[Keys.thVrTempC] = value }
+    suspend fun setRejectRateThreshold(value: Double) = edit { it[Keys.thRejectPct] = value }
+    suspend fun setCooldownMinutes(value: Long) = edit { it[Keys.thCooldownMin] = value }
+
+    private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
+        context.dataStore.edit { block(it) }
+    }
+}

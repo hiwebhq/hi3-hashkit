@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Miners expose plain-HTTP APIs on the local network, so cleartext must be permitted.
+  Tradeoff: Android cannot scope cleartext by IP range, only by hostname. Since miners are
+  addressed by private IPs (LAN or Tailscale CGNAT), cleartext is enabled app-wide BUT the
+  app's own HTTP layer (MinerHostValidator) refuses to connect to any non-private address,
+  which is the enforceable boundary. All non-miner traffic (none in v1) must use HTTPS with
+  certificate validation.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
