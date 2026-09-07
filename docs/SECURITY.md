@@ -68,8 +68,38 @@ system trust anchors remains the default for any future non-miner traffic.
   gitignored. Keystore-backed credential encryption ships with the first feature that
   stores a credential (Canaan auth, Phase 3).
 
-## Known gaps (tracked for the hardening phase)
+## Phase 5 security & permission review (2026-09-06)
+
+Reviewed and confirmed:
+
+- **Permissions are minimal**: INTERNET, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE,
+  POST_NOTIFICATIONS (runtime, contextual). No location, camera, storage, contacts,
+  or foreground-service permissions. `allowBackup` keeps Android's standard app
+  backup; the DB contains miner telemetry and addresses but no passwords.
+- **Network boundary**: every outbound connection (HTTP and raw TCP) passes
+  `MinerHostValidator` — private/CGNAT/link-local/loopback only, re-checked after DNS
+  resolution. Unit-tested edge cases include 172.32.0.1 and 100.128.0.1 (just outside
+  the allowed ranges).
+- **No credential storage**: the app stores no miner passwords, pool passwords, or
+  API keys anywhere (v2.15 pool edits echo the firmware's mask instead of ever
+  handling the real password). Android Keystore-backed encryption is therefore not
+  yet needed and will be added with the first feature that stores a secret (Canaan
+  web-CGI auth).
+- **Exports**: share-sheet only; CSV redacts workers, diagnostics redact IPs by
+  default; backup documents that it contains addresses/workers.
+- **Release build**: R8-minified, resource-shrunk, signed with a locally-generated
+  4096-bit RSA key (`hi3-release.jks` + `keystore.properties`, both gitignored and
+  verified untracked). `apksigner verify` passes.
+- **Dependencies**: pinned via the version catalog — AGP 8.9.2, Kotlin 2.1.10,
+  Compose BOM 2025.04.01, OkHttp 4.12.0, Room 2.7.1, Hilt 2.55,
+  kotlinx.serialization 1.8.0, DataStore 1.1.4, WorkManager 2.10.0. All are
+  maintained mainstream releases with no known-critical CVEs at review time; this was
+  a manual review — wiring an automated scanner (e.g. OWASP dependency-check or
+  `gradle dependencyUpdates`) into CI is recommended when CI exists.
+
+## Known gaps (tracked)
 
 - App lock (biometric/PIN) not yet implemented.
-- Backup/restore encryption not yet implemented (no sensitive data stored yet).
-- Dependency vulnerability review scheduled for Phase 5.
+- Backup file is plaintext JSON (contains addresses/workers, no secrets); encryption
+  will come with credential support.
+- No CI, so no automated dependency scanning yet.

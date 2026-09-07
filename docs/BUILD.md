@@ -25,6 +25,15 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 
 ## Release builds
 
-`./gradlew assembleRelease` produces an unsigned release APK with R8 enabled. Release
-signing uses a local `keystore.properties` (gitignored); generating and wiring the
-signing config is part of Phase 5. Never commit keystores or passwords.
+`./gradlew assembleRelease` → `app/build/outputs/apk/release/app-release.apk`
+(R8-minified + resource-shrunk, ~1.7 MB, signed).
+
+Signing reads `keystore.properties` at the repo root (storeFile/storePassword/
+keyAlias/keyPassword). The keystore `hi3-release.jks` and the properties file live
+locally and are gitignored — **back both up somewhere safe; losing them means future
+releases can't update existing installs.** Without the properties file the release
+build is simply unsigned. Never commit keystores or passwords.
+
+Note: a debug install cannot be upgraded in place by a release build (different
+signatures) — installing the release APK over the debug app requires an uninstall,
+which deletes local history. Pick one signature per phone.
