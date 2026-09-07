@@ -80,6 +80,12 @@ abstract class AdapterModule {
     @IntoSet
     abstract fun braiins(adapter: hi3.hashkit.adapters.braiins.BraiinsAdapter): MinerAdapter
 
+    // Generic cgminer (Antminer-class: Bitmain/VNish/LuxOS) — declines Avalon/BOSer,
+    // so probe order relative to the specific adapters does not matter.
+    @Binds
+    @IntoSet
+    abstract fun genericCgminer(adapter: hi3.hashkit.adapters.cgminer.GenericCgMinerAdapter): MinerAdapter
+
     @Binds
     @IntoSet
     abstract fun demo(adapter: DemoMinerAdapter): MinerAdapter

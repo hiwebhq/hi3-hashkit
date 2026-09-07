@@ -9,7 +9,8 @@
 | Canaan Nano 3S / Avalon Q | Nano 3S, Avalon Q | Same CGMiner API family expected; accepted when `version` identifies as Avalon | Monitoring (compat-gated) | ❌ | Not reachable during Phase 3 (no Tailscale subnet route was advertised) — unverified; the tolerant parser treats them like the Nano 3 once reachable |
 | Demo | Synthetic | — | ✅ (demo mode only) | — | Never mixed with real miners |
 | Braiins OS (BOSer) | Braiins Mini Miner BMM 100 (verified live: boser-openwrt 0.1.0, API 3.7) | CGMiner-compatible TCP API on 4028: `version`, `summary`, `devs`, `temps`, `fans`, `devdetails`, `pools` — read-only | ✅ | ❌ Braiins gRPC/web control APIs unverified — monitoring only | `devs` "Nominal MHS" supplies firmware-declared expected hashrate (attainment works out of the box). No power sensor on the BMM 100 → power UNAVAILABLE; no MAC/serial over this API → identity falls back to model+IP. Braiins OS+ conversions identifying as BOSer are accepted but unverified |
-| LuxOS, VNish, stock Bitmain, WhatsMiner, FutureBit | — | — | Not supported | Not supported | Adapter interface ready; no support claimed |
+| Antminer-class cgminer: stock Bitmain, VNish, LuxOS | Antminer S-series etc. | Standard cgminer TCP API on 4028: `version`/`summary`/`pools` | ✅ Basic (hashrate, shares, uptime, pool) | ❌ Not yet | **Monitoring is limited to the standardized cgminer fields** (verified shapes). Temps/fans/power and controls live in firmware-specific fields/APIs and are **pending capture from real units** — not shipped as guesses. Detected by `version` self-identification; declines Avalon/BOSer so those keep their richer adapters |
+| WhatsMiner, FutureBit | — | — | Not supported | Not supported | Adapter interface ready; no support claimed |
 
 ## ESP-Miner endpoint & field notes
 

@@ -1,0 +1,1 @@
+{"STATUS":[{"STATUS":"S","When":1,"Code":7,"Msg":"1 Pool(s)","Description":"cgminer 4.11.1"}],"POOLS":[{"POOL":0,"URL":"stratum+tcp://192.0.2.10:3333","User":"bc1qredactedexampleaddress.rig1","Status":"Alive","Priority":0,"Stratum Active":true}],"id":1}
