@@ -198,8 +198,20 @@ private fun AppNavHost(onExit: () -> Unit) {
         composable(
             route = "miner/{minerId}",
             arguments = listOf(navArgument("minerId") { type = NavType.LongType }),
+        ) { entry ->
+            MinerDetailScreen(
+                onBack = { nav.popBackStack() },
+                onLogs = {
+                    val id = entry.arguments?.getLong("minerId") ?: return@MinerDetailScreen
+                    nav.navigate("miner/$id/logs")
+                },
+            )
+        }
+        composable(
+            route = "miner/{minerId}/logs",
+            arguments = listOf(navArgument("minerId") { type = NavType.LongType }),
         ) {
-            MinerDetailScreen(onBack = { nav.popBackStack() })
+            hi3.hashkit.ui.logs.LogsScreen(onBack = { nav.popBackStack() })
         }
         composable("add") {
             AddMinerScreen(onDone = { nav.popBackStack() })

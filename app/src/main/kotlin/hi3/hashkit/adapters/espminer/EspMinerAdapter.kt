@@ -98,11 +98,19 @@ class EspMinerAdapter @Inject constructor(
     override fun getCapabilities(identity: MinerIdentity?): MinerCapabilities {
         val flavor = EspMinerFirmware.flavorOf(identity)
         if (!EspMinerFirmware.controlsSupported(flavor)) {
-            return MinerCapabilities.monitoringOnly(EspMinerFirmware.UNVERIFIED_REASON)
+            val base = MinerCapabilities.monitoringOnly(EspMinerFirmware.UNVERIFIED_REASON)
+            // Read-only log streaming over /api/ws is verified on NerdQAxe firmware.
+            return if (flavor == EspMinerFlavor.NERDQAXE) {
+                base.copy(
+                    supported = base.supported + Capability.LOGS,
+                    unsupportedReasons = base.unsupportedReasons - Capability.LOGS,
+                )
+            } else base
         }
         return MinerCapabilities(
             supported = setOf(
                 Capability.TELEMETRY,
+                Capability.LOGS,
                 Capability.REBOOT,
                 Capability.SET_POOLS,
                 Capability.SET_FAN,
@@ -111,7 +119,6 @@ class EspMinerAdapter @Inject constructor(
             unsupportedReasons = mapOf(
                 Capability.SET_OPERATING_MODE to "ESP-Miner has no operating-mode concept; use tune profiles.",
                 Capability.POWER_CONTROL to "ESP-Miner exposes no power on/off endpoint.",
-                Capability.LOGS to "Log streaming arrives in a later milestone.",
             ),
         )
     }

@@ -50,6 +50,7 @@ import java.time.Instant
 @Composable
 fun MinerDetailScreen(
     onBack: () -> Unit,
+    onLogs: () -> Unit = {},
     viewModel: MinerDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -197,6 +198,20 @@ fun MinerDetailScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
+            }
+
+            if (state.capabilities?.let { hi3.hashkit.domain.model.Capability.LOGS in it } == true) {
+                SectionCard("LIVE LOGS") {
+                    androidx.compose.material3.OutlinedButton(onClick = onLogs) {
+                        Text("Open live log stream")
+                    }
+                    Text(
+                        "Streams firmware logs over the miner's WebSocket while open. " +
+                            "Wallet addresses are redacted.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
             }
 
             SectionCard("IDENTITY") {
