@@ -42,6 +42,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.ui.theme.HiBrand
 
+// Section order: alphabetical, with DATA & EXPORTS second-to-last and DEMO last
+// (user preference).
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -77,27 +79,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Section("MONITORING") {
-                ToggleRow(
-                    "Background monitoring",
-                    "Poll every ~15 min while the app is closed (Android may delay this; " +
-                        "it is not continuous real-time monitoring).",
-                    settings.backgroundMonitoringEnabled,
-                ) { enabled ->
-                    viewModel.setBackgroundMonitoring(enabled)
-                    if (enabled && Build.VERSION.SDK_INT >= 33) {
-                        notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
-                }
-                NumberRow(
-                    "Foreground poll interval (s)",
-                    (settings.pollIntervalMs / 1000).toString(),
-                ) { it.toLongOrNull()?.let { s -> viewModel.setPollIntervalSeconds(s) } }
-                NumberRow("Keep history (days)", settings.retentionDays.toString()) {
-                    it.toIntOrNull()?.let { d -> viewModel.setRetentionDays(d) }
-                }
-            }
-
             Section("ALERTS") {
                 ToggleRow(
                     "Alerts & notifications",
@@ -126,14 +107,133 @@ fun SettingsScreen(
                 }
             }
 
-            Section("UNITS & COST") {
-                ToggleRow("Fahrenheit", "Show temperatures in °F.", settings.useFahrenheit) {
-                    viewModel.setUseFahrenheit(it)
+            Section("DISCOVERY") {
+                NumberRow(
+                    "Extra scan subnets (CSV of CIDRs)",
+                    settings.extraSubnetsCsv,
+                ) { viewModel.setExtraSubnets(it) }
+                Text(
+                    "Add remote LANs reachable through your Tailscale subnet router, e.g. " +
+                        "192.168.50.0/24. They appear as quick-fill options on the Add screen.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
+            Section("DISPLAY") {
+                ToggleRow(
+                    "Solo odds card",
+                    "Show block-finding probability on the dashboard.",
+                    settings.showSoloCard,
+                ) { viewModel.setShowSoloCard(it) }
+            }
+
+            Section("HI3 MMP") {
+                ToggleRow(
+                    "Hi3 MMP fleet view",
+                    "Read-only fleet summary and per-site rollups from your Mining " +
+                        "Management Platform.",
+                    settings.mmpEnabled,
+                ) { viewModel.setMmpEnabled(it) }
+                if (settings.mmpEnabled) {
+                    NumberRow("MMP URL", settings.mmpBaseUrl) { viewModel.setMmpBaseUrl(it) }
+                    var keyInput by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = keyInput,
+                        onValueChange = { keyInput = it },
+                        label = {
+                            Text(
+                                if (settings.mmpKeyConfigured) "API key (saved — enter to replace, blank to clear)"
+                                else "API key (mint one in the MMP admin UI)",
+                            )
+                        },
+                        singleLine = true,
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    androidx.compose.material3.TextButton(onClick = {
+                        viewModel.setMmpApiKey(keyInput)
+                        keyInput = ""
+                    }) { Text(if (settings.mmpKeyConfigured) "Replace key" else "Save key") }
                 }
-                NumberRow("Electricity rate (per kWh)", settings.electricityRatePerKwh.toString()) {
-                    it.toDoubleOrNull()?.let { v -> viewModel.setElectricityRate(v) }
+                Text(
+                    "What is transmitted while enabled: your MMP API key in the request " +
+                        "header, over HTTPS to the MMP URL above, about once a minute while " +
+                        "the app is open — read-only fleet queries, nothing uploaded. The key " +
+                        "is stored encrypted with the Android Keystore. Off by default.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
+            Section("HI3 POOL") {
+                ToggleRow(
+                    "Hi3 Pool stats",
+                    "Read-only pool-side view of your workers, compared against local " +
+                        "miner readings on the dashboard.",
+                    settings.hi3PoolEnabled,
+                ) { viewModel.setHi3PoolEnabled(it) }
+                if (settings.hi3PoolEnabled) {
+                    NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                    NumberRow("Payout address (account key)", settings.hi3PoolPayoutAddress) {
+                        viewModel.setHi3PoolPayoutAddress(it)
+                    }
                 }
-                NumberRow("Currency code", settings.currencyCode) { viewModel.setCurrencyCode(it) }
+                Text(
+                    "What is transmitted while enabled: your payout address, inside an " +
+                        "HTTPS request to the pool URL above, about once a minute while the " +
+                        "app is open. Nothing else — no miner telemetry, no local IPs, no " +
+                        "worker passwords. Off by default; turning it off stops all pool " +
+                        "requests immediately.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
+            Section("MONITORING") {
+                ToggleRow(
+                    "Background monitoring",
+                    "Poll every ~15 min while the app is closed (Android may delay this; " +
+                        "it is not continuous real-time monitoring).",
+                    settings.backgroundMonitoringEnabled,
+                ) { enabled ->
+                    viewModel.setBackgroundMonitoring(enabled)
+                    if (enabled && Build.VERSION.SDK_INT >= 33) {
+                        notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
+                NumberRow(
+                    "Foreground poll interval (s)",
+                    (settings.pollIntervalMs / 1000).toString(),
+                ) { it.toLongOrNull()?.let { s -> viewModel.setPollIntervalSeconds(s) } }
+                NumberRow("Keep history (days)", settings.retentionDays.toString()) {
+                    it.toIntOrNull()?.let { d -> viewModel.setRetentionDays(d) }
+                }
+            }
+
+            Section("SECURITY") {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val canLock = remember {
+                    androidx.biometric.BiometricManager.from(context).canAuthenticate(
+                        androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                            androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                    ) == androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
+                }
+                ToggleRow(
+                    "App lock",
+                    if (canLock)
+                        "Require fingerprint/face or your device PIN to open the app " +
+                            "(relocks after 1 minute in the background)."
+                    else
+                        "Unavailable: set up a screen lock (PIN/biometric) on this device first.",
+                    settings.appLockEnabled && canLock,
+                ) { if (canLock) viewModel.setAppLockEnabled(it) }
+                Text(
+                    "Protects the app UI. Note: exported backups and the on-disk database " +
+                        "are protected by Android's standard app sandboxing, not by this lock.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
             }
 
             Section("SOLO MINING") {
@@ -149,17 +249,14 @@ fun SettingsScreen(
                 ) { viewModel.setDifficultyAutoFetch(it) }
             }
 
-            Section("DISCOVERY") {
-                NumberRow(
-                    "Extra scan subnets (CSV of CIDRs)",
-                    settings.extraSubnetsCsv,
-                ) { viewModel.setExtraSubnets(it) }
-                Text(
-                    "Add remote LANs reachable through your Tailscale subnet router, e.g. " +
-                        "192.168.50.0/24. They appear as quick-fill options on the Add screen.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
+            Section("UNITS & COST") {
+                ToggleRow("Fahrenheit", "Show temperatures in °F.", settings.useFahrenheit) {
+                    viewModel.setUseFahrenheit(it)
+                }
+                NumberRow("Electricity rate (per kWh)", settings.electricityRatePerKwh.toString()) {
+                    it.toDoubleOrNull()?.let { v -> viewModel.setElectricityRate(v) }
+                }
+                NumberRow("Currency code", settings.currencyCode) { viewModel.setCurrencyCode(it) }
             }
 
             Section("DATA & EXPORTS") {
@@ -202,101 +299,6 @@ fun SettingsScreen(
                     "Adds clearly-labeled synthetic miners; they never mix with real totals when off.",
                     settings.demoModeEnabled,
                 ) { viewModel.setDemoMode(it) }
-            }
-
-            Section("HI3 POOL") {
-                ToggleRow(
-                    "Hi3 Pool stats",
-                    "Read-only pool-side view of your workers, compared against local " +
-                        "miner readings on the dashboard.",
-                    settings.hi3PoolEnabled,
-                ) { viewModel.setHi3PoolEnabled(it) }
-                if (settings.hi3PoolEnabled) {
-                    NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
-                    NumberRow("Payout address (account key)", settings.hi3PoolPayoutAddress) {
-                        viewModel.setHi3PoolPayoutAddress(it)
-                    }
-                }
-                Text(
-                    "What is transmitted while enabled: your payout address, inside an " +
-                        "HTTPS request to the pool URL above, about once a minute while the " +
-                        "app is open. Nothing else — no miner telemetry, no local IPs, no " +
-                        "worker passwords. Off by default; turning it off stops all pool " +
-                        "requests immediately.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
-            }
-
-            Section("HI3 MMP") {
-                ToggleRow(
-                    "Hi3 MMP fleet view",
-                    "Read-only fleet summary and per-site rollups from your Mining " +
-                        "Management Platform.",
-                    settings.mmpEnabled,
-                ) { viewModel.setMmpEnabled(it) }
-                if (settings.mmpEnabled) {
-                    NumberRow("MMP URL", settings.mmpBaseUrl) { viewModel.setMmpBaseUrl(it) }
-                    var keyInput by remember { mutableStateOf("") }
-                    OutlinedTextField(
-                        value = keyInput,
-                        onValueChange = { keyInput = it },
-                        label = {
-                            Text(
-                                if (settings.mmpKeyConfigured) "API key (saved — enter to replace, blank to clear)"
-                                else "API key (mint one in the MMP admin UI)",
-                            )
-                        },
-                        singleLine = true,
-                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    androidx.compose.material3.TextButton(onClick = {
-                        viewModel.setMmpApiKey(keyInput)
-                        keyInput = ""
-                    }) { Text(if (settings.mmpKeyConfigured) "Replace key" else "Save key") }
-                }
-                Text(
-                    "What is transmitted while enabled: your MMP API key in the request " +
-                        "header, over HTTPS to the MMP URL above, about once a minute while " +
-                        "the app is open — read-only fleet queries, nothing uploaded. The key " +
-                        "is stored encrypted with the Android Keystore. Off by default.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
-            }
-
-            Section("DISPLAY") {
-                ToggleRow(
-                    "Solo odds card",
-                    "Show block-finding probability on the dashboard.",
-                    settings.showSoloCard,
-                ) { viewModel.setShowSoloCard(it) }
-            }
-
-            Section("SECURITY") {
-                val context = androidx.compose.ui.platform.LocalContext.current
-                val canLock = remember {
-                    androidx.biometric.BiometricManager.from(context).canAuthenticate(
-                        androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                            androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    ) == androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
-                }
-                ToggleRow(
-                    "App lock",
-                    if (canLock)
-                        "Require fingerprint/face or your device PIN to open the app " +
-                            "(relocks after 1 minute in the background)."
-                    else
-                        "Unavailable: set up a screen lock (PIN/biometric) on this device first.",
-                    settings.appLockEnabled && canLock,
-                ) { if (canLock) viewModel.setAppLockEnabled(it) }
-                Text(
-                    "Protects the app UI. Note: exported backups and the on-disk database " +
-                        "are protected by Android's standard app sandboxing, not by this lock.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
             }
         }
     }
