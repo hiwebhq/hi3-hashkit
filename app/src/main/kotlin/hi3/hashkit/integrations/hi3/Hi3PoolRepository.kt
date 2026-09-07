@@ -67,6 +67,15 @@ class Hi3PoolRepository @Inject constructor(
             _state.value = Hi3PoolState(enabled = false, poolType = poolType)
             return
         }
+        // Placeholder pools contact nothing — no address/key is read or sent.
+        if (poolType.comingSoon) {
+            _state.value = Hi3PoolState(
+                enabled = true,
+                poolType = poolType,
+                error = "${poolType.displayName.removeSuffix(" (coming soon)")} support is coming soon.",
+            )
+            return
+        }
         if (settings.hi3PoolPayoutAddress.isBlank()) {
             _state.value = Hi3PoolState(
                 enabled = true,

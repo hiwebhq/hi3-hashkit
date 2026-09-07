@@ -95,6 +95,8 @@ class Hi3PoolClient @Inject constructor(
         PoolType.HI3, PoolType.PUBLIC_POOL -> fetchAccount(baseUrl, identifier)
         PoolType.CKPOOL -> fetchCkpoolAccount(baseUrl, identifier)
         PoolType.OCEAN -> fetchOceanAccount(baseUrl, identifier)
+        // No verified endpoint yet — never actually reached (repository short-circuits first).
+        PoolType.LUXOR -> PoolResult.Error("Luxor support is coming soon.")
     }
 
     /** ckpool: raw.stats.ckpool.org/users/{address}; hashrates are suffix strings ("1.5T"). */

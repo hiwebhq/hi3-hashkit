@@ -17,7 +17,7 @@ class LogRedactorTest {
     fun `redacts bech32 and base58 wallets keeping the worker suffix`() {
         assertEquals(
             "stratum_task: login [wallet].0x203 ok",
-            LogRedactor.clean("stratum_task: login bc1qw4klxvyhstqgzkzvxvxlvmz0e8mgy4vk3dhr2p.0x203 ok"),
+            LogRedactor.clean("stratum_task: login bc1qexampleredactedwalletaddr0e8mgy4vk3dh.0x203 ok"),
         )
         assertEquals(
             "user [wallet].worker1 authorized",

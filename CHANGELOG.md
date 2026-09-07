@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.35.0
+
+- **Luxor** appears in the pool selector as "coming soon" — its API isn't verified yet,
+  so selecting it contacts nothing and sends no address or key; the card and settings
+  say support is on the way. Pick another pool for live stats meanwhile.
+
 ## 0.34.0
 
 - **Choose your pool.** The Hi3 Pool card/settings are now a generic "Pool" integration

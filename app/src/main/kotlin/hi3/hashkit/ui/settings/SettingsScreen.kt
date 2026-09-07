@@ -191,27 +191,39 @@ fun SettingsScreen(
                 ) { viewModel.setHi3PoolEnabled(it) }
                 if (settings.hi3PoolEnabled) {
                     PoolTypeRow(current = settings.poolType, onSelect = { viewModel.setPoolType(it) })
-                    if (settings.poolType.baseUrlEditable) {
-                        NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
-                    }
-                    PayoutAddressRow(
-                        label = settings.poolType.identifierLabel,
-                        value = settings.hi3PoolPayoutAddress,
-                        onChange = { viewModel.setHi3PoolPayoutAddress(it) },
-                    )
-                    NumberRow("API key / watcher token (optional)", settings.poolApiToken) {
-                        viewModel.setPoolApiToken(it)
+                    if (settings.poolType.comingSoon) {
+                        Text(
+                            "${settings.poolType.displayName.removeSuffix(" (coming soon)")} support is on " +
+                                "the way. Its API needs verifying before we send anything, so this pool " +
+                                "contacts nothing yet — pick another pool to load live stats.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.statusDegraded,
+                        )
+                    } else {
+                        if (settings.poolType.baseUrlEditable) {
+                            NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                        }
+                        PayoutAddressRow(
+                            label = settings.poolType.identifierLabel,
+                            value = settings.hi3PoolPayoutAddress,
+                            onChange = { viewModel.setHi3PoolPayoutAddress(it) },
+                        )
+                        NumberRow("API key / watcher token (optional)", settings.poolApiToken) {
+                            viewModel.setPoolApiToken(it)
+                        }
                     }
                 }
-                Text(
-                    "What is transmitted while enabled: your ${settings.poolType.identifierLabel.lowercase()} " +
-                        "(and token if set), inside an HTTPS request to ${settings.poolType.displayName}, " +
-                        "about once a minute while the app is open. Nothing else — no miner telemetry, " +
-                        "no local IPs, no worker passwords. Off by default; turning it off stops all " +
-                        "pool requests immediately.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
+                if (!settings.poolType.comingSoon) {
+                    Text(
+                        "What is transmitted while enabled: your ${settings.poolType.identifierLabel.lowercase()} " +
+                            "(and token if set), inside an HTTPS request to ${settings.poolType.displayName}, " +
+                            "about once a minute while the app is open. Nothing else — no miner telemetry, " +
+                            "no local IPs, no worker passwords. Off by default; turning it off stops all " +
+                            "pool requests immediately.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
             }
 
             Section("MONITORING") {

@@ -15,11 +15,16 @@ enum class PoolType(
     /** True when the base URL is user-editable (self-hostable public-pool instances). */
     val baseUrlEditable: Boolean,
     val identifierLabel: String,
+    /** Placeholder pools have no verified endpoint yet — the app contacts nothing. */
+    val comingSoon: Boolean = false,
 ) {
     HI3("Hi3 Pool", "https://pool.hi3.cc", baseUrlEditable = true, identifierLabel = "Payout address"),
     PUBLIC_POOL("Public Pool", "https://web.public-pool.io", baseUrlEditable = true, identifierLabel = "Payout address"),
     CKPOOL("CKPool", "https://raw.stats.ckpool.org", baseUrlEditable = false, identifierLabel = "Payout address"),
-    OCEAN("OCEAN", "https://api.ocean.xyz", baseUrlEditable = false, identifierLabel = "Address / username");
+    OCEAN("OCEAN", "https://api.ocean.xyz", baseUrlEditable = false, identifierLabel = "Address / username"),
+
+    // Endpoint not yet verified — shown but does nothing. See Hi3PoolRepository/fetchAccountFor.
+    LUXOR("Luxor (coming soon)", "https://app.luxor.tech", baseUrlEditable = false, identifierLabel = "Subaccount", comingSoon = true);
 
     companion object {
         fun fromName(name: String?): PoolType =
