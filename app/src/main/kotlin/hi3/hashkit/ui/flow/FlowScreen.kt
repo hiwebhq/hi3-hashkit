@@ -2,6 +2,7 @@ package hi3.hashkit.ui.flow
 
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,10 +45,18 @@ import hi3.hashkit.ui.theme.HiBrand
 import kotlin.math.hypot
 import kotlin.math.sin
 
+/** Miner node screen positions — shared by the renderer and tap hit-testing. */
+private fun minerLayout(w: Float, h: Float, count: Int): List<Offset> =
+    (0 until count).map { i ->
+        val x = if (count <= 1) w / 2f else w * (0.08f + 0.84f * i / (count - 1).coerceAtLeast(1))
+        Offset(x, h * 0.80f)
+    }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlowScreen(
     onBack: () -> Unit,
+    onMinerClick: (Long) -> Unit,
     viewModel: FlowViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -75,7 +85,14 @@ fun FlowScreen(
                 Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .pointerInput(state.miners.size) {
+                        detectTapGestures { pos ->
+                            val layout = minerLayout(size.width.toFloat(), size.height.toFloat(), state.miners.size)
+                            val idx = layout.indexOfFirst { (it - pos).getDistance() < 56f }
+                            if (idx >= 0) onMinerClick(state.miners[idx].id)
+                        }
+                    },
             ) {
                 drawPipeline(state, timeMs)
             }
@@ -165,11 +182,7 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
     val stratumIndexByKey = stratums.mapIndexed { i, s -> "${s.host}:${s.port}" to i }.toMap()
 
     val miners = state.miners
-    val minerY = h * 0.80f
-    val minerPos = miners.mapIndexed { i, _ ->
-        val x = if (miners.size == 1) w / 2f else w * (0.08f + 0.84f * i / (miners.size - 1).coerceAtLeast(1))
-        Offset(x, minerY)
-    }
+    val minerPos = minerLayout(w, h, miners.size)
 
     // Edges: stratum -> network (uplink), colored by reachability/internet.
     stratums.forEachIndexed { i, s ->

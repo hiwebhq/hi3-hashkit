@@ -191,7 +191,10 @@ private fun AppNavHost(onExit: () -> Unit) {
             hi3.hashkit.ui.schedules.SchedulesScreen(onBack = { nav.popBackStack() })
         }
         composable("flow") {
-            hi3.hashkit.ui.flow.FlowScreen(onBack = { nav.popBackStack() })
+            hi3.hashkit.ui.flow.FlowScreen(
+                onBack = { nav.popBackStack() },
+                onMinerClick = { id -> nav.navigate("miner/$id") },
+            )
         }
         composable("alerts") {
             hi3.hashkit.ui.alerts.AlertsScreen(onBack = { nav.popBackStack() })

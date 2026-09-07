@@ -3,6 +3,8 @@ package hi3.hashkit.ui.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -804,7 +806,10 @@ private fun MinerCard(
                 StatusBadge(miner.status)
             }
             Spacer(Modifier.height(10.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+            ) {
                 Metric(
                     "Hashrate",
                     Units.formatHashrate(t?.hashrateGhs?.value),
@@ -813,6 +818,7 @@ private fun MinerCard(
                 Metric("Power", Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
                 Metric("Chip", Units.formatTemp(t?.chipTempC?.value))
                 Metric("Eff.", Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
+                Metric("Uptime", Units.formatUptime(t?.uptimeSeconds))
             }
         }
     }
