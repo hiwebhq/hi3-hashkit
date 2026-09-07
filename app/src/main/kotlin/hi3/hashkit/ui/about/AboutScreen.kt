@@ -35,6 +35,44 @@ import hi3.hashkit.ui.theme.HiBrand
 /** How-to steps shown on the About screen. */
 private data class HowToStep(val title: String, val body: String)
 
+/** A supported-miner family row: what it is, and what the app does with it. */
+private data class SupportedMiner(val family: String, val support: String)
+
+private val SUPPORTED_MINERS = listOf(
+    SupportedMiner(
+        "Bitaxe / ESP-Miner (AxeOS)",
+        "Full monitoring + safe controls: reboot, pool change, fan, firmware-bounded tuning with rollback.",
+    ),
+    SupportedMiner(
+        "NerdQAxe & ESP-Miner forks (Lucky Miner…)",
+        "Full monitoring; controls stay off until verified on that firmware.",
+    ),
+    SupportedMiner(
+        "Canaan Avalon Nano 3",
+        "Full monitoring, plus verified Pause/Resume and Reboot over the CGMiner API.",
+    ),
+    SupportedMiner(
+        "Canaan Nano 3S / Avalon Q",
+        "Monitoring (compatibility-gated); reached once on the same network or via Tailscale.",
+    ),
+    SupportedMiner(
+        "Braiins OS (BMM 100)",
+        "Full monitoring over the CGMiner API. No power sensor on the unit → power shown as unavailable.",
+    ),
+    SupportedMiner(
+        "Stock Bitmain / BMMiner (Antminer S21 Pro, S-series)",
+        "Hashrate, expected, chip temps, fans, frequency, ASIC count, shares, uptime, pool. Power isn't in the API.",
+    ),
+    SupportedMiner(
+        "VNish (Antminer S21 Pro forks)",
+        "Full monitoring including wall power and efficiency (J/TH).",
+    ),
+    SupportedMiner(
+        "LuxOS",
+        "Basic monitoring: hashrate, shares, uptime, pool.",
+    ),
+)
+
 private val HOW_TO = listOf(
     HowToStep(
         "1 · Get on the same network",
@@ -184,11 +222,30 @@ fun AboutScreen(onBack: () -> Unit) {
                 }
             }
             item {
+                Section("SUPPORTED MINERS") {
+                    Text(
+                        "Every device API is verified against real hardware before it ships; " +
+                            "unverified controls are shown as unsupported, never guessed.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    SUPPORTED_MINERS.forEach { m -> SupportedMinerRow(m) }
+                }
+            }
+            item {
                 Section("HOW TO USE") {
                     HOW_TO.forEach { step -> HowToRow(step) }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SupportedMinerRow(m: SupportedMiner) {
+    Column(Modifier.fillMaxWidth()) {
+        Text(m.family, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
+        Text(m.support, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
     }
 }
 

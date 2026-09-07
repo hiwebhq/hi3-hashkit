@@ -208,7 +208,14 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onFarms = { nav.navigate("farms") },
                 onAbout = { nav.navigate("about") },
                 onPrivacy = { nav.navigate("privacy") },
+                onFleet = { nav.navigate("fleet") },
                 onExit = onExit,
+            )
+        }
+        composable("fleet") {
+            hi3.hashkit.ui.dashboard.FleetDetailScreen(
+                onBack = { nav.popBackStack() },
+                onMinerClick = { id -> nav.navigate("miner/$id") },
             )
         }
         composable("schedules") {

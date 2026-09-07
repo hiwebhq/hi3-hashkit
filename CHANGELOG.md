@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.33.0
+
+- **Dedicated Fleet page.** Tap the Fleet card on the dashboard to open a focused view:
+  the aggregate summary and trend chart, then every miner's card — without the
+  pool/MMP/solo/search sections.
+- **About → Supported miners.** New section listing each supported firmware/device and
+  exactly what the app does with it.
+- **Store** — new ⋮ menu item (above About) linking to the Hi3 merch store.
+- Tapping the logo seven times opens a Bitcoin payment page (test link for now).
+
 ## 0.32.1
 
 - Payout-address QR scan now accepts only a bare address; a `bitcoin:` URI or one with

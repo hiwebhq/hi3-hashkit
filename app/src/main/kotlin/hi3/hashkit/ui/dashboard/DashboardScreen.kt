@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.filled.Warehouse
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.Badge
@@ -85,10 +87,12 @@ fun DashboardScreen(
     onFarms: () -> Unit,
     onAbout: () -> Unit,
     onPrivacy: () -> Unit,
+    onFleet: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    var logoTaps by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
     val rescanMessage by viewModel.rescanMessage.collectAsStateWithLifecycle()
@@ -110,7 +114,27 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { hi3.hashkit.ui.theme.HiLogo() },
+                title = {
+                    hi3.hashkit.ui.theme.HiLogo(
+                        modifier = Modifier.clickable(
+                            indication = null,
+                            interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                        ) {
+                            logoTaps++
+                            if (logoTaps >= 7) {
+                                logoTaps = 0
+                                runCatching {
+                                    context.startActivity(
+                                        android.content.Intent(
+                                            android.content.Intent.ACTION_VIEW,
+                                            android.net.Uri.parse("https://www.hi3.cc/bh/pay-bitcoin"),
+                                        ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    )
+                                }
+                            }
+                        }
+                    )
+                },
                 actions = {
                     // Header keeps only Notifications, Setup and Exit; everything else
                     // lives in the overflow menu.
@@ -183,6 +207,21 @@ fun DashboardScreen(
                                 },
                             )
                             DropdownMenuItem(
+                                text = { Text("Store") },
+                                leadingIcon = { Icon(Icons.Filled.Store, contentDescription = null) },
+                                onClick = {
+                                    menuOpen = false
+                                    runCatching {
+                                        context.startActivity(
+                                            android.content.Intent(
+                                                android.content.Intent.ACTION_VIEW,
+                                                android.net.Uri.parse("https://hi3btc.printify.me/"),
+                                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        )
+                                    }
+                                },
+                            )
+                            DropdownMenuItem(
                                 text = { Text("About") },
                                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null) },
                                 onClick = { menuOpen = false; onAbout() },
@@ -230,7 +269,7 @@ fun DashboardScreen(
             item {
                 val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
                 val window by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
-                FleetSummary(state, trend, window, viewModel::setFleetWindow)
+                FleetSummary(state, trend, window, viewModel::setFleetWindow, onClick = onFleet)
             }
             if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
@@ -398,6 +437,82 @@ fun DashboardScreen(
     }
 }
 
+/**
+ * Dedicated fleet view: the aggregate summary + trend, then every miner's card — without
+ * the pool/MMP/solo/search sections of the dashboard. Reached by tapping the Fleet card.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FleetDetailScreen(
+    onBack: () -> Unit,
+    onMinerClick: (Long) -> Unit,
+    viewModel: DashboardViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
+    val window by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
+    val spark by viewModel.sparklines.collectAsStateWithLifecycle()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Fleet", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
+            )
+        },
+        containerColor = HiBrand.background,
+    ) { padding ->
+        androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+            val cols = when {
+                maxWidth >= 1000.dp -> 3
+                maxWidth >= 640.dp -> 2
+                else -> 1
+            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().widthIn(max = 1200.dp).align(Alignment.TopCenter),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                item { FleetSummary(state, trend, window, viewModel::setFleetWindow) }
+                if (cols > 1) {
+                    items(state.miners.chunked(cols), key = { it.first().id }) { rowMiners ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            rowMiners.forEach { miner ->
+                                Box(Modifier.weight(1f)) {
+                                    MinerCard(
+                                        miner = miner,
+                                        density = hi3.hashkit.data.prefs.CardDensity.MEDIUM,
+                                        selected = false,
+                                        selectionMode = false,
+                                        onClick = { onMinerClick(miner.id) },
+                                        onLongClick = { onMinerClick(miner.id) },
+                                    )
+                                }
+                            }
+                            repeat(cols - rowMiners.size) { Spacer(Modifier.weight(1f)) }
+                        }
+                    }
+                } else items(state.miners, key = { it.id }) { miner ->
+                    MinerCard(
+                        miner = miner,
+                        density = state.settings.cardDensity,
+                        sparkline = spark[miner.id],
+                        selected = false,
+                        selectionMode = false,
+                        onClick = { onMinerClick(miner.id) },
+                        onLongClick = { onMinerClick(miner.id) },
+                    )
+                }
+            }
+        }
+    }
+}
+
 /** Compact farm/site switcher: taps open a menu of farms plus "All farms". */
 @Composable
 private fun FarmSelector(state: DashboardUiState, onSelect: (Long) -> Unit) {
@@ -498,12 +613,15 @@ private fun FleetSummary(
     trend: List<hi3.hashkit.data.repo.FleetTrendPoint>,
     windowMs: Long,
     onWindow: (Long) -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     val totals = state.totals
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
     ) {
         Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
             Row(
