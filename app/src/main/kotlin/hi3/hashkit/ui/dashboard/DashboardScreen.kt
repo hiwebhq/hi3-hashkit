@@ -22,8 +22,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CurrencyBitcoin
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
@@ -80,9 +82,11 @@ fun DashboardScreen(
     onFlow: () -> Unit,
     onNetworkScan: () -> Unit,
     onFarms: () -> Unit,
+    onAbout: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
     val rescanMessage by viewModel.rescanMessage.collectAsStateWithLifecycle()
@@ -158,6 +162,28 @@ fun DashboardScreen(
                                 text = { Text("Schedules") },
                                 leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
                                 onClick = { menuOpen = false; onSchedules() },
+                            )
+                            androidx.compose.material3.HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text("Live Bitcoin") },
+                                leadingIcon = { Icon(Icons.Filled.CurrencyBitcoin, contentDescription = null) },
+                                onClick = {
+                                    menuOpen = false
+                                    // Open in a fresh external browser session.
+                                    runCatching {
+                                        context.startActivity(
+                                            android.content.Intent(
+                                                android.content.Intent.ACTION_VIEW,
+                                                android.net.Uri.parse("https://hi3.cc/bitcoin"),
+                                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        )
+                                    }
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("About") },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null) },
+                                onClick = { menuOpen = false; onAbout() },
                             )
                         }
                     }

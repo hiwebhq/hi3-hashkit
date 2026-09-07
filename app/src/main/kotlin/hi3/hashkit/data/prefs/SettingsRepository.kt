@@ -62,7 +62,7 @@ data class AppSettings(
     /** Whether first-run onboarding has been completed. */
     val onboardingComplete: Boolean = false,
     val alertThresholds: AlertThresholds = AlertThresholds(),
-    val alertsEnabled: Boolean = true,
+    val alertsEnabled: Boolean = false,
 )
 
 @Singleton
@@ -129,7 +129,7 @@ class SettingsRepository @Inject constructor(
                 hi3.hashkit.ui.theme.ThemeMode.valueOf(p[Keys.themeMode] ?: "SYSTEM")
             }.getOrDefault(hi3.hashkit.ui.theme.ThemeMode.SYSTEM),
             onboardingComplete = p[Keys.onboardingComplete] ?: false,
-            alertsEnabled = p[Keys.alertsEnabled] ?: true,
+            alertsEnabled = p[Keys.alertsEnabled] ?: false,
             alertThresholds = AlertThresholds(
                 hashrateBelowPercent = p[Keys.thHashBelowPct] ?: 80.0,
                 chipTempC = p[Keys.thChipTempC] ?: 70.0,

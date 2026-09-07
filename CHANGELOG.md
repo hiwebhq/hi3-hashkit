@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.31.0
+
+- **About moved to the ⋮ menu**, and now includes a step-by-step "How to use" guide
+  (get on-network → discover → add → farms → read values → control safely → alerts →
+  privacy). Removed from Settings.
+- **Live Bitcoin** — new ⋮ menu item that opens https://hi3.cc/bitcoin in a fresh
+  external browser session.
+- **Alerts & notifications are now off by default** — enable them in Setup → Alerts
+  when you're ready. Existing installs keep their current setting.
+
 ## 0.30.0
 
 - **Auto-scan at launch.** The app now scans your local subnet in the background as

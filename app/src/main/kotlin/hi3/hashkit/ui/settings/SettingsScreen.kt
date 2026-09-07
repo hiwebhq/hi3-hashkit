@@ -4,7 +4,6 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -80,55 +79,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Section("ABOUT") {
-                val context = androidx.compose.ui.platform.LocalContext.current
-                val version = remember {
-                    runCatching {
-                        context.packageManager.getPackageInfo(context.packageName, 0).versionName
-                    }.getOrNull() ?: "?"
-                }
-                fun open(url: String) {
-                    runCatching {
-                        context.startActivity(
-                            android.content.Intent(
-                                android.content.Intent.ACTION_VIEW,
-                                android.net.Uri.parse(url),
-                            )
-                        )
-                    }
-                }
-                Text(
-                    "${HiBrand.appName}  ·  v$version",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    "Hi3 Hashkit is a local-first Android dashboard for Bitcoin miners: it " +
-                        "discovers, monitors, and safely controls your fleet on your own " +
-                        "network — no account, no cloud, your data stays on your device.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
-                LinkRow(
-                    title = "Hi3",
-                    subtitle = "The Hi3 mining platform",
-                    linkLabel = "hi3.cc",
-                    highlight = false,
-                ) { open("https://www.hi3.cc") }
-                LinkRow(
-                    title = "Bitcoin pool services",
-                    subtitle = "Solo, PPLNS and TIDES payouts on Hi3 Pool",
-                    linkLabel = "pool.hi3.cc",
-                    highlight = true,
-                ) { open("https://pool.hi3.cc") }
-                LinkRow(
-                    title = "Help & support",
-                    subtitle = "Assistance with this app and fleet management",
-                    linkLabel = "mmp.hi3.cc",
-                    highlight = false,
-                ) { open("https://mmp.hi3.cc") }
-            }
-
             Section("ALERTS") {
                 ToggleRow(
                     "Alerts & notifications",
@@ -453,38 +403,6 @@ private fun ToggleRow(
             Text(subtitle, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
         }
         Switch(checked = checked, onCheckedChange = onChange)
-    }
-}
-
-@Composable
-private fun LinkRow(
-    title: String,
-    subtitle: String,
-    linkLabel: String,
-    highlight: Boolean,
-    onClick: () -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(
-                title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (highlight) FontWeight.SemiBold else FontWeight.Normal,
-                color = if (highlight) HiBrand.accent else MaterialTheme.colorScheme.onSurface,
-            )
-            Text(subtitle, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
-        }
-        Text(
-            "$linkLabel ↗",
-            style = MaterialTheme.typography.labelLarge,
-            color = HiBrand.accent,
-            fontWeight = FontWeight.SemiBold,
-        )
     }
 }
 

@@ -206,6 +206,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onFlow = { nav.navigate("flow") },
                 onNetworkScan = { nav.navigate("network") },
                 onFarms = { nav.navigate("farms") },
+                onAbout = { nav.navigate("about") },
                 onExit = onExit,
             )
         }
@@ -217,6 +218,9 @@ private fun AppNavHost(onExit: () -> Unit) {
         }
         composable("farms") {
             hi3.hashkit.ui.farms.FarmsScreen(onBack = { nav.popBackStack() })
+        }
+        composable("about") {
+            hi3.hashkit.ui.about.AboutScreen(onBack = { nav.popBackStack() })
         }
         composable("flow") {
             hi3.hashkit.ui.flow.FlowScreen(
