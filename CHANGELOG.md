@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.37.1
+
+- **Dedicated fast safety poll for the smart-plug cutoff.** A separate 20-second loop now
+  checks miners with an armed plug cutoff, independent of the (possibly slow) per-farm
+  dashboard interval — so over-temp protection fires promptly. It only polls plug-armed
+  miners (cheap when none are configured). Background monitoring, if enabled, also
+  evaluates the cutoff on its ~15-minute cycle.
+
 ## 0.37.0 — advanced operator features
 
 - **Efficiency autotuner** (Bitaxe): sweeps firmware-approved frequencies at your current

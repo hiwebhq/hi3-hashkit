@@ -36,6 +36,7 @@ class PollingEngine @Inject constructor(
     private val auditDao: hi3.hashkit.data.db.AuditDao,
 ) {
     private var job: Job? = null
+    private var safetyJob: Job? = null
     private val lastPrune = AtomicLong(0)
 
     /** Miners whose plug we've already cut this over-temp episode (avoids repeated commands). */
@@ -66,11 +67,38 @@ class PollingEngine @Inject constructor(
                 _isPolling.value = false
             }
         }
+        // Dedicated fast loop so the over-temp cutoff fires promptly regardless of the
+        // (possibly slow) per-farm dashboard cadence. Only touches plug-armed miners.
+        if (safetyJob?.isActive != true) {
+            safetyJob = scope.launch {
+                while (isActive) {
+                    runCatching { safetyCycle() }
+                    delay(SAFETY_INTERVAL_MS)
+                }
+            }
+        }
     }
 
     fun stop() {
         job?.cancel()
         job = null
+        safetyJob?.cancel()
+        safetyJob = null
+    }
+
+    /**
+     * Fast safety pass: poll only miners that have an armed smart-plug cutoff and apply it.
+     * Cheap when none are configured (a single DB read, then nothing).
+     */
+    private suspend fun safetyCycle() {
+        val armed = repository.observeMinerEntities().first()
+            .filter { !it.isDemo && it.plugType != null && it.plugCutoffTempC != null }
+        if (armed.isEmpty()) return
+        supervisorScope {
+            armed.map { entity ->
+                launch { runCatching { maybeCutPower(entity, repository.pollMiner(entity)) } }
+            }.forEach { it.join() }
+        }
     }
 
     /**
@@ -157,5 +185,10 @@ class PollingEngine @Inject constructor(
         if (now - last < 6 * 3_600_000) return
         if (!lastPrune.compareAndSet(last, now)) return
         runCatching { repository.downsampleAndPrune(retentionDays) }
+    }
+
+    companion object {
+        /** Cadence of the dedicated smart-plug safety poll (independent of the dashboard interval). */
+        const val SAFETY_INTERVAL_MS = 20_000L
     }
 }
