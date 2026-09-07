@@ -208,9 +208,11 @@ fun SettingsScreen(
                             value = settings.hi3PoolPayoutAddress,
                             onChange = { viewModel.setHi3PoolPayoutAddress(it) },
                         )
-                        NumberRow("API key / watcher token (optional)", settings.poolApiToken) {
-                            viewModel.setPoolApiToken(it)
-                        }
+                        NumberRow(
+                            if (settings.poolType.usesToken) "Access token"
+                            else "API key / watcher token (optional)",
+                            settings.poolApiToken,
+                        ) { viewModel.setPoolApiToken(it) }
                     }
                 }
                 if (!settings.poolType.comingSoon) {

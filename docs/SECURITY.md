@@ -20,8 +20,11 @@ In this build:
      (Hi3 also `/sproxy-api/api/v1/sessions` for per-rig correlation).
    - **CKPool**: `raw.stats.ckpool.org/users/{address}`.
    - **OCEAN**: `api.ocean.xyz/v1/user_hashrate_full/{address}`.
-   The only user data transmitted is the configured address/subaccount (and an optional
-   watcher token if you set one) in the request path. No miner telemetry, local IPs, or
+   - **F2Pool**: `api.f2pool.com/bitcoin/{account}` (account name only, no token).
+   - **Braiins Pool**: `pool.braiins.com/accounts/workers/json/btc` with your read-only
+     access token in the `Pool-Auth-Token` header.
+   The only user data transmitted is the configured address/subaccount/account (and, for
+   Braiins, your read-only access token in the header) in the request. No miner telemetry, local IPs, or
    worker passwords are sent. Public pool hosts must be HTTPS; plain HTTP is accepted
    only toward private/Tailscale addresses (local stage instances). Disabling the
    toggle stops all pool requests immediately.

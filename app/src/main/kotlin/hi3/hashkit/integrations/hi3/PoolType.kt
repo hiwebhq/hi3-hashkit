@@ -15,6 +15,8 @@ enum class PoolType(
     /** True when the base URL is user-editable (self-hostable public-pool instances). */
     val baseUrlEditable: Boolean,
     val identifierLabel: String,
+    /** True when the required credential is the token/API-key field, not the address field. */
+    val usesToken: Boolean = false,
     /** Placeholder pools have no verified endpoint yet — the app contacts nothing. */
     val comingSoon: Boolean = false,
 ) {
@@ -22,9 +24,12 @@ enum class PoolType(
     PUBLIC_POOL("Public Pool", "https://web.public-pool.io", baseUrlEditable = true, identifierLabel = "Payout address"),
     CKPOOL("CKPool", "https://raw.stats.ckpool.org", baseUrlEditable = false, identifierLabel = "Payout address"),
     OCEAN("OCEAN", "https://api.ocean.xyz", baseUrlEditable = false, identifierLabel = "Address / username"),
+    F2POOL("F2Pool", "https://api.f2pool.com", baseUrlEditable = false, identifierLabel = "Mining account / username"),
+    BRAIINS("Braiins Pool", "https://pool.braiins.com", baseUrlEditable = false, identifierLabel = "Username (optional)", usesToken = true),
 
-    // Endpoint not yet verified — shown but does nothing. See Hi3PoolRepository/fetchAccountFor.
-    LUXOR("Luxor (coming soon)", "https://app.luxor.tech", baseUrlEditable = false, identifierLabel = "Subaccount", comingSoon = true);
+    // Endpoints not yet verified — shown but do nothing. See Hi3PoolRepository/fetchAccountFor.
+    LUXOR("Luxor (coming soon)", "https://app.luxor.tech", baseUrlEditable = false, identifierLabel = "Subaccount", comingSoon = true),
+    NICEHASH("NiceHash (coming soon)", "https://api2.nicehash.com", baseUrlEditable = false, identifierLabel = "Organization ID", comingSoon = true);
 
     companion object {
         fun fromName(name: String?): PoolType =

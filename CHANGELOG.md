@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.36.0
+
+- **F2Pool** and **Braiins Pool** added to the pool selector with per-rig correlation.
+  F2Pool uses your mining-account name (`api.f2pool.com/bitcoin/{account}`, no token);
+  Braiins uses a read-only access token (`Pool-Auth-Token` header). Both endpoints
+  verified against their real APIs.
+- **NiceHash** appears as "coming soon" (its signed API needs a key+secret; contacts
+  nothing yet), alongside Luxor.
+
 ## 0.35.0
 
 - **Luxor** appears in the pool selector as "coming soon" — its API isn't verified yet,

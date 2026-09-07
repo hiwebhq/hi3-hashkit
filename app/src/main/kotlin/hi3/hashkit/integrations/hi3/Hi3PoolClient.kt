@@ -91,12 +91,79 @@ class Hi3PoolClient @Inject constructor(
         poolType: PoolType,
         baseUrl: String,
         identifier: String,
+        token: String = "",
     ): PoolResult<PoolAccount> = when (poolType) {
         PoolType.HI3, PoolType.PUBLIC_POOL -> fetchAccount(baseUrl, identifier)
         PoolType.CKPOOL -> fetchCkpoolAccount(baseUrl, identifier)
         PoolType.OCEAN -> fetchOceanAccount(baseUrl, identifier)
+        PoolType.F2POOL -> fetchF2poolAccount(baseUrl, identifier)
+        PoolType.BRAIINS -> fetchBraiinsAccount(baseUrl, token)
         // No verified endpoint yet — never actually reached (repository short-circuits first).
-        PoolType.LUXOR -> PoolResult.Error("Luxor support is coming soon.")
+        PoolType.LUXOR, PoolType.NICEHASH -> PoolResult.Error("${poolType.displayName} is coming soon.")
+    }
+
+    /** F2Pool v1: GET /bitcoin/{account}; workers are [name, currentHashRate(H/s), ...]. */
+    private suspend fun fetchF2poolAccount(baseUrl: String, account: String): PoolResult<PoolAccount> {
+        val acct = account.trim()
+        if (acct.isEmpty()) return PoolResult.Error("No mining account configured.")
+        return get(baseUrl, "/bitcoin/$acct") { body ->
+            val obj = json.parseToJsonElement(body).jsonObject
+            val workers = (obj["workers"] as? JsonArray)?.mapNotNull { el ->
+                val row = el as? JsonArray ?: return@mapNotNull null
+                val name = (row.getOrNull(0) as? JsonPrimitive)?.content ?: return@mapNotNull null
+                val hs = (row.getOrNull(1) as? JsonPrimitive)?.content?.toDoubleOrNull()
+                PoolWorker(
+                    sessionId = null,
+                    name = name.substringAfter('.', name),
+                    bestDifficulty = null,
+                    hashRateGhs = hs?.div(1e9),
+                    startTime = null,
+                    lastSeen = null,
+                )
+            }.orEmpty()
+            PoolAccount(
+                workersCount = workers.size,
+                workers = workers,
+                totalHashRateGhs = obj.num("hashrate")?.div(1e9) ?: workers.sumOf { it.hashRateGhs ?: 0.0 },
+            )
+        }
+    }
+
+    /** Braiins Pool: GET /accounts/workers/json/btc with Pool-Auth-Token; btc.workers is a map. */
+    private suspend fun fetchBraiinsAccount(baseUrl: String, token: String): PoolResult<PoolAccount> {
+        val t = token.trim()
+        if (t.isEmpty()) return PoolResult.Error("No Braiins access token configured.")
+        return get(baseUrl, "/accounts/workers/json/btc", headers = mapOf("Pool-Auth-Token" to t)) { body ->
+            val workersObj = json.parseToJsonElement(body).jsonObject["btc"]?.jsonObject
+                ?.get("workers") as? JsonObject
+            val workers = workersObj?.entries?.mapNotNull { (key, v) ->
+                val w = v as? JsonObject ?: return@mapNotNull null
+                val unit = w.str("hash_rate_unit")
+                PoolWorker(
+                    sessionId = null,
+                    name = key.substringAfter('.', key),
+                    bestDifficulty = null,
+                    hashRateGhs = braiinsHashToGhs(w.num("hash_rate_5m"), unit),
+                    startTime = null,
+                    lastSeen = w.num("last_share")?.toLong()?.toString(),
+                )
+            }.orEmpty()
+            PoolAccount(
+                workersCount = workers.size,
+                workers = workers,
+                totalHashRateGhs = workers.sumOf { it.hashRateGhs ?: 0.0 },
+            )
+        }
+    }
+
+    /** Convert a Braiins hash rate + its unit string (e.g. "Gh/s", "Th/s") to GH/s. */
+    private fun braiinsHashToGhs(value: Double?, unit: String?): Double? {
+        if (value == null) return null
+        val mult = when (unit?.lowercase()?.substringBefore("/")?.trim()) {
+            "h" -> 1e-9; "kh" -> 1e-6; "mh" -> 1e-3; "gh" -> 1.0
+            "th" -> 1e3; "ph" -> 1e6; "eh" -> 1e9; else -> 1.0 // default Gh/s
+        }
+        return value * mult
     }
 
     /** ckpool: raw.stats.ckpool.org/users/{address}; hashrates are suffix strings ("1.5T"). */
@@ -229,12 +296,15 @@ class Hi3PoolClient @Inject constructor(
     private suspend fun <T> get(
         baseUrl: String,
         path: String,
+        headers: Map<String, String> = emptyMap(),
         parse: (String) -> T,
     ): PoolResult<T> = withContext(Dispatchers.IO) {
         validateBaseUrl(baseUrl)?.let { return@withContext PoolResult.Error(it) }
         val url = (baseUrl.trim().removeSuffix("/") + path).toHttpUrlOrNull()
             ?: return@withContext PoolResult.Error("Invalid request URL.")
-        val request = Request.Builder().url(url).get().build()
+        val request = Request.Builder().url(url).get()
+            .apply { headers.forEach { (k, v) -> addHeader(k, v) } }
+            .build()
         try {
             okHttpClient.newCall(request).execute().use { resp ->
                 if (!resp.isSuccessful) {

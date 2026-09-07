@@ -76,11 +76,15 @@ class Hi3PoolRepository @Inject constructor(
             )
             return
         }
-        if (settings.hi3PoolPayoutAddress.isBlank()) {
+        // Token-based pools (Braiins) need the access token; the rest need the address/subaccount.
+        val missingCredential = if (poolType.usesToken) settings.poolApiToken.isBlank()
+        else settings.hi3PoolPayoutAddress.isBlank()
+        if (missingCredential) {
+            val what = if (poolType.usesToken) "access token" else poolType.identifierLabel.lowercase()
             _state.value = Hi3PoolState(
                 enabled = true,
                 poolType = poolType,
-                error = "Set your ${poolType.identifierLabel.lowercase()} in Settings to load pool stats.",
+                error = "Set your $what in Settings to load pool stats.",
             )
             return
         }
@@ -104,8 +108,8 @@ class Hi3PoolRepository @Inject constructor(
             return
         }
 
-        val account = client.fetchAccountFor(poolType, baseUrl, id)
-        // Only public-pool exposes /api/network; skip for ckpool/OCEAN.
+        val account = client.fetchAccountFor(poolType, baseUrl, id, settings.poolApiToken)
+        // Only public-pool exposes /api/network; skip for the others.
         val net = if (poolType == PoolType.PUBLIC_POOL)
             (client.fetchNetwork(baseUrl) as? Hi3PoolClient.PoolResult.Ok)?.value else null
         _state.value = when (account) {
