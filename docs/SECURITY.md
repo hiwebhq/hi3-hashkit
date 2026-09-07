@@ -124,9 +124,15 @@ Reviewed and confirmed:
   a manual review — wiring an automated scanner (e.g. OWASP dependency-check or
   `gradle dependencyUpdates`) into CI is recommended when CI exists.
 
+## CI & dependency scanning
+
+`.github/workflows/ci.yml` runs the unit tests and a debug build on every push/PR and
+submits the resolved Gradle dependency graph to GitHub, so Dependabot flags CVEs in
+direct and transitive dependencies. `.github/dependabot.yml` opens weekly security and
+version-update PRs. These activate automatically once the repository is pushed to
+GitHub; until then, dependency review remains the manual pinned-version audit above.
+
 ## Known gaps (tracked)
 
-- App lock (biometric/PIN) not yet implemented.
-- Backup file is plaintext JSON (contains addresses/workers, no secrets); encryption
-  will come with credential support.
-- No CI, so no automated dependency scanning yet.
+- Backups are plaintext JSON unless a passphrase is set at export (then AES-256-GCM
+  via PBKDF2 — see BackupCrypto).
