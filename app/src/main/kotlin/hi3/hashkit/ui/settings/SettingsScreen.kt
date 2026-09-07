@@ -103,11 +103,18 @@ fun SettingsScreen(
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    "Local-first miner monitoring for home labs and small mining " +
-                        "operations. Your data stays on this device.",
+                    "Hi3 Hashkit is a local-first Android dashboard for Bitcoin miners: it " +
+                        "discovers, monitors, and safely controls your fleet on your own " +
+                        "network — no account, no cloud, your data stays on your device.",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
+                LinkRow(
+                    title = "Hi3",
+                    subtitle = "The Hi3 mining platform",
+                    linkLabel = "hi3.cc",
+                    highlight = false,
+                ) { open("https://www.hi3.cc") }
                 LinkRow(
                     title = "Bitcoin pool services",
                     subtitle = "Solo, PPLNS and TIDES payouts on Hi3 Pool",

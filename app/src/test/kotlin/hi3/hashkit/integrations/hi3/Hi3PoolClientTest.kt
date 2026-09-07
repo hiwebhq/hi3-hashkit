@@ -101,6 +101,31 @@ class Hi3PoolClientTest {
         assertEquals(0, server.requestCount)
     }
 
+    // Shape verified live against the Hi3 stratum proxy /sproxy-api/api/v1/sessions.
+    private val sessionsBody = """
+        {"count":2,"sessions":[
+          {"authorized":true,"hashrate":7122935628362.281,"peer":"10.0.0.48:60870",
+           "shares_accepted":4310,"shares_rejected":1,"shares_stale":0,
+           "worker":"34T82addr.0x48"},
+          {"authorized":true,"hashrate":376829973418.79,"peer":"10.0.0.203:58581",
+           "shares_accepted":4242,"shares_rejected":11,"shares_stale":1,
+           "worker":"34T82addr.0x203"},
+          {"hashrate":999.0,"peer":"10.0.0.9:1","worker":"OTHERaddr.0x9"}
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `sessions parse peer host and hashrate and filter by address`() = runTest {
+        server.enqueue(MockResponse().setBody(sessionsBody))
+        val res = client.fetchSessions(base(), "34T82addr")
+        val list = (res as Hi3PoolClient.PoolResult.Ok).value
+        assertEquals(2, list.size) // OTHERaddr session filtered out
+        assertEquals("10.0.0.48", list[0].peerHost)
+        assertEquals(7122.94, list[0].hashRateGhs!!, 0.01)
+        assertEquals(4310L, list[0].sharesAccepted)
+        assertEquals("/sproxy-api/api/v1/sessions", server.takeRequest().path)
+    }
+
     @Test
     fun `http errors and malformed bodies degrade to errors not crashes`() = runTest {
         server.enqueue(MockResponse().setResponseCode(500))

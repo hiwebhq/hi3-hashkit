@@ -481,10 +481,21 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
                 Metric("Workers", "${pool.workersCount}")
                 pool.blockHeight?.let { Metric("Height", "$it") }
             }
+            if (pool.aggregatedViaProxy) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Miners reach the pool through your stratum proxy, so the pool reports " +
+                        "them as ${pool.workersCount} aggregated worker(s). Comparing fleet " +
+                        "total vs pool total below.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
             if (pool.comparisons.isNotEmpty()) {
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    "MINER vs POOL (pool averages lag live readings)",
+                    if (pool.aggregatedViaProxy) "FLEET vs POOL"
+                    else "MINER vs POOL (pool averages lag live readings)",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )

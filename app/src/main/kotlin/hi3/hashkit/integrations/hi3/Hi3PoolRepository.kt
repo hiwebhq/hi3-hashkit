@@ -39,6 +39,12 @@ data class Hi3PoolState(
     val comparisons: List<WorkerComparison> = emptyList(),
     /** Local miners the pool doesn't report at all (offline at the pool / other pool). */
     val unmatchedLocal: List<String> = emptyList(),
+    /**
+     * True when miners reach the pool through a stratum proxy, so the pool aggregates
+     * them into far fewer workers than the app tracks locally. The comparison then
+     * pits the local fleet total against the pool total rather than per-worker.
+     */
+    val aggregatedViaProxy: Boolean = false,
 )
 
 /**
@@ -69,66 +75,92 @@ class Hi3PoolRepository @Inject constructor(
 
         val account = client.fetchAccount(settings.hi3PoolBaseUrl, settings.hi3PoolPayoutAddress)
         val network = client.fetchNetwork(settings.hi3PoolBaseUrl)
+        // Per-rig sessions if the proxy exposes them; 403/unavailable -> empty (fallback).
+        val sessions = (client.fetchSessions(settings.hi3PoolBaseUrl, settings.hi3PoolPayoutAddress)
+            as? Hi3PoolClient.PoolResult.Ok)?.value.orEmpty()
 
         when (account) {
             is Hi3PoolClient.PoolResult.Error ->
                 _state.value = _state.value.copy(enabled = true, error = account.message)
             is Hi3PoolClient.PoolResult.Ok -> {
                 val net = (network as? Hi3PoolClient.PoolResult.Ok)?.value
-                _state.value = Hi3PoolState(
-                    enabled = true,
-                    lastUpdated = Instant.now(),
-                    error = null,
-                    workersCount = account.value.workersCount,
-                    totalPoolHashrateGhs = account.value.totalHashRateGhs,
-                    networkDifficulty = net?.difficulty,
-                    blockHeight = net?.blockHeight,
-                    comparisons = compare(account.value.workers, localMiners),
-                    unmatchedLocal = unmatchedLocal(account.value.workers, localMiners),
-                )
+                val realMiners = localMiners.filter { !it.isDemo }
+                _state.value = if (sessions.isNotEmpty()) {
+                    // Rich path: match each proxy rig to a local miner by peer LAN IP.
+                    buildFromSessions(sessions, realMiners, account.value, net)
+                } else {
+                    // Public path: pool aggregates the proxy into few workers -> compare totals.
+                    buildAggregate(account.value, realMiners, net)
+                }
             }
         }
     }
 
-    /**
-     * Match pool workers to local miners. Local workerName is "address.worker"; the
-     * pool reports just the worker suffix. Falls back to hostname/name matching.
-     */
+    private fun buildFromSessions(
+        sessions: List<Hi3PoolClient.PoolSession>,
+        miners: List<Miner>,
+        account: Hi3PoolClient.PoolAccount,
+        net: Hi3PoolClient.PoolNetwork?,
+    ): Hi3PoolState {
+        val comparisons = sessions.map { s ->
+            val local = miners.firstOrNull { it.host == s.peerHost }
+                ?: miners.firstOrNull { m -> localKeyOf(m)?.let { s.worker.endsWith(it) } == true }
+            WorkerComparison(
+                poolWorkerName = local?.name ?: s.worker.substringAfterLast('.'),
+                poolHashrateGhs = s.hashRateGhs,
+                poolBestDifficulty = null,
+                localMinerName = local?.name,
+                localHashrateGhs = local?.lastTelemetry?.hashrateGhs?.value,
+            )
+        }.sortedByDescending { it.poolHashrateGhs ?: 0.0 }
+        val matchedHosts = sessions.mapNotNull { it.peerHost }.toSet()
+        return Hi3PoolState(
+            enabled = true,
+            lastUpdated = Instant.now(),
+            workersCount = sessions.size,
+            totalPoolHashrateGhs = sessions.sumOf { it.hashRateGhs ?: 0.0 },
+            networkDifficulty = net?.difficulty,
+            blockHeight = net?.blockHeight,
+            comparisons = comparisons,
+            unmatchedLocal = miners
+                .filter { it.status == MinerStatus.ONLINE && it.host !in matchedHosts }
+                .map { it.name },
+            aggregatedViaProxy = false,
+        )
+    }
+
+    private fun buildAggregate(
+        account: Hi3PoolClient.PoolAccount,
+        miners: List<Miner>,
+        net: Hi3PoolClient.PoolNetwork?,
+    ): Hi3PoolState {
+        val localTotal = miners
+            .filter { it.status == MinerStatus.ONLINE || it.status == MinerStatus.DEGRADED }
+            .sumOf { it.lastTelemetry?.hashrateGhs?.value ?: 0.0 }
+        val aggregated = account.workersCount in 1 until miners.size.coerceAtLeast(2)
+        return Hi3PoolState(
+            enabled = true,
+            lastUpdated = Instant.now(),
+            workersCount = account.workersCount,
+            totalPoolHashrateGhs = account.totalHashRateGhs,
+            networkDifficulty = net?.difficulty,
+            blockHeight = net?.blockHeight,
+            comparisons = listOf(
+                WorkerComparison(
+                    poolWorkerName = "Fleet (via stratum proxy)",
+                    poolHashrateGhs = account.totalHashRateGhs,
+                    poolBestDifficulty = null,
+                    localMinerName = "${miners.count { it.status == MinerStatus.ONLINE }} miners",
+                    localHashrateGhs = localTotal,
+                )
+            ),
+            unmatchedLocal = emptyList(),
+            aggregatedViaProxy = aggregated,
+        )
+    }
+
+    /** Local worker suffix (e.g. "0x51" from "address.0x51"), used as a fallback match. */
     private fun localKeyOf(miner: Miner): String? =
         miner.lastTelemetry?.workerName?.substringAfterLast('.')?.takeIf { it.isNotBlank() }
             ?: miner.identity.hostname
-
-    private fun compare(
-        poolWorkers: List<Hi3PoolClient.PoolWorker>,
-        localMiners: List<Miner>,
-    ): List<WorkerComparison> {
-        val locals = localMiners.filter { !it.isDemo }
-        return poolWorkers.map { pw ->
-            val match = locals.firstOrNull { m ->
-                val key = localKeyOf(m)
-                key != null && (key.equals(pw.name, true) || m.name.equals(pw.name, true))
-            }
-            WorkerComparison(
-                poolWorkerName = pw.name,
-                poolHashrateGhs = pw.hashRateGhs,
-                poolBestDifficulty = pw.bestDifficulty,
-                localMinerName = match?.name,
-                localHashrateGhs = match?.lastTelemetry?.hashrateGhs?.value,
-            )
-        }.sortedByDescending { it.poolHashrateGhs ?: 0.0 }
-    }
-
-    private fun unmatchedLocal(
-        poolWorkers: List<Hi3PoolClient.PoolWorker>,
-        localMiners: List<Miner>,
-    ): List<String> =
-        localMiners
-            .filter { !it.isDemo && it.status == MinerStatus.ONLINE }
-            .filter { m ->
-                val key = localKeyOf(m)
-                poolWorkers.none { pw ->
-                    (key != null && key.equals(pw.name, true)) || m.name.equals(pw.name, true)
-                }
-            }
-            .map { it.name }
 }

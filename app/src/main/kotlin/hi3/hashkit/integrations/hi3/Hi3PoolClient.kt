@@ -57,6 +57,16 @@ class Hi3PoolClient @Inject constructor(
         val blockHeight: Long?,
     )
 
+    /** One rig as the stratum proxy sees it (from /sproxy-api/api/v1/sessions). */
+    data class PoolSession(
+        val worker: String,
+        val peerHost: String?,   // the rig's LAN IP, e.g. "10.0.0.48"
+        val hashRateGhs: Double?,
+        val sharesAccepted: Long?,
+        val sharesRejected: Long?,
+        val sharesStale: Long?,
+    )
+
     sealed interface PoolResult<out T> {
         data class Ok<T>(val value: T, val rawBody: String) : PoolResult<T>
         data class Error(val message: String) : PoolResult<Nothing>
@@ -100,6 +110,30 @@ class Hi3PoolClient @Inject constructor(
             )
         }
     }
+
+    /**
+     * Per-rig sessions from the stratum proxy, filtered to [payoutAddress]. The public
+     * pool gates this endpoint (403) because it exposes rig LAN IPs; it succeeds when
+     * the app points at an authorized/internal pool URL. Returns an empty list (not an
+     * error) when gated, so the caller can fall back to aggregate comparison.
+     */
+    suspend fun fetchSessions(baseUrl: String, payoutAddress: String): PoolResult<List<PoolSession>> =
+        get(baseUrl, "/sproxy-api/api/v1/sessions") { body ->
+            val arr = json.parseToJsonElement(body).jsonObject["sessions"] as? JsonArray
+            arr.orEmpty().mapNotNull { el ->
+                val o = el as? JsonObject ?: return@mapNotNull null
+                val worker = o.str("worker") ?: return@mapNotNull null
+                if (payoutAddress.isNotBlank() && !worker.startsWith(payoutAddress)) return@mapNotNull null
+                PoolSession(
+                    worker = worker,
+                    peerHost = o.str("peer")?.substringBeforeLast(':'),
+                    hashRateGhs = o.num("hashrate")?.div(1e9),
+                    sharesAccepted = o.num("shares_accepted")?.toLong(),
+                    sharesRejected = o.num("shares_rejected")?.toLong(),
+                    sharesStale = o.num("shares_stale")?.toLong(),
+                )
+            }
+        }
 
     suspend fun fetchNetwork(baseUrl: String): PoolResult<PoolNetwork> =
         get(baseUrl, "/api/network") { body ->
