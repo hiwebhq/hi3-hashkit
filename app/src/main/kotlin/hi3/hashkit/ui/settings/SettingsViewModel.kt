@@ -21,7 +21,37 @@ data class SettingsUiState(val settings: AppSettings = AppSettings())
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repo: SettingsRepository,
+    private val exporter: hi3.hashkit.data.export.Exporter,
 ) : ViewModel() {
+
+    val restoreMessage = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+
+    fun setExtraSubnets(csv: String) = viewModelScope.launch { repo.setExtraSubnets(csv) }
+
+    fun exportFleetCsv(onReady: (android.content.Intent) -> Unit) = viewModelScope.launch {
+        val file = exporter.telemetryCsv(null, System.currentTimeMillis() - 7 * 86_400_000L)
+        onReady(exporter.shareIntent(file, "text/csv"))
+    }
+
+    fun exportBackup(onReady: (android.content.Intent) -> Unit) = viewModelScope.launch {
+        val file = exporter.backupJson()
+        onReady(exporter.shareIntent(file, "application/json"))
+    }
+
+    fun exportDiagnostics(includeAddresses: Boolean, onReady: (android.content.Intent) -> Unit) =
+        viewModelScope.launch {
+            val file = exporter.diagnostics(includeAddresses)
+            onReady(exporter.shareIntent(file, "text/plain"))
+        }
+
+    fun restoreFrom(uri: android.net.Uri) = viewModelScope.launch {
+        val content = runCatching {
+            context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
+        }.getOrNull()
+        restoreMessage.value =
+            if (content == null) "Could not read the selected file."
+            else exporter.restore(content)
+    }
 
     val uiState: StateFlow<SettingsUiState> = repo.settings
         .map { SettingsUiState(it) }

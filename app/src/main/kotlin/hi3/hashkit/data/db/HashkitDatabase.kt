@@ -14,8 +14,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         AlertEventEntity::class,
         AlertStateEntity::class,
         AuditEventEntity::class,
+        ScheduleEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -23,6 +24,7 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun telemetryDao(): TelemetryDao
     abstract fun alertDao(): AlertDao
     abstract fun auditDao(): AuditDao
+    abstract fun scheduleDao(): ScheduleDao
 
     companion object {
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
@@ -70,6 +72,22 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `networkDifficulty` REAL")
+            }
+        }
+
+        /** v3 -> v4: schedules table (additive). */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `schedules` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`enabled` INTEGER NOT NULL, `label` TEXT NOT NULL, " +
+                        "`actionType` TEXT NOT NULL, `paramsJson` TEXT NOT NULL, " +
+                        "`targetMinerIdsCsv` TEXT NOT NULL, `targetGroup` TEXT, " +
+                        "`timeMinutesOfDay` INTEGER NOT NULL, `daysOfWeekCsv` TEXT NOT NULL, " +
+                        "`minIntervalMinutes` INTEGER NOT NULL, " +
+                        "`lastRunAtEpochMs` INTEGER, `lastResult` TEXT)"
+                )
             }
         }
     }

@@ -2,6 +2,7 @@ package hi3.hashkit.ui.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -36,6 +38,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -57,9 +60,13 @@ fun DashboardScreen(
     onAddMiner: () -> Unit,
     onAlerts: () -> Unit,
     onSettings: () -> Unit,
+    onSchedules: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var bulkKind by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf<BulkActionKind?>(null)
+    }
 
     Scaffold(
         topBar = {
@@ -79,6 +86,9 @@ fun DashboardScreen(
                     }
                     IconButton(onClick = { viewModel.refreshNow() }) {
                         Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                    }
+                    IconButton(onClick = onSchedules) {
+                        Icon(Icons.Filled.Schedule, contentDescription = "Schedules")
                     }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
@@ -105,11 +115,52 @@ fun DashboardScreen(
         ) {
             item { FleetSummary(state) }
             state.solo?.let { solo -> item { SoloCard(solo) } }
-            if (state.miners.isEmpty()) {
+            item {
+                androidx.compose.material3.OutlinedTextField(
+                    value = state.searchQuery,
+                    onValueChange = viewModel::setSearch,
+                    label = { Text("Search name, model, host, group, tag") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            if (state.miners.isEmpty() && state.searchQuery.isBlank()) {
                 item { EmptyState(onAddMiner, onEnableDemo = { viewModel.setDemoMode(true) }) }
             } else {
-                items(state.miners, key = { it.id }) { miner ->
-                    MinerCard(miner, onClick = { onMinerClick(miner.id) })
+                state.groups.forEach { (group, groupMiners) ->
+                    if (state.groups.size > 1 || group != null) {
+                        item(key = "group-${group ?: "~none"}") {
+                            Text(
+                                (group ?: "Ungrouped").uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = HiBrand.textSecondary,
+                                modifier = Modifier.padding(top = 6.dp),
+                            )
+                        }
+                    }
+                    items(groupMiners, key = { it.id }) { miner ->
+                        MinerCard(
+                            miner = miner,
+                            selected = miner.id in state.selection,
+                            selectionMode = state.selection.isNotEmpty(),
+                            onClick = {
+                                if (state.selection.isNotEmpty()) viewModel.toggleSelect(miner.id)
+                                else onMinerClick(miner.id)
+                            },
+                            onLongClick = { viewModel.toggleSelect(miner.id) },
+                        )
+                    }
+                }
+                if (state.selection.isNotEmpty()) {
+                    item {
+                        BulkBar(
+                            count = state.selection.size,
+                            onReboot = { bulkKind = BulkActionKind.REBOOT },
+                            onPool = { bulkKind = BulkActionKind.POOL },
+                            onFan = { bulkKind = BulkActionKind.FAN },
+                            onClear = viewModel::clearSelection,
+                        )
+                    }
                 }
                 if (state.settings.demoModeEnabled) {
                     item {
@@ -130,6 +181,73 @@ fun DashboardScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    BulkDialogs(
+        state = state,
+        bulkKind = bulkKind,
+        onDismissKind = { bulkKind = null },
+        viewModel = viewModel,
+    )
+}
+
+@Composable
+private fun BulkDialogs(
+    state: DashboardUiState,
+    bulkKind: BulkActionKind?,
+    onDismissKind: () -> Unit,
+    viewModel: DashboardViewModel,
+) {
+    val bulk = state.bulk
+    when {
+        bulk.outcomes != null -> BulkResultsDialog(
+            outcomes = bulk.outcomes,
+            skippedCount = bulk.plan?.skipped?.size ?: 0,
+            onDismiss = { viewModel.clearSelection() },
+        )
+        bulk.plan != null -> BulkPlanDialog(
+            plan = bulk.plan,
+            running = bulk.running,
+            onExecute = viewModel::executeBulk,
+            onDismiss = viewModel::dismissBulk,
+        )
+        bulkKind != null -> BulkParamsDialog(
+            kind = bulkKind,
+            onPlan = { action ->
+                onDismissKind()
+                viewModel.planBulk(action)
+            },
+            onDismiss = onDismissKind,
+        )
+    }
+}
+
+@Composable
+private fun BulkBar(
+    count: Int,
+    onReboot: () -> Unit,
+    onPool: () -> Unit,
+    onFan: () -> Unit,
+    onClear: () -> Unit,
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surfaceRaised),
+        shape = RoundedCornerShape(14.dp),
+    ) {
+        Column(Modifier.padding(12.dp)) {
+            Text(
+                "$count selected — bulk actions run only on devices that support them",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                androidx.compose.material3.OutlinedButton(onClick = onReboot) { Text("Restart") }
+                androidx.compose.material3.OutlinedButton(onClick = onPool) { Text("Pool") }
+                androidx.compose.material3.OutlinedButton(onClick = onFan) { Text("Fan") }
+                androidx.compose.material3.TextButton(onClick = onClear) { Text("Clear") }
             }
         }
     }
@@ -245,13 +363,26 @@ private fun lastRefreshLabel(instant: Instant?): String {
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-private fun MinerCard(miner: Miner, onClick: () -> Unit) {
+private fun MinerCard(
+    miner: Miner,
+    selected: Boolean,
+    selectionMode: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+) {
     val t = miner.lastTelemetry
     Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) HiBrand.surfaceRaised else HiBrand.surface,
+        ),
+        border = if (selected) androidx.compose.foundation.BorderStroke(2.dp, HiBrand.accent) else null,
         shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick,
+        ),
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(

@@ -120,6 +120,18 @@ fun AddMinerScreen(
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
+                    if (state.savedSubnets.isNotEmpty()) {
+                        Spacer(Modifier.height(6.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            state.savedSubnets.forEach { subnet ->
+                                androidx.compose.material3.FilterChip(
+                                    selected = state.scanCidr == subnet,
+                                    onClick = { viewModel.onScanCidrChange(subnet) },
+                                    label = { Text(subnet) },
+                                )
+                            }
+                        }
+                    }
                     Spacer(Modifier.height(10.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         Button(onClick = viewModel::startScan, enabled = !state.scanning) {

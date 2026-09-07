@@ -36,7 +36,11 @@ object AppModule {
     @Singleton
     fun database(@ApplicationContext context: Context): HashkitDatabase =
         Room.databaseBuilder(context, HashkitDatabase::class.java, "hashkit.db")
-            .addMigrations(HashkitDatabase.MIGRATION_1_2, HashkitDatabase.MIGRATION_2_3)
+            .addMigrations(
+                HashkitDatabase.MIGRATION_1_2,
+                HashkitDatabase.MIGRATION_2_3,
+                HashkitDatabase.MIGRATION_3_4,
+            )
             .build()
 
     @Provides
@@ -50,6 +54,9 @@ object AppModule {
 
     @Provides
     fun auditDao(db: HashkitDatabase): hi3.hashkit.data.db.AuditDao = db.auditDao()
+
+    @Provides
+    fun scheduleDao(db: HashkitDatabase): hi3.hashkit.data.db.ScheduleDao = db.scheduleDao()
 }
 
 @Module

@@ -76,7 +76,11 @@ private fun AppNavHost() {
                 onAddMiner = { nav.navigate("add") },
                 onAlerts = { nav.navigate("alerts") },
                 onSettings = { nav.navigate("settings") },
+                onSchedules = { nav.navigate("schedules") },
             )
+        }
+        composable("schedules") {
+            hi3.hashkit.ui.schedules.SchedulesScreen(onBack = { nav.popBackStack() })
         }
         composable("alerts") {
             hi3.hashkit.ui.alerts.AlertsScreen(onBack = { nav.popBackStack() })

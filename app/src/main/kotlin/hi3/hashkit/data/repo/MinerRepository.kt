@@ -49,6 +49,19 @@ class MinerRepository @Inject constructor(
     suspend fun toDomain(entity: MinerEntity, now: Instant = Instant.now()): Miner =
         entity.toDomain(latestTelemetry(entity.id), staleAfterMs, now)
 
+    /** Stored identity fields of a miner, for capability checks without a network call. */
+    fun identityOf(entity: MinerEntity): MinerIdentity = MinerIdentity(
+        macAddress = entity.macAddress,
+        serialNumber = entity.serialNumber,
+        hostname = entity.hostname,
+        manufacturer = entity.manufacturer,
+        model = entity.model,
+        boardVersion = entity.boardVersion,
+        asicModel = entity.asicModel,
+        firmwareFamily = entity.firmwareFamily,
+        firmwareVersion = entity.firmwareVersion,
+    )
+
     /** Probe a host with every real adapter (each on its own port) and register if supported. */
     suspend fun addByHost(host: String, port: Int = 0): AddMinerResult {
         var lastUnreachable: String? = null
@@ -114,6 +127,29 @@ class MinerRepository @Inject constructor(
     }
 
     suspend fun deleteMiner(id: Long) = minerDao.delete(id)
+
+    /** Update user-editable metadata (name, group, location, notes, tags, expected hashrate). */
+    suspend fun updateMinerMeta(
+        id: Long,
+        name: String,
+        group: String?,
+        location: String?,
+        notes: String?,
+        tags: List<String>,
+        expectedHashrateGhs: Double?,
+    ) {
+        val entity = minerDao.byId(id) ?: return
+        minerDao.update(
+            entity.copy(
+                name = name.ifBlank { entity.name },
+                groupName = group?.takeIf { it.isNotBlank() },
+                location = location?.takeIf { it.isNotBlank() },
+                notes = notes?.takeIf { it.isNotBlank() },
+                tagsCsv = tags.joinToString(","),
+                expectedHashrateGhs = expectedHashrateGhs?.takeIf { it > 0 },
+            )
+        )
+    }
 
     /** Poll one miner, persist the outcome (including honest OFFLINE samples). */
     suspend fun pollMiner(entity: MinerEntity): MinerTelemetry {

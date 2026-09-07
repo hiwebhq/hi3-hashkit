@@ -28,6 +28,14 @@ pool.hi3.cc, mmp.hi3.cc, or any other Hi3 server.
 
 No location, no camera, no contacts, no background-location, no foreground service (yet).
 
+## Exports & backups
+
+All exports are generated locally and leave the device only through the Android share
+sheet to a destination the user picks. CSV telemetry redacts worker names; the
+diagnostics bundle redacts IP addresses (opt-in to include) and never contains
+passwords, wallets, or Tailscale material. The JSON backup contains miner addresses
+and worker names (it exists for the user's own restore) and the UI says so.
+
 ## Control-action safety
 
 Every control (reboot, pool change, fan, tune) requires an in-app confirmation showing

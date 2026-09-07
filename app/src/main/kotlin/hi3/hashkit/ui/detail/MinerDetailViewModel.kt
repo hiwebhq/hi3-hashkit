@@ -20,8 +20,10 @@ import hi3.hashkit.domain.health.HealthScoreCalculator
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerCapabilities
 import hi3.hashkit.domain.model.MinerTelemetry
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -47,6 +49,7 @@ data class MinerDetailUiState(
     val settings: AppSettings = AppSettings(),
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MinerDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -54,11 +57,13 @@ class MinerDetailViewModel @Inject constructor(
     private val controlRepository: ControlRepository,
     private val registry: AdapterRegistry,
     private val pollingEngine: PollingEngine,
+    private val exporter: hi3.hashkit.data.export.Exporter,
     alertDao: AlertDao,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
+    private val windowMs = MutableStateFlow(HISTORY_WINDOW_MS)
     private val showRaw = MutableStateFlow(false)
     private val busyAction = MutableStateFlow<String?>(null)
     private val lastActionMessage = MutableStateFlow<String?>(null)
@@ -68,7 +73,10 @@ class MinerDetailViewModel @Inject constructor(
     val uiState: StateFlow<MinerDetailUiState> = combine(
         combine(
             repository.observeMinerEntity(minerId),
-            repository.observeTelemetrySince(minerId, System.currentTimeMillis() - HISTORY_WINDOW_MS),
+            windowMs.flatMapLatest { w ->
+                // Room re-emits on new samples; only the window start needs recomputing.
+                repository.observeTelemetrySince(minerId, System.currentTimeMillis() - w)
+            },
             pollingEngine.lastRefresh,
             settingsRepository.settings,
             alertDao.observeForMiner(minerId, 20),
@@ -115,6 +123,41 @@ class MinerDetailViewModel @Inject constructor(
 
     fun toggleRaw() {
         showRaw.value = !showRaw.value
+    }
+
+    fun setWindow(ms: Long) {
+        windowMs.value = ms
+    }
+
+    val currentWindowMs: Long get() = windowMs.value
+
+    fun saveMeta(
+        name: String,
+        group: String?,
+        location: String?,
+        notes: String?,
+        tagsCsv: String,
+        expectedHashrateGhs: Double?,
+    ) {
+        viewModelScope.launch {
+            repository.updateMinerMeta(
+                id = minerId,
+                name = name,
+                group = group,
+                location = location,
+                notes = notes,
+                tags = tagsCsv.split(",").map { it.trim() }.filter { it.isNotEmpty() },
+                expectedHashrateGhs = expectedHashrateGhs,
+            )
+        }
+    }
+
+    /** Build a telemetry CSV for the current window and hand back a share intent. */
+    fun exportCsv(onReady: (android.content.Intent) -> Unit) {
+        viewModelScope.launch {
+            val file = exporter.telemetryCsv(minerId, System.currentTimeMillis() - windowMs.value)
+            onReady(exporter.shareIntent(file, "text/csv"))
+        }
     }
 
     fun reboot() = runAction("restarting") { controlRepository.reboot(it) }

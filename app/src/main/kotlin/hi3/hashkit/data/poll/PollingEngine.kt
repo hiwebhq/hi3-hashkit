@@ -27,6 +27,7 @@ class PollingEngine @Inject constructor(
     private val repository: MinerRepository,
     private val alertRepository: AlertRepository,
     private val settingsRepository: SettingsRepository,
+    private val scheduleEngine: hi3.hashkit.data.schedule.ScheduleEngine,
 ) {
     private var job: Job? = null
     private val lastPrune = AtomicLong(0)
@@ -79,6 +80,7 @@ class PollingEngine @Inject constructor(
             }.forEach { it.join() }
         }
         _lastRefresh.value = Instant.now()
+        runCatching { scheduleEngine.runDueSchedules() }
         pruneIfDue(settings.retentionDays)
     }
 

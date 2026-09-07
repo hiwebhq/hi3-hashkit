@@ -1,0 +1,718 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "bc8286e359cfca600f15ba188068db17",
+    "entities": [
+      {
+        "tableName": "miners",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `stableKey` TEXT NOT NULL, `adapterType` TEXT NOT NULL, `name` TEXT NOT NULL, `host` TEXT NOT NULL, `port` INTEGER NOT NULL, `macAddress` TEXT, `serialNumber` TEXT, `hostname` TEXT, `manufacturer` TEXT, `model` TEXT, `boardVersion` TEXT, `asicModel` TEXT, `firmwareFamily` TEXT, `firmwareVersion` TEXT, `groupName` TEXT, `location` TEXT, `notes` TEXT, `tagsCsv` TEXT NOT NULL, `expectedHashrateGhs` REAL, `isDemo` INTEGER NOT NULL, `createdAtEpochMs` INTEGER NOT NULL, `lastSeenAtEpochMs` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stableKey",
+            "columnName": "stableKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "adapterType",
+            "columnName": "adapterType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "host",
+            "columnName": "host",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "port",
+            "columnName": "port",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "macAddress",
+            "columnName": "macAddress",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "hostname",
+            "columnName": "hostname",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "manufacturer",
+            "columnName": "manufacturer",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "boardVersion",
+            "columnName": "boardVersion",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "asicModel",
+            "columnName": "asicModel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firmwareFamily",
+            "columnName": "firmwareFamily",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firmwareVersion",
+            "columnName": "firmwareVersion",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "groupName",
+            "columnName": "groupName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tagsCsv",
+            "columnName": "tagsCsv",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expectedHashrateGhs",
+            "columnName": "expectedHashrateGhs",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "isDemo",
+            "columnName": "isDemo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtEpochMs",
+            "columnName": "createdAtEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSeenAtEpochMs",
+            "columnName": "lastSeenAtEpochMs",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_miners_stableKey",
+            "unique": true,
+            "columnNames": [
+              "stableKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_miners_stableKey` ON `${TABLE_NAME}` (`stableKey`)"
+          }
+        ]
+      },
+      {
+        "tableName": "miner_addresses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `minerId` INTEGER NOT NULL, `host` TEXT NOT NULL, `firstSeenEpochMs` INTEGER NOT NULL, `lastSeenEpochMs` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minerId",
+            "columnName": "minerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "host",
+            "columnName": "host",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstSeenEpochMs",
+            "columnName": "firstSeenEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSeenEpochMs",
+            "columnName": "lastSeenEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_miner_addresses_minerId_host",
+            "unique": true,
+            "columnNames": [
+              "minerId",
+              "host"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_miner_addresses_minerId_host` ON `${TABLE_NAME}` (`minerId`, `host`)"
+          }
+        ]
+      },
+      {
+        "tableName": "telemetry_samples",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `minerId` INTEGER NOT NULL, `timestampEpochMs` INTEGER NOT NULL, `status` TEXT NOT NULL, `hashrateGhs` REAL, `hashrateSource` TEXT NOT NULL, `expectedHashrateGhs` REAL, `powerW` REAL, `powerSource` TEXT NOT NULL, `efficiencyJTh` REAL, `chipTempC` REAL, `vrTempC` REAL, `fansJson` TEXT NOT NULL, `frequencyMhz` REAL, `coreVoltageMv` REAL, `inputVoltageMv` REAL, `asicCount` INTEGER, `sharesAccepted` INTEGER, `sharesRejected` INTEGER, `bestDifficulty` REAL, `bestSessionDifficulty` REAL, `uptimeSeconds` INTEGER, `networkDifficulty` REAL, `poolUrl` TEXT, `poolPort` INTEGER, `workerName` TEXT, `usingFallbackPool` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minerId",
+            "columnName": "minerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestampEpochMs",
+            "columnName": "timestampEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hashrateGhs",
+            "columnName": "hashrateGhs",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "hashrateSource",
+            "columnName": "hashrateSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expectedHashrateGhs",
+            "columnName": "expectedHashrateGhs",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "powerW",
+            "columnName": "powerW",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "powerSource",
+            "columnName": "powerSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "efficiencyJTh",
+            "columnName": "efficiencyJTh",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "chipTempC",
+            "columnName": "chipTempC",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "vrTempC",
+            "columnName": "vrTempC",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fansJson",
+            "columnName": "fansJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frequencyMhz",
+            "columnName": "frequencyMhz",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "coreVoltageMv",
+            "columnName": "coreVoltageMv",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "inputVoltageMv",
+            "columnName": "inputVoltageMv",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "asicCount",
+            "columnName": "asicCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sharesAccepted",
+            "columnName": "sharesAccepted",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sharesRejected",
+            "columnName": "sharesRejected",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "bestDifficulty",
+            "columnName": "bestDifficulty",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bestSessionDifficulty",
+            "columnName": "bestSessionDifficulty",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "uptimeSeconds",
+            "columnName": "uptimeSeconds",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "networkDifficulty",
+            "columnName": "networkDifficulty",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "poolUrl",
+            "columnName": "poolUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "poolPort",
+            "columnName": "poolPort",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "workerName",
+            "columnName": "workerName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "usingFallbackPool",
+            "columnName": "usingFallbackPool",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_telemetry_samples_minerId_timestampEpochMs",
+            "unique": false,
+            "columnNames": [
+              "minerId",
+              "timestampEpochMs"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_telemetry_samples_minerId_timestampEpochMs` ON `${TABLE_NAME}` (`minerId`, `timestampEpochMs`)"
+          }
+        ]
+      },
+      {
+        "tableName": "raw_responses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `minerId` INTEGER NOT NULL, `timestampEpochMs` INTEGER NOT NULL, `endpoint` TEXT NOT NULL, `body` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minerId",
+            "columnName": "minerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestampEpochMs",
+            "columnName": "timestampEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endpoint",
+            "columnName": "endpoint",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "body",
+            "columnName": "body",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_raw_responses_minerId_timestampEpochMs",
+            "unique": false,
+            "columnNames": [
+              "minerId",
+              "timestampEpochMs"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_raw_responses_minerId_timestampEpochMs` ON `${TABLE_NAME}` (`minerId`, `timestampEpochMs`)"
+          }
+        ]
+      },
+      {
+        "tableName": "alert_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `minerId` INTEGER NOT NULL, `minerName` TEXT NOT NULL, `type` TEXT NOT NULL, `message` TEXT NOT NULL, `raisedAtEpochMs` INTEGER NOT NULL, `resolvedAtEpochMs` INTEGER, `acknowledged` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minerId",
+            "columnName": "minerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minerName",
+            "columnName": "minerName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "raisedAtEpochMs",
+            "columnName": "raisedAtEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "resolvedAtEpochMs",
+            "columnName": "resolvedAtEpochMs",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "acknowledged",
+            "columnName": "acknowledged",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_alert_events_minerId_raisedAtEpochMs",
+            "unique": false,
+            "columnNames": [
+              "minerId",
+              "raisedAtEpochMs"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_alert_events_minerId_raisedAtEpochMs` ON `${TABLE_NAME}` (`minerId`, `raisedAtEpochMs`)"
+          },
+          {
+            "name": "index_alert_events_acknowledged",
+            "unique": false,
+            "columnNames": [
+              "acknowledged"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_alert_events_acknowledged` ON `${TABLE_NAME}` (`acknowledged`)"
+          }
+        ]
+      },
+      {
+        "tableName": "alert_states",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`minerId` INTEGER NOT NULL, `consecutiveFailures` INTEGER NOT NULL, `wasOffline` INTEGER NOT NULL, `previousUptimeS` INTEGER, `previousPoolUrl` TEXT, `previousBestDifficulty` REAL, `activeTypesCsv` TEXT NOT NULL, `lastNotifiedJson` TEXT NOT NULL, PRIMARY KEY(`minerId`))",
+        "fields": [
+          {
+            "fieldPath": "minerId",
+            "columnName": "minerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "consecutiveFailures",
+            "columnName": "consecutiveFailures",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wasOffline",
+            "columnName": "wasOffline",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "previousUptimeS",
+            "columnName": "previousUptimeS",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "previousPoolUrl",
+            "columnName": "previousPoolUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "previousBestDifficulty",
+            "columnName": "previousBestDifficulty",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "activeTypesCsv",
+            "columnName": "activeTypesCsv",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastNotifiedJson",
+            "columnName": "lastNotifiedJson",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "minerId"
+          ]
+        }
+      },
+      {
+        "tableName": "audit_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `minerId` INTEGER NOT NULL, `atEpochMs` INTEGER NOT NULL, `action` TEXT NOT NULL, `previousJson` TEXT NOT NULL, `appliedJson` TEXT NOT NULL, `outcome` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minerId",
+            "columnName": "minerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "atEpochMs",
+            "columnName": "atEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "action",
+            "columnName": "action",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "previousJson",
+            "columnName": "previousJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appliedJson",
+            "columnName": "appliedJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "outcome",
+            "columnName": "outcome",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_audit_events_minerId_atEpochMs",
+            "unique": false,
+            "columnNames": [
+              "minerId",
+              "atEpochMs"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_audit_events_minerId_atEpochMs` ON `${TABLE_NAME}` (`minerId`, `atEpochMs`)"
+          }
+        ]
+      },
+      {
+        "tableName": "schedules",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `enabled` INTEGER NOT NULL, `label` TEXT NOT NULL, `actionType` TEXT NOT NULL, `paramsJson` TEXT NOT NULL, `targetMinerIdsCsv` TEXT NOT NULL, `targetGroup` TEXT, `timeMinutesOfDay` INTEGER NOT NULL, `daysOfWeekCsv` TEXT NOT NULL, `minIntervalMinutes` INTEGER NOT NULL, `lastRunAtEpochMs` INTEGER, `lastResult` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actionType",
+            "columnName": "actionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "paramsJson",
+            "columnName": "paramsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetMinerIdsCsv",
+            "columnName": "targetMinerIdsCsv",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetGroup",
+            "columnName": "targetGroup",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "timeMinutesOfDay",
+            "columnName": "timeMinutesOfDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "daysOfWeekCsv",
+            "columnName": "daysOfWeekCsv",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minIntervalMinutes",
+            "columnName": "minIntervalMinutes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastRunAtEpochMs",
+            "columnName": "lastRunAtEpochMs",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastResult",
+            "columnName": "lastResult",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bc8286e359cfca600f15ba188068db17')"
+    ]
+  }
+}

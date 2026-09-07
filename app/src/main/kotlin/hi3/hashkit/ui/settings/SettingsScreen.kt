@@ -149,6 +149,53 @@ fun SettingsScreen(
                 ) { viewModel.setDifficultyAutoFetch(it) }
             }
 
+            Section("DISCOVERY") {
+                NumberRow(
+                    "Extra scan subnets (CSV of CIDRs)",
+                    settings.extraSubnetsCsv,
+                ) { viewModel.setExtraSubnets(it) }
+                Text(
+                    "Add remote LANs reachable through your Tailscale subnet router, e.g. " +
+                        "192.168.50.0/24. They appear as quick-fill options on the Add screen.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
+            Section("DATA & EXPORTS") {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val restoreMessage by viewModel.restoreMessage.collectAsStateWithLifecycle()
+                val restorePicker = rememberLauncherForActivityResult(
+                    ActivityResultContracts.OpenDocument()
+                ) { uri -> uri?.let { viewModel.restoreFrom(it) } }
+
+                fun share(intent: android.content.Intent, title: String) {
+                    context.startActivity(android.content.Intent.createChooser(intent, title))
+                }
+                ActionRow("Export fleet telemetry CSV (last 7 days)") {
+                    viewModel.exportFleetCsv { share(it, "Export CSV") }
+                }
+                ActionRow("Backup miners & schedules (JSON)") {
+                    viewModel.exportBackup { share(it, "Export backup") }
+                }
+                ActionRow("Restore from backup…") {
+                    restorePicker.launch(arrayOf("application/json", "text/plain", "*/*"))
+                }
+                ActionRow("Export diagnostics bundle (addresses redacted)") {
+                    viewModel.exportDiagnostics(includeAddresses = false) { share(it, "Export diagnostics") }
+                }
+                restoreMessage?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.accentAlt)
+                }
+                Text(
+                    "Backups include miner addresses and worker names for your own restore — " +
+                        "share the file only with yourself. CSV and diagnostics redact wallets; " +
+                        "diagnostics also redact IP addresses.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
             Section("DEMO") {
                 ToggleRow(
                     "Demo mode",
@@ -197,6 +244,13 @@ private fun ToggleRow(
             Text(subtitle, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
         }
         Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+@Composable
+private fun ActionRow(label: String, onClick: () -> Unit) {
+    androidx.compose.material3.OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Text(label)
     }
 }
 

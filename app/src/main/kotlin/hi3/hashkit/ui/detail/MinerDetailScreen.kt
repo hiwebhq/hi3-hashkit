@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -54,6 +55,8 @@ fun MinerDetailScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val miner = state.miner
     var confirmDelete by remember { mutableStateOf(false) }
+    var editing by remember { mutableStateOf(false) }
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Scaffold(
         topBar = {
@@ -65,6 +68,9 @@ fun MinerDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { editing = true }) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Edit miner")
+                    }
                     IconButton(onClick = { confirmDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = "Remove miner")
                     }
@@ -113,14 +119,38 @@ fun MinerDetailScreen(
                 StatusBadge(miner.status)
             }
 
-            SectionCard("HASHRATE — LAST HOUR") {
+            SectionCard("HASHRATE HISTORY") {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    listOf(
+                        "1h" to 3_600_000L,
+                        "24h" to 86_400_000L,
+                        "7d" to 7 * 86_400_000L,
+                        "30d" to 30 * 86_400_000L,
+                    ).forEach { (label, ms) ->
+                        androidx.compose.material3.FilterChip(
+                            selected = viewModel.currentWindowMs == ms,
+                            onClick = { viewModel.setWindow(ms) },
+                            label = { Text(label) },
+                        )
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
                 HashrateChart(state.history)
                 Spacer(Modifier.height(4.dp))
+                val stats = historyStats(state.history)
                 Text(
-                    lastReadingLabel(t?.timestamp),
+                    lastReadingLabel(t?.timestamp) +
+                        (stats?.let { "  ·  uptime ${it.first}%  ·  ~${it.second} energy" } ?: ""),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
+                androidx.compose.material3.TextButton(onClick = {
+                    viewModel.exportCsv { intent ->
+                        context.startActivity(
+                            android.content.Intent.createChooser(intent, "Export telemetry CSV")
+                        )
+                    }
+                }) { Text("Export CSV") }
             }
 
             SectionCard("LIVE TELEMETRY") {
@@ -276,6 +306,17 @@ fun MinerDetailScreen(
         }
     }
 
+    if (editing && miner != null) {
+        EditMinerDialog(
+            miner = miner,
+            onSave = { name, group, location, notes, tags, expected ->
+                viewModel.saveMeta(name, group, location, notes, tags, expected)
+                editing = false
+            },
+            onDismiss = { editing = false },
+        )
+    }
+
     if (confirmDelete) {
         AlertDialog(
             onDismissRequest = { confirmDelete = false },
@@ -326,6 +367,68 @@ private fun InfoRow(label: String, value: String?) {
             style = MaterialTheme.typography.bodySmall,
         )
     }
+}
+
+/** (uptime %, energy string) over the loaded history window, or null when too sparse. */
+private fun historyStats(history: List<hi3.hashkit.domain.model.MinerTelemetry>): Pair<Int, String>? {
+    if (history.size < 3) return null
+    val online = history.count { it.status == hi3.hashkit.domain.model.MinerStatus.ONLINE }
+    val uptimePct = (online * 100.0 / history.size).toInt()
+    // Energy: integrate power over inter-sample gaps, capped at 5 min to avoid
+    // fabricating consumption across app-closed periods.
+    var wh = 0.0
+    for (i in 1 until history.size) {
+        val dtH = (history[i].timestamp.toEpochMilli() - history[i - 1].timestamp.toEpochMilli())
+            .coerceAtMost(300_000L) / 3_600_000.0
+        history[i].powerW.value?.let { wh += it * dtH }
+    }
+    val energy = if (wh >= 1000) String.format(java.util.Locale.US, "%.2f kWh", wh / 1000)
+    else String.format(java.util.Locale.US, "%.0f Wh", wh)
+    return uptimePct to energy
+}
+
+@Composable
+private fun EditMinerDialog(
+    miner: hi3.hashkit.domain.model.Miner,
+    onSave: (String, String?, String?, String?, String, Double?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf(miner.name) }
+    var group by remember { mutableStateOf(miner.group ?: "") }
+    var location by remember { mutableStateOf(miner.location ?: "") }
+    var notes by remember { mutableStateOf(miner.notes ?: "") }
+    var tags by remember { mutableStateOf(miner.tags.joinToString(", ")) }
+    var expected by remember { mutableStateOf(miner.expectedHashrateGhs?.toString() ?: "") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit miner") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
+                androidx.compose.material3.OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Group") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location (room/rack/shelf)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = tags, onValueChange = { tags = it }, label = { Text("Tags (comma-separated)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(
+                    value = expected,
+                    onValueChange = { expected = it },
+                    label = { Text("Expected hashrate (GH/s, blank = device-reported)") },
+                    singleLine = true,
+                )
+                androidx.compose.material3.OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("Notes") })
+            }
+        },
+        confirmButton = {
+            TextButton(
+                enabled = name.isNotBlank(),
+                onClick = { onSave(name.trim(), group, location, notes, tags, expected.toDoubleOrNull()) },
+            ) { Text("Save") }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+    )
 }
 
 private fun lastReadingLabel(ts: Instant?): String {

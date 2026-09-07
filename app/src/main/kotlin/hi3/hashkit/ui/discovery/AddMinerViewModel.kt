@@ -32,6 +32,8 @@ data class AddMinerUiState(
     val scanProgress: Pair<Int, Int>? = null,
     val scanMessage: String? = null,
     val discovered: List<DiscoveredMiner> = emptyList(),
+    /** User-defined extra subnets from Settings, offered as quick-fill. */
+    val savedSubnets: List<String> = emptyList(),
 )
 
 @HiltViewModel
@@ -41,6 +43,7 @@ class AddMinerViewModel @Inject constructor(
     private val networkInspector: NetworkInspector,
     private val pollingEngine: PollingEngine,
     private val mdnsDiscovery: hi3.hashkit.discovery.MdnsDiscovery,
+    settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddMinerUiState())
@@ -51,6 +54,15 @@ class AddMinerViewModel @Inject constructor(
     init {
         networkInspector.defaultScanCidr()?.let { cidr ->
             _state.value = _state.value.copy(scanCidr = "${cidr.baseIp}/${cidr.prefix}")
+        }
+        viewModelScope.launch {
+            settingsRepository.settings.collect { settings ->
+                _state.value = _state.value.copy(
+                    savedSubnets = settings.extraSubnetsCsv.split(",")
+                        .map { it.trim() }
+                        .filter { SubnetUtils.parseCidr(it) != null },
+                )
+            }
         }
     }
 
