@@ -262,6 +262,12 @@ fun SettingsScreen(
                 NumberRow("Keep history (days)", settings.retentionDays.toString()) {
                     it.toIntOrNull()?.let { d -> viewModel.setRetentionDays(d) }
                 }
+                ToggleRow(
+                    "Check for firmware updates",
+                    "Opt-in: checks AxeOS (Bitaxe) releases on GitHub and flags miners that " +
+                        "are behind. No flashing from the app; nothing is contacted while off.",
+                    settings.firmwareUpdateCheck,
+                ) { viewModel.setFirmwareUpdateCheck(it) }
             }
 
             Section("SECURITY") {

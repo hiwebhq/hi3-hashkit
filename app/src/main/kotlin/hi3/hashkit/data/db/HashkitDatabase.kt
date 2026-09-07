@@ -18,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         TelemetryHourlyEntity::class,
         FarmEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -123,6 +123,17 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `farms` ADD COLUMN `refreshIntervalMs` INTEGER NOT NULL DEFAULT 15000")
+            }
+        }
+
+        /** v8 -> v9: per-miner smart-plug safety-cutoff columns (additive). */
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugType` TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugHost` TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugOnUrl` TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugOffUrl` TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugCutoffTempC` REAL DEFAULT NULL")
             }
         }
 

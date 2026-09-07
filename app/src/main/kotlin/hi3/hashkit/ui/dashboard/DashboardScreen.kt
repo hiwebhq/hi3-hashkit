@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CurrencyBitcoin
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
@@ -88,6 +89,7 @@ fun DashboardScreen(
     onAbout: () -> Unit,
     onPrivacy: () -> Unit,
     onFleet: () -> Unit,
+    onLeaderboard: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -185,6 +187,11 @@ fun DashboardScreen(
                                 onClick = { menuOpen = false; onNetworkScan() },
                             )
                             DropdownMenuItem(
+                                text = { Text("Leaderboard") },
+                                leadingIcon = { Icon(Icons.Filled.EmojiEvents, contentDescription = null) },
+                                onClick = { menuOpen = false; onLeaderboard() },
+                            )
+                            DropdownMenuItem(
                                 text = { Text("Schedules") },
                                 leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
                                 onClick = { menuOpen = false; onSchedules() },
@@ -265,6 +272,10 @@ fun DashboardScreen(
         ) {
             if (state.farms.isNotEmpty()) {
                 item { FarmSelector(state, viewModel::setActiveFarm) }
+            }
+            item {
+                val latest by viewModel.firmwareLatest.collectAsStateWithLifecycle()
+                FirmwareUpdateBanner(state.miners, latest, context)
             }
             item {
                 val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
@@ -509,6 +520,43 @@ fun FleetDetailScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+/** Opt-in AxeOS firmware-update notice: shows when any Bitaxe is behind the latest release. */
+@Composable
+private fun FirmwareUpdateBanner(
+    miners: List<Miner>,
+    latest: hi3.hashkit.integrations.update.FirmwareUpdateChecker.Release?,
+    context: android.content.Context,
+) {
+    if (latest == null) return
+    val outdated = miners.count { m ->
+        hi3.hashkit.integrations.update.FirmwareUpdateChecker.isAxeOsFamily(m.identity.firmwareFamily) &&
+            hi3.hashkit.integrations.update.FirmwareUpdateChecker.isNewer(latest.tag, m.identity.firmwareVersion)
+    }
+    if (outdated == 0) return
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().clickable {
+            runCatching {
+                context.startActivity(
+                    android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(latest.url))
+                        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+        },
+    ) {
+        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Filled.Refresh, contentDescription = null, tint = HiBrand.accent, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(10.dp))
+            Text(
+                "AxeOS ${latest.tag} available — $outdated miner(s) can update. Tap for release notes.",
+                style = MaterialTheme.typography.bodySmall,
+                color = HiBrand.textPrimary,
+            )
         }
     }
 }

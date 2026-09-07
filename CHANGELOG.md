@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.37.0 — advanced operator features
+
+- **Efficiency autotuner** (Bitaxe): sweeps firmware-approved frequencies at your current
+  voltage, settles each, measures J/TH, restores your original setpoint, and recommends
+  the most efficient one — apply on tap. Reachable from a miner's Controls.
+- **Time-of-use scheduling**: schedules now support Pause/Resume, so you can auto-pause at
+  peak-rate hours and resume off-peak.
+- **Efficiency leaderboard** (⋮ menu): ranks miners by J/TH, expected-vs-actual attainment,
+  or hashrate.
+- **Smart-plug safety cutoff**: per-miner, cut power via a local Tasmota / Shelly / Kasa
+  plug or a generic on/off webhook when chip temp exceeds your limit. Turning power back on
+  is always manual; local addresses only; each cut is audit-logged. (DB v9, additive.)
+- **Firmware-update awareness** (opt-in): checks AxeOS releases on GitHub and flags Bitaxes
+  that are behind, with a dashboard banner linking to the release notes. No flashing.
+
 ## 0.36.0
 
 - **F2Pool** and **Braiins Pool** added to the pool selector with per-rig correlation.

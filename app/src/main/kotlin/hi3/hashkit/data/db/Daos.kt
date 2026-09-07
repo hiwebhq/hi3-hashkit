@@ -70,6 +70,12 @@ interface MinerDao {
     @Query("UPDATE miners SET farmId = :farmId WHERE id = :id")
     suspend fun assignFarm(id: Long, farmId: Long?)
 
+    @Query(
+        "UPDATE miners SET plugType = :type, plugHost = :host, plugOnUrl = :onUrl, " +
+            "plugOffUrl = :offUrl, plugCutoffTempC = :cutoffC WHERE id = :id"
+    )
+    suspend fun updatePlug(id: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?)
+
     /** Detach every miner from a farm being deleted (they become unassigned). */
     @Query("UPDATE miners SET farmId = NULL WHERE farmId = :farmId")
     suspend fun clearFarm(farmId: Long)

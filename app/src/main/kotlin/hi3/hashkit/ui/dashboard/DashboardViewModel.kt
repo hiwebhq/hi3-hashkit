@@ -90,8 +90,12 @@ class DashboardViewModel @Inject constructor(
     private val scanner: hi3.hashkit.discovery.MinerScanner,
     private val networkInspector: hi3.hashkit.discovery.NetworkInspector,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
+    private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker,
     alertDao: AlertDao,
 ) : ViewModel() {
+
+    /** Latest AxeOS release (opt-in), for the dashboard update banner. */
+    val firmwareLatest = firmwareChecker.axeOs
 
     val poolState = hi3PoolRepository.state
     val mmpState = mmpRepository.state
@@ -129,6 +133,7 @@ class DashboardViewModel @Inject constructor(
     init {
         // Both run only when the user has opted in; otherwise they no-op locally.
         viewModelScope.launch { difficultyRepository.refreshIfEnabled() }
+        viewModelScope.launch { firmwareChecker.refreshIfEnabled() }
         viewModelScope.launch {
             while (true) {
                 refreshPool()
@@ -255,6 +260,7 @@ class DashboardViewModel @Inject constructor(
             try {
                 pollingEngine.pollAllOnce()
                 difficultyRepository.refreshIfEnabled()
+                firmwareChecker.refreshIfEnabled()
                 refreshPool()
             } finally {
                 _refreshing.value = false

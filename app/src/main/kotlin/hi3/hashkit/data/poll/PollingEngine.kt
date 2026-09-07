@@ -32,9 +32,14 @@ class PollingEngine @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val scheduleEngine: hi3.hashkit.data.schedule.ScheduleEngine,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
+    private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
+    private val auditDao: hi3.hashkit.data.db.AuditDao,
 ) {
     private var job: Job? = null
     private val lastPrune = AtomicLong(0)
+
+    /** Miners whose plug we've already cut this over-temp episode (avoids repeated commands). */
+    private val cutMiners = java.util.Collections.synchronizedSet(mutableSetOf<Long>())
 
     private val _lastRefresh = MutableStateFlow<Instant?>(null)
     val lastRefresh: StateFlow<Instant?> = _lastRefresh
@@ -103,6 +108,7 @@ class PollingEngine @Inject constructor(
                                 ),
                             )
                         }
+                        if (!entity.isDemo) maybeCutPower(entity, telemetry)
                     }
                 }
             }.forEach { it.join() }
@@ -114,6 +120,34 @@ class PollingEngine @Inject constructor(
         runCatching { hi3.hashkit.widget.HashkitWidget().updateAll(appContext) }
         runCatching { scheduleEngine.runDueSchedules() }
         pruneIfDue(settings.retentionDays)
+    }
+
+    /**
+     * Over-temp safety cutoff: if the miner has a smart plug configured and its chip temp
+     * reaches the cutoff, switch the plug OFF once. Turning it back on is always manual, so
+     * we never oscillate power; the cut flag clears when the temp falls back below the limit.
+     */
+    private suspend fun maybeCutPower(entity: hi3.hashkit.data.db.MinerEntity, telemetry: hi3.hashkit.domain.model.MinerTelemetry) {
+        val type = hi3.hashkit.integrations.plug.PlugType.fromName(entity.plugType) ?: return
+        val cutoff = entity.plugCutoffTempC ?: return
+        val temp = telemetry.chipTempC.value ?: return
+        if (temp < cutoff) { cutMiners.remove(entity.id); return }
+        if (!cutMiners.add(entity.id)) return // already cut this episode
+        val plug = hi3.hashkit.integrations.plug.SmartPlugClient.Plug(type, entity.plugHost, entity.plugOnUrl, entity.plugOffUrl)
+        val ok = smartPlugClient.turnOff(plug)
+        runCatching {
+            auditDao.insert(
+                hi3.hashkit.data.db.AuditEventEntity(
+                    minerId = entity.id,
+                    atEpochMs = System.currentTimeMillis(),
+                    action = "smart_plug_cutoff",
+                    previousJson = "{\"chipTempC\":$temp}",
+                    appliedJson = "{\"cutoffC\":$cutoff,\"plug\":\"${type.name}\"}",
+                    outcome = if (ok) "power cut" else "cut FAILED",
+                )
+            )
+        }
+        if (!ok) cutMiners.remove(entity.id) // let it retry next cycle if the command failed
     }
 
     /** Maintenance: downsample completed hours + prune, at most once per 6h of use. */

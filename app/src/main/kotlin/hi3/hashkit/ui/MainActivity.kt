@@ -209,7 +209,14 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onAbout = { nav.navigate("about") },
                 onPrivacy = { nav.navigate("privacy") },
                 onFleet = { nav.navigate("fleet") },
+                onLeaderboard = { nav.navigate("leaderboard") },
                 onExit = onExit,
+            )
+        }
+        composable("leaderboard") {
+            hi3.hashkit.ui.leaderboard.LeaderboardScreen(
+                onBack = { nav.popBackStack() },
+                onMinerClick = { id -> nav.navigate("miner/$id") },
             )
         }
         composable("fleet") {
@@ -255,6 +262,10 @@ private fun AppNavHost(onExit: () -> Unit) {
                     val id = entry.arguments?.getLong("minerId") ?: return@MinerDetailScreen
                     nav.navigate("miner/$id/logs")
                 },
+                onAutotune = {
+                    val id = entry.arguments?.getLong("minerId") ?: return@MinerDetailScreen
+                    nav.navigate("miner/$id/autotune")
+                },
             )
         }
         composable(
@@ -262,6 +273,12 @@ private fun AppNavHost(onExit: () -> Unit) {
             arguments = listOf(navArgument("minerId") { type = NavType.LongType }),
         ) {
             hi3.hashkit.ui.logs.LogsScreen(onBack = { nav.popBackStack() })
+        }
+        composable(
+            route = "miner/{minerId}/autotune",
+            arguments = listOf(navArgument("minerId") { type = NavType.LongType }),
+        ) {
+            hi3.hashkit.ui.autotune.AutotuneScreen(onBack = { nav.popBackStack() })
         }
         composable("add") {
             AddMinerScreen(onDone = { nav.popBackStack() })

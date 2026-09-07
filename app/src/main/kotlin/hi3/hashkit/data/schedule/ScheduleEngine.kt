@@ -59,6 +59,9 @@ object ScheduleDueLogic {
         }.getOrNull()
         return when (schedule.actionType) {
             "reboot" -> BulkAction.Reboot
+            // Time-of-use: pause during peak-rate hours, resume off-peak.
+            "pause" -> BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.PAUSE)
+            "resume" -> BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.RESUME)
             "set_pool" -> {
                 val url = params?.get("url")?.jsonPrimitive?.content ?: return null
                 val port = params["port"]?.jsonPrimitive?.intOrNull ?: return null

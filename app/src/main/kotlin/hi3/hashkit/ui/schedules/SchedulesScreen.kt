@@ -222,7 +222,10 @@ private fun ScheduleEditorDialog(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    listOf("reboot" to "Restart", "set_pool" to "Pool", "set_fan" to "Fan").forEach { (key, text) ->
+                    listOf(
+                        "reboot" to "Restart", "set_pool" to "Pool", "set_fan" to "Fan",
+                        "pause" to "Pause", "resume" to "Resume",
+                    ).forEach { (key, text) ->
                         FilterChip(selected = action == key, onClick = { action = key }, label = { Text(text) })
                     }
                 }
@@ -258,8 +261,9 @@ private fun ScheduleEditorDialog(
                 OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all miners)") }, singleLine = true)
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    "Unsupported devices in the target set are skipped with a reason; " +
-                        "each run is recorded in the audit log.",
+                    "Time-of-use: schedule Pause at your peak-rate start and Resume at the end " +
+                        "(pause needs a device that supports it). Unsupported devices are skipped " +
+                        "with a reason; each run is recorded in the audit log.",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )

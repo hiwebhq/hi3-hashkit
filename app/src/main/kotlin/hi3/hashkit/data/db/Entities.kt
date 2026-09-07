@@ -58,6 +58,12 @@ data class MinerEntity(
     @androidx.room.ColumnInfo(defaultValue = "NULL") val alertVrTempC: Double? = null,
     @androidx.room.ColumnInfo(defaultValue = "NULL") val alertRejectPct: Double? = null,
     @androidx.room.ColumnInfo(defaultValue = "0") val alertsMuted: Boolean = false,
+    // Smart-plug safety cutoff: cut power via a local plug when chip temp exceeds the limit.
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugType: String? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugHost: String? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugOnUrl: String? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugOffUrl: String? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugCutoffTempC: Double? = null,
 )
 
 @Entity(

@@ -49,6 +49,14 @@ data class MinerDetailUiState(
     val settings: AppSettings = AppSettings(),
 )
 
+data class PlugConfig(
+    val type: hi3.hashkit.integrations.plug.PlugType? = null,
+    val host: String = "",
+    val onUrl: String = "",
+    val offUrl: String = "",
+    val cutoffC: Double? = null,
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MinerDetailViewModel @Inject constructor(
@@ -58,11 +66,42 @@ class MinerDetailViewModel @Inject constructor(
     private val registry: AdapterRegistry,
     private val pollingEngine: PollingEngine,
     private val exporter: hi3.hashkit.data.export.Exporter,
+    private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
     alertDao: AlertDao,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
+
+    /** Current smart-plug config, surfaced to the detail UI (null type = disabled). */
+    val plug: StateFlow<PlugConfig> = repository.observeMinerEntity(minerId)
+        .map { e ->
+            PlugConfig(
+                type = hi3.hashkit.integrations.plug.PlugType.fromName(e?.plugType),
+                host = e?.plugHost ?: "",
+                onUrl = e?.plugOnUrl ?: "",
+                offUrl = e?.plugOffUrl ?: "",
+                cutoffC = e?.plugCutoffTempC,
+            )
+        }
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), PlugConfig())
+
+    fun saveSmartPlug(type: hi3.hashkit.integrations.plug.PlugType?, host: String, onUrl: String, offUrl: String, cutoffC: Double?) {
+        viewModelScope.launch {
+            repository.setSmartPlug(minerId, type?.name, host, onUrl, offUrl, cutoffC)
+        }
+    }
+
+    fun testPlug(turnOn: Boolean) {
+        viewModelScope.launch {
+            val p = plug.value
+            val type = p.type ?: return@launch
+            val plugCfg = hi3.hashkit.integrations.plug.SmartPlugClient.Plug(type, p.host, p.onUrl, p.offUrl)
+            val ok = if (turnOn) smartPlugClient.turnOn(plugCfg) else smartPlugClient.turnOff(plugCfg)
+            lastActionMessage.value = if (ok) "Plug ${if (turnOn) "on" else "off"} command sent."
+                else "Plug command failed — check the address/URL."
+        }
+    }
     private val windowMs = MutableStateFlow(HISTORY_WINDOW_MS)
     private val showRaw = MutableStateFlow(false)
     private val busyAction = MutableStateFlow<String?>(null)

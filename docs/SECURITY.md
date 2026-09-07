@@ -38,6 +38,15 @@ In this build:
    AES-256 key in the Android Keystore (`KeystoreCrypto`); the same HTTPS-for-public
    -hosts rule applies. Disabling the toggle stops all MMP requests immediately.
 
+5. **Optional, off by default — firmware-update check:** while "Check for firmware
+   updates" is enabled, the app makes one HTTPS GET to
+   `api.github.com/repos/bitaxeorg/ESP-Miner/releases/latest` (at most every 6h) to read
+   the latest AxeOS version tag. No device data is sent; nothing is flashed.
+6. **Smart-plug safety cutoff (local only):** when you configure a plug for a miner, the
+   app sends its on/off command over the LAN only — Tasmota/Shelly/Kasa on a private
+   address, or a generic webhook URL you supply. Plug hosts must be private/Tailscale
+   addresses. Automatic cutoff only ever turns power OFF; turning back on is manual.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server.
 

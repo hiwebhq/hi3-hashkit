@@ -40,6 +40,12 @@ class MinerRepository @Inject constructor(
 
     fun observeMinerEntities(): Flow<List<MinerEntity>> = minerDao.observeAll()
 
+    /** Configure (or clear, with a null type) the per-miner smart-plug safety cutoff. */
+    suspend fun setSmartPlug(
+        minerId: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?,
+    ) = minerDao.updatePlug(minerId, type, host?.trim()?.ifBlank { null }, onUrl?.trim()?.ifBlank { null },
+        offUrl?.trim()?.ifBlank { null }, cutoffC)
+
     fun observeMinerEntity(id: Long): Flow<MinerEntity?> = minerDao.observeById(id)
 
     suspend fun latestTelemetry(minerId: Long): MinerTelemetry? =

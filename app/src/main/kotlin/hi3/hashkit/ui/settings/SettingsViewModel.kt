@@ -111,6 +111,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun setRetentionDays(days: Int) = viewModelScope.launch { repo.setRetentionDays(days) }
+    fun setFirmwareUpdateCheck(v: Boolean) = viewModelScope.launch { repo.setFirmwareUpdateCheck(v) }
     fun setAlertsEnabled(v: Boolean) = viewModelScope.launch { repo.setAlertsEnabled(v) }
     fun setHashrateBelowPercent(v: Double) = viewModelScope.launch { repo.setHashrateBelowPercent(v) }
     fun setChipTempThreshold(v: Double) = viewModelScope.launch { repo.setChipTempThreshold(v) }

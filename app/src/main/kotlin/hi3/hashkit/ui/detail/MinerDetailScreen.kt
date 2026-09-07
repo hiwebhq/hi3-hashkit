@@ -51,6 +51,7 @@ import java.time.Instant
 fun MinerDetailScreen(
     onBack: () -> Unit,
     onLogs: () -> Unit = {},
+    onAutotune: () -> Unit = {},
     viewModel: MinerDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -290,7 +291,23 @@ fun MinerDetailScreen(
                         onPause = viewModel::pauseHashing,
                         onResume = viewModel::resumeHashing,
                     )
+                    if (state.tuneOptions != null) {
+                        Spacer(Modifier.height(8.dp))
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = onAutotune,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text("Efficiency autotuner (sweep J/TH)") }
+                    }
                 }
+            }
+
+            SectionCard("SAFETY CUTOFF (SMART PLUG)") {
+                val plug by viewModel.plug.collectAsStateWithLifecycle()
+                SmartPlugCard(
+                    plug = plug,
+                    onSave = viewModel::saveSmartPlug,
+                    onTest = viewModel::testPlug,
+                )
             }
 
             if (state.alerts.isNotEmpty()) {
@@ -504,4 +521,61 @@ private fun lastReadingLabel(ts: Instant?): String {
     if (ts == null) return "No successful reading yet"
     val secs = Duration.between(ts, Instant.now()).seconds
     return if (secs < 90) "Last reading ${secs}s ago" else "Last reading ${secs / 60}m ago — stale"
+}
+
+@Composable
+private fun SmartPlugCard(
+    plug: hi3.hashkit.ui.detail.PlugConfig,
+    onSave: (hi3.hashkit.integrations.plug.PlugType?, String, String, String, Double?) -> Unit,
+    onTest: (Boolean) -> Unit,
+) {
+    val types = hi3.hashkit.integrations.plug.PlugType.entries
+    var type by remember(plug.type) { mutableStateOf(plug.type) }
+    var host by remember(plug.host) { mutableStateOf(plug.host) }
+    var onUrl by remember(plug.onUrl) { mutableStateOf(plug.onUrl) }
+    var offUrl by remember(plug.offUrl) { mutableStateOf(plug.offUrl) }
+    var cutoff by remember(plug.cutoffC) { mutableStateOf(plug.cutoffC?.toInt()?.toString() ?: "") }
+    var menu by remember { mutableStateOf(false) }
+
+    Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+        Text(
+            "Cut power via a local smart plug when chip temp reaches the limit. On is always " +
+                "manual — the app never auto-restores power. Local addresses only.",
+            style = MaterialTheme.typography.labelSmall,
+            color = HiBrand.textSecondary,
+        )
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Text("Plug", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            androidx.compose.foundation.layout.Box {
+                androidx.compose.material3.AssistChip(
+                    onClick = { menu = true },
+                    label = { Text(type?.label ?: "Disabled") },
+                )
+                androidx.compose.material3.DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                    androidx.compose.material3.DropdownMenuItem(text = { Text("Disabled") }, onClick = { menu = false; type = null })
+                    types.forEach { t ->
+                        androidx.compose.material3.DropdownMenuItem(text = { Text(t.label) }, onClick = { menu = false; type = t })
+                    }
+                }
+            }
+        }
+        when (type) {
+            null -> Unit
+            hi3.hashkit.integrations.plug.PlugType.WEBHOOK -> {
+                androidx.compose.material3.OutlinedTextField(value = offUrl, onValueChange = { offUrl = it }, label = { Text("OFF URL") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                androidx.compose.material3.OutlinedTextField(value = onUrl, onValueChange = { onUrl = it }, label = { Text("ON URL") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            }
+            else -> androidx.compose.material3.OutlinedTextField(value = host, onValueChange = { host = it }, label = { Text("Plug IP / host") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        }
+        if (type != null) {
+            androidx.compose.material3.OutlinedTextField(value = cutoff, onValueChange = { cutoff = it }, label = { Text("Cut power at chip temp (°C)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        }
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+            androidx.compose.material3.Button(onClick = { onSave(type, host, onUrl, offUrl, cutoff.toDoubleOrNull()) }) { Text("Save") }
+            if (type != null) {
+                androidx.compose.material3.OutlinedButton(onClick = { onTest(false) }) { Text("Test off") }
+                androidx.compose.material3.OutlinedButton(onClick = { onTest(true) }) { Text("Test on") }
+            }
+        }
+    }
 }
