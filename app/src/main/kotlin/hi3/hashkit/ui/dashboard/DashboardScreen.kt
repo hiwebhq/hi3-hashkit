@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -81,6 +82,8 @@ fun DashboardScreen(
     var bulkKind by androidx.compose.runtime.remember {
         androidx.compose.runtime.mutableStateOf<BulkActionKind?>(null)
     }
+    var confirmExit by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
     rescanMessage?.let { msg ->
         val ctx = androidx.compose.ui.platform.LocalContext.current
         androidx.compose.runtime.LaunchedEffect(msg) {
@@ -118,7 +121,7 @@ fun DashboardScreen(
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
                     }
-                    IconButton(onClick = onExit) {
+                    IconButton(onClick = { confirmExit = true }) {
                         Icon(
                             Icons.Filled.PowerSettingsNew,
                             contentDescription = "Exit app",
@@ -143,8 +146,15 @@ fun DashboardScreen(
             onRefresh = { viewModel.refreshNow() },
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
+        androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize()) {
+        // Responsive columns: 1 on phones, 2 on small tablets/landscape, 3 on large.
+        val wideCols = when {
+            maxWidth >= 1000.dp -> 3
+            maxWidth >= 640.dp -> 2
+            else -> 1
+        }
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().widthIn(max = 1200.dp).align(Alignment.TopCenter),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -206,14 +216,21 @@ fun DashboardScreen(
                             )
                         }
                     }
-                    if (state.settings.cardDensity == hi3.hashkit.data.prefs.CardDensity.GRID) {
-                        items(groupMiners.chunked(2), key = { it.first().id }) { pair ->
+                    // Multi-column when the user picked GRID or the screen is wide.
+                    val cols = when {
+                        state.settings.cardDensity == hi3.hashkit.data.prefs.CardDensity.GRID -> maxOf(wideCols, 2)
+                        else -> wideCols
+                    }
+                    if (cols > 1) {
+                        items(groupMiners.chunked(cols), key = { it.first().id }) { rowMiners ->
                             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                pair.forEach { miner ->
+                                rowMiners.forEach { miner ->
                                     Box(Modifier.weight(1f)) {
                                         MinerCard(
                                             miner = miner,
-                                            density = state.settings.cardDensity,
+                                            density = if (state.settings.cardDensity == hi3.hashkit.data.prefs.CardDensity.GRID)
+                                                hi3.hashkit.data.prefs.CardDensity.GRID
+                                            else hi3.hashkit.data.prefs.CardDensity.MEDIUM,
                                             selected = miner.id in state.selection,
                                             selectionMode = state.selection.isNotEmpty(),
                                             onClick = {
@@ -224,7 +241,7 @@ fun DashboardScreen(
                                         )
                                     }
                                 }
-                                if (pair.size == 1) Spacer(Modifier.weight(1f))
+                                repeat(cols - rowMiners.size) { Spacer(Modifier.weight(1f)) }
                             }
                         }
                     } else items(groupMiners, key = { it.id }) { miner ->
@@ -278,6 +295,7 @@ fun DashboardScreen(
             }
         }
         }
+        }
     }
 
     BulkDialogs(
@@ -286,6 +304,29 @@ fun DashboardScreen(
         onDismissKind = { bulkKind = null },
         viewModel = viewModel,
     )
+
+    if (confirmExit) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { confirmExit = false },
+            title = { Text("Exit Hi3 Hashkit?") },
+            text = {
+                Text(
+                    "This closes the app and stops foreground polling. Background " +
+                        "monitoring, if enabled, keeps running.",
+                )
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                    confirmExit = false
+                    onExit()
+                }) { Text("Exit", color = HiBrand.statusOffline) }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { confirmExit = false }) { Text("Cancel") }
+            },
+        )
+    }
 }
 
 @Composable

@@ -61,6 +61,10 @@ fun ControlsCard(
     onResume: () -> Unit = {},
 ) {
     var dialog by remember { mutableStateOf<ControlDialog?>(null) }
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
+    fun buzz() = haptics.performHapticFeedback(
+        androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress
+    )
 
     Column {
         if (Capability.TELEMETRY in capabilities && capabilities.supported.size == 1) {
@@ -130,7 +134,7 @@ fun ControlsCard(
             title = "Restart miner?",
             body = "Hashing stops for ~30–60 seconds while the miner reboots. Shares in flight may be lost. No settings are changed.",
             confirmLabel = "Restart",
-            onConfirm = { dialog = null; onReboot() },
+            onConfirm = { buzz(); dialog = null; onReboot() },
             onDismiss = { dialog = null },
         )
         ControlDialog.Pool -> PoolDialog(
@@ -150,8 +154,8 @@ fun ControlsCard(
             currentFrequencyMhz = currentFrequencyMhz,
             currentVoltageMv = currentVoltageMv,
             hasTuneToRollback = hasTuneToRollback,
-            onApply = { f, v -> dialog = null; onApplyTune(f, v) },
-            onRollback = { dialog = null; onRollbackTune() },
+            onApply = { f, v -> buzz(); dialog = null; onApplyTune(f, v) },
+            onRollback = { buzz(); dialog = null; onRollbackTune() },
             onDismiss = { dialog = null },
         )
         ControlDialog.Power -> AlertDialog(
