@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.26.0
+
+- Polish batch: first-run onboarding, System/Dark/Light theme, pull-to-refresh
+  and dashboard rescan, per-miner sparklines, a home-screen widget, per-category
+  notification channels, accessibility descriptions, an in-app logo, and a UI
+  smoke test.
+
 ## 0.22.0
 
 - Added monitoring for Antminer-class cgminer firmware: stock Bitmain, VNish, and
