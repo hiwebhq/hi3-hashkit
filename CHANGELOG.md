@@ -1,0 +1,34 @@
+# Changelog
+
+## 0.21.0 — first public release
+
+First release of Hi3 Hashkit for download, a local-first Android dashboard for
+Bitcoin miners.
+
+**Highlights**
+- Live monitoring for Bitaxe/ESP-Miner, Canaan Avalon Nano 3, Braiins OS and
+  NerdQAxe — hashrate, temps, power, efficiency, uptime, shares, best difficulty.
+- Safe controls: reboot, pool change, fan, and firmware-bounded tuning with rollback
+  (Bitaxe); pause/resume and reboot (Canaan Avalon). Every control is confirmed and
+  audited; unsupported controls are hidden with a reason.
+- Explainable 0–100 health score, alerts with per-miner thresholds and mute, and
+  recovery notifications.
+- Animated Blockchain → Stratum → Miners flow view with an uplink/latency check, and a
+  per-miner live render (fan spins at reported RPM, chips glow by temperature).
+- Fleet tools: groups, search, bulk actions, schedules, list/grid/compact layouts.
+- Live firmware log streaming with wallet redaction.
+- Solo-mining odds, electricity-cost estimates, CSV export, and passphrase-encrypted
+  backups.
+- App lock (biometric/PIN) and telemetry downsampling for long-term history.
+- Optional, read-only Hi3 Pool and Hi3 MMP views (off by default).
+
+**Fixed in 0.21.0**
+- Pool comparison now understands stratum-proxy setups: miners that reach the pool
+  through a proxy are matched per-rig by their LAN IP where available, and otherwise
+  compared as fleet-total vs pool-total — instead of being wrongly reported as
+  "not seen by this pool."
+
+**Notes**
+- Requires Android 8.0 (API 26) or newer.
+- Local-first: talks only to the miners you configure; Hi3 Pool/MMP integrations are
+  opt-in and read-only; no account, no ads, no analytics.
