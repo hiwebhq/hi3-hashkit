@@ -44,6 +44,10 @@ class SettingsViewModel @Inject constructor(
             onReady(exporter.shareIntent(file, "text/plain"))
         }
 
+    fun setShowSoloCard(v: Boolean) = viewModelScope.launch { repo.setShowSoloCard(v) }
+    fun setMmpEnabled(v: Boolean) = viewModelScope.launch { repo.setMmpEnabled(v) }
+    fun setMmpBaseUrl(v: String) = viewModelScope.launch { repo.setMmpBaseUrl(v) }
+    fun setMmpApiKey(v: String) = viewModelScope.launch { repo.setMmpApiKey(v) }
     fun setHi3PoolEnabled(v: Boolean) = viewModelScope.launch { repo.setHi3PoolEnabled(v) }
     fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
     fun setHi3PoolPayoutAddress(v: String) = viewModelScope.launch { repo.setHi3PoolPayoutAddress(v) }

@@ -22,8 +22,17 @@ In this build:
    only toward private/Tailscale addresses (local stage instances). Disabling the
    toggle stops all pool requests immediately.
 
+4. **Optional, off by default — Hi3 MMP:** while "Hi3 MMP fleet view" is enabled in
+   Settings, the app sends read-only GETs (`/api/v1/fleet/summary`,
+   `/api/v1/fleet/by-site`) to the configured MMP URL (default `https://mmp.hi3.cc`)
+   about once a minute while the app is open, authenticated with the user's MMP API
+   key in the `Authorization: Bearer` header. Nothing is uploaded — the phone never
+   acts as an MMP agent. The API key is stored encrypted with a non-exportable
+   AES-256 key in the Android Keystore (`KeystoreCrypto`); the same HTTPS-for-public
+   -hosts rule applies. Disabling the toggle stops all MMP requests immediately.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
-with mmp.hi3.cc or any other server.
+with any other server.
 
 ## Permissions
 

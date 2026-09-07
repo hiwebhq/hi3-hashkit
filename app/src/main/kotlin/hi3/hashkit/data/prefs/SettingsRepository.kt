@@ -44,6 +44,13 @@ data class AppSettings(
     val hi3PoolBaseUrl: String = "https://pool.hi3.cc",
     /** Payout address used as the read-only account key on the pool. */
     val hi3PoolPayoutAddress: String = "",
+    /** Hi3 MMP integration — OPT-IN; nothing is contacted while false. */
+    val mmpEnabled: Boolean = false,
+    val mmpBaseUrl: String = "https://mmp.hi3.cc",
+    /** Whether an (encrypted) MMP API key is stored; the key itself is never in this flow. */
+    val mmpKeyConfigured: Boolean = false,
+    /** Show the solo-mining odds card on the dashboard. */
+    val showSoloCard: Boolean = true,
     val alertThresholds: AlertThresholds = AlertThresholds(),
     val alertsEnabled: Boolean = true,
 )
@@ -67,6 +74,10 @@ class SettingsRepository @Inject constructor(
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
         val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
+        val mmpEnabled = booleanPreferencesKey("mmp_enabled")
+        val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
+        val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
+        val showSoloCard = booleanPreferencesKey("show_solo_card")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
         val thChipTempC = doublePreferencesKey("th_chip_temp_c")
@@ -92,6 +103,10 @@ class SettingsRepository @Inject constructor(
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
             hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
             hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
+            mmpEnabled = p[Keys.mmpEnabled] ?: false,
+            mmpBaseUrl = p[Keys.mmpBaseUrl] ?: "https://mmp.hi3.cc",
+            mmpKeyConfigured = !p[Keys.mmpApiKeyEncrypted].isNullOrBlank(),
+            showSoloCard = p[Keys.showSoloCard] ?: true,
             alertsEnabled = p[Keys.alertsEnabled] ?: true,
             alertThresholds = AlertThresholds(
                 hashrateBelowPercent = p[Keys.thHashBelowPct] ?: 80.0,
@@ -119,6 +134,22 @@ class SettingsRepository @Inject constructor(
     suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }
     suspend fun setHi3PoolBaseUrl(value: String) = edit { it[Keys.hi3PoolBaseUrl] = value.trim() }
     suspend fun setHi3PoolPayoutAddress(value: String) = edit { it[Keys.hi3PoolPayoutAddress] = value.trim() }
+    suspend fun setMmpEnabled(value: Boolean) = edit { it[Keys.mmpEnabled] = value }
+    suspend fun setMmpBaseUrl(value: String) = edit { it[Keys.mmpBaseUrl] = value.trim() }
+    suspend fun setShowSoloCard(value: Boolean) = edit { it[Keys.showSoloCard] = value }
+
+    /** Store the MMP API key encrypted with the Android Keystore; blank clears it. */
+    suspend fun setMmpApiKey(plaintext: String) = edit {
+        val trimmed = plaintext.trim()
+        it[Keys.mmpApiKeyEncrypted] =
+            if (trimmed.isEmpty()) "" else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed)
+    }
+
+    /** Decrypt the MMP API key on demand; never surfaced through the settings flow. */
+    suspend fun mmpApiKey(): String? =
+        context.dataStore.data.first()[Keys.mmpApiKeyEncrypted]
+            ?.takeIf { it.isNotBlank() }
+            ?.let { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }
     suspend fun setAlertsEnabled(value: Boolean) = edit { it[Keys.alertsEnabled] = value }
     suspend fun setHashrateBelowPercent(value: Double) = edit { it[Keys.thHashBelowPct] = value }
     suspend fun setChipTempThreshold(value: Double) = edit { it[Keys.thChipTempC] = value }

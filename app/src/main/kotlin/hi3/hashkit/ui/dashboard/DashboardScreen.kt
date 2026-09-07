@@ -123,10 +123,16 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item { FleetSummary(state) }
-            state.solo?.let { solo -> item { SoloCard(solo) } }
+            if (state.settings.showSoloCard) {
+                state.solo?.let { solo -> item { SoloCard(solo) } }
+            }
             item {
                 val poolState by viewModel.poolState.collectAsStateWithLifecycle()
                 if (poolState.enabled) Hi3PoolCard(poolState)
+            }
+            item {
+                val mmpState by viewModel.mmpState.collectAsStateWithLifecycle()
+                if (mmpState.enabled) MmpCard(mmpState, state)
             }
             item {
                 Row(
@@ -324,6 +330,80 @@ private fun FleetSummary(state: DashboardUiState) {
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
+        }
+    }
+}
+
+@Composable
+private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardUiState) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("HI3 MMP FLEET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                Text(
+                    mmp.lastUpdated?.let { "updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: "",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            mmp.error?.let {
+                Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.statusDegraded)
+                return@Column
+            }
+            val s = mmp.summary ?: return@Column
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                Metric(
+                    "MMP hashrate",
+                    Units.formatHashrate(s.hashrateThs?.times(1000.0)),
+                    valueColor = HiBrand.accentAlt,
+                )
+                Metric("Online", "${s.online ?: "—"}/${s.installed ?: "—"}")
+                Metric("Power", s.powerKw?.let { Units.formatPower(it * 1000.0) } ?: "—")
+            }
+            Spacer(Modifier.height(6.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                s.realizationPct?.let { Metric("Realization", "${it.toInt()}%") }
+                s.needsAttention?.takeIf { it > 0 }?.let {
+                    Metric("Attention", "$it", valueColor = HiBrand.statusDegraded)
+                }
+                s.zeroHash?.takeIf { it > 0 }?.let {
+                    Metric("Zero-hash", "$it", valueColor = HiBrand.statusOffline)
+                }
+            }
+            if (mmp.sites.isNotEmpty()) {
+                Spacer(Modifier.height(10.dp))
+                mmp.sites.forEach { site ->
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                    ) {
+                        Text(site.siteName, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                        Text(
+                            "${site.online ?: "?"}/${site.installed ?: "?"} · " +
+                                Units.formatHashrate(site.hashrateThs?.times(1000.0)),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = HiBrand.textSecondary,
+                        )
+                    }
+                }
+            }
+            dash.totals?.let { totals ->
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "This app sees ${Units.formatHashrate(totals.totalHashrateGhs)} locally; " +
+                        "MMP reports ${Units.formatHashrate(s.hashrateThs?.times(1000.0))} fleet-wide.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
         }
     }
 }

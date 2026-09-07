@@ -79,10 +79,12 @@ class DashboardViewModel @Inject constructor(
     private val difficultyRepository: DifficultyRepository,
     private val fleetControl: hi3.hashkit.data.repo.FleetControl,
     private val hi3PoolRepository: hi3.hashkit.integrations.hi3.Hi3PoolRepository,
+    private val mmpRepository: hi3.hashkit.integrations.hi3.MmpRepository,
     alertDao: AlertDao,
 ) : ViewModel() {
 
     val poolState = hi3PoolRepository.state
+    val mmpState = mmpRepository.state
 
     private val searchQuery = kotlinx.coroutines.flow.MutableStateFlow("")
     private val selection = kotlinx.coroutines.flow.MutableStateFlow<Set<Long>>(emptySet())
@@ -105,6 +107,7 @@ class DashboardViewModel @Inject constructor(
                 .map { repository.toDomain(it, Instant.now()) }
             hi3PoolRepository.refresh(miners)
         }
+        runCatching { mmpRepository.refresh() }
     }
 
     val uiState: StateFlow<DashboardUiState> =

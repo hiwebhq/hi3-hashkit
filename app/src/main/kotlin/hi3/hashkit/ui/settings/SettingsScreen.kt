@@ -228,14 +228,50 @@ fun SettingsScreen(
                 )
             }
 
-            Section("FUTURE INTEGRATIONS") {
+            Section("HI3 MMP") {
+                ToggleRow(
+                    "Hi3 MMP fleet view",
+                    "Read-only fleet summary and per-site rollups from your Mining " +
+                        "Management Platform.",
+                    settings.mmpEnabled,
+                ) { viewModel.setMmpEnabled(it) }
+                if (settings.mmpEnabled) {
+                    NumberRow("MMP URL", settings.mmpBaseUrl) { viewModel.setMmpBaseUrl(it) }
+                    var keyInput by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = keyInput,
+                        onValueChange = { keyInput = it },
+                        label = {
+                            Text(
+                                if (settings.mmpKeyConfigured) "API key (saved — enter to replace, blank to clear)"
+                                else "API key (mint one in the MMP admin UI)",
+                            )
+                        },
+                        singleLine = true,
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    androidx.compose.material3.TextButton(onClick = {
+                        viewModel.setMmpApiKey(keyInput)
+                        keyInput = ""
+                    }) { Text(if (settings.mmpKeyConfigured) "Replace key" else "Save key") }
+                }
                 Text(
-                    "Hi3 MMP (mmp.hi3.cc) integration is planned but disabled — this app " +
-                        "never contacts it. It will be opt-in with a full data disclosure " +
-                        "when it ships.",
-                    style = MaterialTheme.typography.bodySmall,
+                    "What is transmitted while enabled: your MMP API key in the request " +
+                        "header, over HTTPS to the MMP URL above, about once a minute while " +
+                        "the app is open — read-only fleet queries, nothing uploaded. The key " +
+                        "is stored encrypted with the Android Keystore. Off by default.",
+                    style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
+            }
+
+            Section("DISPLAY") {
+                ToggleRow(
+                    "Solo odds card",
+                    "Show block-finding probability on the dashboard.",
+                    settings.showSoloCard,
+                ) { viewModel.setShowSoloCard(it) }
             }
         }
     }

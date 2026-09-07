@@ -27,9 +27,12 @@ the phone and open it (enable "install unknown apps" for your file manager).
 
 ## Privacy behavior
 
-- No data leaves your device except requests to the miner IPs you configure, plus two
-  strictly opt-in integrations (both off by default): a network-difficulty fetch and
-  read-only Hi3 Pool stats keyed by your payout address (see docs/SECURITY.md).
-- No connection to mmp.hi3.cc (future, opt-in; interface stubbed and disabled).
+- No data leaves your device except requests to the miner IPs you configure, plus
+  three strictly opt-in, read-only integrations (all off by default): a
+  network-difficulty fetch, Hi3 Pool stats keyed by your payout address, and the
+  Hi3 MMP fleet view authenticated by an API key stored via the Android Keystore
+  (see docs/SECURITY.md for exactly what each transmits).
+- The phone never uploads miner data anywhere — MMP agent functionality remains a
+  disabled placeholder.
 - No background monitoring yet — polling runs while the app is open (Phase 2 adds an
   explicit foreground-service option).
