@@ -61,6 +61,35 @@ class CgMinerCommonTest {
     }
 
     @Test
+    fun `Bitmain S21 - GHS summary and stats temps fans (real capture)`() {
+        // Verified against a real Antminer S21 Pro (BMMiner 1.0.0).
+        assertEquals(CgMinerCommon.Family.ANTMINER_STOCK,
+            CgMinerCommon.family(fx("fixtures/cgminer/antminer_s21_version.json")))
+        val base = CgMinerCommon.parseStandardTelemetry(
+            fx("fixtures/cgminer/antminer_s21_summary.json"),
+            fx("fixtures/cgminer/antminer_s21_pools.json"),
+        )
+        // Summary reports GHS 5s = 251116.18 GH/s (not MHS) -> used directly.
+        assertEquals(251116.18, base.hashrateGhs.value!!, 0.1)
+        assertEquals(86330L, base.sharesAccepted)
+        assertEquals("192.0.2.10", base.poolUrl)
+
+        val t = CgMinerCommon.enrichWithAntminerStats(base, fx("fixtures/cgminer/antminer_s21_stats.json"))
+        // Hottest chip across temp2_* (71,70,72) and temp_chip strings = 72.
+        assertEquals(72.0, t.chipTempC.value!!, 0.001)
+        assertEquals(ValueSource.MEASURED, t.chipTempC.source)
+        assertEquals(4, t.fans.size)
+        assertEquals(6570, t.fans[0].rpm)
+        assertEquals(245000.0, t.expectedHashrateGhs.value!!, 0.1) // total_rateideal
+        assertEquals(625.0, t.frequencyMhz.value!!, 0.1)
+        assertEquals(195, t.asicCount)
+        // Power is not in the Bitmain cgminer API -> honestly unavailable.
+        assertEquals(ValueSource.UNAVAILABLE, t.powerW.source)
+        // Board temps (temp1/2/3 = 66/65/67) preserved for diagnostics; max = 67.
+        assertEquals(67.0, t.unrecognizedFields["boardTempC"]!!.toDouble(), 0.001)
+    }
+
+    @Test
     fun `standard parse of a REAL cgminer summary (Avalon Nano 3 capture)`() {
         // Confirms the standard-field extraction works on a genuine cgminer response.
         val t = CgMinerCommon.parseStandardTelemetry(

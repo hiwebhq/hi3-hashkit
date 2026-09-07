@@ -58,11 +58,18 @@ class GenericCgMinerAdapter @Inject constructor(
         val summary = api.query(host.host, port, "summary").body
         val pools = api.query(host.host, port, "pools").body
         if (summary == null) return TelemetryResult.Offline("No summary from cgminer API")
-        val telemetry = CgMinerCommon.parseStandardTelemetry(summary, pools)
+        var telemetry = CgMinerCommon.parseStandardTelemetry(summary, pools)
+        // Stock Bitmain: enrich with verified stats fields (temps/fans/freq/expected).
+        var statsBody: String? = null
+        if (family == CgMinerCommon.Family.ANTMINER_STOCK) {
+            statsBody = api.query(host.host, port, "stats").body
+            telemetry = CgMinerCommon.enrichWithAntminerStats(telemetry, statsBody)
+        }
         val raw = buildString {
             append("{\"version\":").append(versionBody)
             append(",\"summary\":").append(summary)
             pools?.let { append(",\"pools\":").append(it) }
+            statsBody?.let { append(",\"stats\":").append(it) }
             append("}")
         }
         return TelemetryResult.Success(telemetry, raw)
