@@ -1,26 +1,15 @@
 package hi3.hashkit.integrations.hi3
 
 /**
- * PLACEHOLDER INTERFACES — DISABLED IN VERSION 1.
+ * Hi3 platform integrations.
  *
- * Future opt-in integrations with pool.hi3.cc and mmp.hi3.cc. Version 1 must never
- * contact either domain, and there are intentionally no implementations, no HTTP code,
- * and no references from production UI beyond a disabled "coming soon" settings row.
- * When implemented, each integration must clearly display exactly what data will be
- * transmitted before the user enables it.
+ * Hi3 POOL is now implemented (see [Hi3PoolClient] / Hi3PoolRepository): opt-in,
+ * read-only, address-keyed queries against the pool's verified public-pool-fork API.
+ *
+ * Hi3 MMP below remains a PLACEHOLDER: no implementation, no HTTP code, never
+ * contacted. When implemented it must be opt-in and clearly display exactly what
+ * data will be transmitted before the user enables it.
  */
-
-data class AuthenticationResult(val success: Boolean, val message: String?)
-data class PoolWorker(val name: String, val hashrateGhs: Double?)
-data class PoolHashrate(val currentGhs: Double?, val dayAvgGhs: Double?)
-data class ShareStatistics(val accepted: Long, val rejected: Long, val stale: Long)
-
-interface Hi3PoolProvider {
-    suspend fun authenticate(): AuthenticationResult
-    suspend fun getWorkers(): List<PoolWorker>
-    suspend fun getAccountHashrate(): PoolHashrate
-    suspend fun getShareStatistics(): ShareStatistics
-}
 
 data class RegistrationResult(val success: Boolean, val agentId: String?)
 data class SyncResult(val success: Boolean)

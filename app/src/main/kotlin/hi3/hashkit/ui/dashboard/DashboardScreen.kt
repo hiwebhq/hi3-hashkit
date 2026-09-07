@@ -125,6 +125,10 @@ fun DashboardScreen(
             item { FleetSummary(state) }
             state.solo?.let { solo -> item { SoloCard(solo) } }
             item {
+                val poolState by viewModel.poolState.collectAsStateWithLifecycle()
+                if (poolState.enabled) Hi3PoolCard(poolState)
+            }
+            item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -320,6 +324,84 @@ private fun FleetSummary(state: DashboardUiState) {
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
+        }
+    }
+}
+
+@Composable
+private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("HI3 POOL", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                Text(
+                    pool.lastUpdated?.let { "pool view · updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: "",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            pool.error?.let {
+                Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.statusDegraded)
+                return@Column
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                Metric("Pool-side hashrate", Units.formatHashrate(pool.totalPoolHashrateGhs), valueColor = HiBrand.accentAlt)
+                Metric("Workers", "${pool.workersCount}")
+                pool.blockHeight?.let { Metric("Height", "$it") }
+            }
+            if (pool.comparisons.isNotEmpty()) {
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    "MINER vs POOL (pool averages lag live readings)",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                Spacer(Modifier.height(4.dp))
+                pool.comparisons.forEach { c ->
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                    ) {
+                        Text(
+                            c.localMinerName ?: "${c.poolWorkerName} (no local match)",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Text(
+                            "${Units.formatHashrate(c.localHashrateGhs)} → ${Units.formatHashrate(c.poolHashrateGhs)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = HiBrand.textSecondary,
+                        )
+                        c.deltaPercent?.let { delta ->
+                            Text(
+                                String.format(java.util.Locale.US, " %+.0f%%", delta),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = when {
+                                    delta < -25 -> HiBrand.statusOffline
+                                    delta < -10 -> HiBrand.statusDegraded
+                                    else -> HiBrand.statusOnline
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+            if (pool.unmatchedLocal.isNotEmpty()) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "Not seen by this pool: ${pool.unmatchedLocal.joinToString(", ")}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.statusDegraded,
+                )
+            }
         }
     }
 }

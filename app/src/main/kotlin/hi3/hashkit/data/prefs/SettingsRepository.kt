@@ -39,6 +39,11 @@ data class AppSettings(
     val extraSubnetsCsv: String = "",
     /** Miner-card size on the dashboard. */
     val cardDensity: CardDensity = CardDensity.LARGE,
+    /** Hi3 Pool integration — OPT-IN; nothing is contacted while false. */
+    val hi3PoolEnabled: Boolean = false,
+    val hi3PoolBaseUrl: String = "https://pool.hi3.cc",
+    /** Payout address used as the read-only account key on the pool. */
+    val hi3PoolPayoutAddress: String = "",
     val alertThresholds: AlertThresholds = AlertThresholds(),
     val alertsEnabled: Boolean = true,
 )
@@ -59,6 +64,9 @@ class SettingsRepository @Inject constructor(
         val retentionDays = intPreferencesKey("retention_days")
         val extraSubnets = stringPreferencesKey("extra_subnets")
         val cardDensity = stringPreferencesKey("card_density")
+        val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
+        val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
+        val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
         val thChipTempC = doublePreferencesKey("th_chip_temp_c")
@@ -81,6 +89,9 @@ class SettingsRepository @Inject constructor(
             extraSubnetsCsv = p[Keys.extraSubnets] ?: "",
             cardDensity = runCatching { CardDensity.valueOf(p[Keys.cardDensity] ?: "LARGE") }
                 .getOrDefault(CardDensity.LARGE),
+            hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
+            hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
+            hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
             alertsEnabled = p[Keys.alertsEnabled] ?: true,
             alertThresholds = AlertThresholds(
                 hashrateBelowPercent = p[Keys.thHashBelowPct] ?: 80.0,
@@ -105,6 +116,9 @@ class SettingsRepository @Inject constructor(
     suspend fun setRetentionDays(value: Int) = edit { it[Keys.retentionDays] = value }
     suspend fun setExtraSubnets(value: String) = edit { it[Keys.extraSubnets] = value }
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
+    suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }
+    suspend fun setHi3PoolBaseUrl(value: String) = edit { it[Keys.hi3PoolBaseUrl] = value.trim() }
+    suspend fun setHi3PoolPayoutAddress(value: String) = edit { it[Keys.hi3PoolPayoutAddress] = value.trim() }
     suspend fun setAlertsEnabled(value: Boolean) = edit { it[Keys.alertsEnabled] = value }
     suspend fun setHashrateBelowPercent(value: Double) = edit { it[Keys.thHashBelowPct] = value }
     suspend fun setChipTempThreshold(value: Double) = edit { it[Keys.thChipTempC] = value }

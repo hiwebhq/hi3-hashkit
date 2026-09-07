@@ -13,9 +13,17 @@ In this build:
    difficulty for solo-mining odds. It carries no miner data, no identifiers beyond
    the connection itself, and runs only while "Fetch network difficulty" is enabled in
    Settings (manual difficulty entry works without it).
+3. **Optional, off by default — Hi3 Pool:** while "Hi3 Pool stats" is enabled in
+   Settings, the app sends read-only GETs (`/api/client/{payoutAddress}`,
+   `/api/network`) to the configured pool URL (default `https://pool.hi3.cc`) about
+   once a minute while the app is open. The only user data transmitted is the
+   configured payout address in the request path. No miner telemetry, local IPs, or
+   worker passwords are sent. Public pool hosts must be HTTPS; plain HTTP is accepted
+   only toward private/Tailscale addresses (local stage instances). Disabling the
+   toggle stops all pool requests immediately.
 
-There is no analytics SDK, no advertising, no account, and no contact with
-pool.hi3.cc, mmp.hi3.cc, or any other Hi3 server.
+There is no analytics SDK, no advertising, no account requirement, and no contact
+with mmp.hi3.cc or any other server.
 
 ## Permissions
 

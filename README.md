@@ -25,9 +25,11 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 17 2>/dev/null || echo /opt/homebre
 Install: `adb install app/build/outputs/apk/debug/app-debug.apk`, or copy the APK to
 the phone and open it (enable "install unknown apps" for your file manager).
 
-## What v1 does not do
+## Privacy behavior
 
-- No data ever leaves your device except HTTP requests to the miner IPs you configure.
-- No connection to pool.hi3.cc or mmp.hi3.cc (future, opt-in; interfaces are stubbed and disabled).
+- No data leaves your device except requests to the miner IPs you configure, plus two
+  strictly opt-in integrations (both off by default): a network-difficulty fetch and
+  read-only Hi3 Pool stats keyed by your payout address (see docs/SECURITY.md).
+- No connection to mmp.hi3.cc (future, opt-in; interface stubbed and disabled).
 - No background monitoring yet — polling runs while the app is open (Phase 2 adds an
   explicit foreground-service option).

@@ -44,6 +44,10 @@ class SettingsViewModel @Inject constructor(
             onReady(exporter.shareIntent(file, "text/plain"))
         }
 
+    fun setHi3PoolEnabled(v: Boolean) = viewModelScope.launch { repo.setHi3PoolEnabled(v) }
+    fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
+    fun setHi3PoolPayoutAddress(v: String) = viewModelScope.launch { repo.setHi3PoolPayoutAddress(v) }
+
     fun restoreFrom(uri: android.net.Uri) = viewModelScope.launch {
         val content = runCatching {
             context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()

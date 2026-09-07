@@ -204,12 +204,35 @@ fun SettingsScreen(
                 ) { viewModel.setDemoMode(it) }
             }
 
+            Section("HI3 POOL") {
+                ToggleRow(
+                    "Hi3 Pool stats",
+                    "Read-only pool-side view of your workers, compared against local " +
+                        "miner readings on the dashboard.",
+                    settings.hi3PoolEnabled,
+                ) { viewModel.setHi3PoolEnabled(it) }
+                if (settings.hi3PoolEnabled) {
+                    NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                    NumberRow("Payout address (account key)", settings.hi3PoolPayoutAddress) {
+                        viewModel.setHi3PoolPayoutAddress(it)
+                    }
+                }
+                Text(
+                    "What is transmitted while enabled: your payout address, inside an " +
+                        "HTTPS request to the pool URL above, about once a minute while the " +
+                        "app is open. Nothing else — no miner telemetry, no local IPs, no " +
+                        "worker passwords. Off by default; turning it off stops all pool " +
+                        "requests immediately.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
             Section("FUTURE INTEGRATIONS") {
                 Text(
-                    "Hi3 Pool (pool.hi3.cc) and Hi3 MMP (mmp.hi3.cc) integrations are " +
-                        "planned but disabled — this version never contacts Hi3 servers. " +
-                        "When they ship they will be opt-in and will state exactly what is " +
-                        "transmitted before enabling.",
+                    "Hi3 MMP (mmp.hi3.cc) integration is planned but disabled — this app " +
+                        "never contacts it. It will be opt-in with a full data disclosure " +
+                        "when it ships.",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )

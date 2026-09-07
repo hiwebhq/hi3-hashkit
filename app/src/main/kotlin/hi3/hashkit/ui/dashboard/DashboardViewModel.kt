@@ -78,16 +78,33 @@ class DashboardViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val difficultyRepository: DifficultyRepository,
     private val fleetControl: hi3.hashkit.data.repo.FleetControl,
+    private val hi3PoolRepository: hi3.hashkit.integrations.hi3.Hi3PoolRepository,
     alertDao: AlertDao,
 ) : ViewModel() {
+
+    val poolState = hi3PoolRepository.state
 
     private val searchQuery = kotlinx.coroutines.flow.MutableStateFlow("")
     private val selection = kotlinx.coroutines.flow.MutableStateFlow<Set<Long>>(emptySet())
     private val bulkFlow = kotlinx.coroutines.flow.MutableStateFlow(BulkFlowState())
 
     init {
-        // Runs only when the user has opted in to the external difficulty fetch.
+        // Both run only when the user has opted in; otherwise they no-op locally.
         viewModelScope.launch { difficultyRepository.refreshIfEnabled() }
+        viewModelScope.launch {
+            while (true) {
+                refreshPool()
+                kotlinx.coroutines.delay(60_000)
+            }
+        }
+    }
+
+    private suspend fun refreshPool() {
+        runCatching {
+            val miners = repository.observeMinerEntities().first()
+                .map { repository.toDomain(it, Instant.now()) }
+            hi3PoolRepository.refresh(miners)
+        }
     }
 
     val uiState: StateFlow<DashboardUiState> =
@@ -180,6 +197,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             pollingEngine.pollAllOnce()
             difficultyRepository.refreshIfEnabled()
+            refreshPool()
         }
     }
 
