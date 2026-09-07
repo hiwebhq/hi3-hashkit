@@ -129,7 +129,10 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            item { FleetSummary(state) }
+            item {
+                val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
+                FleetSummary(state, trend)
+            }
             if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
             }
@@ -321,7 +324,10 @@ private fun BulkBar(
 }
 
 @Composable
-private fun FleetSummary(state: DashboardUiState) {
+private fun FleetSummary(
+    state: DashboardUiState,
+    trend: List<hi3.hashkit.data.repo.FleetTrendPoint>,
+) {
     val totals = state.totals
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
@@ -372,7 +378,50 @@ private fun FleetSummary(state: DashboardUiState) {
                     Metric("Est. cost", "%.2f %s/d".format(cost, totals.currencyCode))
                 }
             }
+            if (trend.size >= 2) {
+                Spacer(Modifier.height(12.dp))
+                FleetTrendChart(trend, Modifier.fillMaxWidth().height(72.dp))
+                Text(
+                    "Fleet hashrate · last 2h",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun FleetTrendChart(
+    trend: List<hi3.hashkit.data.repo.FleetTrendPoint>,
+    modifier: Modifier = Modifier,
+) {
+    androidx.compose.foundation.Canvas(modifier) {
+        val minT = trend.first().timeMs
+        val maxT = trend.last().timeMs
+        val spanT = (maxT - minT).coerceAtLeast(1)
+        val maxV = (trend.maxOf { it.totalGhs } * 1.1).coerceAtLeast(1.0)
+        fun x(t: Long) = (t - minT).toFloat() / spanT * size.width
+        fun y(v: Double) = size.height - (v / maxV).toFloat() * size.height
+
+        val line = androidx.compose.ui.graphics.Path()
+        val area = androidx.compose.ui.graphics.Path()
+        trend.forEachIndexed { i, p ->
+            val px = x(p.timeMs); val py = y(p.totalGhs)
+            if (i == 0) { line.moveTo(px, py); area.moveTo(px, size.height); area.lineTo(px, py) }
+            else { line.lineTo(px, py); area.lineTo(px, py) }
+        }
+        area.lineTo(x(maxT), size.height)
+        area.close()
+        drawPath(area, HiBrand.accent.copy(alpha = 0.15f))
+        drawPath(
+            line,
+            color = HiBrand.accent,
+            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                width = 3f,
+                cap = androidx.compose.ui.graphics.StrokeCap.Round,
+            ),
+        )
     }
 }
 
@@ -681,6 +730,7 @@ private fun MinerCard(
                         listOfNotNull(
                             Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
                             Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
+                            t?.uptimeSeconds?.let { "up ${Units.formatUptime(it)}" },
                         ).joinToString(" · ").ifEmpty { "no telemetry" },
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
@@ -757,6 +807,7 @@ private fun MinerCard(
                             Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
                             Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
                             Units.formatEfficiency(t?.efficiencyJTh?.value).takeIf { it != "—" },
+                            t?.uptimeSeconds?.let { "up ${Units.formatUptime(it)}" },
                             t?.attainmentPercent?.let { "${it.toInt()}% of exp." },
                         ).joinToString("  ·  ").ifEmpty { "no telemetry" },
                         style = MaterialTheme.typography.labelSmall,

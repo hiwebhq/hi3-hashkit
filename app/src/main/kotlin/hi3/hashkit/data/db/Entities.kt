@@ -87,6 +87,13 @@ data class TelemetrySampleEntity(
     val usingFallbackPool: Boolean?,
 )
 
+/** Lightweight projection for the fleet trend chart (not a table). */
+data class FleetSamplePoint(
+    val minerId: Long,
+    val timestampEpochMs: Long,
+    val hashrateGhs: Double?,
+)
+
 /** Raw API bodies kept briefly for diagnostics only (short, configurable retention). */
 @Entity(
     tableName = "raw_responses",
