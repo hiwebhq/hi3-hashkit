@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.ui.theme.HiBrand
@@ -42,7 +44,12 @@ fun MinerVisual(
     val timeMs by produceState(0L) {
         while (true) withInfiniteAnimationFrameMillis { value = it }
     }
-    Canvas(modifier.fillMaxWidth().height(200.dp)) {
+    val desc = "Live miner render: status $status" +
+        (chipTempC?.let { ", chip ${it.toInt()} degrees" } ?: "") +
+        (fanRpm?.let { ", fan $it RPM" } ?: "")
+    Canvas(
+        modifier.fillMaxWidth().height(200.dp).semantics { contentDescription = desc },
+    ) {
         drawMiner(timeMs, status, chipTempC, fanRpm, fanPercent)
     }
 }

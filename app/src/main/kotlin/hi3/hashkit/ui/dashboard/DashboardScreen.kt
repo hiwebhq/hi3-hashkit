@@ -54,8 +54,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.core.Units
 import hi3.hashkit.domain.model.Miner
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import hi3.hashkit.ui.components.Metric
 import hi3.hashkit.ui.components.StatusBadge
+import hi3.hashkit.ui.components.color
 import hi3.hashkit.ui.theme.HiBrand
 import java.time.Duration
 import java.time.Instant
@@ -225,9 +228,11 @@ fun DashboardScreen(
                             }
                         }
                     } else items(groupMiners, key = { it.id }) { miner ->
+                        val spark by viewModel.sparklines.collectAsStateWithLifecycle()
                         MinerCard(
                             miner = miner,
                             density = state.settings.cardDensity,
+                            sparkline = spark[miner.id],
                             selected = miner.id in state.selection,
                             selectionMode = state.selection.isNotEmpty(),
                             onClick = {
@@ -449,7 +454,9 @@ private fun FleetTrendChart(
     trend: List<hi3.hashkit.data.repo.FleetTrendPoint>,
     modifier: Modifier = Modifier,
 ) {
-    androidx.compose.foundation.Canvas(modifier) {
+    androidx.compose.foundation.Canvas(
+        modifier.semantics { contentDescription = "Fleet hashrate trend chart" },
+    ) {
         val minT = trend.first().timeMs
         val maxT = trend.last().timeMs
         val spanT = (maxT - minT).coerceAtLeast(1)
@@ -742,6 +749,7 @@ private fun MinerCard(
     selectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    sparkline: List<Double>? = null,
 ) {
     val t = miner.lastTelemetry
     val clickMod = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
@@ -935,7 +943,39 @@ private fun MinerCard(
                 Metric("Eff.", Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
                 Metric("Uptime", Units.formatUptime(t?.uptimeSeconds))
             }
+            if ((sparkline?.size ?: 0) >= 2) {
+                Spacer(Modifier.height(8.dp))
+                MiniSparkline(
+                    sparkline!!,
+                    Modifier.fillMaxWidth().height(28.dp),
+                    color = miner.status.color(),
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun MiniSparkline(points: List<Double>, modifier: Modifier, color: androidx.compose.ui.graphics.Color) {
+    androidx.compose.foundation.Canvas(
+        modifier.semantics { contentDescription = "Recent hashrate trend" },
+    ) {
+        val maxV = (points.max() * 1.1).coerceAtLeast(1.0)
+        val minV = (points.min() * 0.9).coerceAtLeast(0.0)
+        val span = (maxV - minV).coerceAtLeast(1e-6)
+        val stepX = if (points.size > 1) size.width / (points.size - 1) else size.width
+        val path = androidx.compose.ui.graphics.Path()
+        points.forEachIndexed { i, v ->
+            val x = i * stepX
+            val y = size.height - ((v - minV) / span).toFloat() * size.height
+            if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        }
+        drawPath(
+            path, color = color,
+            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                width = 2.5f, cap = androidx.compose.ui.graphics.StrokeCap.Round,
+            ),
+        )
     }
 }
 

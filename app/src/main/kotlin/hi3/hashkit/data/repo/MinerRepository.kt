@@ -237,6 +237,26 @@ class MinerRepository @Inject constructor(
         telemetryDao.observeSince(minerId, sinceEpochMs)
             .map { rows -> rows.map { it.toDomain() } }
 
+    /** Recent hashrate series per miner (normalized point lists) for card sparklines. */
+    suspend fun minerSparklines(
+        windowMs: Long,
+        includeDemo: Boolean,
+        points: Int = 24,
+    ): Map<Long, List<Double>> {
+        val now = System.currentTimeMillis()
+        val start = now - windowMs
+        val bucketMs = (windowMs / points).coerceAtLeast(1)
+        return telemetryDao.fleetSamplesSince(start, includeDemo)
+            .groupBy { it.minerId }
+            .mapValues { (_, rows) ->
+                rows.filter { it.hashrateGhs != null }
+                    .groupBy { ((it.timestampEpochMs - start) / bucketMs).toInt().coerceIn(0, points - 1) }
+                    .toSortedMap()
+                    .map { (_, b) -> b.mapNotNull { it.hashrateGhs }.average() }
+            }
+            .filterValues { it.size >= 2 }
+    }
+
     /** Fleet-total hashrate trend over [windowMs], bucketed for a compact chart. */
     suspend fun fleetHashrateTrend(
         windowMs: Long,

@@ -96,6 +96,16 @@ class DashboardViewModel @Inject constructor(
 
     fun setFleetWindow(ms: Long) { fleetWindow.value = ms }
 
+    /** Per-miner ~30min hashrate sparkline points, recomputed each poll cycle. */
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val sparklines: StateFlow<Map<Long, List<Double>>> =
+        combine(
+            pollingEngine.lastRefresh,
+            settingsRepository.settings.map { it.demoModeEnabled }.distinctUntilChanged(),
+        ) { _, demo -> demo }
+            .mapLatest { demo -> repository.minerSparklines(30 * 60_000L, demo) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
     /** Fleet-total hashrate trend, recomputed each poll cycle (or when window/demo change). */
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val fleetTrend: StateFlow<List<hi3.hashkit.data.repo.FleetTrendPoint>> =
