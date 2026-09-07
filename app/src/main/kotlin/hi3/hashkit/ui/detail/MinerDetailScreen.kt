@@ -120,6 +120,21 @@ fun MinerDetailScreen(
                 StatusBadge(miner.status)
             }
 
+            SectionCard("LIVE VIEW") {
+                MinerVisual(
+                    status = miner.status,
+                    chipTempC = t?.chipTempC?.value,
+                    fanRpm = t?.fans?.firstOrNull()?.rpm,
+                    fanPercent = t?.fans?.firstOrNull()?.percent,
+                )
+                Text(
+                    "Stylized live render: fan spins with reported RPM, chips glow by " +
+                        "temperature, LED shows status.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
             SectionCard("HASHRATE HISTORY") {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf(
