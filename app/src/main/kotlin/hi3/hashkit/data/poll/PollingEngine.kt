@@ -34,6 +34,7 @@ class PollingEngine @Inject constructor(
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
     private val auditDao: hi3.hashkit.data.db.AuditDao,
+    private val remediationEngine: hi3.hashkit.data.remediation.RemediationEngine,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
@@ -139,7 +140,10 @@ class PollingEngine @Inject constructor(
                                 ),
                             )
                         }
-                        if (!entity.isDemo) maybeCutPower(entity, telemetry)
+                        if (!entity.isDemo) {
+                            maybeCutPower(entity, telemetry)
+                            remediationEngine.onPolled(entity, telemetry.status)
+                        }
                     }
                 }
             }.forEach { it.join() }

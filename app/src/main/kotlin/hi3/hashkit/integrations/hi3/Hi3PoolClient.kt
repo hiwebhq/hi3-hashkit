@@ -102,10 +102,20 @@ class Hi3PoolClient @Inject constructor(
         PoolType.LUXOR, PoolType.NICEHASH -> PoolResult.Error("${poolType.displayName} is coming soon.")
     }
 
+    /**
+     * A pool identifier (address / account / username) is interpolated into a request path,
+     * so it must be a safe token — reject anything with path/query/whitespace characters
+     * rather than build a malformed or path-traversing URL.
+     */
+    private fun safeIdentifier(id: String): String? {
+        val t = id.trim()
+        return if (t.isNotEmpty() && t.matches(Regex("^[A-Za-z0-9._-]{1,120}$"))) t else null
+    }
+
     /** F2Pool v1: GET /bitcoin/{account}; workers are [name, currentHashRate(H/s), ...]. */
     private suspend fun fetchF2poolAccount(baseUrl: String, account: String): PoolResult<PoolAccount> {
-        val acct = account.trim()
-        if (acct.isEmpty()) return PoolResult.Error("No mining account configured.")
+        val acct = safeIdentifier(account)
+            ?: return PoolResult.Error("Mining account has an unexpected format.")
         return get(baseUrl, "/bitcoin/$acct") { body ->
             val obj = json.parseToJsonElement(body).jsonObject
             val workers = (obj["workers"] as? JsonArray)?.mapNotNull { el ->
@@ -168,8 +178,8 @@ class Hi3PoolClient @Inject constructor(
 
     /** ckpool: raw.stats.ckpool.org/users/{address}; hashrates are suffix strings ("1.5T"). */
     private suspend fun fetchCkpoolAccount(baseUrl: String, address: String): PoolResult<PoolAccount> {
-        val addr = address.trim()
-        if (addr.isEmpty()) return PoolResult.Error("No address configured.")
+        val addr = safeIdentifier(address)
+            ?: return PoolResult.Error("Address has an unexpected format.")
         return get(baseUrl, "/users/$addr") { body ->
             val obj = json.parseToJsonElement(body).jsonObject
             val workers = (obj["worker"] as? JsonArray)?.mapNotNull { el ->
@@ -196,8 +206,8 @@ class Hi3PoolClient @Inject constructor(
 
     /** OCEAN: api.ocean.xyz/v1/user_hashrate_full/{address}; per-worker hashrate in H/s. */
     private suspend fun fetchOceanAccount(baseUrl: String, address: String): PoolResult<PoolAccount> {
-        val addr = address.trim()
-        if (addr.isEmpty()) return PoolResult.Error("No address configured.")
+        val addr = safeIdentifier(address)
+            ?: return PoolResult.Error("Address has an unexpected format.")
         return get(baseUrl, "/v1/user_hashrate_full/$addr") { body ->
             val root = json.parseToJsonElement(body).jsonObject
             // OCEAN wraps the payload under "result"/"data" on some versions; tolerate both.

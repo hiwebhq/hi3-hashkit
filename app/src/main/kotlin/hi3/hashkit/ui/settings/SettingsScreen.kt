@@ -269,6 +269,17 @@ fun SettingsScreen(
                     settings.firmwareUpdateCheck,
                 ) { viewModel.setFirmwareUpdateCheck(it) }
                 ToggleRow(
+                    "Auto-recover offline miners",
+                    "When a miner stays offline past the threshold, power-cycle its smart plug " +
+                        "(if set) or reboot it — once, with a cooldown. Every attempt is audited.",
+                    settings.autoRecoverEnabled,
+                ) { viewModel.setAutoRecoverEnabled(it) }
+                if (settings.autoRecoverEnabled) {
+                    NumberRow("Recover after offline (min)", settings.autoRecoverAfterMin.toString()) {
+                        it.toLongOrNull()?.let { v -> viewModel.setAutoRecoverAfterMin(v) }
+                    }
+                }
+                ToggleRow(
                     "Always-on safety monitor",
                     "Runs the smart-plug over-temp cutoff in the background (with a persistent " +
                         "notification) even when the app is closed, and re-arms after a reboot. " +
@@ -328,6 +339,16 @@ fun SettingsScreen(
                     it.toDoubleOrNull()?.let { v -> viewModel.setElectricityRate(v) }
                 }
                 NumberRow("Currency code", settings.currencyCode) { viewModel.setCurrencyCode(it) }
+                NumberRow(
+                    "BTC price (per coin, ${settings.currencyCode})",
+                    if (settings.btcPrice > 0) "%.0f".format(settings.btcPrice) else "",
+                ) { it.toDoubleOrNull()?.let { v -> viewModel.setBtcPrice(v) } }
+                ToggleRow(
+                    "Fetch BTC price from mempool.space",
+                    "Opt-in: a single HTTPS GET (no miner data) so the dashboard can estimate " +
+                        "revenue and profit. Off by default; enter a price manually instead if you prefer.",
+                    settings.btcPriceAutoFetch,
+                ) { viewModel.setBtcPriceAutoFetch(it) }
             }
 
             Section("DATA & EXPORTS") {

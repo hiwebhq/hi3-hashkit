@@ -292,6 +292,11 @@ fun DashboardScreen(
             item {
                 FleetSummary(state, fleetTrend, fleetWindow, viewModel::setFleetWindow, onClick = onFleet)
             }
+            state.profit?.let { profit ->
+                if (profit.revenuePerDay != null || profit.energyKwhPerDay != null) {
+                    item { ProfitCard(profit) }
+                }
+            }
             if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
             }
@@ -947,6 +952,47 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
                     color = HiBrand.statusDegraded,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary) {
+    fun money(v: Double?): String = v?.let { "%,.2f %s".format(it, p.currencyCode) } ?: "—"
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("PROFITABILITY & ENERGY", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                Metric("Revenue/day", money(p.revenuePerDay))
+                Metric("Power cost/day", money(p.costPerDay))
+                Metric(
+                    "Net/day",
+                    money(p.profitPerDay),
+                    valueColor = when {
+                        (p.profitPerDay ?: 0.0) > 0 -> HiBrand.statusOnline
+                        (p.profitPerDay ?: 0.0) < 0 -> HiBrand.statusOffline
+                        else -> HiBrand.accent
+                    },
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                Metric("BTC/day", p.btcPerDay?.let { "%.8f".format(it) } ?: "—")
+                Metric("Energy/day", p.energyKwhPerDay?.let { "%.1f kWh".format(it) } ?: "—")
+                Metric("Heat", p.heatBtuPerHour?.let { "%,.0f BTU/hr".format(it) } ?: "—")
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "Estimate: BTC/day assumes the ${"%.3f".format(hi3.hashkit.domain.solo.ProfitMath.BLOCK_SUBSIDY_BTC)}-BTC block subsidy " +
+                    "(excludes tx & pool fees); revenue needs a BTC price and network difficulty set/fetched in Settings.",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
         }
     }
 }

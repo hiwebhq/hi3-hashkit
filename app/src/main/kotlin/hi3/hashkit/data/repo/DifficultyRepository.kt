@@ -42,4 +42,28 @@ class DifficultyRepository @Inject constructor(
             }.getOrNull()?.also { settingsRepository.setNetworkDifficulty(it) }
         }
     }
+
+    /**
+     * Opt-in: fetch the current BTC price in the user's currency from mempool.space and
+     * cache it for profitability estimates. Single HTTPS GET, no identifying payload.
+     * Verified shape: {"time":..,"USD":..,"EUR":..,"GBP":..,"CAD":..,"CHF":..,"AUD":..,"JPY":..}.
+     */
+    suspend fun refreshPriceIfEnabled(): Double? {
+        val settings = settingsRepository.current()
+        if (!settings.btcPriceAutoFetch) return null
+        val field = when (settings.currencyCode.uppercase()) {
+            "USD", "EUR", "GBP", "CAD", "CHF", "AUD", "JPY" -> settings.currencyCode.uppercase()
+            else -> "USD" // mempool.space only serves these; fall back to USD
+        }
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                val request = Request.Builder().url("https://mempool.space/api/v1/prices").get().build()
+                client.newCall(request).execute().use { resp ->
+                    if (!resp.isSuccessful) return@runCatching null
+                    val body = resp.body?.string() ?: return@runCatching null
+                    Regex("\"$field\"\\s*:\\s*([0-9.]+)").find(body)?.groupValues?.get(1)?.toDoubleOrNull()
+                }
+            }.getOrNull()?.also { settingsRepository.setBtcPrice(it) }
+        }
+    }
 }

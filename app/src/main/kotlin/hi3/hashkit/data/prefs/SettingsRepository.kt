@@ -33,6 +33,10 @@ data class AppSettings(
     val networkDifficulty: Double = 0.0,
     /** Opt-in fetch of network difficulty from mempool.space (documented external request). */
     val difficultyAutoFetch: Boolean = false,
+    /** Opt-in fetch of the BTC fiat price from mempool.space, for profitability estimates. */
+    val btcPriceAutoFetch: Boolean = false,
+    /** Last fetched/entered BTC price in [currencyCode]; 0 disables revenue estimates. */
+    val btcPrice: Double = 0.0,
     /** Days of telemetry history to keep. */
     val retentionDays: Int = 30,
     /** User-defined extra scan subnets (CSV of CIDRs), e.g. remote Tailscale-routed LANs. */
@@ -43,6 +47,9 @@ data class AppSettings(
     val firmwareUpdateCheck: Boolean = false,
     /** Always-on foreground service that runs the smart-plug over-temp cutoff even when closed. */
     val safetyServiceEnabled: Boolean = false,
+    /** Auto-recover miners that stay offline: power-cycle a configured plug, else reboot. */
+    val autoRecoverEnabled: Boolean = false,
+    val autoRecoverAfterMin: Long = 15,
     /** Currently viewed farm/site; -1 means "All farms" (no filter). */
     val activeFarmId: Long = -1,
     /** Miner-card size on the dashboard. */
@@ -86,11 +93,15 @@ class SettingsRepository @Inject constructor(
         val currencyCode = stringPreferencesKey("currency_code")
         val networkDifficulty = doublePreferencesKey("network_difficulty")
         val difficultyAutoFetch = booleanPreferencesKey("difficulty_auto_fetch")
+        val btcPriceAutoFetch = booleanPreferencesKey("btc_price_auto_fetch")
+        val btcPrice = doublePreferencesKey("btc_price")
         val retentionDays = intPreferencesKey("retention_days")
         val extraSubnets = stringPreferencesKey("extra_subnets")
         val autoScanOnStartup = booleanPreferencesKey("auto_scan_on_startup")
         val firmwareUpdateCheck = booleanPreferencesKey("firmware_update_check")
         val safetyServiceEnabled = booleanPreferencesKey("safety_service_enabled")
+        val autoRecoverEnabled = booleanPreferencesKey("auto_recover_enabled")
+        val autoRecoverAfterMin = longPreferencesKey("auto_recover_after_min")
         val activeFarmId = longPreferencesKey("active_farm_id")
         val cardDensity = stringPreferencesKey("card_density")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
@@ -123,11 +134,15 @@ class SettingsRepository @Inject constructor(
             currencyCode = p[Keys.currencyCode] ?: "USD",
             networkDifficulty = p[Keys.networkDifficulty] ?: 0.0,
             difficultyAutoFetch = p[Keys.difficultyAutoFetch] ?: false,
+            btcPriceAutoFetch = p[Keys.btcPriceAutoFetch] ?: false,
+            btcPrice = p[Keys.btcPrice] ?: 0.0,
             retentionDays = (p[Keys.retentionDays] ?: 30).coerceIn(1, 3650),
             extraSubnetsCsv = p[Keys.extraSubnets] ?: "",
             autoScanOnStartup = p[Keys.autoScanOnStartup] ?: true,
             firmwareUpdateCheck = p[Keys.firmwareUpdateCheck] ?: false,
             safetyServiceEnabled = p[Keys.safetyServiceEnabled] ?: false,
+            autoRecoverEnabled = p[Keys.autoRecoverEnabled] ?: false,
+            autoRecoverAfterMin = (p[Keys.autoRecoverAfterMin] ?: 15L).coerceIn(2, 1440),
             activeFarmId = p[Keys.activeFarmId] ?: -1,
             cardDensity = runCatching { CardDensity.valueOf(p[Keys.cardDensity] ?: "LARGE") }
                 .getOrDefault(CardDensity.LARGE),
@@ -166,11 +181,15 @@ class SettingsRepository @Inject constructor(
     suspend fun setCurrencyCode(value: String) = edit { it[Keys.currencyCode] = value }
     suspend fun setNetworkDifficulty(value: Double) = edit { it[Keys.networkDifficulty] = value }
     suspend fun setDifficultyAutoFetch(value: Boolean) = edit { it[Keys.difficultyAutoFetch] = value }
+    suspend fun setBtcPriceAutoFetch(value: Boolean) = edit { it[Keys.btcPriceAutoFetch] = value }
+    suspend fun setBtcPrice(value: Double) = edit { it[Keys.btcPrice] = value }
     suspend fun setRetentionDays(value: Int) = edit { it[Keys.retentionDays] = value }
     suspend fun setExtraSubnets(value: String) = edit { it[Keys.extraSubnets] = value }
     suspend fun setAutoScanOnStartup(value: Boolean) = edit { it[Keys.autoScanOnStartup] = value }
     suspend fun setFirmwareUpdateCheck(value: Boolean) = edit { it[Keys.firmwareUpdateCheck] = value }
     suspend fun setSafetyServiceEnabled(value: Boolean) = edit { it[Keys.safetyServiceEnabled] = value }
+    suspend fun setAutoRecoverEnabled(value: Boolean) = edit { it[Keys.autoRecoverEnabled] = value }
+    suspend fun setAutoRecoverAfterMin(value: Long) = edit { it[Keys.autoRecoverAfterMin] = value }
     suspend fun setActiveFarmId(value: Long) = edit { it[Keys.activeFarmId] = value }
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
     suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }

@@ -6,7 +6,7 @@ your Tailscale VPN — with **no account, no cloud, and no telemetry**. Every re
 labeled by how it was obtained (measured, reported, calculated, estimated, or unavailable),
 so an estimate is never dressed up as a fact.
 
-Current release: **v0.38.0**.
+Current release: **v0.44.0**.
 
 ## Key features
 
@@ -23,10 +23,13 @@ Current release: **v0.38.0**.
   states with a redacted raw-response viewer.
 - Local history (Room) with configurable retention, downsampling, and CSV export / JSON
   backup-restore.
+- Attainment % (actual vs expected hashrate) seeded from a built-in model spec registry
+  (public spec-sheet nominals) when the device doesn't report an expected rate.
 
 ### Control (only where verified against real firmware)
 - Reboot, pool change, fan control, and firmware-bounded tuning with confirmations and
-  rollback; bulk actions across selected miners.
+  rollback; bulk actions across selected miners. Per-miner admin passwords/tokens are
+  stored encrypted (Android Keystore) and used only in-memory to authenticate a control.
 - **Efficiency autotuner** (Bitaxe): sweeps approved frequencies, measures J/TH, recommends
   the most efficient setpoint (apply on tap; restores the original).
 - **Time-of-use scheduling**: auto-pause at peak-rate hours, resume off-peak.
@@ -72,6 +75,8 @@ shown as unsupported, never guessed.
 | VNish (Antminer S21 Pro forks) | Full incl. wall power & efficiency | Reboot, Pause/Resume |
 | LuxOS | Basic (hashrate, shares, uptime, pool) | Pause/Resume |
 | WhatsMiner (MicroBT M2X–M6X) | Hashrate, shares, uptime, pool, chip temp, fans, power* | — (encrypted token API) |
+| FutureBit Apollo BTC | Hashrate, shares, uptime, pool | — |
+| Generic cgminer (older Antminers, ePIC, Hiveon, …) | Hashrate, shares, uptime, pool | — |
 | Demo | Synthetic (demo mode only) | — |
 
 \* WhatsMiner is implemented against MicroBT's documented BTMiner API and is compat-gated pending confirmation on a physical unit.

@@ -112,6 +112,8 @@ class SettingsViewModel @Inject constructor(
 
     fun setRetentionDays(days: Int) = viewModelScope.launch { repo.setRetentionDays(days) }
     fun setFirmwareUpdateCheck(v: Boolean) = viewModelScope.launch { repo.setFirmwareUpdateCheck(v) }
+    fun setAutoRecoverEnabled(v: Boolean) = viewModelScope.launch { repo.setAutoRecoverEnabled(v) }
+    fun setAutoRecoverAfterMin(v: Long) = viewModelScope.launch { repo.setAutoRecoverAfterMin(v) }
 
     /** Toggle the always-on foreground safety monitor (persist + start/stop the service). */
     fun setSafetyService(v: Boolean) = viewModelScope.launch {
@@ -130,5 +132,7 @@ class SettingsViewModel @Inject constructor(
     fun setCurrencyCode(v: String) = viewModelScope.launch { repo.setCurrencyCode(v.take(6)) }
     fun setNetworkDifficulty(v: Double) = viewModelScope.launch { repo.setNetworkDifficulty(v) }
     fun setDifficultyAutoFetch(v: Boolean) = viewModelScope.launch { repo.setDifficultyAutoFetch(v) }
+    fun setBtcPrice(v: Double) = viewModelScope.launch { repo.setBtcPrice(v) }
+    fun setBtcPriceAutoFetch(v: Boolean) = viewModelScope.launch { repo.setBtcPriceAutoFetch(v) }
     fun setDemoMode(v: Boolean) = viewModelScope.launch { repo.setDemoMode(v) }
 }

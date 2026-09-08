@@ -9,6 +9,9 @@ In this build:
    confirm) and read-only CGMiner TCP API queries on port 4028 for Canaan/Avalon
    devices. All destinations must be private (RFC 1918), link-local, or
    CGNAT/Tailscale (100.64/10) addresses; discovery probes only these two ports.
+2a. **Optional, off by default:** one HTTPS GET to `mempool.space/api/v1/prices` to fetch
+   the BTC fiat price for profitability estimates (no miner data; a manual price can be
+   entered instead).
 2. **Optional, off by default:** one HTTPS GET to `mempool.space` to fetch network
    difficulty for solo-mining odds. It carries no miner data, no identifiers beyond
    the connection itself, and runs only while "Fetch network difficulty" is enabled in
@@ -73,6 +76,10 @@ the user has explicitly enabled the always-on safety monitor, shows a persistent
 notification while active, and does nothing but the over-temp plug cutoff.
 
 ## Exports & backups
+
+Android auto-backup is **disabled** (`allowBackup="false"`), so the OS never silently
+copies the app's local database, preferences, or Keystore-encrypted secrets to the user's
+cloud backup. The only way data leaves the device is an export the user explicitly starts.
 
 All exports are generated locally and leave the device only through the Android share
 sheet to a destination the user picks. CSV telemetry redacts worker names; the

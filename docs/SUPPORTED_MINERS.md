@@ -1,6 +1,6 @@
 # Supported miners
 
-Complete model-by-model support for Hi3 Hashkit (as of **v0.39.0**).
+Complete model-by-model support for Hi3 Hashkit (as of **v0.44.0**).
 
 **Status:** ✅ Verified on real hardware · 🟡 Compat‑gated (same firmware/API, basic
 telemetry is safe, pending confirmation on that exact model).
@@ -40,13 +40,19 @@ need the exact unit that was tested.
 
 ## Notes
 
-- **Antminers have no controls** in Hashkit — reboot/pool/tune need Bitmain's authenticated
-  web API, which isn't verified. Monitoring only, regardless of firmware (stock/VNish/LuxOS).
+- **Antminer controls depend on firmware:** stock Bitmain gets **Reboot** (web CGI with
+  Digest auth, root password), VNish gets **Reboot + Pause/Resume** (web API, stored
+  password), LuxOS gets **Pause/Resume** (curtail, no password). Pool change and tuning
+  remain unsupported on all Antminer firmware until the settings round-trips are verified.
 - **Compat‑gated (🟡)** items graduate to ✅ with a single real API capture from that model —
   mainly the **Antminer S19/S17** and **Canaan Nano 3S / Avalon Q / Avalon Mini 3**.
-- **Not supported** (no verified API captured): WhatsMiner *controls*, FutureBit, and
-  anything not listed above. The adapter framework is ready; nothing is claimed until it's
+- **Anything else that speaks the standard cgminer API on 4028** (older Antminers, ePIC,
+  Hiveon, …) gets basic monitoring via the generic fallback, shown as
+  "Generic ASIC (cgminer)". Controls stay absent for WhatsMiner (encrypted admin-token
+  API) and FutureBit (HTTP dashboard API unverified) — nothing is claimed until it's
   verified on hardware or against the vendor's documented API.
+- **Expected hashrate / attainment %** is seeded from a built-in model spec registry
+  (public spec-sheet nominals) when neither the device nor the user provides one.
 - Every miner API is verified against real hardware (or, for compat‑gated entries, the
   vendor's documented API) before it ships — endpoints are never invented.
 

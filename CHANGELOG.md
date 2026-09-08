@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.45.0
+
+- **Profitability & energy dashboard.** A new card estimates revenue/day, power cost/day,
+  net/day, BTC/day, energy (kWh/day) and heat (BTU/hr) for the fleet. Opt-in BTC price
+  fetch from mempool.space (or enter a price manually); uses the block subsidy and
+  excludes tx/pool fees, and is clearly labelled an estimate.
+- **Automated remediation: auto-recover offline miners.** Opt-in — when a miner stays
+  offline past a threshold, the app power-cycles its smart plug (if configured) or reboots
+  it, once, with a cooldown, and audit-logs every attempt.
+- **Security hardening.** Android auto-backup disabled (`allowBackup=false`) so local data
+  is never silently cloud-backed-up; pool identifiers are now validated before they're
+  placed in a request path.
+
 ## 0.44.0
 
 - **Broader model coverage via a generic cgminer fallback.** The cgminer adapter now

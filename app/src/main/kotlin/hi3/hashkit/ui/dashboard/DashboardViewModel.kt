@@ -44,6 +44,16 @@ data class FleetTotals(
     val currencyCode: String,
 )
 
+data class ProfitSummary(
+    val btcPerDay: Double?,
+    val revenuePerDay: Double?,
+    val costPerDay: Double?,
+    val profitPerDay: Double?,
+    val energyKwhPerDay: Double?,
+    val heatBtuPerHour: Double?,
+    val currencyCode: String,
+)
+
 data class SoloSummary(
     val networkDifficulty: Double,
     val bestDifficulty: Double?,
@@ -66,6 +76,7 @@ data class DashboardUiState(
     val groups: List<Pair<String?, List<Miner>>> = emptyList(),
     val totals: FleetTotals? = null,
     val solo: SoloSummary? = null,
+    val profit: ProfitSummary? = null,
     val unresolvedAlerts: Int = 0,
     val lastRefresh: Instant? = null,
     val settings: AppSettings = AppSettings(),
@@ -133,6 +144,7 @@ class DashboardViewModel @Inject constructor(
     init {
         // Both run only when the user has opted in; otherwise they no-op locally.
         viewModelScope.launch { difficultyRepository.refreshIfEnabled() }
+        viewModelScope.launch { difficultyRepository.refreshPriceIfEnabled() }
         viewModelScope.launch { firmwareChecker.refreshIfEnabled() }
         viewModelScope.launch {
             while (true) {
@@ -174,6 +186,7 @@ class DashboardViewModel @Inject constructor(
                     miners = miners,
                     totals = totalsOf(miners, settings),
                     solo = soloOf(miners, settings),
+                    profit = profitOf(miners, settings),
                     unresolvedAlerts = unresolved,
                     lastRefresh = refresh,
                     settings = settings,
@@ -260,6 +273,7 @@ class DashboardViewModel @Inject constructor(
             try {
                 pollingEngine.pollAllOnce()
                 difficultyRepository.refreshIfEnabled()
+                difficultyRepository.refreshPriceIfEnabled()
                 firmwareChecker.refreshIfEnabled()
                 refreshPool()
             } finally {
@@ -349,6 +363,32 @@ class DashboardViewModel @Inject constructor(
             hottestChipC = miners.mapNotNull { it.lastTelemetry?.chipTempC?.value }.maxOrNull(),
             dailyCost = settings.electricityRatePerKwh.takeIf { it > 0 && power > 0 }
                 ?.let { rate -> power / 1000.0 * 24.0 * rate },
+            currencyCode = settings.currencyCode,
+        )
+    }
+
+    /** Fleet profitability + energy estimate. Revenue needs difficulty + a BTC price; energy/heat don't. */
+    private fun profitOf(miners: List<Miner>, settings: AppSettings): ProfitSummary? {
+        val real = miners.filter { !it.isDemo }
+        val live = real.filter { it.status == MinerStatus.ONLINE || it.status == MinerStatus.DEGRADED }
+        val hash = live.sumOf { it.lastTelemetry?.hashrateGhs?.value ?: 0.0 }
+        val power = live.sumOf { it.lastTelemetry?.powerW?.value ?: 0.0 }
+        if (hash <= 0 && power <= 0) return null
+        val difficulty = real.mapNotNull { it.lastTelemetry?.networkDifficulty }.maxOrNull()
+            ?: settings.networkDifficulty.takeIf { it > 0 }
+        val price = settings.btcPrice.takeIf { it > 0 }
+        val btcPerDay = hi3.hashkit.domain.solo.ProfitMath.btcPerDay(hash.takeIf { it > 0 }, difficulty)
+        val revenue = if (btcPerDay != null && price != null) btcPerDay * price else null
+        val cost = hi3.hashkit.domain.solo.ProfitMath.powerCostPerDay(
+            power.takeIf { it > 0 }, settings.electricityRatePerKwh.takeIf { it > 0 },
+        )
+        return ProfitSummary(
+            btcPerDay = btcPerDay,
+            revenuePerDay = revenue,
+            costPerDay = cost,
+            profitPerDay = if (revenue != null && cost != null) revenue - cost else null,
+            energyKwhPerDay = hi3.hashkit.domain.solo.ProfitMath.energyKwhPerDay(power.takeIf { it > 0 }),
+            heatBtuPerHour = hi3.hashkit.domain.solo.ProfitMath.heatBtuPerHour(power.takeIf { it > 0 }),
             currencyCode = settings.currencyCode,
         )
     }
