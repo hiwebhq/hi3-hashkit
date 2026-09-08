@@ -10,7 +10,10 @@
 - **FutureBit Apollo** is now recognized and monitored (via that cgminer path).
 - **Model spec registry.** Nominal hashrate/power per model (public spec sheets) now seed
   the expected hashrate when neither the device nor the user provides one, so attainment %
-  works for more models. Static reference data only — no endpoints.
+  works for more models. Static reference data only — no endpoints. Covers the Antminer
+  S17/S19/S21/S23 + T-series, WhatsMiner M30/M31/M50/M60, Canaan Avalon A12xx–A16 + Nano/Q,
+  Bitaxe, FutureBit Apollo, Braiins BMM, and Fluminer (anchors cross-checked against public
+  spec sheets).
 
 ## 0.43.0
 
