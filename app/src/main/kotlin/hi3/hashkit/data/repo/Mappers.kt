@@ -49,7 +49,9 @@ fun MinerEntity.toDomain(lastTelemetry: MinerTelemetry?, staleAfterMs: Long, now
         location = location,
         notes = notes,
         tags = tagsCsv.split(",").map { it.trim() }.filter { it.isNotEmpty() },
-        expectedHashrateGhs = expectedHashrateGhs,
+        // Fall back to the nominal spec for this model when neither the user nor the
+        // device provides an expected hashrate, so attainment still works.
+        expectedHashrateGhs = expectedHashrateGhs ?: hi3.hashkit.domain.model.MinerSpecs.nominalHashrateGhs(model),
         alertOverrides = hi3.hashkit.domain.alerts.AlertOverrides(
             hashrateBelowPercent = alertHashBelowPct,
             chipTempC = alertChipTempC,

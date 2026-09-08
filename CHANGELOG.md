@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.44.0
+
+- **Broader model coverage via a generic cgminer fallback.** The cgminer adapter now
+  accepts any miner exposing the standard cgminer API on 4028 — including unrecognized
+  firmware (shown as "Generic ASIC (cgminer)") — for basic monitoring, instead of
+  declining it. It still declines Avalon/BOSer (owned by their own adapters) and
+  non-cgminer hosts.
+- **FutureBit Apollo** is now recognized and monitored (via that cgminer path).
+- **Model spec registry.** Nominal hashrate/power per model (public spec sheets) now seed
+  the expected hashrate when neither the device nor the user provides one, so attainment %
+  works for more models. Static reference data only — no endpoints.
+
 ## 0.43.0
 
 - **NerdQAxe: Reboot.** Enabled the inherited `POST /api/system/restart` (identical to

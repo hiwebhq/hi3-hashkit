@@ -34,7 +34,7 @@ class GenericCgMinerAdapter @Inject constructor(
 ) : MinerControlAdapter {
 
     override val adapterType: String = TYPE
-    override val displayName: String = "Antminer-class (cgminer)"
+    override val displayName: String = "cgminer-compatible ASIC"
     override val defaultPort: Int = CgMinerApi.DEFAULT_PORT
 
     override suspend fun probe(host: MinerHost): ProbeResult {
@@ -48,10 +48,11 @@ class GenericCgMinerAdapter @Inject constructor(
             statsBody = api.query(host.host, port, "stats").body
             family = CgMinerCommon.familyFromStats(statsBody)
         }
-        // Decline anything a specific adapter owns, or that isn't recognizably cgminer.
-        if (family == null || family == CgMinerCommon.Family.AVALON ||
-            family == CgMinerCommon.Family.BOSER || family == CgMinerCommon.Family.UNKNOWN
-        ) {
+        // Decline only what a specific adapter owns, or what isn't a cgminer device at all.
+        // Anything else that speaks the cgminer API — including unrecognized firmware
+        // (GENERIC/UNKNOWN, e.g. FutureBit Apollo, ePIC, older Antminers) — is accepted for
+        // monitoring; controls stay off unless the family is one we've verified.
+        if (family == null || family == CgMinerCommon.Family.AVALON || family == CgMinerCommon.Family.BOSER) {
             return ProbeResult.NotThisDevice
         }
         return ProbeResult.Supported(TYPE, identity(versionBody, statsBody, family), versionBody)
@@ -205,10 +206,21 @@ class GenericCgMinerAdapter @Inject constructor(
         val statsType = statsBody?.let { CgMinerCommon.familyModelFromStats(it) }
         fun s(o: kotlinx.serialization.json.JsonObject?, k: String) =
             (o?.get(k) as? kotlinx.serialization.json.JsonPrimitive)?.content
+        val model = s(v, "Type") ?: s(v, "PROD") ?: s(v, "Model") ?: statsType
+        // Recognize a few vendors by their reported strings for a friendlier label; the
+        // rest of the cgminer long tail is shown honestly as a generic cgminer device.
+        val blob = "${model.orEmpty()} $versionBody".lowercase()
+        val vendor = when {
+            "apollo" in blob || "futurebit" in blob -> "FutureBit"
+            "epic" in blob -> "ePIC"
+            family == CgMinerCommon.Family.GENERIC || family == CgMinerCommon.Family.UNKNOWN ->
+                "Generic ASIC (cgminer)"
+            else -> CgMinerCommon.familyLabel(family)
+        }
         return MinerIdentity(
-            manufacturer = CgMinerCommon.familyLabel(family),
-            model = s(v, "Type") ?: statsType,
-            firmwareFamily = CgMinerCommon.familyLabel(family),
+            manufacturer = vendor,
+            model = model,
+            firmwareFamily = if (vendor == "FutureBit") "FutureBit" else CgMinerCommon.familyLabel(family),
             firmwareVersion = s(v, "CGMiner") ?: s(v, "LUXminer") ?: statsType,
         )
     }

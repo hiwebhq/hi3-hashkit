@@ -34,6 +34,8 @@ need the exact unit that was tested.
 | Canaan Avalon Mini 3 | Canaan · CGMiner 4028 | Full (like Nano 3) | **Pause/Resume, Reboot** | 🟡 |
 | Braiins BMM 100 | Braiins OS / BOSer · CGMiner 4028 | Full (no power sensor → power unavailable) | **Pause/Resume** | ✅ |
 | WhatsMiner M2X/M3X/M5X/M6X | MicroBT BTMiner · 4028 `{"cmd":…}` | Hashrate, shares, uptime, pool, chip temp, fans, power (where reported) | — | 🟡 |
+| FutureBit Apollo BTC (Gen1/Gen2) | cgminer 4028 (via generic path) | Hashrate, shares, uptime, pool | — (HTTP dashboard API unverified) | 🟡 |
+| Generic cgminer (long tail: older Antminers, ePIC, Hiveon…) | cgminer 4028 | Hashrate, shares, uptime, pool | — | 🟡 |
 | Demo | Synthetic | Full (demo mode only) | — | — |
 
 ## Notes
