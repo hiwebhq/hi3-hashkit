@@ -51,13 +51,14 @@ class FleetControlPlanTest {
             entity(1, firmware = "v2.15.1"),                           // supported
             entity(2, firmware = "v2.14.2"),                           // supported
             entity(3, firmware = "2.0.0 20260418", model = "Hammer"),  // fork -> skipped
-            entity(4, firmware = "v1.1.0", model = "NerdQAxe++"),      // nerdqaxe -> skipped
+            entity(4, firmware = "v1.1.0", model = "NerdQAxe++"),      // nerdqaxe -> reboot supported
             entity(5, isDemo = true),                                  // demo -> skipped
             entity(6, adapterType = "braiins"),                        // no adapter -> skipped
         )
         val plan = fleet.plan(BulkAction.Reboot, targets)
-        assertEquals(listOf(1L, 2L), plan.supported.map { it.id })
-        assertEquals(listOf(3L, 4L, 5L, 6L), plan.skipped.map { it.first.id })
+        // NerdQAxe now supports Reboot (inherited /api/system/restart), so id 4 is included.
+        assertEquals(listOf(1L, 2L, 4L), plan.supported.map { it.id })
+        assertEquals(listOf(3L, 5L, 6L), plan.skipped.map { it.first.id })
         // Every skip carries a human-readable reason.
         plan.skipped.forEach { (_, reason) -> assertTrue(reason.isNotBlank()) }
         assertNotNull(plan.skipped.first { it.first.id == 5L }.second.contains("Demo"))
