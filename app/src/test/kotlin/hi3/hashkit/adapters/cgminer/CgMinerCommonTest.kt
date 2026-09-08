@@ -116,6 +116,31 @@ class CgMinerCommonTest {
     }
 
     @Test
+    fun `WhatsMiner - detected from btminer status, standard telemetry plus temps fans power`() {
+        // Shape per MicroBT's documented API (btminer summary); pending on-device verification.
+        assertEquals("btminer 2.0.5",
+            CgMinerCommon.firstStatusDescription(fx("fixtures/cgminer/whatsminer_summary.json")))
+        val base = CgMinerCommon.parseStandardTelemetry(
+            fx("fixtures/cgminer/whatsminer_summary.json"),
+            fx("fixtures/cgminer/whatsminer_pools.json"),
+        )
+        // MHS 5s 86,000,000 -> 86,000 GH/s.
+        assertEquals(86_000.0, base.hashrateGhs.value!!, 0.1)
+        assertEquals(123_456L, base.uptimeSeconds)
+        assertEquals("192.0.2.10", base.poolUrl)
+
+        val t = CgMinerCommon.enrichWhatsMiner(base, fx("fixtures/cgminer/whatsminer_summary.json"))
+        assertEquals(72.0, t.chipTempC.value!!, 0.001)
+        assertEquals(ValueSource.MEASURED, t.chipTempC.source)
+        assertEquals(2, t.fans.size)
+        assertEquals(3900, t.fans[0].rpm)
+        assertEquals(3400.0, t.powerW.value!!, 0.1)
+        assertEquals(ValueSource.REPORTED, t.powerW.source)
+        assertNotNull(t.efficiencyJTh.value) // power present -> J/TH computed
+        assertEquals("28.0", t.unrecognizedFields["envTempC"])
+    }
+
+    @Test
     fun `standard parse of a REAL cgminer summary (Avalon Nano 3 capture)`() {
         // Confirms the standard-field extraction works on a genuine cgminer response.
         val t = CgMinerCommon.parseStandardTelemetry(

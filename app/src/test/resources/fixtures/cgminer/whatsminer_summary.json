@@ -1,0 +1,18 @@
+{
+ "STATUS": [{"STATUS":"S","When":1788800000,"Code":11,"Msg":"summary","Description":"btminer 2.0.5"}],
+ "SUMMARY": [{
+   "Elapsed": 123456,
+   "MHS av": 85000000.0,
+   "MHS 5s": 86000000.0,
+   "Accepted": 5000,
+   "Rejected": 12,
+   "Temperature": 72.0,
+   "Env Temp": 28.0,
+   "Fan Speed In": 3900,
+   "Fan Speed Out": 3960,
+   "Power": 3400.0,
+   "Best Share": 12345678,
+   "Pool Rejected%": 0.24
+ }],
+ "id": 1
+}

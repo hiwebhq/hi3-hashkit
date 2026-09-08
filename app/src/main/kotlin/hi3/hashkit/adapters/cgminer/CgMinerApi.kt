@@ -20,7 +20,27 @@ class CgMinerApi @Inject constructor() {
 
     class CgResult(val body: String?, val error: String?)
 
-    suspend fun query(host: String, port: Int, command: String, parameter: String? = null): CgResult =
+    suspend fun query(host: String, port: Int, command: String, parameter: String? = null): CgResult {
+        // ascset etc. take a "parameter" field; JSON-escape it minimally.
+        val payload = if (parameter == null) {
+            """{"command":"$command"}"""
+        } else {
+            val safe = parameter.replace("\\", "\\\\").replace("\"", "\\\"")
+            """{"command":"$command","parameter":"$safe"}"""
+        }
+        return exchange(host, port, payload)
+    }
+
+    /**
+     * WhatsMiner (MicroBT/BTMiner) variant: its read API on 4028 uses `{"cmd":"<x>"}`
+     * (not cgminer's `{"command":...}`). Read commands (summary/pools/devs/get_miner_info/
+     * get_psu/status/version) are open; write commands need an encrypted token and are not
+     * sent here.
+     */
+    suspend fun queryCmd(host: String, port: Int, cmd: String): CgResult =
+        exchange(host, port, """{"cmd":"$cmd"}""")
+
+    private suspend fun exchange(host: String, port: Int, payload: String): CgResult =
         withContext(Dispatchers.IO) {
             if (!MinerHostValidator.resolvesToAllowed(host)) {
                 return@withContext CgResult(null, "Refused: $host is not a private/Tailscale address")
@@ -29,13 +49,6 @@ class CgMinerApi @Inject constructor() {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), CONNECT_TIMEOUT_MS)
                     socket.soTimeout = READ_TIMEOUT_MS
-                    // ascset etc. take a "parameter" field; JSON-escape it minimally.
-                    val payload = if (parameter == null) {
-                        """{"command":"$command"}"""
-                    } else {
-                        val safe = parameter.replace("\\", "\\\\").replace("\"", "\\\"")
-                        """{"command":"$command","parameter":"$safe"}"""
-                    }
                     socket.getOutputStream().write(payload.toByteArray())
                     socket.getOutputStream().flush()
                     val buffer = ByteArrayOutputStream()

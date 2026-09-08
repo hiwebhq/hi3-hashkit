@@ -94,5 +94,9 @@ abstract class AdapterModule {
 
     @Binds
     @IntoSet
+    abstract fun whatsminer(adapter: hi3.hashkit.adapters.cgminer.WhatsMinerAdapter): MinerAdapter
+
+    @Binds
+    @IntoSet
     abstract fun demo(adapter: DemoMinerAdapter): MinerAdapter
 }

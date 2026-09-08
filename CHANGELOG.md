@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.39.0
+
+- **WhatsMiner (MicroBT) monitoring.** New adapter for the BTMiner API on port 4028
+  (JSON `{"cmd":"summary"}`/`pools`/`get_miner_info`, all open read commands): hashrate,
+  shares, uptime, pool, chip temperature, fans (in/out), and power where the firmware
+  reports it. Detected via the `btminer` status description. Controls need MicroBT's
+  encrypted admin-token API and are intentionally unsupported. Implemented against
+  MicroBT's documented API — **compat-gated pending confirmation on a physical unit.**
+
 ## 0.38.0
 
 - **Always-on safety monitor (opt-in).** A foreground service (with a persistent, low-

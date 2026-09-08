@@ -1,0 +1,5 @@
+{
+ "STATUS": [{"STATUS":"S","When":1788800000,"Code":7,"Msg":"1 Pool(s)","Description":"btminer 2.0.5"}],
+ "POOLS": [{"POOL":0,"URL":"stratum+tcp://192.0.2.10:3333","User":"bc1qredactedexampleaddress.worker1","Status":"Alive","Priority":0,"Stratum Active":true,"Accepted":5000,"Rejected":12,"Best Share":12345678}],
+ "id": 1
+}

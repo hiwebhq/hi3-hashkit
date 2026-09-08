@@ -71,7 +71,10 @@ shown as unsupported, never guessed.
 | Stock Bitmain / BMMiner (Antminer S21 Pro, S-series) | Hashrate, expected, chip temps, fans, freq, ASIC count | — (power not in API) |
 | VNish (Antminer S21 Pro forks) | Full incl. wall power & efficiency | — |
 | LuxOS | Basic (hashrate, shares, uptime, pool) | — |
+| WhatsMiner (MicroBT M2X–M6X) | Hashrate, shares, uptime, pool, chip temp, fans, power* | — (encrypted token API) |
 | Demo | Synthetic (demo mode only) | — |
+
+\* WhatsMiner is implemented against MicroBT's documented BTMiner API and is compat-gated pending confirmation on a physical unit.
 
 ## Privacy & security
 

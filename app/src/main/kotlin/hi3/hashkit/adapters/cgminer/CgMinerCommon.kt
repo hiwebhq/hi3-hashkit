@@ -158,7 +158,37 @@ object CgMinerCommon {
         )
     }
 
+    /**
+     * Enrich telemetry from a WhatsMiner (MicroBT/BTMiner) `summary` record. Field names
+     * per MicroBT's documented API: `Temperature` (chip), `Fan Speed In`/`Fan Speed Out`
+     * (RPM), `Power` (W, on firmware that reports it in summary). Parsed defensively — a
+     * field is surfaced only when the device actually returns it.
+     */
+    fun enrichWhatsMiner(base: MinerTelemetry, summaryBody: String?): MinerTelemetry {
+        val s = summaryBody?.let { firstRecord(it, "SUMMARY") } ?: return base
+        val chip = s.num("Temperature")?.takeIf { it > 0 }
+        val fans = buildList {
+            s.num("Fan Speed In")?.toInt()?.takeIf { it > 0 }?.let { add(FanReading(0, it, null)) }
+            s.num("Fan Speed Out")?.toInt()?.takeIf { it > 0 }?.let { add(FanReading(1, it, null)) }
+        }
+        val power = s.num("Power")?.takeIf { it > 0 }
+        val hashrate = base.hashrateGhs.value
+        return base.copy(
+            chipTempC = if (chip != null) Sourced.measured(chip) else base.chipTempC,
+            powerW = if (power != null) Sourced.reported(power) else base.powerW,
+            efficiencyJTh = Sourced.calculated(hi3.hashkit.core.Units.efficiencyJTh(power, hashrate)),
+            fans = fans.ifEmpty { base.fans },
+            unrecognizedFields = base.unrecognizedFields + buildMap {
+                s.num("Env Temp")?.let { put("envTempC", it.toString()) }
+            },
+        )
+    }
+
     // ------------------------------------------------------------------ helpers ----
+
+    /** The STATUS[0].Description string (e.g. "btminer 2.0.5"), used for family detection. */
+    fun firstStatusDescription(body: String): String? =
+        firstRecord(body, "STATUS")?.let { (it["Description"] as? JsonPrimitive)?.content }
 
     fun firstRecord(body: String, section: String): JsonObject? =
         runCatching {
