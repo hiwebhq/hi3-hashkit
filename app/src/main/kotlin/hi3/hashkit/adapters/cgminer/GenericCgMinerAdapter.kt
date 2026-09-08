@@ -30,6 +30,7 @@ import javax.inject.Singleton
 class GenericCgMinerAdapter @Inject constructor(
     private val api: CgMinerApi,
     private val vnish: VnishWebClient,
+    private val bitmain: BitmainWebClient,
 ) : MinerControlAdapter {
 
     override val adapterType: String = TYPE
@@ -88,11 +89,28 @@ class GenericCgMinerAdapter @Inject constructor(
     }
 
     override fun getCapabilities(identity: MinerIdentity?): MinerCapabilities {
-        // VNish exposes an authenticated web API for reboot + pause/resume; stock Bitmain
-        // and LuxOS have no verified control path, so they stay monitoring-only.
-        val isVnish = identity?.firmwareFamily?.contains("vnish", ignoreCase = true) == true
-        if (!isVnish) {
-            return MinerCapabilities(
+        val family = identity?.firmwareFamily?.lowercase() ?: ""
+        return when {
+            // VNish: authenticated web API for reboot + pause/resume.
+            "vnish" in family -> MinerCapabilities(
+                supported = setOf(Capability.TELEMETRY, Capability.REBOOT, Capability.POWER_CONTROL),
+                unsupportedReasons = mapOf(
+                    Capability.SET_POOLS to "VNish pool changes require its settings-object round-trip, not yet verified.",
+                    Capability.SET_FAN to "VNish fan/preset changes go through its settings object, not yet verified.",
+                    Capability.APPLY_APPROVED_TUNE to "VNish tuning goes through its autotune presets, not yet verified.",
+                    Capability.LOGS to "No log stream over the cgminer API.",
+                ),
+            )
+            // Stock Bitmain: reboot via the authenticated web CGI (Digest). No pause on stock.
+            "bitmain" in family -> MinerCapabilities(
+                supported = setOf(Capability.TELEMETRY, Capability.REBOOT),
+                unsupportedReasons = mapOf(
+                    Capability.SET_POOLS to "Bitmain pool changes need the set_miner_conf.cgi config round-trip, not yet verified.",
+                    Capability.POWER_CONTROL to "Stock Bitmain has no pause/resume control.",
+                    Capability.LOGS to "No log stream over the cgminer API.",
+                ),
+            )
+            else -> MinerCapabilities(
                 supported = setOf(Capability.TELEMETRY),
                 unsupportedReasons = Capability.entries
                     .filter { it != Capability.TELEMETRY }
@@ -102,33 +120,38 @@ class GenericCgMinerAdapter @Inject constructor(
                     },
             )
         }
-        return MinerCapabilities(
-            supported = setOf(Capability.TELEMETRY, Capability.REBOOT, Capability.POWER_CONTROL),
-            unsupportedReasons = mapOf(
-                Capability.SET_POOLS to "VNish pool changes require its full settings-object " +
-                    "round-trip, which isn't verified yet.",
-                Capability.SET_FAN to "VNish fan/preset changes go through its settings object, not yet verified.",
-                Capability.APPLY_APPROVED_TUNE to "VNish tuning goes through its autotune presets, not yet verified.",
-                Capability.LOGS to "No log stream over the cgminer API.",
-            ),
-        )
     }
 
-    // --- controls (VNish web API only; other cgminer firmware stays monitoring-only) ------
+    // --- controls (routed per firmware family; unverified families stay monitoring-only) ---
 
     private fun requireSecret(host: MinerHost): String? = host.secret?.takeIf { it.isNotBlank() }
 
-    override suspend fun reboot(host: MinerHost): ActionResult {
-        val pw = requireSecret(host)
-            ?: return ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
-        return vnish.reboot(host.host, pw)
+    /** Detect the firmware family live so a control routes to the right API. */
+    private suspend fun familyOf(host: MinerHost): CgMinerCommon.Family? {
+        val port = apiPort(host)
+        val version = api.query(host.host, port, "version").body
+        val fam = version?.let { CgMinerCommon.family(it) }
+        if (fam != null && fam != CgMinerCommon.Family.UNKNOWN) return fam
+        return CgMinerCommon.familyFromStats(api.query(host.host, port, "stats").body)
     }
 
-    override suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult {
-        val pw = requireSecret(host)
-            ?: return ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
-        return vnish.pauseResume(host.host, pw, pause = action == PowerAction.PAUSE)
+    override suspend fun reboot(host: MinerHost): ActionResult = when (familyOf(host)) {
+        CgMinerCommon.Family.VNISH ->
+            requireSecret(host)?.let { vnish.reboot(host.host, it) }
+                ?: ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
+        CgMinerCommon.Family.ANTMINER_STOCK ->
+            requireSecret(host)?.let { bitmain.reboot(host.host, "root", it) }
+                ?: ActionResult.Unsupported("Set the miner's root web password in the miner's settings first.")
+        else -> ActionResult.Unsupported("Reboot is not verified for this firmware.")
     }
+
+    override suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult =
+        when (familyOf(host)) {
+            CgMinerCommon.Family.VNISH ->
+                requireSecret(host)?.let { vnish.pauseResume(host.host, it, pause = action == PowerAction.PAUSE) }
+                    ?: ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
+            else -> ActionResult.Unsupported("Pause/Resume is not available for this firmware.")
+        }
 
     override suspend fun getTuneOptions(host: MinerHost): TuneOptions? = null
 

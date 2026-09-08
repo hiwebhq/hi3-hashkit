@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.42.0
+
+- **Stock Bitmain (Antminer) Reboot.** Reboot via the authenticated web CGI
+  (`GET /cgi-bin/reboot.cgi`) with HTTP Digest auth (`root` + the miner's web password,
+  stored encrypted) — the 4028 API is read-only on stock firmware, so control goes through
+  the web interface. Digest auth is implemented in-app (no new dependency). Pool change
+  (set_miner_conf.cgi config round-trip) and pause/resume (not present on stock) remain
+  unsupported. Controls route by firmware family, so VNish keeps its own reboot + pause/resume.
+
 ## 0.41.0
 
 - **Per-miner credentials (encrypted).** Miners can now store an admin password / API token,

@@ -19,13 +19,13 @@ need the exact unit that was tested.
 | NerdQAxe++ | ESP‑Miner fork · HTTP | Full | — (unverified) | ✅ (monitoring) |
 | NerdQAxe+ | ESP‑Miner fork · HTTP | Full | — | ✅ (monitoring) |
 | NerdQAxe+ Hydro | ESP‑Miner fork · HTTP | Full | — | 🟡 |
-| Antminer S21 Pro (stock) | BMMiner · cgminer 4028 | Hashrate, chip temps, fans, freq, expected, ASIC count, shares, uptime, pool (no power) | — | ✅ |
-| Antminer S21+ | BMMiner · cgminer 4028 | Same as S21 Pro | — | 🟡 |
-| Antminer S21+ Hyd | BMMiner · cgminer 4028 | Same as S21 Pro | — | 🟡 |
-| Antminer S21 Hyd | BMMiner · cgminer 4028 | Same as S21 Pro | — | 🟡 |
-| Antminer S21 XP | BMMiner · cgminer 4028 | Same as S21 Pro | — | 🟡 |
-| Antminer S19 series | BMMiner · cgminer 4028 | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | — | 🟡 |
-| Antminer S17 series | BMMiner · cgminer 4028 | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | — | 🟡 |
+| Antminer S21 Pro (stock) | BMMiner · cgminer 4028 (read) + web CGI (control) | Hashrate, chip temps, fans, freq, expected, ASIC count, shares, uptime, pool (no power) | **Reboot** (Digest auth, root password) | ✅ |
+| Antminer S21+ | BMMiner · cgminer 4028 (read) + web CGI (control) | Same as S21 Pro | **Reboot** (Digest auth) | 🟡 |
+| Antminer S21+ Hyd | BMMiner · cgminer 4028 (read) + web CGI (control) | Same as S21 Pro | **Reboot** (Digest auth) | 🟡 |
+| Antminer S21 Hyd | BMMiner · cgminer 4028 (read) + web CGI (control) | Same as S21 Pro | **Reboot** (Digest auth) | 🟡 |
+| Antminer S21 XP | BMMiner · cgminer 4028 (read) + web CGI (control) | Same as S21 Pro | **Reboot** (Digest auth) | 🟡 |
+| Antminer S19 series | BMMiner · cgminer 4028 (read) + web CGI (control) | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | **Reboot** (Digest auth) | 🟡 |
+| Antminer S17 series | BMMiner · cgminer 4028 (read) + web CGI (control) | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | **Reboot** (Digest auth) | 🟡 |
 | Antminer (VNish firmware), e.g. S21 Pro | VNish · cgminer 4028 (read) + web API 80 (control) | Full incl. **wall power** & efficiency | **Reboot, Pause/Resume** (needs web password) | ✅ (S21 Pro) |
 | Antminer (LuxOS firmware) | LuxOS · cgminer 4028 | Basic: hashrate, shares, uptime, pool | — | 🟡 |
 | Canaan Avalon Nano 3 | Canaan · CGMiner 4028 | Full (temps, fan, wall watts) | **Pause/Resume, Reboot** | ✅ |
