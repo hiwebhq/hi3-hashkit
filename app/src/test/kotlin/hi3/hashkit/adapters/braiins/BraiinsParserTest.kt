@@ -77,3 +77,18 @@ class BraiinsParserTest {
         assertNull(nothing.hashrateGhs.value)
     }
 }
+
+/** Braiins now exposes verified Pause/Resume (BOSminer pause/resume); no other controls. */
+class BraiinsControlTest {
+    private val adapter = BraiinsAdapter(hi3.hashkit.adapters.cgminer.CgMinerApi())
+
+    @org.junit.Test
+    fun `capabilities advertise power control only`() {
+        val caps = adapter.getCapabilities(null)
+        org.junit.Assert.assertTrue(caps.supported.contains(hi3.hashkit.domain.model.Capability.POWER_CONTROL))
+        org.junit.Assert.assertTrue(caps.supported.contains(hi3.hashkit.domain.model.Capability.TELEMETRY))
+        // Pool/reboot/fan/tune stay unsupported until the gRPC/web API is verified.
+        org.junit.Assert.assertFalse(caps.supported.contains(hi3.hashkit.domain.model.Capability.SET_POOLS))
+        org.junit.Assert.assertFalse(caps.supported.contains(hi3.hashkit.domain.model.Capability.REBOOT))
+    }
+}

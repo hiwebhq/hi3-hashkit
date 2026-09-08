@@ -32,7 +32,7 @@ need the exact unit that was tested.
 | Canaan Nano 3S | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |
 | Canaan Avalon Q | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |
 | Canaan Avalon Mini 3 | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |
-| Braiins BMM 100 | Braiins OS / BOSer · CGMiner 4028 | Full (no power sensor → power unavailable) | — | ✅ |
+| Braiins BMM 100 | Braiins OS / BOSer · CGMiner 4028 | Full (no power sensor → power unavailable) | **Pause/Resume** | ✅ |
 | WhatsMiner M2X/M3X/M5X/M6X | MicroBT BTMiner · 4028 `{"cmd":…}` | Hashrate, shares, uptime, pool, chip temp, fans, power (where reported) | — | 🟡 |
 | Demo | Synthetic | Full (demo mode only) | — | — |
 

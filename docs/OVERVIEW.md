@@ -67,7 +67,7 @@ shown as unsupported, never guessed.
 | NerdQAxe, Lucky-Miner-style ESP-Miner forks | Full | Monitoring-only (unverified) |
 | Canaan Avalon Nano 3 | Full | Pause/Resume, Reboot |
 | Canaan Nano 3S / Avalon Q | Monitoring (compat) | — |
-| Braiins OS (BMM 100) | Full (no power sensor) | — |
+| Braiins OS (BMM 100) | Full (no power sensor) | Pause/Resume |
 | Stock Bitmain / BMMiner (Antminer S21 Pro, S-series) | Hashrate, expected, chip temps, fans, freq, ASIC count | — (power not in API) |
 | VNish (Antminer S21 Pro forks) | Full incl. wall power & efficiency | — |
 | LuxOS | Basic (hashrate, shares, uptime, pool) | — |

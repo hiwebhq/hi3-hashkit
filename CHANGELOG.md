@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.40.0
+
+- **Braiins OS controls: Pause/Resume.** The Braiins adapter now supports reversible
+  Pause/Resume via BOSminer's documented `{"command":"pause"}`/`{"command":"resume"}` on
+  port 4028 — no credentials needed. Pool/reboot/fan/tuning remain unsupported (they live
+  in the gRPC/web API, or Braiins documents them as not fully implemented). Confirm on your
+  BMM 100 the first time.
+
 ## 0.39.0
 
 - **WhatsMiner (MicroBT) monitoring.** New adapter for the BTMiner API on port 4028
