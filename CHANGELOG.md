@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.43.0
+
+- **NerdQAxe: Reboot.** Enabled the inherited `POST /api/system/restart` (identical to
+  ESP-Miner); pool/fan/tune stay off on the fork until verified.
+- **LuxOS: Pause/Resume.** Via `logon`→SessionID then `curtail <session>,sleep`/`wakeup`
+  on 4028 — no password. Reboot (board-indexed) and pool changes deferred until verified.
+- **Canaan Nano 3S / Avalon Q / Avalon Mini 3** now expose Pause/Resume + Reboot through the
+  same verified `ascset` path as the Nano 3 (the Canaan adapter offers controls to any
+  Avalon device) — unverified on those specific models until one is reachable.
+- Controls are still absent only for **WhatsMiner**, whose write API needs MicroBT's
+  encrypted token handshake — not shipped blind (see notes/DEVICE_MATRIX).
+
 ## 0.42.0
 
 - **Stock Bitmain (Antminer) Reboot.** Reboot via the authenticated web CGI

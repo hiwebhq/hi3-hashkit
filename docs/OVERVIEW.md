@@ -64,13 +64,13 @@ shown as unsupported, never guessed.
 | Firmware / device | Monitoring | Controls |
 |---|---|---|
 | ESP-Miner / AxeOS (Bitaxe Ultra/Supra/Gamma/…) | Full | Reboot, pool, fan, bounded tuning, autotune |
-| NerdQAxe, Lucky-Miner-style ESP-Miner forks | Full | Monitoring-only (unverified) |
+| NerdQAxe, Lucky-Miner-style ESP-Miner forks | Full | Reboot (NerdQAxe) |
 | Canaan Avalon Nano 3 | Full | Pause/Resume, Reboot |
 | Canaan Nano 3S / Avalon Q | Monitoring (compat) | — |
 | Braiins OS (BMM 100) | Full (no power sensor) | Pause/Resume |
 | Stock Bitmain / BMMiner (Antminer S21 Pro, S-series) | Hashrate, expected, chip temps, fans, freq, ASIC count | Reboot (needs root password) |
 | VNish (Antminer S21 Pro forks) | Full incl. wall power & efficiency | Reboot, Pause/Resume |
-| LuxOS | Basic (hashrate, shares, uptime, pool) | — |
+| LuxOS | Basic (hashrate, shares, uptime, pool) | Pause/Resume |
 | WhatsMiner (MicroBT M2X–M6X) | Hashrate, shares, uptime, pool, chip temp, fans, power* | — (encrypted token API) |
 | Demo | Synthetic (demo mode only) | — |
 

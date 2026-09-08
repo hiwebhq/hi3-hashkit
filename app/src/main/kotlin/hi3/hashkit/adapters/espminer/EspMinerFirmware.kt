@@ -45,6 +45,13 @@ object EspMinerFirmware {
         EspMinerFlavor.NERDQAXE, EspMinerFlavor.UNKNOWN_FORK -> false
     }
 
+    /**
+     * Reboot (`POST /api/system/restart`) is inherited unchanged from ESP-Miner, so it's
+     * safe on NerdQAxe too — unlike pool/fan/tune whose semantics differ on the fork.
+     */
+    fun rebootSupported(flavor: EspMinerFlavor): Boolean =
+        controlsSupported(flavor) || flavor == EspMinerFlavor.NERDQAXE
+
     const val UNVERIFIED_REASON =
         "This firmware's control API has not been verified; monitoring only until it is."
 }

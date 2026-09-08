@@ -16,9 +16,9 @@ need the exact unit that was tested.
 | Bitaxe Gamma (600) | AxeOS · HTTP | Full | Reboot, pool, fan, tuning, autotune | ✅ |
 | Bitaxe Gamma Turbo | AxeOS · HTTP | Full | Reboot, pool, fan, tuning, autotune | ✅ |
 | Bitaxe Supra Hex | AxeOS (multi‑chip) · HTTP | Full | Reboot, pool, fan, tuning, autotune | ✅ |
-| NerdQAxe++ | ESP‑Miner fork · HTTP | Full | — (unverified) | ✅ (monitoring) |
-| NerdQAxe+ | ESP‑Miner fork · HTTP | Full | — | ✅ (monitoring) |
-| NerdQAxe+ Hydro | ESP‑Miner fork · HTTP | Full | — | 🟡 |
+| NerdQAxe++ | ESP‑Miner fork · HTTP | Full | **Reboot** | ✅ |
+| NerdQAxe+ | ESP‑Miner fork · HTTP | Full | **Reboot** | ✅ |
+| NerdQAxe+ Hydro | ESP‑Miner fork · HTTP | Full | **Reboot** | 🟡 |
 | Antminer S21 Pro (stock) | BMMiner · cgminer 4028 (read) + web CGI (control) | Hashrate, chip temps, fans, freq, expected, ASIC count, shares, uptime, pool (no power) | **Reboot** (Digest auth, root password) | ✅ |
 | Antminer S21+ | BMMiner · cgminer 4028 (read) + web CGI (control) | Same as S21 Pro | **Reboot** (Digest auth) | 🟡 |
 | Antminer S21+ Hyd | BMMiner · cgminer 4028 (read) + web CGI (control) | Same as S21 Pro | **Reboot** (Digest auth) | 🟡 |
@@ -27,11 +27,11 @@ need the exact unit that was tested.
 | Antminer S19 series | BMMiner · cgminer 4028 (read) + web CGI (control) | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | **Reboot** (Digest auth) | 🟡 |
 | Antminer S17 series | BMMiner · cgminer 4028 (read) + web CGI (control) | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | **Reboot** (Digest auth) | 🟡 |
 | Antminer (VNish firmware), e.g. S21 Pro | VNish · cgminer 4028 (read) + web API 80 (control) | Full incl. **wall power** & efficiency | **Reboot, Pause/Resume** (needs web password) | ✅ (S21 Pro) |
-| Antminer (LuxOS firmware) | LuxOS · cgminer 4028 | Basic: hashrate, shares, uptime, pool | — | 🟡 |
+| Antminer (LuxOS firmware) | LuxOS · cgminer 4028 (+ session API) | Basic: hashrate, shares, uptime, pool | **Pause/Resume** (curtail; no password) | 🟡 |
 | Canaan Avalon Nano 3 | Canaan · CGMiner 4028 | Full (temps, fan, wall watts) | **Pause/Resume, Reboot** | ✅ |
-| Canaan Nano 3S | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |
-| Canaan Avalon Q | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |
-| Canaan Avalon Mini 3 | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |
+| Canaan Nano 3S | Canaan · CGMiner 4028 | Full (like Nano 3) | **Pause/Resume, Reboot** | 🟡 |
+| Canaan Avalon Q | Canaan · CGMiner 4028 | Full (like Nano 3) | **Pause/Resume, Reboot** | 🟡 |
+| Canaan Avalon Mini 3 | Canaan · CGMiner 4028 | Full (like Nano 3) | **Pause/Resume, Reboot** | 🟡 |
 | Braiins BMM 100 | Braiins OS / BOSer · CGMiner 4028 | Full (no power sensor → power unavailable) | **Pause/Resume** | ✅ |
 | WhatsMiner M2X/M3X/M5X/M6X | MicroBT BTMiner · 4028 `{"cmd":…}` | Hashrate, shares, uptime, pool, chip temp, fans, power (where reported) | — | 🟡 |
 | Demo | Synthetic | Full (demo mode only) | — | — |

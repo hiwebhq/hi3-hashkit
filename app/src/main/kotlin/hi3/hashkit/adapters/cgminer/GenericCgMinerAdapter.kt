@@ -110,6 +110,15 @@ class GenericCgMinerAdapter @Inject constructor(
                     Capability.LOGS to "No log stream over the cgminer API.",
                 ),
             )
+            // LuxOS: session-token API on 4028; curtail sleep/wakeup = pause/resume (no password).
+            "luxos" in family -> MinerCapabilities(
+                supported = setOf(Capability.TELEMETRY, Capability.POWER_CONTROL),
+                unsupportedReasons = mapOf(
+                    Capability.REBOOT to "LuxOS reboot targets a board index; whole-miner semantics not yet verified.",
+                    Capability.SET_POOLS to "LuxOS addpool/switchpool not yet verified per device.",
+                    Capability.LOGS to "No log stream over the cgminer API.",
+                ),
+            )
             else -> MinerCapabilities(
                 supported = setOf(Capability.TELEMETRY),
                 unsupportedReasons = Capability.entries
@@ -150,8 +159,30 @@ class GenericCgMinerAdapter @Inject constructor(
             CgMinerCommon.Family.VNISH ->
                 requireSecret(host)?.let { vnish.pauseResume(host.host, it, pause = action == PowerAction.PAUSE) }
                     ?: ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
+            CgMinerCommon.Family.LUXOS -> luxosCurtail(host, pause = action == PowerAction.PAUSE)
             else -> ActionResult.Unsupported("Pause/Resume is not available for this firmware.")
         }
+
+    /** LuxOS pause/resume: logon → SessionID, then `curtail <session>,sleep|wakeup`. */
+    private suspend fun luxosCurtail(host: MinerHost, pause: Boolean): ActionResult {
+        val port = apiPort(host)
+        val logon = api.query(host.host, port, "logon").body
+            ?: return ActionResult.Failure("LuxOS logon failed (no response)")
+        val session = CgMinerCommon.firstRecord(logon, "SESSION")
+            ?.let { (it["SessionID"] as? kotlinx.serialization.json.JsonPrimitive)?.content }
+            ?.takeIf { it.isNotBlank() }
+            ?: return ActionResult.Failure("LuxOS did not return a session id")
+        val param = "$session," + if (pause) "sleep" else "wakeup"
+        val res = api.query(host.host, port, "curtail", param)
+        val body = res.body ?: return ActionResult.Failure(res.error ?: "No response")
+        val status = CgMinerCommon.firstRecord(body, "STATUS")
+            ?.let { (it["STATUS"] as? kotlinx.serialization.json.JsonPrimitive)?.content }
+        return if (status == "E" || status == "F") {
+            ActionResult.Failure("LuxOS rejected curtail")
+        } else {
+            ActionResult.Success
+        }
+    }
 
     override suspend fun getTuneOptions(host: MinerHost): TuneOptions? = null
 

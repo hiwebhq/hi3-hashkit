@@ -101,9 +101,10 @@ class EspMinerAdapter @Inject constructor(
             val base = MinerCapabilities.monitoringOnly(EspMinerFirmware.UNVERIFIED_REASON)
             // Read-only log streaming over /api/ws is verified on NerdQAxe firmware.
             return if (flavor == EspMinerFlavor.NERDQAXE) {
+                // Reboot + log streaming are verified on NerdQAxe; pool/fan/tune differ.
                 base.copy(
-                    supported = base.supported + Capability.LOGS,
-                    unsupportedReasons = base.unsupportedReasons - Capability.LOGS,
+                    supported = base.supported + Capability.LOGS + Capability.REBOOT,
+                    unsupportedReasons = base.unsupportedReasons - Capability.LOGS - Capability.REBOOT,
                 )
             } else base
         }
@@ -142,7 +143,7 @@ class EspMinerAdapter @Inject constructor(
         }
 
     override suspend fun reboot(host: MinerHost): ActionResult =
-        gated(host) { _, _ ->
+        gated(host, EspMinerFirmware::rebootSupported) { _, _ ->
             when (val r = send(host, "POST", "/api/system/restart", null)) {
                 is Fetched.Ok -> ActionResult.Success
                 is Fetched.HttpError -> ActionResult.Failure("Restart rejected: HTTP ${r.code}")
@@ -247,6 +248,7 @@ class EspMinerAdapter @Inject constructor(
     /** Run a control action only after re-verifying the firmware flavor supports controls. */
     private suspend fun gated(
         host: MinerHost,
+        allow: (EspMinerFlavor) -> Boolean = EspMinerFirmware::controlsSupported,
         block: suspend (EspMinerFlavor, JsonObject) -> ActionResult,
     ): ActionResult = withContext(Dispatchers.IO) {
         val body = (get(host, "/api/system/info") as? Fetched.Ok)?.body
@@ -255,7 +257,7 @@ class EspMinerAdapter @Inject constructor(
             ?: return@withContext ActionResult.Failure("Miner response unparseable; no changes were made.")
         val identity = EspMinerParser.parseSystemInfo(body)?.identity
         val flavor = EspMinerFirmware.flavorOf(identity)
-        if (!EspMinerFirmware.controlsSupported(flavor)) {
+        if (!allow(flavor)) {
             return@withContext ActionResult.Unsupported(EspMinerFirmware.UNVERIFIED_REASON)
         }
         block(flavor, obj)
