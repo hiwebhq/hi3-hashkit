@@ -98,6 +98,19 @@ fun DashboardScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
     val rescanMessage by viewModel.rescanMessage.collectAsStateWithLifecycle()
+    val firmwareLatest by viewModel.firmwareLatest.collectAsStateWithLifecycle()
+    val poolState by viewModel.poolState.collectAsStateWithLifecycle()
+    val mmpState by viewModel.mmpState.collectAsStateWithLifecycle()
+    val fleetTrend by viewModel.fleetTrend.collectAsStateWithLifecycle()
+    val fleetWindow by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
+    // Count of AxeOS miners behind the latest release; the banner item only exists when > 0
+    // so a disabled banner doesn't add phantom LazyColumn spacing.
+    val firmwareOutdated = firmwareLatest?.let { latest ->
+        state.miners.count { m ->
+            hi3.hashkit.integrations.update.FirmwareUpdateChecker.isAxeOsFamily(m.identity.firmwareFamily) &&
+                hi3.hashkit.integrations.update.FirmwareUpdateChecker.isNewer(latest.tag, m.identity.firmwareVersion)
+        }
+    } ?: 0
     var bulkKind by androidx.compose.runtime.remember {
         androidx.compose.runtime.mutableStateOf<BulkActionKind?>(null)
     }
@@ -273,25 +286,20 @@ fun DashboardScreen(
             if (state.farms.isNotEmpty()) {
                 item { FarmSelector(state, viewModel::setActiveFarm) }
             }
-            item {
-                val latest by viewModel.firmwareLatest.collectAsStateWithLifecycle()
-                FirmwareUpdateBanner(state.miners, latest, context)
+            firmwareLatest?.takeIf { firmwareOutdated > 0 }?.let { latest ->
+                item { FirmwareUpdateBanner(firmwareOutdated, latest, context) }
             }
             item {
-                val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
-                val window by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
-                FleetSummary(state, trend, window, viewModel::setFleetWindow, onClick = onFleet)
+                FleetSummary(state, fleetTrend, fleetWindow, viewModel::setFleetWindow, onClick = onFleet)
             }
             if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
             }
-            item {
-                val poolState by viewModel.poolState.collectAsStateWithLifecycle()
-                if (poolState.enabled) Hi3PoolCard(poolState)
+            if (poolState.enabled) {
+                item { Hi3PoolCard(poolState) }
             }
-            item {
-                val mmpState by viewModel.mmpState.collectAsStateWithLifecycle()
-                if (mmpState.enabled) MmpCard(mmpState, state)
+            if (mmpState.enabled) {
+                item { MmpCard(mmpState, state) }
             }
             item {
                 Row(
@@ -302,23 +310,23 @@ fun DashboardScreen(
                     androidx.compose.material3.OutlinedTextField(
                         value = state.searchQuery,
                         onValueChange = viewModel::setSearch,
-                        label = { Text("Search") },
+                        placeholder = { Text("Search") },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                     )
+                    if (state.miners.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.rescanLocalNetwork() }) {
+                            Icon(
+                                Icons.Filled.Refresh,
+                                contentDescription = "Rescan network for new miners",
+                                tint = HiBrand.accent,
+                            )
+                        }
+                    }
                     DensitySelector(
                         current = state.settings.cardDensity,
                         onSelect = viewModel::setDensity,
                     )
-                }
-            }
-            if (state.miners.isNotEmpty()) {
-                item {
-                    androidx.compose.material3.TextButton(onClick = { viewModel.rescanLocalNetwork() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text("Rescan network for new miners")
-                    }
                 }
             }
             if (state.miners.isEmpty() && state.searchQuery.isBlank()) {
@@ -449,8 +457,8 @@ fun DashboardScreen(
 }
 
 /**
- * Dedicated fleet view: the aggregate summary + trend, then every miner's card — without
- * the pool/MMP/solo/search sections of the dashboard. Reached by tapping the Fleet card.
+ * Dedicated fleet view: just every miner's card — no summary card and none of the
+ * pool/MMP/solo/search sections of the dashboard. Reached by tapping the Fleet card.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -460,8 +468,6 @@ fun FleetDetailScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val trend by viewModel.fleetTrend.collectAsStateWithLifecycle()
-    val window by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
     val spark by viewModel.sparklines.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -489,7 +495,6 @@ fun FleetDetailScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                item { FleetSummary(state, trend, window, viewModel::setFleetWindow) }
                 if (cols > 1) {
                     items(state.miners.chunked(cols), key = { it.first().id }) { rowMiners ->
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -527,16 +532,10 @@ fun FleetDetailScreen(
 /** Opt-in AxeOS firmware-update notice: shows when any Bitaxe is behind the latest release. */
 @Composable
 private fun FirmwareUpdateBanner(
-    miners: List<Miner>,
-    latest: hi3.hashkit.integrations.update.FirmwareUpdateChecker.Release?,
+    outdated: Int,
+    latest: hi3.hashkit.integrations.update.FirmwareUpdateChecker.Release,
     context: android.content.Context,
 ) {
-    if (latest == null) return
-    val outdated = miners.count { m ->
-        hi3.hashkit.integrations.update.FirmwareUpdateChecker.isAxeOsFamily(m.identity.firmwareFamily) &&
-            hi3.hashkit.integrations.update.FirmwareUpdateChecker.isNewer(latest.tag, m.identity.firmwareVersion)
-    }
-    if (outdated == 0) return
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(12.dp),
@@ -1012,34 +1011,35 @@ private fun lastRefreshLabel(instant: Instant?): String {
     }
 }
 
+/** Single button showing the current card style; each tap cycles L → M → C → ▦. */
 @Composable
 private fun DensitySelector(
     current: hi3.hashkit.data.prefs.CardDensity,
     onSelect: (hi3.hashkit.data.prefs.CardDensity) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        listOf(
-            hi3.hashkit.data.prefs.CardDensity.LARGE to "L",
-            hi3.hashkit.data.prefs.CardDensity.MEDIUM to "M",
-            hi3.hashkit.data.prefs.CardDensity.COMPACT to "C",
-            hi3.hashkit.data.prefs.CardDensity.GRID to "▦",
-        ).forEach { (density, label) ->
-            Text(
-                label,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = if (density == current) HiBrand.accent else HiBrand.textSecondary,
-                modifier = Modifier
-                    .background(
-                        if (density == current) HiBrand.accent.copy(alpha = 0.15f)
-                        else HiBrand.surface,
-                        RoundedCornerShape(8.dp),
-                    )
-                    .clickable { onSelect(density) }
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-            )
-        }
+    val label = when (current) {
+        hi3.hashkit.data.prefs.CardDensity.LARGE -> "L"
+        hi3.hashkit.data.prefs.CardDensity.MEDIUM -> "M"
+        hi3.hashkit.data.prefs.CardDensity.COMPACT -> "C"
+        hi3.hashkit.data.prefs.CardDensity.GRID -> "▦"
     }
+    val next = when (current) {
+        hi3.hashkit.data.prefs.CardDensity.LARGE -> hi3.hashkit.data.prefs.CardDensity.MEDIUM
+        hi3.hashkit.data.prefs.CardDensity.MEDIUM -> hi3.hashkit.data.prefs.CardDensity.COMPACT
+        hi3.hashkit.data.prefs.CardDensity.COMPACT -> hi3.hashkit.data.prefs.CardDensity.GRID
+        hi3.hashkit.data.prefs.CardDensity.GRID -> hi3.hashkit.data.prefs.CardDensity.LARGE
+    }
+    Text(
+        label,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+        color = HiBrand.accent,
+        modifier = Modifier
+            .background(HiBrand.accent.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
+            .clickable { onSelect(next) }
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .semantics { contentDescription = "Card style: $label. Tap to change." },
+    )
 }
 
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)

@@ -269,6 +269,34 @@ fun MinerDetailScreen(
                 }
             }
 
+            // VNish controls authenticate with the miner's web password; capture it (encrypted).
+            if (miner.identity.firmwareFamily?.contains("vnish", ignoreCase = true) == true) {
+                SectionCard("MINER LOGIN (FOR CONTROLS)") {
+                    val credSet by viewModel.credentialSet.collectAsStateWithLifecycle()
+                    var pw by remember { mutableStateOf("") }
+                    Text(
+                        if (credSet) "A web password is saved (encrypted). Enter a new one to replace it, or clear it."
+                        else "Enter the VNish web password to enable Reboot and Pause/Resume. Stored encrypted on this device only.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    androidx.compose.material3.OutlinedTextField(
+                        value = pw,
+                        onValueChange = { pw = it },
+                        label = { Text("VNish web password") },
+                        singleLine = true,
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        androidx.compose.material3.Button(onClick = { viewModel.setCredential(pw); pw = "" }) { Text("Save") }
+                        if (credSet) {
+                            androidx.compose.material3.OutlinedButton(onClick = { viewModel.setCredential("") }) { Text("Clear") }
+                        }
+                    }
+                }
+            }
+
             state.capabilities?.let { caps ->
                 SectionCard("CONTROLS") {
                     ControlsCard(

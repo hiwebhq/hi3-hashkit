@@ -83,6 +83,9 @@ interface MinerDao {
     @Query("SELECT COUNT(*) FROM miners WHERE farmId = :farmId")
     suspend fun countInFarm(farmId: Long): Int
 
+    @Query("UPDATE miners SET credentialEnc = :enc WHERE id = :id")
+    suspend fun updateCredential(id: Long, enc: String?)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAddress(address: MinerAddressEntity)
 

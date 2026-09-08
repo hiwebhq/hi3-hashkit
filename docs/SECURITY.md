@@ -47,6 +47,12 @@ In this build:
    address, or a generic webhook URL you supply. Plug hosts must be private/Tailscale
    addresses. Automatic cutoff only ever turns power OFF; turning back on is manual.
 
+**Per-miner credentials:** a miner's own admin password / API token (e.g. the VNish web
+password used for Reboot and Pause/Resume) is stored **encrypted with the Android
+Keystore** (AES‑256‑GCM, non-exportable key — same `KeystoreCrypto` as the MMP key). The
+plaintext is decrypted just-in-time only to authenticate a control request to that miner
+on the LAN, and is never logged, exported, or sent anywhere else.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server.
 

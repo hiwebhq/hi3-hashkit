@@ -1,9 +1,13 @@
 package hi3.hashkit.adapters.cgminer
 
-import hi3.hashkit.domain.adapter.MinerAdapter
+import hi3.hashkit.domain.adapter.ActionResult
+import hi3.hashkit.domain.adapter.FanControl
+import hi3.hashkit.domain.adapter.MinerControlAdapter
 import hi3.hashkit.domain.adapter.MinerHost
+import hi3.hashkit.domain.adapter.PowerAction
 import hi3.hashkit.domain.adapter.ProbeResult
 import hi3.hashkit.domain.adapter.TelemetryResult
+import hi3.hashkit.domain.adapter.TuneOptions
 import hi3.hashkit.domain.model.Capability
 import hi3.hashkit.domain.model.MinerCapabilities
 import hi3.hashkit.domain.model.MinerIdentity
@@ -25,7 +29,8 @@ import javax.inject.Singleton
 @Singleton
 class GenericCgMinerAdapter @Inject constructor(
     private val api: CgMinerApi,
-) : MinerAdapter {
+    private val vnish: VnishWebClient,
+) : MinerControlAdapter {
 
     override val adapterType: String = TYPE
     override val displayName: String = "Antminer-class (cgminer)"
@@ -82,16 +87,59 @@ class GenericCgMinerAdapter @Inject constructor(
         return TelemetryResult.Success(telemetry, raw)
     }
 
-    override fun getCapabilities(identity: MinerIdentity?): MinerCapabilities =
-        MinerCapabilities(
-            supported = setOf(Capability.TELEMETRY),
-            unsupportedReasons = Capability.entries
-                .filter { it != Capability.TELEMETRY }
-                .associateWith {
-                    "Temperature, fan, power and controls for this firmware are not yet " +
-                        "verified — monitoring shows hashrate, shares, uptime and pool only."
-                },
+    override fun getCapabilities(identity: MinerIdentity?): MinerCapabilities {
+        // VNish exposes an authenticated web API for reboot + pause/resume; stock Bitmain
+        // and LuxOS have no verified control path, so they stay monitoring-only.
+        val isVnish = identity?.firmwareFamily?.contains("vnish", ignoreCase = true) == true
+        if (!isVnish) {
+            return MinerCapabilities(
+                supported = setOf(Capability.TELEMETRY),
+                unsupportedReasons = Capability.entries
+                    .filter { it != Capability.TELEMETRY }
+                    .associateWith {
+                        "Controls for this firmware are not yet verified — monitoring shows " +
+                            "hashrate, shares, uptime, pool and (where reported) temps/fans/power."
+                    },
+            )
+        }
+        return MinerCapabilities(
+            supported = setOf(Capability.TELEMETRY, Capability.REBOOT, Capability.POWER_CONTROL),
+            unsupportedReasons = mapOf(
+                Capability.SET_POOLS to "VNish pool changes require its full settings-object " +
+                    "round-trip, which isn't verified yet.",
+                Capability.SET_FAN to "VNish fan/preset changes go through its settings object, not yet verified.",
+                Capability.APPLY_APPROVED_TUNE to "VNish tuning goes through its autotune presets, not yet verified.",
+                Capability.LOGS to "No log stream over the cgminer API.",
+            ),
         )
+    }
+
+    // --- controls (VNish web API only; other cgminer firmware stays monitoring-only) ------
+
+    private fun requireSecret(host: MinerHost): String? = host.secret?.takeIf { it.isNotBlank() }
+
+    override suspend fun reboot(host: MinerHost): ActionResult {
+        val pw = requireSecret(host)
+            ?: return ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
+        return vnish.reboot(host.host, pw)
+    }
+
+    override suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult {
+        val pw = requireSecret(host)
+            ?: return ActionResult.Unsupported("Set the VNish web password in the miner's settings first.")
+        return vnish.pauseResume(host.host, pw, pause = action == PowerAction.PAUSE)
+    }
+
+    override suspend fun getTuneOptions(host: MinerHost): TuneOptions? = null
+
+    override suspend fun setPrimaryPool(host: MinerHost, url: String, port: Int, worker: String): ActionResult =
+        ActionResult.Unsupported("VNish pool changes need its settings-object API (not verified).")
+
+    override suspend fun setFan(host: MinerHost, config: FanControl): ActionResult =
+        ActionResult.Unsupported("VNish fan control needs its settings-object API (not verified).")
+
+    override suspend fun applyTune(host: MinerHost, frequencyMhz: Int, coreVoltageMv: Int): ActionResult =
+        ActionResult.Unsupported("VNish tuning needs its autotune-preset API (not verified).")
 
     private fun identity(
         versionBody: String,

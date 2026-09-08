@@ -86,6 +86,19 @@ class MinerDetailViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), PlugConfig())
 
+    /** Whether an admin credential is stored for this miner (for authenticated controls). */
+    val credentialSet: StateFlow<Boolean> = repository.observeMinerEntity(minerId)
+        .map { !it?.credentialEnc.isNullOrBlank() }
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), false)
+
+    /** Save (or clear, with blank) the miner's admin password / API token, encrypted at rest. */
+    fun setCredential(secret: String) {
+        viewModelScope.launch {
+            repository.setCredential(minerId, secret)
+            lastActionMessage.value = if (secret.isBlank()) "Credential cleared." else "Credential saved (encrypted)."
+        }
+    }
+
     fun saveSmartPlug(type: hi3.hashkit.integrations.plug.PlugType?, host: String, onUrl: String, offUrl: String, cutoffC: Double?) {
         viewModelScope.launch {
             repository.setSmartPlug(minerId, type?.name, host, onUrl, offUrl, cutoffC)

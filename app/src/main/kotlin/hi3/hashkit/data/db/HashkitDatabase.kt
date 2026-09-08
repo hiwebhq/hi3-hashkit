@@ -18,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         TelemetryHourlyEntity::class,
         FarmEntity::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -134,6 +134,13 @@ abstract class HashkitDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugOnUrl` TEXT DEFAULT NULL")
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugOffUrl` TEXT DEFAULT NULL")
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `plugCutoffTempC` REAL DEFAULT NULL")
+            }
+        }
+
+        /** v9 -> v10: per-miner encrypted credential for authenticated controls (additive). */
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `credentialEnc` TEXT DEFAULT NULL")
             }
         }
 

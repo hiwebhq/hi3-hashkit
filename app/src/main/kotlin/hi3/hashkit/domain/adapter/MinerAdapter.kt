@@ -4,8 +4,12 @@ import hi3.hashkit.domain.model.MinerCapabilities
 import hi3.hashkit.domain.model.MinerIdentity
 import hi3.hashkit.domain.model.MinerTelemetry
 
-/** Address of a candidate or known miner. */
-data class MinerHost(val host: String, val port: Int = 80)
+/**
+ * Address of a candidate or known miner. [secret] is the miner's own admin password / API
+ * token (decrypted just-in-time by the control layer) for firmware whose controls require
+ * authentication (e.g. VNish web API); null for read paths and credential-less controls.
+ */
+data class MinerHost(val host: String, val port: Int = 80, val secret: String? = null)
 
 sealed interface ProbeResult {
     /** The host answered a known endpoint and looks like a device this adapter supports. */

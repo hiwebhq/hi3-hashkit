@@ -34,13 +34,20 @@ class ControlRepository @Inject constructor(
     private fun controlAdapter(entity: MinerEntity): MinerControlAdapter? =
         registry.byType(entity.adapterType) as? MinerControlAdapter
 
+    /** Miner address with its decrypted admin credential attached (for authenticated controls). */
+    private fun hostOf(entity: MinerEntity): MinerHost = MinerHost(
+        entity.host,
+        entity.port,
+        entity.credentialEnc?.let { runCatching { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }.getOrNull() },
+    )
+
     suspend fun tuneOptions(entity: MinerEntity): TuneOptions? =
-        controlAdapter(entity)?.getTuneOptions(MinerHost(entity.host, entity.port))
+        controlAdapter(entity)?.getTuneOptions(hostOf(entity))
 
     suspend fun reboot(entity: MinerEntity): ActionResult {
         val adapter = controlAdapter(entity)
             ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")
-        val result = adapter.reboot(MinerHost(entity.host, entity.port))
+        val result = adapter.reboot(hostOf(entity))
         audit(entity.id, "reboot", "{}", "{}", result)
         return result
     }
@@ -51,7 +58,7 @@ class ControlRepository @Inject constructor(
     ): ActionResult {
         val adapter = controlAdapter(entity)
             ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")
-        val result = adapter.powerControl(MinerHost(entity.host, entity.port), action)
+        val result = adapter.powerControl(hostOf(entity), action)
         audit(entity.id, "power_${action.name.lowercase()}", "{}", "{}", result)
         return result
     }
@@ -71,7 +78,7 @@ class ControlRepository @Inject constructor(
             put("stratumPort", port)
             put("stratumUser", worker)
         }.toString()
-        val result = adapter.setPrimaryPool(MinerHost(entity.host, entity.port), url, port, worker)
+        val result = adapter.setPrimaryPool(hostOf(entity), url, port, worker)
         audit(entity.id, ACTION_SET_POOL, previous, applied, result)
         return result
     }
@@ -89,7 +96,7 @@ class ControlRepository @Inject constructor(
                 put("manualFanSpeed", config.percent)
             }
         }.toString()
-        val result = adapter.setFan(MinerHost(entity.host, entity.port), config)
+        val result = adapter.setFan(hostOf(entity), config)
         audit(entity.id, "set_fan", "{}", applied, result)
         return result
     }
@@ -106,7 +113,7 @@ class ControlRepository @Inject constructor(
             put("frequency", frequencyMhz)
             put("coreVoltage", coreVoltageMv)
         }.toString()
-        val result = adapter.applyTune(MinerHost(entity.host, entity.port), frequencyMhz, coreVoltageMv)
+        val result = adapter.applyTune(hostOf(entity), frequencyMhz, coreVoltageMv)
         audit(entity.id, ACTION_TUNE, previous, applied, result)
         return result
     }
@@ -123,7 +130,7 @@ class ControlRepository @Inject constructor(
             ?: return ActionResult.Failure("Previous frequency was not recorded.")
         val volt = prev["coreVoltage"]?.jsonPrimitive?.intOrNull?.takeIf { it > 0 }
             ?: return ActionResult.Failure("Previous core voltage was not recorded.")
-        val result = adapter.applyTune(MinerHost(entity.host, entity.port), freq, volt)
+        val result = adapter.applyTune(hostOf(entity), freq, volt)
         audit(entity.id, "rollback_tune", last.appliedJson, last.previousJson, result)
         return result
     }

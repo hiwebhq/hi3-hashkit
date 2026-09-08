@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.41.0
+
+- **Per-miner credentials (encrypted).** Miners can now store an admin password / API token,
+  encrypted with the Android Keystore (like the MMP key), entered on the miner's detail
+  screen. Decrypted only in-memory to authenticate a control; never logged or exported.
+- **VNish controls: Reboot + Pause/Resume.** Via the VNish web API (`/api/v1/unlock` →
+  Bearer token, then `/api/v1/system/reboot` and `/api/v1/mining/pause`/`resume`), using the
+  stored web password. Pool/preset/fan changes (which need the settings-object round-trip)
+  remain unsupported until verified. (DB v10, additive.)
+
 ## 0.40.0
 
 - **Braiins OS controls: Pause/Resume.** The Braiins adapter now supports reversible

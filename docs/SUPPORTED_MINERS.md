@@ -26,7 +26,7 @@ need the exact unit that was tested.
 | Antminer S21 XP | BMMiner · cgminer 4028 | Same as S21 Pro | — | 🟡 |
 | Antminer S19 series | BMMiner · cgminer 4028 | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | — | 🟡 |
 | Antminer S17 series | BMMiner · cgminer 4028 | Hashrate, shares, uptime, pool (temps/fans firmware‑dependent) | — | 🟡 |
-| Antminer (VNish firmware), e.g. S21 Pro | VNish · cgminer 4028 | Full incl. **wall power** & efficiency | — | ✅ (S21 Pro) |
+| Antminer (VNish firmware), e.g. S21 Pro | VNish · cgminer 4028 (read) + web API 80 (control) | Full incl. **wall power** & efficiency | **Reboot, Pause/Resume** (needs web password) | ✅ (S21 Pro) |
 | Antminer (LuxOS firmware) | LuxOS · cgminer 4028 | Basic: hashrate, shares, uptime, pool | — | 🟡 |
 | Canaan Avalon Nano 3 | Canaan · CGMiner 4028 | Full (temps, fan, wall watts) | **Pause/Resume, Reboot** | ✅ |
 | Canaan Nano 3S | Canaan · CGMiner 4028 | Full (like Nano 3) | — | 🟡 |

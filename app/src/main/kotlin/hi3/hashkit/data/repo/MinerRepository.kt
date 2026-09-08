@@ -40,6 +40,16 @@ class MinerRepository @Inject constructor(
 
     fun observeMinerEntities(): Flow<List<MinerEntity>> = minerDao.observeAll()
 
+    /** Store (or clear, with blank) a miner's admin password/API token, encrypted at rest. */
+    suspend fun setCredential(minerId: Long, plaintext: String) {
+        val trimmed = plaintext.trim()
+        minerDao.updateCredential(minerId, if (trimmed.isEmpty()) null else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed))
+    }
+
+    /** True when a credential is stored for this miner (without decrypting it). */
+    suspend fun hasCredential(minerId: Long): Boolean =
+        !minerDao.byId(minerId)?.credentialEnc.isNullOrBlank()
+
     /** Configure (or clear, with a null type) the per-miner smart-plug safety cutoff. */
     suspend fun setSmartPlug(
         minerId: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?,

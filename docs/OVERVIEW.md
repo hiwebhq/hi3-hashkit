@@ -69,7 +69,7 @@ shown as unsupported, never guessed.
 | Canaan Nano 3S / Avalon Q | Monitoring (compat) | — |
 | Braiins OS (BMM 100) | Full (no power sensor) | Pause/Resume |
 | Stock Bitmain / BMMiner (Antminer S21 Pro, S-series) | Hashrate, expected, chip temps, fans, freq, ASIC count | — (power not in API) |
-| VNish (Antminer S21 Pro forks) | Full incl. wall power & efficiency | — |
+| VNish (Antminer S21 Pro forks) | Full incl. wall power & efficiency | Reboot, Pause/Resume |
 | LuxOS | Basic (hashrate, shares, uptime, pool) | — |
 | WhatsMiner (MicroBT M2X–M6X) | Hashrate, shares, uptime, pool, chip temp, fans, power* | — (encrypted token API) |
 | Demo | Synthetic (demo mode only) | — |
