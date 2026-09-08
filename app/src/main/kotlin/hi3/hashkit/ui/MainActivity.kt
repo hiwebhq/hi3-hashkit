@@ -78,6 +78,10 @@ class MainActivity : FragmentActivity() {
             if (savedInstanceState == null && settings.onboardingComplete && !settings.appLockEnabled) {
                 autoScanManager.startIfEnabled()
             }
+            // Ensure the always-on safety monitor is running if the user enabled it.
+            if (settings.safetyServiceEnabled) {
+                hi3.hashkit.data.poll.SafetyMonitorService.start(this@MainActivity)
+            }
         }
         setContent {
             val settings by settingsRepository.settings.collectAsState(

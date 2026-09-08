@@ -41,6 +41,8 @@ data class AppSettings(
     val autoScanOnStartup: Boolean = true,
     /** Opt-in check of AxeOS firmware releases on GitHub (one documented external request). */
     val firmwareUpdateCheck: Boolean = false,
+    /** Always-on foreground service that runs the smart-plug over-temp cutoff even when closed. */
+    val safetyServiceEnabled: Boolean = false,
     /** Currently viewed farm/site; -1 means "All farms" (no filter). */
     val activeFarmId: Long = -1,
     /** Miner-card size on the dashboard. */
@@ -88,6 +90,7 @@ class SettingsRepository @Inject constructor(
         val extraSubnets = stringPreferencesKey("extra_subnets")
         val autoScanOnStartup = booleanPreferencesKey("auto_scan_on_startup")
         val firmwareUpdateCheck = booleanPreferencesKey("firmware_update_check")
+        val safetyServiceEnabled = booleanPreferencesKey("safety_service_enabled")
         val activeFarmId = longPreferencesKey("active_farm_id")
         val cardDensity = stringPreferencesKey("card_density")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
@@ -124,6 +127,7 @@ class SettingsRepository @Inject constructor(
             extraSubnetsCsv = p[Keys.extraSubnets] ?: "",
             autoScanOnStartup = p[Keys.autoScanOnStartup] ?: true,
             firmwareUpdateCheck = p[Keys.firmwareUpdateCheck] ?: false,
+            safetyServiceEnabled = p[Keys.safetyServiceEnabled] ?: false,
             activeFarmId = p[Keys.activeFarmId] ?: -1,
             cardDensity = runCatching { CardDensity.valueOf(p[Keys.cardDensity] ?: "LARGE") }
                 .getOrDefault(CardDensity.LARGE),
@@ -166,6 +170,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setExtraSubnets(value: String) = edit { it[Keys.extraSubnets] = value }
     suspend fun setAutoScanOnStartup(value: Boolean) = edit { it[Keys.autoScanOnStartup] = value }
     suspend fun setFirmwareUpdateCheck(value: Boolean) = edit { it[Keys.firmwareUpdateCheck] = value }
+    suspend fun setSafetyServiceEnabled(value: Boolean) = edit { it[Keys.safetyServiceEnabled] = value }
     suspend fun setActiveFarmId(value: Long) = edit { it[Keys.activeFarmId] = value }
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
     suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }

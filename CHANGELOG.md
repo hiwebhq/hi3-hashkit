@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.38.0
+
+- **Always-on safety monitor (opt-in).** A foreground service (with a persistent, low-
+  priority notification) now runs the smart-plug over-temp cutoff even when the app is
+  closed, checking armed miners every 20s, and re-arms itself after a reboot. Enable it in
+  Settings → Monitoring. It only acts on miners with a plug cutoff set and never turns
+  power back on.
+
 ## 0.37.1
 
 - **Dedicated fast safety poll for the smart-plug cutoff.** A separate 20-second loop now

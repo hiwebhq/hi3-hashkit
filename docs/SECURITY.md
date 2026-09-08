@@ -58,8 +58,13 @@ with any other server.
 | `ACCESS_NETWORK_STATE` | Detect the active network before scanning |
 | `ACCESS_WIFI_STATE` | Read the Wi-Fi interface address to derive the default scan /24 |
 | `POST_NOTIFICATIONS` | Miner alert notifications (requested contextually when alerts/background monitoring are enabled) |
+| `CAMERA` | On-demand only, to scan a payout-address QR code; no image is stored or sent. Optional (`android.hardware.camera` not required) |
+| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | The opt-in always-on safety monitor that runs the smart-plug over-temp cutoff in the background |
+| `RECEIVE_BOOT_COMPLETED` | Re-arm the safety monitor after a reboot, only if the user enabled it |
 
-No location, no camera, no contacts, no background-location, no foreground service (yet).
+No location, no contacts, no background-location. The foreground service runs only while
+the user has explicitly enabled the always-on safety monitor, shows a persistent
+notification while active, and does nothing but the over-temp plug cutoff.
 
 ## Exports & backups
 

@@ -13,6 +13,11 @@
     <!-- Optional: only used on-demand to scan a payout-address QR code. No image leaves the device. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Opt-in always-on safety monitor (smart-plug over-temp cutoff) runs as a foreground service. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Re-arm the safety monitor after a reboot, only if the user enabled it. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".HashkitApplication"
@@ -65,5 +70,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Opt-in always-on smart-plug over-temp safety cutoff. -->
+        <service
+            android:name=".data.poll.SafetyMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="miner_thermal_safety_cutoff" />
+        </service>
+
+        <receiver
+            android:name=".data.poll.SafetyBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

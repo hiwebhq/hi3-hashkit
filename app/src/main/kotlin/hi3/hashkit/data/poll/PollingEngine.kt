@@ -86,6 +86,9 @@ class PollingEngine @Inject constructor(
         safetyJob = null
     }
 
+    /** Public entry point for the always-on foreground safety service to run one pass. */
+    suspend fun runSafetyCycleOnce() = safetyCycle()
+
     /**
      * Fast safety pass: poll only miners that have an armed smart-plug cutoff and apply it.
      * Cheap when none are configured (a single DB read, then nothing).

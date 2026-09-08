@@ -268,6 +268,18 @@ fun SettingsScreen(
                         "are behind. No flashing from the app; nothing is contacted while off.",
                     settings.firmwareUpdateCheck,
                 ) { viewModel.setFirmwareUpdateCheck(it) }
+                ToggleRow(
+                    "Always-on safety monitor",
+                    "Runs the smart-plug over-temp cutoff in the background (with a persistent " +
+                        "notification) even when the app is closed, and re-arms after a reboot. " +
+                        "Only useful if you've set a plug cutoff on a miner.",
+                    settings.safetyServiceEnabled,
+                ) { enabled ->
+                    viewModel.setSafetyService(enabled)
+                    if (enabled && Build.VERSION.SDK_INT >= 33) {
+                        notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
             }
 
             Section("SECURITY") {

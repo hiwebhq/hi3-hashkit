@@ -112,6 +112,13 @@ class SettingsViewModel @Inject constructor(
 
     fun setRetentionDays(days: Int) = viewModelScope.launch { repo.setRetentionDays(days) }
     fun setFirmwareUpdateCheck(v: Boolean) = viewModelScope.launch { repo.setFirmwareUpdateCheck(v) }
+
+    /** Toggle the always-on foreground safety monitor (persist + start/stop the service). */
+    fun setSafetyService(v: Boolean) = viewModelScope.launch {
+        repo.setSafetyServiceEnabled(v)
+        if (v) hi3.hashkit.data.poll.SafetyMonitorService.start(context)
+        else hi3.hashkit.data.poll.SafetyMonitorService.stop(context)
+    }
     fun setAlertsEnabled(v: Boolean) = viewModelScope.launch { repo.setAlertsEnabled(v) }
     fun setHashrateBelowPercent(v: Double) = viewModelScope.launch { repo.setHashrateBelowPercent(v) }
     fun setChipTempThreshold(v: Double) = viewModelScope.launch { repo.setChipTempThreshold(v) }
