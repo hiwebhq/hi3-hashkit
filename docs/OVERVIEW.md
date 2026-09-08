@@ -6,7 +6,7 @@ your Tailscale VPN — with **no account, no cloud, and no telemetry**. Every re
 labeled by how it was obtained (measured, reported, calculated, estimated, or unavailable),
 so an estimate is never dressed up as a fact.
 
-Current release: **v0.44.0**.
+Current release: **v0.45.0**.
 
 ## Key features
 
@@ -35,6 +35,12 @@ Current release: **v0.44.0**.
 - **Time-of-use scheduling**: auto-pause at peak-rate hours, resume off-peak.
 
 ### Advanced / operator
+- **Profitability & energy dashboard** — estimated revenue/day, power cost/day, net/day,
+  BTC/day, kWh/day and heat (BTU/hr) for the fleet; BTC price via opt-in mempool.space
+  fetch or manual entry, clearly labelled an estimate.
+- **Auto-recover offline miners** (opt-in) — after a configurable offline threshold, the
+  app power-cycles the miner's smart plug (if configured) or reboots it, once, with a
+  cooldown; every attempt is audit-logged.
 - **Efficiency leaderboard** — rank by J/TH, attainment, or hashrate.
 - **Smart-plug over-temp safety cutoff** — per-miner, via Tasmota / Shelly / Kasa / generic
   webhook; cuts power when chip temp exceeds your limit (manual restore only). Backed by a
@@ -86,7 +92,8 @@ shown as unsupported, never guessed.
 Local-first by design: the app contacts only your configured miners, plus a few strictly
 opt-in, off-by-default integrations (network-difficulty fetch, pool stats keyed by your
 address, Hi3 MMP fleet view, AxeOS update check). An enforced network boundary refuses any
-non-private address; secrets use AES-256-GCM in the Android Keystore; there is no analytics,
+non-private address; secrets use AES-256-GCM in the Android Keystore; Android auto-backup
+is disabled so local data is never silently cloud-backed-up; there is no analytics,
 advertising, or account. The camera is used only for on-demand QR scanning. See
 [`SECURITY.md`](SECURITY.md) for the full disclosure of what leaves the device and when.
 

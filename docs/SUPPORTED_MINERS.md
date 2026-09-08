@@ -1,6 +1,6 @@
 # Supported miners
 
-Complete model-by-model support for Hi3 Hashkit (as of **v0.44.0**).
+Complete model-by-model support for Hi3 Hashkit (as of **v0.45.0**).
 
 **Status:** ✅ Verified on real hardware · 🟡 Compat‑gated (same firmware/API, basic
 telemetry is safe, pending confirmation on that exact model).
