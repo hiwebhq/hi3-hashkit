@@ -35,41 +35,54 @@ import hi3.hashkit.ui.theme.HiBrand
 /** How-to steps shown on the About screen. */
 private data class HowToStep(val title: String, val body: String)
 
-/** A supported-miner family row: what it is, and what the app does with it. */
-private data class SupportedMiner(val family: String, val support: String)
+/** A supported-miner family row: the family, the models it covers, and support level. */
+private data class SupportedMiner(val family: String, val models: String, val support: String)
 
 private val SUPPORTED_MINERS = listOf(
     SupportedMiner(
         "Bitaxe / ESP-Miner (AxeOS)",
-        "Full monitoring + safe controls: reboot, pool change, fan, firmware-bounded tuning with rollback.",
+        "Max (202), Ultra (204), Supra (400), Gamma (600), Gamma Turbo, Supra Hex",
+        "Full monitoring + safe controls: reboot, pool, fan, firmware-bounded tuning + autotune.",
     ),
     SupportedMiner(
-        "NerdQAxe & ESP-Miner forks (Lucky Miner…)",
+        "NerdQAxe (ESP-Miner fork)",
+        "NerdQAxe++, NerdQAxe+, NerdQAxe+ Hydro, Lucky-Miner-style forks",
         "Full monitoring; controls stay off until verified on that firmware.",
     ),
     SupportedMiner(
-        "Canaan Avalon Nano 3",
-        "Full monitoring, plus verified Pause/Resume and Reboot over the CGMiner API.",
+        "Antminer — stock Bitmain (BMMiner)",
+        "S21 Pro (verified); S21+, S21+ Hyd, S21 Hyd, S21 XP, S19 series, S17 series (compat-gated)",
+        "Hashrate, chip temps, fans, frequency, expected, ASIC count, shares, uptime, pool. No controls; power isn't in this API.",
     ),
     SupportedMiner(
-        "Canaan Nano 3S / Avalon Q",
-        "Monitoring (compatibility-gated); reached once on the same network or via Tailscale.",
+        "Antminer — VNish firmware",
+        "S21 Pro (verified) and other VNish-flashed Antminers",
+        "Full monitoring including wall power and efficiency (J/TH). No controls.",
     ),
     SupportedMiner(
-        "Braiins OS (BMM 100)",
-        "Full monitoring over the CGMiner API. No power sensor on the unit → power shown as unavailable.",
-    ),
-    SupportedMiner(
-        "Stock Bitmain / BMMiner (Antminer S21 Pro, S-series)",
-        "Hashrate, expected, chip temps, fans, frequency, ASIC count, shares, uptime, pool. Power isn't in the API.",
-    ),
-    SupportedMiner(
-        "VNish (Antminer S21 Pro forks)",
-        "Full monitoring including wall power and efficiency (J/TH).",
-    ),
-    SupportedMiner(
-        "LuxOS",
+        "Antminer — LuxOS firmware",
+        "LuxOS-flashed Antminers",
         "Basic monitoring: hashrate, shares, uptime, pool.",
+    ),
+    SupportedMiner(
+        "Canaan Avalon",
+        "Nano 3 (verified); Nano 3S, Avalon Q, Avalon Mini 3 (compat-gated)",
+        "Nano 3: monitoring + Pause/Resume/Reboot. Others: monitoring over the CGMiner API.",
+    ),
+    SupportedMiner(
+        "Braiins OS (BOSer)",
+        "Braiins Mini Miner BMM 100 (verified)",
+        "Full monitoring over the CGMiner API. No power sensor on the unit → power unavailable.",
+    ),
+    SupportedMiner(
+        "WhatsMiner (MicroBT)",
+        "M2X / M3X / M5X / M6X families (compat-gated)",
+        "Hashrate, shares, uptime, pool, chip temp, fans, and power where reported. No controls.",
+    ),
+    SupportedMiner(
+        "Demo",
+        "Synthetic miners",
+        "Demo mode only — never mixed with real miners.",
     ),
 )
 
@@ -224,8 +237,10 @@ fun AboutScreen(onBack: () -> Unit) {
             item {
                 Section("SUPPORTED MINERS") {
                     Text(
-                        "Every device API is verified against real hardware before it ships; " +
-                            "unverified controls are shown as unsupported, never guessed.",
+                        "Support is by firmware/API family, so every model in a family works — " +
+                            "you don't need each one. \"Verified\" = confirmed on real hardware; " +
+                            "\"compat-gated\" = same firmware API, pending confirmation on that model " +
+                            "(basic telemetry is safe). Unverified controls are never guessed.",
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -245,6 +260,7 @@ fun AboutScreen(onBack: () -> Unit) {
 private fun SupportedMinerRow(m: SupportedMiner) {
     Column(Modifier.fillMaxWidth()) {
         Text(m.family, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
+        Text(m.models, style = MaterialTheme.typography.labelSmall, color = HiBrand.accent)
         Text(m.support, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
     }
 }
