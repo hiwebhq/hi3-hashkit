@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +43,44 @@ import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.ui.rack.RackGroup
 import hi3.hashkit.ui.rack.RackViewModel
 import hi3.hashkit.ui.theme.HiBrand
+
+/** Selectable Wall / TV tile+font size, chosen on the wall page. */
+enum class WallSize(val label: String) {
+    SMALL("Small"), MEDIUM("Medium"), LARGE("Large");
+
+    companion object {
+        fun fromName(name: String?): WallSize = entries.firstOrNull { it.name == name } ?: MEDIUM
+    }
+}
+
+/** Concrete dimensions for each [WallSize]. */
+data class WallDims(
+    val tileWidth: Dp, val tilePad: Dp, val tileGap: Dp, val dot: Dp,
+    val nameSp: TextUnit, val hashSp: TextUnit, val tempSp: TextUnit,
+    val totalSp: TextUnit, val countsSp: TextUnit, val groupSp: TextUnit,
+    val contentPad: Dp, val sectionGap: Dp,
+)
+
+fun wallDims(size: WallSize): WallDims = when (size) {
+    WallSize.SMALL -> WallDims(
+        tileWidth = 180.dp, tilePad = 14.dp, tileGap = 12.dp, dot = 14.dp,
+        nameSp = 18.sp, hashSp = 26.sp, tempSp = 14.sp,
+        totalSp = 44.sp, countsSp = 16.sp, groupSp = 20.sp,
+        contentPad = 20.dp, sectionGap = 18.dp,
+    )
+    WallSize.MEDIUM -> WallDims(
+        tileWidth = 240.dp, tilePad = 18.dp, tileGap = 16.dp, dot = 18.dp,
+        nameSp = 22.sp, hashSp = 34.sp, tempSp = 18.sp,
+        totalSp = 56.sp, countsSp = 20.sp, groupSp = 24.sp,
+        contentPad = 28.dp, sectionGap = 22.dp,
+    )
+    WallSize.LARGE -> WallDims(
+        tileWidth = 320.dp, tilePad = 24.dp, tileGap = 20.dp, dot = 22.dp,
+        nameSp = 28.sp, hashSp = 44.sp, tempSp = 22.sp,
+        totalSp = 72.sp, countsSp = 24.sp, groupSp = 30.sp,
+        contentPad = 32.dp, sectionGap = 28.dp,
+    )
+}
 
 /**
  * Kiosk / wall-dashboard view: a full-screen, glanceable fleet board meant for a spare
@@ -53,6 +94,8 @@ fun WallScreen(
 ) {
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val fahrenheit by viewModel.useFahrenheit.collectAsStateWithLifecycle()
+    val wallSize by viewModel.wallSize.collectAsStateWithLifecycle()
+    val dims = wallDims(wallSize)
 
     // Keep the screen on while the wall is up; clear the flag when leaving.
     val context = LocalContext.current
@@ -74,8 +117,8 @@ fun WallScreen(
     Box(Modifier.fillMaxSize().background(HiBrand.background)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(32.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp),
+            contentPadding = PaddingValues(dims.contentPad),
+            verticalArrangement = Arrangement.spacedBy(dims.sectionGap),
         ) {
             item {
                 Row(
@@ -86,23 +129,34 @@ fun WallScreen(
                     Column {
                         Text(
                             Units.formatHashrate(totalHash),
-                            fontSize = 72.sp,
+                            fontSize = dims.totalSp,
                             fontWeight = FontWeight.Bold,
                             color = HiBrand.textPrimary,
                         )
                         Text(
                             "$online online · $offline offline · ${allMiners.size} miners",
-                            fontSize = 24.sp,
+                            fontSize = dims.countsSp,
                             color = HiBrand.textSecondary,
                         )
                     }
-                    IconButton(onClick = onExit, modifier = Modifier.size(56.dp)) {
-                        Icon(
-                            Icons.Filled.Close,
-                            contentDescription = "Exit wall mode",
-                            tint = HiBrand.textSecondary,
-                            modifier = Modifier.size(40.dp),
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        // Size selector: pick how big the cards render for this screen.
+                        WallSize.entries.forEach { s ->
+                            FilterChip(
+                                selected = s == wallSize,
+                                onClick = { viewModel.setWallSize(s) },
+                                label = { Text(s.label) },
+                                modifier = Modifier.padding(end = 6.dp),
+                            )
+                        }
+                        IconButton(onClick = onExit, modifier = Modifier.size(56.dp)) {
+                            Icon(
+                                Icons.Filled.Close,
+                                contentDescription = "Exit wall mode",
+                                tint = HiBrand.textSecondary,
+                                modifier = Modifier.size(36.dp),
+                            )
+                        }
                     }
                 }
             }
@@ -120,17 +174,17 @@ fun WallScreen(
                     Column {
                         Text(
                             "${group.location}  ·  ${group.online}/${group.total}",
-                            fontSize = 30.sp,
+                            fontSize = dims.groupSp,
                             fontWeight = FontWeight.SemiBold,
                             color = HiBrand.textPrimary,
                             modifier = Modifier.padding(bottom = 14.dp),
                         )
                         FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(dims.tileGap),
+                            verticalArrangement = Arrangement.spacedBy(dims.tileGap),
                         ) {
-                            group.miners.forEach { WallTile(it, fahrenheit) }
+                            group.miners.forEach { WallTile(it, fahrenheit, dims) }
                         }
                     }
                 }
@@ -140,7 +194,7 @@ fun WallScreen(
 }
 
 @Composable
-private fun WallTile(miner: Miner, fahrenheit: Boolean) {
+private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims) {
     val color = when (miner.status) {
         MinerStatus.ONLINE -> HiBrand.statusOnline
         MinerStatus.DEGRADED -> HiBrand.statusDegraded
@@ -149,17 +203,17 @@ private fun WallTile(miner: Miner, fahrenheit: Boolean) {
     }
     Column(
         modifier = Modifier
-            .width(320.dp)
+            .width(dims.tileWidth)
             .clip(RoundedCornerShape(18.dp))
             .background(HiBrand.surface)
-            .padding(24.dp),
+            .padding(dims.tilePad),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(22.dp).clip(CircleShape).background(color))
+            Box(Modifier.size(dims.dot).clip(CircleShape).background(color))
             Text(
                 miner.name,
-                fontSize = 28.sp,
+                fontSize = dims.nameSp,
                 fontWeight = FontWeight.Bold,
                 color = HiBrand.textPrimary,
                 maxLines = 1,
@@ -169,14 +223,14 @@ private fun WallTile(miner: Miner, fahrenheit: Boolean) {
         val hr = miner.lastTelemetry?.hashrateGhs?.value
         Text(
             if (miner.status == MinerStatus.OFFLINE) "Offline" else Units.formatHashrate(hr),
-            fontSize = 44.sp,
+            fontSize = dims.hashSp,
             fontWeight = FontWeight.Bold,
             color = if (miner.status == MinerStatus.OFFLINE) HiBrand.statusOffline else HiBrand.textPrimary,
         )
         val temp = miner.lastTelemetry?.chipTempC?.value
         Text(
             temp?.let { Units.formatTemp(it, fahrenheit) } ?: "—",
-            fontSize = 22.sp,
+            fontSize = dims.tempSp,
             color = HiBrand.textSecondary,
         )
     }

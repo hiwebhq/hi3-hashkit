@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
 
@@ -79,6 +80,16 @@ class RackViewModel @Inject constructor(
         settingsRepository.settings
             .map { it.useFahrenheit }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+    /** Wall / TV mode tile size, adjustable from the wall page. */
+    val wallSize: StateFlow<hi3.hashkit.ui.wall.WallSize> =
+        settingsRepository.settings
+            .map { it.wallSize }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), hi3.hashkit.ui.wall.WallSize.MEDIUM)
+
+    fun setWallSize(size: hi3.hashkit.ui.wall.WallSize) {
+        viewModelScope.launch { settingsRepository.setWallSize(size) }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val groups: StateFlow<List<RackGroup>> =

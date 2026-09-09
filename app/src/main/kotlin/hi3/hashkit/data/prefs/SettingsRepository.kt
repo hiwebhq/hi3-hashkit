@@ -78,6 +78,8 @@ data class AppSettings(
     val themeMode: hi3.hashkit.ui.theme.ThemeMode = hi3.hashkit.ui.theme.ThemeMode.SYSTEM,
     /** Accent color scheme ("UI Theme"); default blue. */
     val themeColor: hi3.hashkit.ui.theme.ThemeColor = hi3.hashkit.ui.theme.ThemeColor.BLUE,
+    /** Wall / TV mode tile+font size. */
+    val wallSize: hi3.hashkit.ui.wall.WallSize = hi3.hashkit.ui.wall.WallSize.MEDIUM,
     /** Whether first-run onboarding has been completed. */
     val onboardingComplete: Boolean = false,
     val alertThresholds: AlertThresholds = AlertThresholds(),
@@ -155,6 +157,7 @@ class SettingsRepository @Inject constructor(
         val appLockEnabled = booleanPreferencesKey("app_lock_enabled")
         val themeMode = stringPreferencesKey("theme_mode")
         val themeColor = stringPreferencesKey("theme_color")
+        val wallSize = stringPreferencesKey("wall_size")
         val onboardingComplete = booleanPreferencesKey("onboarding_complete")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
@@ -230,6 +233,7 @@ class SettingsRepository @Inject constructor(
                 hi3.hashkit.ui.theme.ThemeMode.valueOf(p[Keys.themeMode] ?: "SYSTEM")
             }.getOrDefault(hi3.hashkit.ui.theme.ThemeMode.SYSTEM),
             themeColor = hi3.hashkit.ui.theme.ThemeColor.fromName(p[Keys.themeColor]),
+            wallSize = hi3.hashkit.ui.wall.WallSize.fromName(p[Keys.wallSize]),
             onboardingComplete = p[Keys.onboardingComplete] ?: false,
             alertsEnabled = p[Keys.alertsEnabled] ?: false,
             alertThresholds = AlertThresholds(
@@ -297,6 +301,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setAppLockEnabled(value: Boolean) = edit { it[Keys.appLockEnabled] = value }
     suspend fun setThemeMode(value: hi3.hashkit.ui.theme.ThemeMode) = edit { it[Keys.themeMode] = value.name }
     suspend fun setThemeColor(value: hi3.hashkit.ui.theme.ThemeColor) = edit { it[Keys.themeColor] = value.name }
+    suspend fun setWallSize(value: hi3.hashkit.ui.wall.WallSize) = edit { it[Keys.wallSize] = value.name }
     suspend fun setOnboardingComplete(value: Boolean) = edit { it[Keys.onboardingComplete] = value }
 
     /** Store the MMP API key encrypted with the Android Keystore; blank clears it. */

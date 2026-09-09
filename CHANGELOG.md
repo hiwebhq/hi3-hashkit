@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.58.0
+
+- **Wall / TV mode: size selector.** Pick **Small / Medium / Large** right on the wall page
+  (top-right chips) — it scales the tiles and all fonts and is remembered. Default is now
+  Medium (0.57.0's fixed size was Large).
+
 ## 0.57.0
 
 - **Wall / TV mode: bigger, room-readable layout.** Larger tiles (320dp) with much larger
