@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.59.0
+
+- **Real wall-power from metering smart plugs.** If a miner doesn't report its own power
+  (e.g. stock Bitmain) but has a metering plug configured (Tasmota / Shelly / Kasa energy
+  monitor), the app now reads the plug's measured watts over the LAN and uses it — turning
+  estimated efficiency/cost into **measured** J/TH. Miners that report their own power are
+  unaffected; non-metering plugs are ignored.
+
 ## 0.58.0
 
 - **Wall / TV mode: size selector.** Pick **Small / Medium / Large** right on the wall page

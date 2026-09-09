@@ -34,6 +34,7 @@ class MinerRepository @Inject constructor(
     private val telemetryDao: TelemetryDao,
     private val registry: AdapterRegistry,
     private val hourlyDao: hi3.hashkit.data.db.HourlyDao? = null,
+    private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient? = null,
 ) {
     /** Telemetry older than this renders as stale/UNKNOWN rather than pretending freshness. */
     val staleAfterMs: Long = 120_000
@@ -189,7 +190,8 @@ class MinerRepository @Inject constructor(
         return when (val result = adapter.getTelemetry(MinerHost(entity.host, entity.port))) {
             is TelemetryResult.Success -> {
                 val now = System.currentTimeMillis()
-                telemetryDao.insert(result.telemetry.toEntity(entity.id))
+                val telemetry = augmentWithPlugPower(entity, result.telemetry)
+                telemetryDao.insert(telemetry.toEntity(entity.id))
                 if (!entity.isDemo) {
                     telemetryDao.insertRaw(
                         RawResponseEntity(
@@ -204,7 +206,7 @@ class MinerRepository @Inject constructor(
                 }
                 minerDao.updateHostAndSeen(entity.id, entity.host, now)
                 minerDao.touchAddress(entity.id, entity.host, now)
-                result.telemetry
+                telemetry
             }
             is TelemetryResult.Offline -> offlineSample(result.cause).also {
                 telemetryDao.insert(it.toEntity(entity.id))
@@ -213,6 +215,30 @@ class MinerRepository @Inject constructor(
                 telemetryDao.insert(it.toEntity(entity.id))
             }
         }
+    }
+
+    /**
+     * When a miner doesn't report its own power (e.g. stock Bitmain) but has a *metering*
+     * smart plug configured, fill power from the plug's measured wall watts — turning
+     * estimated efficiency/cost into measured. Miners that report their own power are left
+     * untouched, and plugs that don't meter simply return null (no change).
+     */
+    private suspend fun augmentWithPlugPower(entity: MinerEntity, telemetry: MinerTelemetry): MinerTelemetry {
+        if (telemetry.powerW.value != null) return telemetry
+        val client = smartPlugClient ?: return telemetry
+        val type = hi3.hashkit.integrations.plug.PlugType.fromName(entity.plugType) ?: return telemetry
+        val watts = client.readPowerW(
+            hi3.hashkit.integrations.plug.SmartPlugClient.Plug(
+                type, entity.plugHost, entity.plugOnUrl, entity.plugOffUrl,
+            )
+        ) ?: return telemetry
+        if (watts <= 0.0) return telemetry
+        return telemetry.copy(
+            powerW = Sourced.measured(watts),
+            efficiencyJTh = Sourced.calculated(
+                hi3.hashkit.core.Units.efficiencyJTh(watts, telemetry.hashrateGhs.value)
+            ),
+        )
     }
 
     private fun offlineSample(@Suppress("UNUSED_PARAMETER") cause: String): MinerTelemetry =

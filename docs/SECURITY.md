@@ -52,7 +52,10 @@ In this build:
    auto-recovery power-cycles a plug it just turned off. The only way the app turns a
    plug back ON on its own is a **scheduled `plug_on` you create yourself** in Schedules
    (a deliberate opt-in, e.g. a morning-on / night-off time-of-use pair); nothing turns a
-   plug on automatically otherwise.
+   plug on automatically otherwise. If the plug is a **metering** model (Tasmota/Shelly/Kasa
+   energy monitor), the app also reads its instantaneous wall power over the LAN to fill in
+   true watts for miners that don't report their own power — a read-only local GET/query,
+   same private-address rule.
 
 **Per-miner credentials:** a miner's own admin password / API token (e.g. the VNish web
 password used for Reboot and Pause/Resume) is stored **encrypted with the Android

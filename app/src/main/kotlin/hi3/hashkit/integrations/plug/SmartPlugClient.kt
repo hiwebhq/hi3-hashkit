@@ -81,6 +81,49 @@ class SmartPlugClient @Inject constructor(
         okHttpClient.newCall(Request.Builder().url(url).get().build()).execute().use { it.isSuccessful }
     }.getOrDefault(false)
 
+    private fun httpGetBody(url: String): String? = runCatching {
+        okHttpClient.newCall(Request.Builder().url(url).get().build()).execute().use { resp ->
+            if (resp.isSuccessful) resp.body?.string() else null
+        }
+    }.getOrNull()
+
+    /**
+     * Read instantaneous active power (watts) from a metering plug, or null if the plug
+     * doesn't meter / isn't reachable. Verified endpoints:
+     *  - Tasmota:  GET /cm?cmnd=Status%208  -> StatusSNS.ENERGY.Power
+     *  - Shelly:   GET /rpc/Switch.GetStatus?id=0 (Gen2, "apower"), else /meter/0 ("power")
+     *  - Kasa:     emeter get_realtime -> power_mw / power (only energy-monitoring models)
+     * Only private/Tailscale hosts are contacted.
+     */
+    suspend fun readPowerW(plug: Plug): Double? = withContext(Dispatchers.IO) {
+        when (plug.type) {
+            PlugType.WEBHOOK -> null
+            PlugType.TASMOTA -> {
+                val host = privateHost(plug.host) ?: return@withContext null
+                httpGetBody("http://$host/cm?cmnd=Status%208")
+                    ?.let { Regex("\"Power\"\\s*:\\s*(-?[0-9.]+)").find(it)?.groupValues?.get(1)?.toDoubleOrNull() }
+            }
+            PlugType.SHELLY -> {
+                val host = privateHost(plug.host) ?: return@withContext null
+                httpGetBody("http://$host/rpc/Switch.GetStatus?id=0")
+                    ?.let { Regex("\"apower\"\\s*:\\s*(-?[0-9.]+)").find(it)?.groupValues?.get(1)?.toDoubleOrNull() }
+                    ?: httpGetBody("http://$host/meter/0")
+                        ?.let { Regex("\"power\"\\s*:\\s*(-?[0-9.]+)").find(it)?.groupValues?.get(1)?.toDoubleOrNull() }
+            }
+            PlugType.KASA -> {
+                val host = privateHost(plug.host) ?: return@withContext null
+                kasaReadPower(host)
+            }
+        }?.takeIf { it >= 0.0 }
+    }
+
+    /** Kasa emeter realtime read; returns watts (power_mw/1000 or power), or null. */
+    private fun kasaReadPower(host: String): Double? = runCatching {
+        val reply = kasaExchange(host, """{"emeter":{"get_realtime":{}}}""") ?: return null
+        Regex("\"power_mw\"\\s*:\\s*([0-9.]+)").find(reply)?.groupValues?.get(1)?.toDoubleOrNull()?.div(1000.0)
+            ?: Regex("\"power\"\\s*:\\s*([0-9.]+)").find(reply)?.groupValues?.get(1)?.toDoubleOrNull()
+    }.getOrNull()
+
     /** Kasa local protocol: 4-byte length prefix + autokey-XOR-encrypted JSON on TCP 9999. */
     private fun kasaSetRelay(host: String, on: Boolean): Boolean = runCatching {
         val payload = """{"system":{"set_relay_state":{"state":${if (on) 1 else 0}}}}"""
@@ -95,6 +138,31 @@ class SmartPlugClient @Inject constructor(
         }
         true
     }.getOrDefault(false)
+
+    /** Send an encrypted Kasa command and return the decrypted JSON reply, or null. */
+    private fun kasaExchange(host: String, payload: String): String? = runCatching {
+        Socket().use { socket ->
+            socket.connect(InetSocketAddress(host, 9999), 3000)
+            socket.soTimeout = 3000
+            socket.getOutputStream().apply { write(kasaEncrypt(payload)); flush() }
+            val din = DataInputStream(socket.getInputStream())
+            val len = din.readInt()
+            if (len !in 1..8192) return null
+            val buf = ByteArray(len); din.readFully(buf)
+            kasaDecrypt(buf)
+        }
+    }.getOrNull()
+
+    private fun kasaDecrypt(bytes: ByteArray): String {
+        val out = ByteArray(bytes.size)
+        var key = 171
+        for (i in bytes.indices) {
+            val b = bytes[i].toInt() and 0xFF
+            out[i] = (key xor b).toByte()
+            key = b
+        }
+        return String(out, Charsets.UTF_8)
+    }
 
     private fun kasaEncrypt(text: String): ByteArray {
         val bytes = text.toByteArray(Charsets.UTF_8)
