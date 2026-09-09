@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.62.0
+
+- **Auto-tuner upgraded (ClockTune-style).** The Bitaxe auto-tuner now enforces a **chip-temp
+  ceiling** (65/70/75 °C) — points that settle above it are excluded and the sweep stops
+  climbing (higher frequencies only run hotter) — and you can **optimize for efficiency or
+  hashrate**. Results show per-point temperature; it still only uses firmware-approved
+  frequencies, restores your original setpoint, and applies the best point only when you tap.
+
 ## 0.61.0
 
 - **Automation rules engine.** A new "if condition then action" builder (Dashboard menu →

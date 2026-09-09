@@ -49,11 +49,13 @@ fun AutotuneScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var settle by remember { mutableStateOf(60) }
+    var maxTemp by remember { mutableStateOf(70) }
+    var optimizeHashrate by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Efficiency autotuner", fontWeight = FontWeight.Bold) },
+                title = { Text("Auto-tuner", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -72,9 +74,10 @@ fun AutotuneScreen(
             item {
                 Text(
                     "Sweeps the firmware-approved frequencies at your current voltage, lets each " +
-                        "settle, measures J/TH, then restores your original setpoint and recommends " +
-                        "the most efficient one. Applying is a separate tap. Keep the app open " +
-                        "during the sweep.",
+                        "settle, measures J/TH and chip temp, then restores your original setpoint " +
+                        "and recommends the best point under your temperature ceiling. It stops " +
+                        "climbing once the ceiling is hit. Applying is a separate tap — keep the app " +
+                        "open during the sweep.",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -98,6 +101,39 @@ fun AutotuneScreen(
                 }
             }
             item {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Text("Temp ceiling", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    listOf(65, 70, 75).forEach { c ->
+                        FilterChip(
+                            selected = maxTemp == c,
+                            onClick = { maxTemp = c },
+                            enabled = !state.running,
+                            label = { Text("${c}°C") },
+                            modifier = Modifier.padding(start = 6.dp),
+                        )
+                    }
+                }
+            }
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Text("Optimize for", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    FilterChip(
+                        selected = !optimizeHashrate,
+                        onClick = { optimizeHashrate = false },
+                        enabled = !state.running,
+                        label = { Text("Efficiency") },
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
+                    FilterChip(
+                        selected = optimizeHashrate,
+                        onClick = { optimizeHashrate = true },
+                        enabled = !state.running,
+                        label = { Text("Hashrate") },
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
+                }
+            }
+            item {
                 if (state.running) {
                     val frac = if (state.stepTotal > 0) state.stepIndex.toFloat() / state.stepTotal else 0f
                     LinearProgressIndicator(progress = { frac }, modifier = Modifier.fillMaxWidth())
@@ -108,7 +144,7 @@ fun AutotuneScreen(
                     OutlinedButton(onClick = { viewModel.cancel() }) { Text("Cancel") }
                 } else {
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Button(onClick = { viewModel.start(settle) }) { Text("Start sweep") }
+                        Button(onClick = { viewModel.start(settle, maxTemp, optimizeHashrate) }) { Text("Start sweep") }
                         if (state.bestFrequencyMhz != null) {
                             Button(onClick = { viewModel.applyBest() }) { Text("Apply best (${state.bestFrequencyMhz} MHz)") }
                         }
@@ -140,10 +176,12 @@ private fun ResultRow(r: TuneResult, isBest: Boolean) {
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("${r.frequencyMhz} MHz @ ${r.voltageMv} mV",
-                    style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
+                Text("${r.frequencyMhz} MHz @ ${r.voltageMv} mV" + if (r.overTemp) "  ⚠ over ceiling" else "",
+                    style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
+                    color = if (r.overTemp) HiBrand.statusOffline else HiBrand.textPrimary)
                 Text(
-                    "${Units.formatHashrate(r.hashrateGhs)} · ${Units.formatPower(r.powerW)}",
+                    "${Units.formatHashrate(r.hashrateGhs)} · ${Units.formatPower(r.powerW)}" +
+                        (r.chipTempC?.let { " · ${it.toInt()}°C" } ?: ""),
                     style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
                 )
             }

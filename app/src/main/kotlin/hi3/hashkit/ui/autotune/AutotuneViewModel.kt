@@ -24,6 +24,9 @@ data class TuneResult(
     val hashrateGhs: Double?,
     val powerW: Double?,
     val efficiencyJTh: Double?,
+    val chipTempC: Double? = null,
+    /** True when this point exceeded the thermal ceiling (excluded from "best"). */
+    val overTemp: Boolean = false,
 )
 
 data class AutotuneUiState(
@@ -38,6 +41,8 @@ data class AutotuneUiState(
     /** Original setpoint we restore to unless the user applies a result. */
     val originalFrequencyMhz: Int? = null,
     val originalVoltageMv: Int? = null,
+    /** What "best" optimizes for (false = efficiency / min J·TH⁻¹, true = max hashrate). */
+    val optimizeForHashrate: Boolean = false,
 )
 
 /**
@@ -58,8 +63,13 @@ class AutotuneViewModel @Inject constructor(
     val state: StateFlow<AutotuneUiState> = _state
     private var job: Job? = null
 
-    /** Settle time per step, in seconds — ASICs need time to reach steady hashrate/temp. */
-    fun start(settleSeconds: Int) {
+    /**
+     * @param settleSeconds settle time per step — ASICs need time to reach steady state.
+     * @param maxChipTempC thermal ceiling: a point that settles above this is excluded, and
+     *   the sweep stops climbing (higher frequencies only run hotter).
+     * @param optimizeForHashrate pick the highest-hashrate safe point instead of the most efficient.
+     */
+    fun start(settleSeconds: Int, maxChipTempC: Int, optimizeForHashrate: Boolean) {
         if (_state.value.running) return
         job = viewModelScope.launch {
             val entity = repository.observeMinerEntity(minerId).first()
@@ -79,12 +89,14 @@ class AutotuneViewModel @Inject constructor(
             _state.value = AutotuneUiState(
                 running = true, stepTotal = candidates.size,
                 originalFrequencyMhz = origFreq, originalVoltageMv = voltage,
-                message = "Sweeping ${candidates.size} frequencies at ${voltage} mV…",
+                optimizeForHashrate = optimizeForHashrate,
+                message = "Sweeping ${candidates.size} frequencies at ${voltage} mV, ceiling ${maxChipTempC}°C…",
             )
             val results = mutableListOf<TuneResult>()
+            var stoppedForHeat = false
             try {
-                candidates.forEachIndexed { i, freq ->
-                    if (!isActive) return@forEachIndexed
+                for ((i, freq) in candidates.withIndex()) {
+                    if (!isActive) break
                     _state.value = _state.value.copy(
                         stepIndex = i + 1,
                         currentLabel = "$freq MHz @ ${voltage} mV — applying & settling ${settleSeconds}s",
@@ -92,30 +104,47 @@ class AutotuneViewModel @Inject constructor(
                     val applied = controlRepository.applyTune(entity, freq, voltage)
                     if (applied !is ActionResult.Success) {
                         results += TuneResult(freq, voltage, null, null, null)
-                        return@forEachIndexed
+                        _state.value = _state.value.copy(results = results.toList())
+                        continue
                     }
                     // Settle, then take a fresh live sample.
                     repeat(settleSeconds) { if (isActive) delay(1000) }
                     val fresh = runCatching { repository.pollMiner(entity) }.getOrNull()
                     val hr = fresh?.hashrateGhs?.value
                     val pw = fresh?.powerW?.value
-                    results += TuneResult(freq, voltage, hr, pw, Units.efficiencyJTh(pw, hr))
+                    val temp = fresh?.chipTempC?.value
+                    val over = temp != null && temp > maxChipTempC
+                    results += TuneResult(freq, voltage, hr, pw, Units.efficiencyJTh(pw, hr), temp, over)
                     _state.value = _state.value.copy(results = results.toList())
+                    // Higher frequencies only run hotter — stop climbing once over the ceiling.
+                    if (over) { stoppedForHeat = true; break }
                 }
             } finally {
                 // Always restore the original setpoint; the user opts in to any change.
                 if (origFreq != null) runCatching { controlRepository.applyTune(entity, origFreq, voltage) }
             }
-            val best = results.filter { it.efficiencyJTh != null && (it.hashrateGhs ?: 0.0) > 0 }
-                .minByOrNull { it.efficiencyJTh!! }
+            val safe = results.filter { !it.overTemp && (it.hashrateGhs ?: 0.0) > 0 && it.efficiencyJTh != null }
+            val best = if (optimizeForHashrate) safe.maxByOrNull { it.hashrateGhs!! }
+            else safe.minByOrNull { it.efficiencyJTh!! }
+            val sorted = if (optimizeForHashrate)
+                results.sortedByDescending { it.hashrateGhs ?: -1.0 }
+            else results.sortedBy { it.efficiencyJTh ?: Double.MAX_VALUE }
             _state.value = _state.value.copy(
                 running = false,
-                results = results.sortedBy { it.efficiencyJTh ?: Double.MAX_VALUE },
+                results = sorted,
                 bestFrequencyMhz = best?.frequencyMhz,
                 currentLabel = "",
-                message = if (best != null)
-                    "Best: ${best.frequencyMhz} MHz at %.1f J/TH. Restored your original setpoint.".format(best.efficiencyJTh)
-                else "Sweep finished but no valid efficiency reading was collected.",
+                message = buildString {
+                    if (stoppedForHeat) append("Stopped early: hit the ${maxChipTempC}°C ceiling. ")
+                    append(
+                        when {
+                            best == null -> "No safe point produced a valid reading."
+                            optimizeForHashrate -> "Best hashrate: ${best.frequencyMhz} MHz (${Units.formatHashrate(best.hashrateGhs)})."
+                            else -> "Best efficiency: ${best.frequencyMhz} MHz at %.1f J/TH.".format(best.efficiencyJTh)
+                        }
+                    )
+                    append(" Restored your original setpoint.")
+                },
             )
         }
     }
