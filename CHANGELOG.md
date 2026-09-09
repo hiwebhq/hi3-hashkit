@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.57.0
+
+- **Wall / TV mode: bigger, room-readable layout.** Larger tiles (320dp) with much larger
+  fonts — fleet total 72sp, per-miner hashrate 44sp, name 28sp — plus a bigger exit target
+  and roomier spacing, so it reads across a room on an Android TV or wall-mounted tablet.
+
 ## 0.56.0
 
 - **Flow view: miners look like ASIC miners.** Each miner node is now a little chassis with

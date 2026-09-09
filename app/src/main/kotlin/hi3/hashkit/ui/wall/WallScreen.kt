@@ -74,8 +74,8 @@ fun WallScreen(
     Box(Modifier.fillMaxSize().background(HiBrand.background)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(32.dp),
+            verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             item {
                 Row(
@@ -86,18 +86,23 @@ fun WallScreen(
                     Column {
                         Text(
                             Units.formatHashrate(totalHash),
-                            fontSize = 44.sp,
+                            fontSize = 72.sp,
                             fontWeight = FontWeight.Bold,
                             color = HiBrand.textPrimary,
                         )
                         Text(
                             "$online online · $offline offline · ${allMiners.size} miners",
-                            style = MaterialTheme.typography.titleMedium,
+                            fontSize = 24.sp,
                             color = HiBrand.textSecondary,
                         )
                     }
-                    IconButton(onClick = onExit) {
-                        Icon(Icons.Filled.Close, contentDescription = "Exit wall mode", tint = HiBrand.textSecondary)
+                    IconButton(onClick = onExit, modifier = Modifier.size(56.dp)) {
+                        Icon(
+                            Icons.Filled.Close,
+                            contentDescription = "Exit wall mode",
+                            tint = HiBrand.textSecondary,
+                            modifier = Modifier.size(40.dp),
+                        )
                     }
                 }
             }
@@ -115,15 +120,15 @@ fun WallScreen(
                     Column {
                         Text(
                             "${group.location}  ·  ${group.online}/${group.total}",
-                            style = MaterialTheme.typography.titleLarge,
+                            fontSize = 30.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = HiBrand.textPrimary,
-                            modifier = Modifier.padding(bottom = 10.dp),
+                            modifier = Modifier.padding(bottom = 14.dp),
                         )
                         FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
                         ) {
                             group.miners.forEach { WallTile(it, fahrenheit) }
                         }
@@ -144,34 +149,34 @@ private fun WallTile(miner: Miner, fahrenheit: Boolean) {
     }
     Column(
         modifier = Modifier
-            .width(200.dp)
-            .clip(RoundedCornerShape(14.dp))
+            .width(320.dp)
+            .clip(RoundedCornerShape(18.dp))
             .background(HiBrand.surface)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(14.dp).clip(CircleShape).background(color))
+            Box(Modifier.size(22.dp).clip(CircleShape).background(color))
             Text(
                 miner.name,
-                style = MaterialTheme.typography.titleMedium,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = HiBrand.textPrimary,
                 maxLines = 1,
-                modifier = Modifier.padding(start = 10.dp),
+                modifier = Modifier.padding(start = 14.dp),
             )
         }
         val hr = miner.lastTelemetry?.hashrateGhs?.value
         Text(
             if (miner.status == MinerStatus.OFFLINE) "Offline" else Units.formatHashrate(hr),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            fontSize = 44.sp,
+            fontWeight = FontWeight.Bold,
             color = if (miner.status == MinerStatus.OFFLINE) HiBrand.statusOffline else HiBrand.textPrimary,
         )
         val temp = miner.lastTelemetry?.chipTempC?.value
         Text(
             temp?.let { Units.formatTemp(it, fahrenheit) } ?: "—",
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 22.sp,
             color = HiBrand.textSecondary,
         )
     }
