@@ -18,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         TelemetryHourlyEntity::class,
         FarmEntity::class,
     ],
-    version = 10,
+    version = 11,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -141,6 +141,13 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `miners` ADD COLUMN `credentialEnc` TEXT DEFAULT NULL")
+            }
+        }
+
+        /** v10 -> v11: per-chain health JSON on telemetry samples (additive). */
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `perChainJson` TEXT DEFAULT NULL")
             }
         }
 

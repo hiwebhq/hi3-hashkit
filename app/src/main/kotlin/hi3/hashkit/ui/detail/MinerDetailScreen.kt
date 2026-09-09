@@ -161,6 +161,14 @@ fun MinerDetailScreen(
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
+                val anomalies = hi3.hashkit.domain.analysis.AnomalyDetector.analyze(state.history)
+                anomalies.forEach { finding ->
+                    Text(
+                        "⚠ ${finding.message}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.statusDegraded,
+                    )
+                }
                 androidx.compose.material3.TextButton(onClick = {
                     viewModel.exportCsv { intent ->
                         context.startActivity(
@@ -168,6 +176,25 @@ fun MinerDetailScreen(
                         )
                     }
                 }) { Text("Export CSV") }
+            }
+
+            if (efficiencyStats(state.history) != null) {
+                SectionCard("EFFICIENCY (J/TH)") {
+                    EfficiencyChart(state.history)
+                    Spacer(Modifier.height(4.dp))
+                    val e = efficiencyStats(state.history)!!
+                    Text(
+                        "min %.1f  ·  now %.1f  ·  max %.1f J/TH   (lower is better)".format(e.first, e.second, e.third),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
+            }
+
+            (t?.perChain ?: emptyList()).takeIf { it.isNotEmpty() }?.let { chains ->
+                SectionCard("PER-CHIP HEALTH") {
+                    PerChipHealthCard(chains, state.settings.useFahrenheit)
+                }
             }
 
             SectionCard("LIVE TELEMETRY") {

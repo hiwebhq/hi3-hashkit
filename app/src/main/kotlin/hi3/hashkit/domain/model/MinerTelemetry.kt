@@ -9,6 +9,27 @@ data class FanReading(
 )
 
 /**
+ * Per-board/per-chain health, for miners whose firmware reports it (Antminer-class
+ * `stats`: chain_rateN / chain_acnN / chain_acsN / chain_hwN). Absent boards (no chips
+ * detected) are omitted by the adapter. [chipsDead] > 0 or a chain far below its siblings
+ * flags a failing board before it drags down the fleet total.
+ */
+data class ChainReading(
+    val index: Int,
+    val hashrateGhs: Double?,
+    /** Chips the firmware reports active on this chain (chain_acnN). */
+    val chipsActive: Int?,
+    /** Total chip slots seen in the status string (o + x), when available. */
+    val chipsTotal: Int?,
+    /** Chips flagged failed in the status string ('x'); 0 = all good. */
+    val chipsDead: Int?,
+    /** Hardware-error counter for the chain (chain_hwN), if reported. */
+    val hwErrors: Int?,
+    /** Hottest chip temperature on this chain, °C. */
+    val tempC: Double?,
+)
+
+/**
  * Normalized telemetry snapshot. Internal canonical units:
  * hashrate GH/s, power W, temperature °C, voltage mV, frequency MHz, efficiency J/TH.
  */
@@ -26,6 +47,9 @@ data class MinerTelemetry(
     val vrTempC: Sourced<Double> = Sourced.unavailable(),
 
     val fans: List<FanReading> = emptyList(),
+
+    /** Per-chain/per-board health where the firmware reports it; empty otherwise. */
+    val perChain: List<ChainReading> = emptyList(),
 
     /** Whether firmware-managed fan control is on. Not persisted; null when unknown. */
     val autoFanEnabled: Boolean? = null,

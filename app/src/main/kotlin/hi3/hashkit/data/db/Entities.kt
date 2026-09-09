@@ -99,6 +99,8 @@ data class TelemetrySampleEntity(
     val vrTempC: Double?,
     /** JSON list of {index, rpm, percent}. */
     val fansJson: String,
+    /** JSON list of per-chain health {index, hashrateGhs, chipsActive, chipsTotal, chipsDead, hwErrors, tempC}; null when unreported. */
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val perChainJson: String? = null,
     val frequencyMhz: Double?,
     val coreVoltageMv: Double?,
     val inputVoltageMv: Double?,

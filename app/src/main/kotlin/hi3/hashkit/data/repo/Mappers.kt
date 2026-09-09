@@ -2,6 +2,7 @@ package hi3.hashkit.data.repo
 
 import hi3.hashkit.data.db.MinerEntity
 import hi3.hashkit.data.db.TelemetrySampleEntity
+import hi3.hashkit.domain.model.ChainReading
 import hi3.hashkit.domain.model.FanReading
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerIdentity
@@ -19,6 +20,19 @@ internal data class FanJson(val index: Int, val rpm: Int?, val percent: Int?)
 
 internal val fanJson = Json { ignoreUnknownKeys = true }
 internal val fanListSerializer = ListSerializer(FanJson.serializer())
+
+@Serializable
+internal data class ChainJson(
+    val index: Int,
+    val hashrateGhs: Double?,
+    val chipsActive: Int?,
+    val chipsTotal: Int?,
+    val chipsDead: Int?,
+    val hwErrors: Int?,
+    val tempC: Double?,
+)
+
+internal val chainListSerializer = ListSerializer(ChainJson.serializer())
 
 fun MinerEntity.toDomain(lastTelemetry: MinerTelemetry?, staleAfterMs: Long, now: Instant): Miner {
     val status = when {
@@ -82,6 +96,12 @@ fun MinerTelemetry.toEntity(minerId: Long): TelemetrySampleEntity = TelemetrySam
         fanListSerializer,
         fans.map { FanJson(it.index, it.rpm, it.percent) },
     ),
+    perChainJson = if (perChain.isEmpty()) null else fanJson.encodeToString(
+        chainListSerializer,
+        perChain.map {
+            ChainJson(it.index, it.hashrateGhs, it.chipsActive, it.chipsTotal, it.chipsDead, it.hwErrors, it.tempC)
+        },
+    ),
     frequencyMhz = frequencyMhz.value,
     coreVoltageMv = coreVoltageMv.value,
     inputVoltageMv = inputVoltageMv.value,
@@ -116,6 +136,13 @@ fun TelemetrySampleEntity.toDomain(): MinerTelemetry {
             fanJson.decodeFromString(fanListSerializer, fansJson).map {
                 FanReading(it.index, it.rpm, it.percent)
             }
+        }.getOrDefault(emptyList()),
+        perChain = runCatching {
+            perChainJson?.let {
+                fanJson.decodeFromString(chainListSerializer, it).map { c ->
+                    ChainReading(c.index, c.hashrateGhs, c.chipsActive, c.chipsTotal, c.chipsDead, c.hwErrors, c.tempC)
+                }
+            } ?: emptyList()
         }.getOrDefault(emptyList()),
         frequencyMhz = Sourced.reported(frequencyMhz),
         coreVoltageMv = Sourced.reported(coreVoltageMv),

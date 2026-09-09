@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.51.0
+
+Wave A — telemetry insights:
+
+- **Per-chip / per-chain health.** For Antminer-class miners (stock Bitmain, VNish) that
+  report it, the miner detail screen now shows a per-board table: hashrate, working/total
+  chips, failed-chip count (highlighted red), hardware errors, and hottest chip temp —
+  flagging a dead or underperforming board before it drags the fleet total down. Parsed
+  only from fields present in real captures (`chain_rate/acn/acs/hw`, `temp_chip`); miners
+  that don't report per-chain data simply don't show the section.
+- **Efficiency (J/TH) trend chart.** A new detail chart plots efficiency over the selected
+  history window (min / now / max), computed from the power and hashrate already stored —
+  fleet efficiency was already on the dashboard totals.
+- **Statistical anomaly detection.** A pure detector flags *gradual* trends a fixed
+  threshold misses — sustained hashrate drift (recent vs. baseline average) and a creeping
+  reject rate — shown as an advisory on the detail screen. (Alerting on these lands in the
+  next wave.)
+
 ## 0.50.0
 
 - **First feature wired to the advanced-features gate.** The dashboard menu's **"Live

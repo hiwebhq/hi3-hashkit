@@ -88,6 +88,15 @@ class CgMinerCommonTest {
         assertEquals(ValueSource.UNAVAILABLE, t.powerW.source)
         // Board temps (temp1/2/3 = 66/65/67) preserved for diagnostics; max = 67.
         assertEquals(67.0, t.unrecognizedFields["boardTempC"]!!.toDouble(), 0.001)
+
+        // Per-chain health: 3 populated boards (chain 4 is absent: acn 0, blank rate/acs).
+        assertEquals(3, t.perChain.size)
+        val chain1 = t.perChain.first { it.index == 1 }
+        assertEquals(83852.84, chain1.hashrateGhs!!, 0.01) // chain_rate1
+        assertEquals(65, chain1.chipsActive)               // chain_acn1
+        assertEquals(65, chain1.chipsTotal)                // chain_acs1: 65 'o's, no spaces counted
+        assertEquals(0, chain1.chipsDead)                  // no 'x'
+        assertEquals(100, chain1.hwErrors)                 // chain_hw1
     }
 
     @Test

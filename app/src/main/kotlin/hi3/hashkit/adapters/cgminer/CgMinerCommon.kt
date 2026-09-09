@@ -1,5 +1,6 @@
 package hi3.hashkit.adapters.cgminer
 
+import hi3.hashkit.domain.model.ChainReading
 import hi3.hashkit.domain.model.FanReading
 import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.domain.model.MinerTelemetry
@@ -139,6 +140,7 @@ object CgMinerCommon {
         val frequency = stats.num("frequency") ?: freqs.average().takeIf { freqs.isNotEmpty() }
         val hashrateGhs = stats.num("GHS 5s") ?: stats.num("GHS av") ?: stats.num("total_rate")
             ?: base.hashrateGhs.value
+        val perChain = parseChains(stats)
 
         return base.copy(
             hashrateGhs = Sourced.reported(hashrateGhs),
@@ -151,6 +153,7 @@ object CgMinerCommon {
             frequencyMhz = Sourced.reported(frequency),
             asicCount = stats.num("total_acn")?.toInt(),
             fans = fans.ifEmpty { base.fans },
+            perChain = perChain.ifEmpty { base.perChain },
             unrecognizedFields = base.unrecognizedFields + buildMap {
                 boardTemps.maxOrNull()?.let { put("boardTempC", it.toString()) }
                 stats.str("Type")?.let { put("model", it) }
@@ -182,6 +185,42 @@ object CgMinerCommon {
                 s.num("Env Temp")?.let { put("envTempC", it.toString()) }
             },
         )
+    }
+
+    /**
+     * Per-chain health from an Antminer-class `stats` record (verified against the S21 Pro
+     * capture): chain_rateN (GH/s), chain_acnN (active chips), chain_acsN (per-chip status
+     * string, non-space = chip, 'x' = failed), chain_hwN (hw errors), temp_chipN (dash-
+     * separated sensor temps → max). A chain with no chips detected (acn 0 and blank
+     * rate/status) is an absent board and is skipped.
+     */
+    private fun parseChains(stats: JsonObject): List<ChainReading> = buildList {
+        val count = stats.num("chain_num")?.toInt()?.coerceIn(1, 64) ?: 16
+        for (i in 1..count) {
+            val rate = stats.str("chain_rate$i")?.toDoubleOrNull()
+            val active = stats.num("chain_acn$i")?.toInt()
+            val acs = stats.str("chain_acs$i")
+            val hw = stats.num("chain_hw$i")?.toInt()
+            val temp = stats.str("temp_chip$i")
+                ?.split("-")?.mapNotNull { it.trim().toDoubleOrNull() }?.filter { it > 0 }?.maxOrNull()
+            // Skip absent boards: nothing reported at all.
+            val present = (active != null && active > 0) || (rate != null && rate > 0) ||
+                (!acs.isNullOrBlank())
+            if (!present) continue
+            val chipsTotal = acs?.count { !it.isWhitespace() }?.takeIf { it > 0 }
+            val chipsDead = acs?.count { it == 'x' || it == 'X' }
+            add(
+                ChainReading(
+                    index = i,
+                    hashrateGhs = rate,
+                    chipsActive = active,
+                    chipsTotal = chipsTotal,
+                    chipsDead = chipsDead,
+                    hwErrors = hw,
+                    tempC = temp,
+                )
+            )
+        }
     }
 
     // ------------------------------------------------------------------ helpers ----
