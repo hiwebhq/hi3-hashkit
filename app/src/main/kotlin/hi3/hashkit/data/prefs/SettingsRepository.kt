@@ -76,6 +76,8 @@ data class AppSettings(
     val appLockEnabled: Boolean = false,
     /** Theme: SYSTEM, DARK, or LIGHT. */
     val themeMode: hi3.hashkit.ui.theme.ThemeMode = hi3.hashkit.ui.theme.ThemeMode.SYSTEM,
+    /** Accent color scheme ("UI Theme"); default blue. */
+    val themeColor: hi3.hashkit.ui.theme.ThemeColor = hi3.hashkit.ui.theme.ThemeColor.BLUE,
     /** Whether first-run onboarding has been completed. */
     val onboardingComplete: Boolean = false,
     val alertThresholds: AlertThresholds = AlertThresholds(),
@@ -131,6 +133,7 @@ class SettingsRepository @Inject constructor(
         val showProfitCard = booleanPreferencesKey("show_profit_card")
         val appLockEnabled = booleanPreferencesKey("app_lock_enabled")
         val themeMode = stringPreferencesKey("theme_mode")
+        val themeColor = stringPreferencesKey("theme_color")
         val onboardingComplete = booleanPreferencesKey("onboarding_complete")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
@@ -190,6 +193,7 @@ class SettingsRepository @Inject constructor(
             themeMode = runCatching {
                 hi3.hashkit.ui.theme.ThemeMode.valueOf(p[Keys.themeMode] ?: "SYSTEM")
             }.getOrDefault(hi3.hashkit.ui.theme.ThemeMode.SYSTEM),
+            themeColor = hi3.hashkit.ui.theme.ThemeColor.fromName(p[Keys.themeColor]),
             onboardingComplete = p[Keys.onboardingComplete] ?: false,
             alertsEnabled = p[Keys.alertsEnabled] ?: false,
             alertThresholds = AlertThresholds(
@@ -241,6 +245,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setShowProfitCard(value: Boolean) = edit { it[Keys.showProfitCard] = value }
     suspend fun setAppLockEnabled(value: Boolean) = edit { it[Keys.appLockEnabled] = value }
     suspend fun setThemeMode(value: hi3.hashkit.ui.theme.ThemeMode) = edit { it[Keys.themeMode] = value.name }
+    suspend fun setThemeColor(value: hi3.hashkit.ui.theme.ThemeColor) = edit { it[Keys.themeColor] = value.name }
     suspend fun setOnboardingComplete(value: Boolean) = edit { it[Keys.onboardingComplete] = value }
 
     /** Store the MMP API key encrypted with the Android Keystore; blank clears it. */

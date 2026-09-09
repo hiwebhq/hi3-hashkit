@@ -66,6 +66,7 @@ class SettingsViewModel @Inject constructor(
     fun setShowSoloCard(v: Boolean) = viewModelScope.launch { repo.setShowSoloCard(v) }
     fun setShowProfitCard(v: Boolean) = viewModelScope.launch { repo.setShowProfitCard(v) }
     fun setThemeMode(v: hi3.hashkit.ui.theme.ThemeMode) = viewModelScope.launch { repo.setThemeMode(v) }
+    fun setThemeColor(v: hi3.hashkit.ui.theme.ThemeColor) = viewModelScope.launch { repo.setThemeColor(v) }
     fun setAppLockEnabled(v: Boolean) = viewModelScope.launch { repo.setAppLockEnabled(v) }
     fun setMmpEnabled(v: Boolean) = viewModelScope.launch { repo.setMmpEnabled(v) }
     fun setMmpBaseUrl(v: String) = viewModelScope.launch { repo.setMmpBaseUrl(v) }

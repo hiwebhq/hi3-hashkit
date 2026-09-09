@@ -9,8 +9,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 
 enum class ThemeMode { SYSTEM, DARK, LIGHT }
+
+/**
+ * Selectable accent color scheme ("UI Theme"). Only the accent pair changes; the
+ * command-center greys and the online/offline status colors stay constant so status
+ * always reads the same. BLUE is the original default. Each option carries a dark and a
+ * light accent tuned for contrast on the respective ground.
+ */
+enum class ThemeColor(
+    val label: String,
+    val darkAccent: Color,
+    val darkAccentAlt: Color,
+    val lightAccent: Color,
+    val lightAccentAlt: Color,
+) {
+    BLUE("Blue", Color(0xFF3987E5), Color(0xFF6FB1FF), Color(0xFF1C6FD0), Color(0xFF1C6FD0)),
+    GREEN("Green", Color(0xFF2BB673), Color(0xFF5FD79B), Color(0xFF158A54), Color(0xFF158A54)),
+    ORANGE("Orange", Color(0xFFF08A24), Color(0xFFFFB05A), Color(0xFFD9720F), Color(0xFFD9720F)),
+    YELLOW("Yellow", Color(0xFFE6B800), Color(0xFFF3D46A), Color(0xFF9A7B00), Color(0xFF9A7B00)),
+    RED("Red", Color(0xFFE5484D), Color(0xFFFF7B7F), Color(0xFFC93338), Color(0xFFC93338)),
+    PURPLE("Purple", Color(0xFF8B5CF6), Color(0xFFB794FF), Color(0xFF6D3FD4), Color(0xFF6D3FD4));
+
+    fun accent(dark: Boolean): Color = if (dark) darkAccent else lightAccent
+    fun accentAlt(dark: Boolean): Color = if (dark) darkAccentAlt else lightAccentAlt
+
+    companion object {
+        fun fromName(name: String?): ThemeColor = entries.firstOrNull { it.name == name } ?: BLUE
+    }
+}
 
 /**
  * Centralized Hi3 branding layer. Colors are snapshot-backed so the whole UI —
@@ -21,8 +51,9 @@ enum class ThemeMode { SYSTEM, DARK, LIGHT }
 object HiBrand {
     val appName = "Hi3 Hashkit"
 
-    // Brand ink is constant across themes; the logo blue is the app's primary color.
-    val accent = Color(0xFF3987E5)
+    // Accent color reacts to the selected UI Theme (default blue). Snapshot-backed so the
+    // whole UI — including Canvas code reading it directly — recolors when it changes.
+    var accent by mutableStateOf(ThemeColor.BLUE.darkAccent)
 
     var accentAlt by mutableStateOf(Dark.accentAlt)
     var background by mutableStateOf(Dark.background)
@@ -36,9 +67,11 @@ object HiBrand {
     var statusOffline by mutableStateOf(Dark.statusOffline)
     var statusUnknown by mutableStateOf(Dark.statusUnknown)
 
-    fun apply(dark: Boolean) {
+    fun apply(dark: Boolean, themeColor: ThemeColor = ThemeColor.BLUE) {
         val p: Palette = if (dark) Dark else Light
-        accentAlt = p.accentAlt; background = p.background; surface = p.surface
+        accent = themeColor.accent(dark)
+        accentAlt = themeColor.accentAlt(dark)
+        background = p.background; surface = p.surface
         surfaceRaised = p.surfaceRaised; outline = p.outline
         textPrimary = p.textPrimary; textSecondary = p.textSecondary
         statusOnline = p.statusOnline; statusDegraded = p.statusDegraded
@@ -84,22 +117,26 @@ object HiBrand {
     }
 }
 
-private fun darkScheme() = darkColorScheme(
-    primary = HiBrand.accent, onPrimary = Color(0xFFF2F7FF),
-    primaryContainer = Color(0xFF1C4A8C), onPrimaryContainer = Color(0xFFD6E5FB),
-    secondary = HiBrand.Dark.accentAlt, onSecondary = Color(0xFF071219),
-    secondaryContainer = Color(0xFF14355F), onSecondaryContainer = Color(0xFFD6E5FB),
+/** Text that reads on a filled accent button: dark on bright accents (e.g. yellow), else light. */
+private fun onAccent(accent: Color): Color =
+    if (accent.luminance() > 0.5f) Color(0xFF071219) else Color(0xFFF2F7FF)
+
+private fun darkScheme(accent: Color, accentAlt: Color) = darkColorScheme(
+    primary = accent, onPrimary = onAccent(accent),
+    primaryContainer = lerp(accent, Color.Black, 0.55f), onPrimaryContainer = lerp(accent, Color.White, 0.75f),
+    secondary = accentAlt, onSecondary = onAccent(accentAlt),
+    secondaryContainer = lerp(accent, Color.Black, 0.6f), onSecondaryContainer = lerp(accent, Color.White, 0.75f),
     background = HiBrand.Dark.background, onBackground = HiBrand.Dark.textPrimary,
     surface = HiBrand.Dark.surface, onSurface = HiBrand.Dark.textPrimary,
     surfaceVariant = HiBrand.Dark.surfaceRaised, onSurfaceVariant = HiBrand.Dark.textSecondary,
     outline = HiBrand.Dark.outline, error = HiBrand.Dark.statusOffline,
 )
 
-private fun lightScheme() = lightColorScheme(
-    primary = HiBrand.accent, onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFD6E5FB), onPrimaryContainer = Color(0xFF0B2E5C),
-    secondary = HiBrand.Light.accentAlt, onSecondary = Color(0xFFFFFFFF),
-    secondaryContainer = Color(0xFFD6E5FB), onSecondaryContainer = Color(0xFF0B2E5C),
+private fun lightScheme(accent: Color, accentAlt: Color) = lightColorScheme(
+    primary = accent, onPrimary = onAccent(accent),
+    primaryContainer = lerp(accent, Color.White, 0.75f), onPrimaryContainer = lerp(accent, Color.Black, 0.6f),
+    secondary = accentAlt, onSecondary = onAccent(accentAlt),
+    secondaryContainer = lerp(accent, Color.White, 0.75f), onSecondaryContainer = lerp(accent, Color.Black, 0.6f),
     background = HiBrand.Light.background, onBackground = HiBrand.Light.textPrimary,
     surface = HiBrand.Light.surface, onSurface = HiBrand.Light.textPrimary,
     surfaceVariant = HiBrand.Light.surfaceRaised, onSurfaceVariant = HiBrand.Light.textSecondary,
@@ -109,6 +146,7 @@ private fun lightScheme() = lightColorScheme(
 @Composable
 fun Hi3MinerWatchTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
+    themeColor: ThemeColor = ThemeColor.BLUE,
     content: @Composable () -> Unit,
 ) {
     val dark = when (themeMode) {
@@ -116,6 +154,9 @@ fun Hi3MinerWatchTheme(
         ThemeMode.DARK -> true
         ThemeMode.LIGHT -> false
     }
-    androidx.compose.runtime.SideEffect { HiBrand.apply(dark) }
-    MaterialTheme(colorScheme = if (dark) darkScheme() else lightScheme(), content = content)
+    androidx.compose.runtime.SideEffect { HiBrand.apply(dark, themeColor) }
+    val accent = themeColor.accent(dark)
+    val accentAlt = themeColor.accentAlt(dark)
+    val scheme = if (dark) darkScheme(accent, accentAlt) else lightScheme(accent, accentAlt)
+    MaterialTheme(colorScheme = scheme, content = content)
 }

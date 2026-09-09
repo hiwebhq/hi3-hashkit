@@ -4,18 +4,27 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -43,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.theme.ThemeColor
 
 // Section order: alphabetical, with DATA & EXPORTS second-to-last and DEMO last
 // (user preference).
@@ -162,6 +172,17 @@ fun SettingsScreen(
                         )
                     }
                 }
+                Spacer(Modifier.height(4.dp))
+                Text("UI Theme", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Accent color used across the app. Status colors (online/offline) don't change.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                ThemeColorRow(
+                    selected = settings.themeColor,
+                    onSelect = { viewModel.setThemeColor(it) },
+                )
                 ToggleRow(
                     "Profitability & energy card",
                     "Show estimated revenue, power cost, and energy use on the dashboard.",
@@ -519,6 +540,42 @@ private fun Section(title: String, content: @Composable () -> Unit) {
         Column(Modifier.padding(14.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(title, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
             content()
+        }
+    }
+}
+
+/** Six selectable accent swatches; the current one gets a ring. */
+@Composable
+private fun ThemeColorRow(selected: ThemeColor, onSelect: (ThemeColor) -> Unit) {
+    val dark = isSystemInDarkTheme()
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        ThemeColor.entries.forEach { color ->
+            val isSelected = color == selected
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(color.accent(dark))
+                        .then(
+                            if (isSelected)
+                                Modifier.border(3.dp, HiBrand.textPrimary, CircleShape)
+                            else
+                                Modifier.border(1.dp, HiBrand.outline, CircleShape)
+                        )
+                        .clickable { onSelect(color) },
+                )
+                Text(
+                    color.label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isSelected) HiBrand.textPrimary else HiBrand.textSecondary,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
         }
     }
 }

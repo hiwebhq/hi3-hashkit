@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.49.0
+
+- **UI Theme (accent color).** Settings → Display → **UI Theme** now offers six accent
+  colors — **Blue (default), Green, Orange, Yellow, Red, Purple** — applied live across the
+  whole app. Only the accent changes; the command-center greys and the online/offline
+  status colors stay constant so status always reads the same. Works in both light and dark
+  mode (each color is contrast-tuned per mode), persists across restarts, and defaults to
+  the original blue so existing installs look unchanged.
+
 ## 0.48.0
 
 - **Wear OS tile.** A new `:wear` module adds a glanceable watch **tile** (and a small

@@ -87,7 +87,7 @@ class MainActivity : FragmentActivity() {
             val settings by settingsRepository.settings.collectAsState(
                 initial = hi3.hashkit.data.prefs.AppSettings()
             )
-            Hi3MinerWatchTheme(themeMode = settings.themeMode) {
+            Hi3MinerWatchTheme(themeMode = settings.themeMode, themeColor = settings.themeColor) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     PollingLifecycle()
                     LockLifecycle()
