@@ -49,6 +49,7 @@ object AppModule {
                 HashkitDatabase.MIGRATION_10_11,
                 HashkitDatabase.MIGRATION_11_12,
                 HashkitDatabase.MIGRATION_12_13,
+                HashkitDatabase.MIGRATION_13_14,
             )
             .build()
 
@@ -78,6 +79,9 @@ object AppModule {
 
     @Provides
     fun ruleDao(db: HashkitDatabase): hi3.hashkit.data.db.RuleDao = db.ruleDao()
+
+    @Provides
+    fun savedPoolDao(db: HashkitDatabase): hi3.hashkit.data.db.SavedPoolDao = db.savedPoolDao()
 }
 
 @Module

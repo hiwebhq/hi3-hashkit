@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Tv
@@ -99,6 +100,7 @@ fun DashboardScreen(
     onWall: () -> Unit,
     onTable: () -> Unit,
     onRules: () -> Unit,
+    onAddressBook: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -224,6 +226,11 @@ fun DashboardScreen(
                                 text = { Text("Automation rules") },
                                 leadingIcon = { Icon(Icons.Filled.Bolt, contentDescription = null) },
                                 onClick = { menuOpen = false; onRules() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Pool address book") },
+                                leadingIcon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },
+                                onClick = { menuOpen = false; onAddressBook() },
                             )
                             DropdownMenuItem(
                                 text = { Text("Rack & site") },

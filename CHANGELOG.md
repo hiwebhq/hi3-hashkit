@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.63.0
+
+- **Pool & wallet address book.** Save the pools/wallets you use (name · stratum URL · port ·
+  worker/payout address) and apply one across the whole fleet — or a group — in a tap, with
+  a confirmation (Dashboard menu → Pool address book). No pool password is stored; the
+  firmware keeps its own. Unsupported miners are skipped and the result is summarized.
+
 ## 0.62.0
 
 - **Auto-tuner upgraded (ClockTune-style).** The Bitaxe auto-tuner now enforces a **chip-temp

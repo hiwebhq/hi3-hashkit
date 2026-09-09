@@ -19,8 +19,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         FarmEntity::class,
         MaintenanceNoteEntity::class,
         RuleEntity::class,
+        SavedPoolEntity::class,
     ],
-    version = 13,
+    version = 14,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -33,6 +34,7 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun farmDao(): FarmDao
     abstract fun maintenanceDao(): MaintenanceDao
     abstract fun ruleDao(): RuleDao
+    abstract fun savedPoolDao(): SavedPoolDao
 
     companion object {
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
@@ -152,6 +154,18 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `perChainJson` TEXT DEFAULT NULL")
+            }
+        }
+
+        /** v13 -> v14: saved_pools address book (additive). */
+        val MIGRATION_13_14 = object : Migration(13, 14) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `saved_pools` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`label` TEXT NOT NULL, `url` TEXT NOT NULL, " +
+                        "`port` INTEGER NOT NULL, `worker` TEXT NOT NULL)"
+                )
             }
         }
 
