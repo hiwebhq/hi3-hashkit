@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.50.0
+
+- **First feature wired to the advanced-features gate.** The dashboard menu's **"Live
+  Bitcoin"** link is now revealed only when advanced features are unlocked
+  (Settings → Advanced features). It stays visible for everyone while
+  `ADVANCED_FEATURES_FREE` is `true` (the shipping default), so there's no change in normal
+  builds — this just proves the gate end-to-end and is the pattern future advanced features
+  (secure pages, power tools) will follow.
+
 ## 0.49.0
 
 - **UI Theme (accent color).** Settings → Display → **UI Theme** now offers six accent

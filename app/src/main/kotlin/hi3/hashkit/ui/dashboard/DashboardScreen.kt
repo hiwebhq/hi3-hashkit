@@ -224,22 +224,27 @@ fun DashboardScreen(
                                 onClick = { menuOpen = false; onWall() },
                             )
                             androidx.compose.material3.HorizontalDivider()
-                            DropdownMenuItem(
-                                text = { Text("Live Bitcoin") },
-                                leadingIcon = { Icon(Icons.Filled.CurrencyBitcoin, contentDescription = null) },
-                                onClick = {
-                                    menuOpen = false
-                                    // Open in a fresh external browser session.
-                                    runCatching {
-                                        context.startActivity(
-                                            android.content.Intent(
-                                                android.content.Intent.ACTION_VIEW,
-                                                android.net.Uri.parse("https://hi3.cc/bitcoin"),
-                                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        )
-                                    }
-                                },
-                            )
+                            // Advanced feature: only revealed once the unlock code is applied
+                            // (Settings → Advanced features). Ships unlocked while
+                            // ADVANCED_FEATURES_FREE is true.
+                            if (state.settings.advancedUnlocked) {
+                                DropdownMenuItem(
+                                    text = { Text("Live Bitcoin") },
+                                    leadingIcon = { Icon(Icons.Filled.CurrencyBitcoin, contentDescription = null) },
+                                    onClick = {
+                                        menuOpen = false
+                                        // Open in a fresh external browser session.
+                                        runCatching {
+                                            context.startActivity(
+                                                android.content.Intent(
+                                                    android.content.Intent.ACTION_VIEW,
+                                                    android.net.Uri.parse("https://hi3.cc/bitcoin"),
+                                                ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            )
+                                        }
+                                    },
+                                )
+                            }
                             DropdownMenuItem(
                                 text = { Text("Store") },
                                 leadingIcon = { Icon(Icons.Filled.Store, contentDescription = null) },

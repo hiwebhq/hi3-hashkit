@@ -373,11 +373,12 @@ fun SettingsScreen(
                 val unlocked = settings.advancedUnlocked
                 Text(
                     if (unlocked)
-                        "All advanced features are unlocked in this release — no code needed. " +
-                            "A future version may move power tools (plug scheduling, wall/TV mode, " +
-                            "pool round-trips) behind an unlock code entered here."
+                        "Advanced features are unlocked. This reveals the dashboard menu's " +
+                            "\"Live Bitcoin\" link; more may move here in future versions " +
+                            "(secure pages, power tools)."
                     else
-                        "Enter your unlock code to enable advanced features.",
+                        "Enter your unlock code to reveal advanced features (currently the " +
+                            "dashboard menu's \"Live Bitcoin\" link).",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
