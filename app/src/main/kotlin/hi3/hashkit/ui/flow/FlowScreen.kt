@@ -219,8 +219,16 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
         }
         drawNode(stratumPos[i], 22f, col, pulse = t + i)
     }
+    // Adjacent-slot spacing; the ASIC glyph is sized to sit comfortably inside one slot.
+    val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
+    val boxW = (adjSpacing * 0.82f).coerceAtMost(52f)
     miners.forEachIndexed { i, m ->
-        drawNode(minerPos[i], 14f, statusColor(m.status, m.healthFraction), pulse = t + i * 0.3)
+        drawAsicMiner(
+            minerPos[i], boxW,
+            statusColor(m.status, m.healthFraction),
+            pulse = t + i * 0.3,
+            spinning = m.status != MinerStatus.OFFLINE && (m.hashrateGhs ?: 0.0) > 0,
+        )
     }
 
     // Labels via native canvas.
@@ -247,12 +255,32 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
                 stratumPos[i].x, stratumPos[i].y + 44f, label,
             )
         }
+        // Miner labels: smaller, and staggered across two rows + ellipsized to the slot so
+        // adjacent labels never overlap, however many miners there are.
+        val minerLabel = android.graphics.Paint(label).apply { textSize = 22f }
+        val minerHash = android.graphics.Paint(strong).apply { textSize = 22f }
+        val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
+        val boxW = (adjSpacing * 0.82f).coerceAtMost(52f)
+        val boxH = boxW * 0.6f
+        // Staggered rows double the effective horizontal room for a given row.
+        val maxLabelW = (adjSpacing * 1.85f - 8f).coerceAtLeast(40f)
+        val lineH = 24f
         miners.forEachIndexed { i, m ->
-            val short = m.name.take(10)
-            drawText(short, minerPos[i].x, minerPos[i].y + 34f, label)
-            drawText(Units.formatHashrate(m.hashrateGhs), minerPos[i].x, minerPos[i].y - 24f, label)
+            val stagger = (i % 2) * lineH
+            val name = fitText(minerLabel, m.name, maxLabelW)
+            val hash = fitText(minerHash, Units.formatHashrate(m.hashrateGhs), maxLabelW)
+            drawText(hash, minerPos[i].x, minerPos[i].y - boxH / 2f - 12f - stagger, minerHash)
+            drawText(name, minerPos[i].x, minerPos[i].y + boxH / 2f + 24f + stagger, minerLabel)
         }
     }
+}
+
+/** Truncate [text] with an ellipsis until it fits within [maxWidth] px for [paint]. */
+private fun fitText(paint: android.graphics.Paint, text: String, maxWidth: Float): String {
+    if (paint.measureText(text) <= maxWidth) return text
+    var end = text.length
+    while (end > 1 && paint.measureText(text.substring(0, end) + "…") > maxWidth) end--
+    return text.substring(0, end).trimEnd() + "…"
 }
 
 private fun DrawScope.drawLink(from: Offset, to: Offset, color: Color) {
@@ -284,4 +312,63 @@ private fun DrawScope.drawNode(center: Offset, radius: Float, color: Color, puls
     drawCircle(color.copy(alpha = 0.30f), radius = radius * 1.4f, center = center)
     drawCircle(color, radius = radius, center = center)
     drawCircle(HiBrand.background, radius = radius, center = center, style = Stroke(width = 3f))
+}
+
+/**
+ * A little ASIC-miner glyph: a chassis box with two spinning intake fans, tinted by the
+ * miner's status color. Online miners' fans spin (via [pulse]); offline miners are static.
+ */
+private fun DrawScope.drawAsicMiner(
+    center: Offset,
+    boxW: Float,
+    color: Color,
+    pulse: Double,
+    spinning: Boolean,
+) {
+    val boxH = boxW * 0.6f
+    val topLeft = Offset(center.x - boxW / 2f, center.y - boxH / 2f)
+    val corner = androidx.compose.ui.geometry.CornerRadius(boxW * 0.10f)
+    val glowA = (0.10f + 0.10f * sin(pulse * 2).toFloat()).coerceIn(0.05f, 0.22f)
+    // Soft status glow behind the chassis.
+    drawRoundRect(
+        color = color.copy(alpha = glowA),
+        topLeft = Offset(topLeft.x - 6f, topLeft.y - 6f),
+        size = androidx.compose.ui.geometry.Size(boxW + 12f, boxH + 12f),
+        cornerRadius = androidx.compose.ui.geometry.CornerRadius(boxW * 0.16f),
+    )
+    // Chassis: dark raised body with a status-colored edge.
+    drawRoundRect(
+        color = HiBrand.surfaceRaised,
+        topLeft = topLeft,
+        size = androidx.compose.ui.geometry.Size(boxW, boxH),
+        cornerRadius = corner,
+    )
+    drawRoundRect(
+        color = color,
+        topLeft = topLeft,
+        size = androidx.compose.ui.geometry.Size(boxW, boxH),
+        cornerRadius = corner,
+        style = Stroke(width = 2.5f),
+    )
+    // Two intake fans on the face.
+    val fanR = boxH * 0.34f
+    val fanY = center.y
+    val offsetsX = listOf(center.x - boxW * 0.24f, center.x + boxW * 0.24f)
+    offsetsX.forEachIndexed { fi, fx ->
+        val fanCenter = Offset(fx, fanY)
+        drawCircle(color.copy(alpha = 0.20f), radius = fanR, center = fanCenter)
+        drawCircle(color, radius = fanR, center = fanCenter, style = Stroke(width = 2f))
+        // Blades: 3 spokes, rotating (opposite directions per fan) when spinning.
+        val dir = if (fi == 0) 1.0 else -1.0
+        val base = if (spinning) pulse * 3.0 * dir else 0.4 * dir
+        for (b in 0 until 3) {
+            val a = base + b * (2 * Math.PI / 3)
+            val end = Offset(
+                (fx + fanR * 0.82f * kotlin.math.cos(a)).toFloat(),
+                (fanY + fanR * 0.82f * kotlin.math.sin(a)).toFloat(),
+            )
+            drawLine(color, fanCenter, end, strokeWidth = 2f)
+        }
+        drawCircle(color, radius = fanR * 0.16f, center = fanCenter) // hub
+    }
 }

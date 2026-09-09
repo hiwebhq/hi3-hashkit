@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.56.0
+
+- **Flow view: miners look like ASIC miners.** Each miner node is now a little chassis with
+  two spinning intake fans (fans spin while hashing, static when offline), tinted by status.
+- **Flow view: labels never overlap.** Miner name/hashrate labels are staggered across two
+  rows and ellipsized to their slot, and the glyphs are sized to their slot, so nothing
+  collides regardless of how many miners you have.
+
 ## 0.55.0
 
 - **Maintenance-log photos.** Notes can now include a photo (via the system photo picker,
