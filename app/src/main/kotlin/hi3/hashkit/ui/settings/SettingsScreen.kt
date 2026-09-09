@@ -109,6 +109,31 @@ fun SettingsScreen(
                 }
             }
 
+            Section("PUSH (WEBHOOK)") {
+                Text(
+                    "Mirror alerts to your own push service so they reach you when the app is " +
+                        "closed — no cloud account of ours. Fires only for active alerts.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                WebhookTypeRow(current = settings.webhookType, onSelect = { viewModel.setWebhookType(it) })
+                when (settings.webhookType) {
+                    hi3.hashkit.data.alerts.WebhookType.NONE -> Unit
+                    hi3.hashkit.data.alerts.WebhookType.NTFY ->
+                        NumberRow("ntfy topic URL (https://ntfy.sh/your-topic)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                    hi3.hashkit.data.alerts.WebhookType.GOTIFY -> {
+                        NumberRow("Gotify server URL", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                        NumberRow("Gotify app token", settings.webhookToken) { viewModel.setWebhookToken(it) }
+                    }
+                    hi3.hashkit.data.alerts.WebhookType.TELEGRAM -> {
+                        NumberRow("Telegram bot token", settings.webhookToken) { viewModel.setWebhookToken(it) }
+                        NumberRow("Telegram chat ID", settings.webhookTarget) { viewModel.setWebhookTarget(it) }
+                    }
+                    hi3.hashkit.data.alerts.WebhookType.GENERIC ->
+                        NumberRow("POST URL (JSON body)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                }
+            }
+
             Section("DISCOVERY") {
                 NumberRow(
                     "Extra scan subnets (CSV of CIDRs)",
@@ -137,6 +162,11 @@ fun SettingsScreen(
                         )
                     }
                 }
+                ToggleRow(
+                    "Profitability & energy card",
+                    "Show estimated revenue, power cost, and energy use on the dashboard.",
+                    settings.showProfitCard,
+                ) { viewModel.setShowProfitCard(it) }
                 ToggleRow(
                     "Solo odds card",
                     "Show block-finding probability on the dashboard.",
@@ -503,6 +533,28 @@ private fun PoolTypeRow(
                     androidx.compose.material3.DropdownMenuItem(
                         text = { Text(type.displayName) },
                         onClick = { open = false; onSelect(type) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WebhookTypeRow(
+    current: hi3.hashkit.data.alerts.WebhookType,
+    onSelect: (hi3.hashkit.data.alerts.WebhookType) -> Unit,
+) {
+    var open by remember { mutableStateOf(false) }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Text("Push service", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Box {
+            androidx.compose.material3.AssistChip(onClick = { open = true }, label = { Text(current.label) })
+            androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+                hi3.hashkit.data.alerts.WebhookType.entries.forEach { t ->
+                    androidx.compose.material3.DropdownMenuItem(
+                        text = { Text(t.label) },
+                        onClick = { open = false; onSelect(t) },
                     )
                 }
             }

@@ -69,7 +69,9 @@ data class AppSettings(
     /** Whether an (encrypted) MMP API key is stored; the key itself is never in this flow. */
     val mmpKeyConfigured: Boolean = false,
     /** Show the solo-mining odds card on the dashboard. */
-    val showSoloCard: Boolean = true,
+    val showSoloCard: Boolean = false,
+    /** Show the profitability & energy card on the dashboard. */
+    val showProfitCard: Boolean = false,
     /** Require device biometric/PIN to open the app. */
     val appLockEnabled: Boolean = false,
     /** Theme: SYSTEM, DARK, or LIGHT. */
@@ -78,6 +80,11 @@ data class AppSettings(
     val onboardingComplete: Boolean = false,
     val alertThresholds: AlertThresholds = AlertThresholds(),
     val alertsEnabled: Boolean = false,
+    /** Push alerts to a user webhook (ntfy/Gotify/Telegram/generic) so they arrive when closed. */
+    val webhookType: hi3.hashkit.data.alerts.WebhookType = hi3.hashkit.data.alerts.WebhookType.NONE,
+    val webhookUrl: String = "",
+    val webhookToken: String = "",
+    val webhookTarget: String = "",
 )
 
 @Singleton
@@ -113,6 +120,7 @@ class SettingsRepository @Inject constructor(
         val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
         val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
         val showSoloCard = booleanPreferencesKey("show_solo_card")
+        val showProfitCard = booleanPreferencesKey("show_profit_card")
         val appLockEnabled = booleanPreferencesKey("app_lock_enabled")
         val themeMode = stringPreferencesKey("theme_mode")
         val onboardingComplete = booleanPreferencesKey("onboarding_complete")
@@ -122,6 +130,10 @@ class SettingsRepository @Inject constructor(
         val thVrTempC = doublePreferencesKey("th_vr_temp_c")
         val thRejectPct = doublePreferencesKey("th_reject_pct")
         val thCooldownMin = longPreferencesKey("th_cooldown_min")
+        val webhookType = stringPreferencesKey("webhook_type")
+        val webhookUrl = stringPreferencesKey("webhook_url")
+        val webhookToken = stringPreferencesKey("webhook_token")
+        val webhookTarget = stringPreferencesKey("webhook_target")
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -154,7 +166,8 @@ class SettingsRepository @Inject constructor(
             mmpEnabled = p[Keys.mmpEnabled] ?: false,
             mmpBaseUrl = p[Keys.mmpBaseUrl] ?: "https://mmp.hi3.cc",
             mmpKeyConfigured = !p[Keys.mmpApiKeyEncrypted].isNullOrBlank(),
-            showSoloCard = p[Keys.showSoloCard] ?: true,
+            showSoloCard = p[Keys.showSoloCard] ?: false,
+            showProfitCard = p[Keys.showProfitCard] ?: false,
             appLockEnabled = p[Keys.appLockEnabled] ?: false,
             themeMode = runCatching {
                 hi3.hashkit.ui.theme.ThemeMode.valueOf(p[Keys.themeMode] ?: "SYSTEM")
@@ -168,6 +181,10 @@ class SettingsRepository @Inject constructor(
                 rejectRatePercent = p[Keys.thRejectPct] ?: 3.0,
                 cooldownMs = ((p[Keys.thCooldownMin] ?: 30L).coerceIn(1, 1440)) * 60_000,
             ),
+            webhookType = hi3.hashkit.data.alerts.WebhookType.fromName(p[Keys.webhookType]),
+            webhookUrl = p[Keys.webhookUrl] ?: "",
+            webhookToken = p[Keys.webhookToken] ?: "",
+            webhookTarget = p[Keys.webhookTarget] ?: "",
         )
     }
 
@@ -200,6 +217,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setMmpEnabled(value: Boolean) = edit { it[Keys.mmpEnabled] = value }
     suspend fun setMmpBaseUrl(value: String) = edit { it[Keys.mmpBaseUrl] = value.trim() }
     suspend fun setShowSoloCard(value: Boolean) = edit { it[Keys.showSoloCard] = value }
+    suspend fun setShowProfitCard(value: Boolean) = edit { it[Keys.showProfitCard] = value }
     suspend fun setAppLockEnabled(value: Boolean) = edit { it[Keys.appLockEnabled] = value }
     suspend fun setThemeMode(value: hi3.hashkit.ui.theme.ThemeMode) = edit { it[Keys.themeMode] = value.name }
     suspend fun setOnboardingComplete(value: Boolean) = edit { it[Keys.onboardingComplete] = value }
@@ -222,6 +240,10 @@ class SettingsRepository @Inject constructor(
     suspend fun setVrTempThreshold(value: Double) = edit { it[Keys.thVrTempC] = value }
     suspend fun setRejectRateThreshold(value: Double) = edit { it[Keys.thRejectPct] = value }
     suspend fun setCooldownMinutes(value: Long) = edit { it[Keys.thCooldownMin] = value }
+    suspend fun setWebhookType(value: hi3.hashkit.data.alerts.WebhookType) = edit { it[Keys.webhookType] = value.name }
+    suspend fun setWebhookUrl(value: String) = edit { it[Keys.webhookUrl] = value.trim() }
+    suspend fun setWebhookToken(value: String) = edit { it[Keys.webhookToken] = value.trim() }
+    suspend fun setWebhookTarget(value: String) = edit { it[Keys.webhookTarget] = value.trim() }
 
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit { block(it) }

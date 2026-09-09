@@ -65,17 +65,36 @@ class AlertNotifier @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val title = if (signal.active) "Alert: ${signal.minerName}" else "Recovered: ${signal.minerName}"
-        val notification = NotificationCompat.Builder(context, channelFor(signal))
+        // Stable id per miner+type so a recovery replaces its alert instead of stacking.
+        val id = (signal.minerId * 31 + signal.type.ordinal).toInt()
+        val builder = NotificationCompat.Builder(context, channelFor(signal))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
             .setContentText(signal.message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(signal.message))
             .setContentIntent(intent)
             .setAutoCancel(true)
-            .build()
-        // Stable id per miner+type so a recovery replaces its alert instead of stacking.
-        val id = (signal.minerId * 31 + signal.type.ordinal).toInt()
-        NotificationManagerCompat.from(context).notify(id, notification)
+        // Quick-actions on active alerts: reboot the miner or acknowledge, straight from here.
+        if (signal.active) {
+            builder.addAction(0, "Reboot", actionIntent(signal, id, AlertActionReceiver.ACTION_REBOOT))
+            builder.addAction(0, "Acknowledge", actionIntent(signal, id, AlertActionReceiver.ACTION_ACK))
+        }
+        NotificationManagerCompat.from(context).notify(id, builder.build())
+    }
+
+    private fun actionIntent(signal: AlertSignal, notificationId: Int, action: String): PendingIntent {
+        val intent = Intent(context, AlertActionReceiver::class.java).apply {
+            this.action = action
+            putExtra(AlertActionReceiver.EXTRA_MINER_ID, signal.minerId)
+            putExtra(AlertActionReceiver.EXTRA_TYPE, signal.type.name)
+            putExtra(AlertActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+        }
+        return PendingIntent.getBroadcast(
+            context,
+            (notificationId.toString() + action).hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 
     companion object {

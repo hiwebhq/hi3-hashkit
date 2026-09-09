@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.46.0
+
+- **Push alerts to your own webhook.** Mirror active alerts to **ntfy, Gotify, Telegram,
+  or a generic JSON POST** so they reach you when the app is closed — no cloud account of
+  ours. Configure in Settings → Push (webhook). Off by default.
+- **Notification quick-actions.** Active alert notifications now carry **Reboot** and
+  **Acknowledge** buttons, so you can act without opening the app (reboot uses the miner's
+  verified control path).
+
 ## 0.45.0
 
 - **Profitability & energy dashboard.** A new card estimates revenue/day, power cost/day,

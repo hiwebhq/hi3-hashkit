@@ -64,6 +64,7 @@ class SettingsViewModel @Inject constructor(
         }
 
     fun setShowSoloCard(v: Boolean) = viewModelScope.launch { repo.setShowSoloCard(v) }
+    fun setShowProfitCard(v: Boolean) = viewModelScope.launch { repo.setShowProfitCard(v) }
     fun setThemeMode(v: hi3.hashkit.ui.theme.ThemeMode) = viewModelScope.launch { repo.setThemeMode(v) }
     fun setAppLockEnabled(v: Boolean) = viewModelScope.launch { repo.setAppLockEnabled(v) }
     fun setMmpEnabled(v: Boolean) = viewModelScope.launch { repo.setMmpEnabled(v) }
@@ -127,6 +128,10 @@ class SettingsViewModel @Inject constructor(
     fun setVrTempThreshold(v: Double) = viewModelScope.launch { repo.setVrTempThreshold(v) }
     fun setRejectRateThreshold(v: Double) = viewModelScope.launch { repo.setRejectRateThreshold(v) }
     fun setCooldownMinutes(v: Long) = viewModelScope.launch { repo.setCooldownMinutes(v) }
+    fun setWebhookType(v: hi3.hashkit.data.alerts.WebhookType) = viewModelScope.launch { repo.setWebhookType(v) }
+    fun setWebhookUrl(v: String) = viewModelScope.launch { repo.setWebhookUrl(v) }
+    fun setWebhookToken(v: String) = viewModelScope.launch { repo.setWebhookToken(v) }
+    fun setWebhookTarget(v: String) = viewModelScope.launch { repo.setWebhookTarget(v) }
     fun setUseFahrenheit(v: Boolean) = viewModelScope.launch { repo.setUseFahrenheit(v) }
     fun setElectricityRate(v: Double) = viewModelScope.launch { repo.setElectricityRate(v) }
     fun setCurrencyCode(v: String) = viewModelScope.launch { repo.setCurrencyCode(v.take(6)) }

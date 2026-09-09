@@ -88,5 +88,15 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <!-- Reboot / Acknowledge quick-actions on alert notifications. -->
+        <receiver
+            android:name=".data.alerts.AlertActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="hi3.hashkit.ACTION_ALERT_REBOOT" />
+                <action android:name="hi3.hashkit.ACTION_ALERT_ACK" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

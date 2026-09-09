@@ -56,8 +56,15 @@ Keystore** (AES‑256‑GCM, non-exportable key — same `KeystoreCrypto` as the
 plaintext is decrypted just-in-time only to authenticate a control request to that miner
 on the LAN, and is never logged, exported, or sent anywhere else.
 
+7. **Optional, off by default — alert webhook:** if you configure a push service (ntfy,
+   Gotify, Telegram, or a generic URL), an active alert triggers one HTTPS POST to **the
+   endpoint you specify**, containing the miner name, alert type and message — no
+   telemetry, addresses, or credentials. This is a deliberate outbound push to a
+   destination you choose (so, unlike miner traffic, it may be a public host); nothing is
+   sent while the push service is set to Off.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
-with any other server.
+with any other server unless you explicitly configure one of the opt-in integrations above.
 
 ## Permissions
 

@@ -292,9 +292,11 @@ fun DashboardScreen(
             item {
                 FleetSummary(state, fleetTrend, fleetWindow, viewModel::setFleetWindow, onClick = onFleet)
             }
-            state.profit?.let { profit ->
-                if (profit.revenuePerDay != null || profit.energyKwhPerDay != null) {
-                    item { ProfitCard(profit) }
+            if (state.settings.showProfitCard) {
+                state.profit?.let { profit ->
+                    if (profit.revenuePerDay != null || profit.energyKwhPerDay != null) {
+                        item { ProfitCard(profit) }
+                    }
                 }
             }
             if (state.settings.showSoloCard) {

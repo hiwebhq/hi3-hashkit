@@ -28,6 +28,9 @@ interface AlertDao {
     @Query("UPDATE alert_events SET acknowledged = 1 WHERE id = :id")
     suspend fun acknowledge(id: Long)
 
+    @Query("UPDATE alert_events SET acknowledged = 1 WHERE minerId = :minerId AND type = :type AND resolvedAtEpochMs IS NULL")
+    suspend fun acknowledgeOpen(minerId: Long, type: String)
+
     @Query("UPDATE alert_events SET acknowledged = 1")
     suspend fun acknowledgeAll()
 

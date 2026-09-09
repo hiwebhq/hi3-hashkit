@@ -21,6 +21,7 @@ import javax.inject.Singleton
 class AlertRepository @Inject constructor(
     private val alertDao: AlertDao,
     private val notifier: AlertNotifier,
+    private val webhookNotifier: WebhookNotifier,
 ) {
     private val json = Json { ignoreUnknownKeys = true }
     private val mapSerializer = MapSerializer(String.serializer(), Long.serializer())
@@ -59,6 +60,7 @@ class AlertRepository @Inject constructor(
                 val last = lastNotified[signal.type.name] ?: 0L
                 if (now - last >= thresholds.cooldownMs) {
                     notifier.notify(signal)
+                    webhookNotifier.send(signal)
                     lastNotified[signal.type.name] = now
                 }
             } else {
