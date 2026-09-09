@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.64.0
+
+- **Local web dashboard (Advanced).** The local server (formerly just Prometheus /metrics)
+  now also serves a **read-only HTML fleet dashboard** at `http://<device-ip>:<port>/` — a
+  self-contained, auto-refreshing page (fleet total + per-miner table) any browser or TV on
+  your LAN can open without the app. `/metrics` still serves the Prometheus format. Read-only,
+  no auth, LAN/tailnet only; runs while the app is open and the toggle is on.
+
 ## 0.63.0
 
 - **Pool & wallet address book.** Save the pools/wallets you use (name · stratum URL · port ·

@@ -219,11 +219,12 @@ fun SettingsScreen(
             }
 
             if (settings.advancedUnlocked) {
-                Section("PROMETHEUS METRICS (ADVANCED)") {
+                Section("LOCAL WEB SERVER (ADVANCED)") {
                     ToggleRow(
-                        "Expose /metrics endpoint",
-                        "Run a local Prometheus scrape endpoint so Grafana/Prometheus can " +
-                            "graph your fleet. Read-only, no auth — for a private LAN/tailnet only.",
+                        "Expose web dashboard + /metrics",
+                        "Run a local, read-only web server: an HTML fleet dashboard any browser " +
+                            "or TV on the LAN can open, plus a Prometheus /metrics endpoint for " +
+                            "Grafana. No auth — for a private LAN/tailnet only.",
                         settings.prometheusEnabled,
                     ) { viewModel.setPrometheusEnabled(it) }
                     if (settings.prometheusEnabled) {
@@ -231,8 +232,9 @@ fun SettingsScreen(
                             it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
                         }
                         Text(
-                            "Scrape http://<this-device-ip>:${settings.prometheusPort}/metrics while the " +
-                                "app is open. Serves only GET /metrics; exposes totals + per-miner gauges.",
+                            "While the app is open: dashboard at " +
+                                "http://<this-device-ip>:${settings.prometheusPort}/ and metrics at " +
+                                "/metrics. Read-only (GET only); exposes totals + per-miner data, no controls.",
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.textSecondary,
                         )

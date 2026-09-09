@@ -88,12 +88,13 @@ on the LAN, and is never logged, exported, or sent anywhere else.
    point it at a broker on your LAN/tailnet. Optional Home Assistant discovery publishes
    retained config topics so entities auto-appear.
 
-10. **Optional, off by default — Prometheus /metrics (Advanced):** if you enable it, the
-    app runs a tiny local HTTP server (on a port you choose, default 9184) that answers
-    **only** `GET /metrics` with the same aggregate/per-miner gauges shown in-app. It's
-    read-only, accepts no input beyond the request line, serves no files, and has no auth
-    (Prometheus scrapes are unauthenticated), so it is meant for a private LAN/tailnet only
-    — expose it no further. It runs only while the app is open and the toggle is on.
+10. **Optional, off by default — local web server (Advanced):** if you enable it, the app
+    runs a tiny local HTTP server (on a port you choose, default 9184) that answers **only**
+    `GET /` (a read-only HTML fleet dashboard) and `GET /metrics` (Prometheus format) with
+    the same aggregate/per-miner data shown in-app. It's read-only, accepts no input beyond
+    the request line, serves no files, exposes no controls, and has no auth, so it is meant
+    for a private LAN/tailnet only — expose it no further. It runs only while the app is open
+    and the toggle is on.
 
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server unless you explicitly configure one of the opt-in integrations above.

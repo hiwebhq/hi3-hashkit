@@ -72,20 +72,34 @@ class PrometheusServer @Inject constructor(
         val parts = requestLine.split(" ")
         val method = parts.getOrNull(0)
         val path = parts.getOrNull(1)?.substringBefore('?')
-        if (method == "GET" && (path == "/metrics" || path == "/")) {
-            val body = runCatching {
-                runBlocking {
-                    val miners = repository.observeMinerEntities().first()
-                        .map { repository.toDomain(it, Instant.now()) }
-                    MetricsFormatter.render(miners)
-                }
-            }.getOrDefault("# metrics unavailable\n")
-            respond(out, "200 OK", "text/plain; version=0.0.4; charset=utf-8", body)
-        } else {
-            respond(out, "404 Not Found", "text/plain; charset=utf-8", "Not found. Try GET /metrics\n")
+        if (method != "GET") {
+            respond(out, "404 Not Found", "text/plain; charset=utf-8", "Not found.\n")
+            out.flush()
+            return
+        }
+        when (path) {
+            "/metrics" -> {
+                val body = runCatching {
+                    runBlocking { MetricsFormatter.render(currentMiners()) }
+                }.getOrDefault("# metrics unavailable\n")
+                respond(out, "200 OK", "text/plain; version=0.0.4; charset=utf-8", body)
+            }
+            "/", "/dashboard", "/index.html" -> {
+                val body = runCatching {
+                    runBlocking { HtmlDashboard.render(currentMiners()) }
+                }.getOrDefault("<html><body>dashboard unavailable</body></html>")
+                respond(out, "200 OK", "text/html; charset=utf-8", body)
+            }
+            else -> respond(
+                out, "404 Not Found", "text/plain; charset=utf-8",
+                "Not found. Try GET / (dashboard) or /metrics\n",
+            )
         }
         out.flush()
     }
+
+    private suspend fun currentMiners() =
+        repository.observeMinerEntities().first().map { repository.toDomain(it, Instant.now()) }
 
     private fun respond(out: java.io.OutputStream, status: String, contentType: String, body: String) {
         val bytes = body.toByteArray(Charsets.UTF_8)
