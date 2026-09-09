@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.60.0
+
+- **Sortable fleet table view.** A new dense, spreadsheet-style list (Dashboard menu →
+  Fleet table): name · IP · model · hashrate · temp · fan · pool · uptime · J/TH, with
+  tap-to-sort columns (IP sorts numerically) and a filter box. Tap a row to open the miner.
+
 ## 0.59.0
 
 - **Real wall-power from metering smart plugs.** If a miner doesn't report its own power

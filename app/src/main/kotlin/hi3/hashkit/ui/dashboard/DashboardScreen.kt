@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CurrencyBitcoin
@@ -95,6 +96,7 @@ fun DashboardScreen(
     onLeaderboard: () -> Unit,
     onRack: () -> Unit,
     onWall: () -> Unit,
+    onTable: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -220,6 +222,11 @@ fun DashboardScreen(
                                 text = { Text("Rack & site") },
                                 leadingIcon = { Icon(Icons.Filled.GridView, contentDescription = null) },
                                 onClick = { menuOpen = false; onRack() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Fleet table") },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+                                onClick = { menuOpen = false; onTable() },
                             )
                             DropdownMenuItem(
                                 text = { Text("Wall / TV mode") },
