@@ -119,6 +119,33 @@ fun SettingsScreen(
                 }
             }
 
+            Section("QUIET HOURS & DIGEST") {
+                ToggleRow(
+                    "Quiet hours",
+                    "Suppress alert notifications during a nightly window. Alerts are still " +
+                        "recorded and appear in the daily digest.",
+                    settings.quietHoursEnabled,
+                ) { viewModel.setQuietHoursEnabled(it) }
+                if (settings.quietHoursEnabled) {
+                    NumberRow("Quiet from (HH:MM)", minutesToHhMm(settings.quietStartMinute)) {
+                        hhMmToMinutes(it)?.let { m -> viewModel.setQuietStartMinute(m) }
+                    }
+                    NumberRow("Quiet until (HH:MM)", minutesToHhMm(settings.quietEndMinute)) {
+                        hhMmToMinutes(it)?.let { m -> viewModel.setQuietEndMinute(m) }
+                    }
+                }
+                ToggleRow(
+                    "Daily digest",
+                    "One summary notification per day of the last 24h of alerts.",
+                    settings.digestEnabled,
+                ) { viewModel.setDigestEnabled(it) }
+                if (settings.digestEnabled) {
+                    NumberRow("Digest time (hour, 0–23)", settings.digestHour.toString()) {
+                        it.toIntOrNull()?.let { v -> viewModel.setDigestHour(v) }
+                    }
+                }
+            }
+
             Section("PUSH (WEBHOOK)") {
                 Text(
                     "Mirror alerts to your own push service so they reach you when the app is " +
@@ -543,6 +570,16 @@ private fun Section(title: String, content: @Composable () -> Unit) {
             content()
         }
     }
+}
+
+private fun minutesToHhMm(min: Int): String = "%02d:%02d".format(min / 60, min % 60)
+
+private fun hhMmToMinutes(text: String): Int? {
+    val parts = text.split(":")
+    val h = parts.getOrNull(0)?.trim()?.toIntOrNull() ?: return null
+    val m = parts.getOrNull(1)?.trim()?.toIntOrNull() ?: return null
+    if (h !in 0..23 || m !in 0..59) return null
+    return h * 60 + m
 }
 
 /** Six selectable accent swatches; the current one gets a ring. */

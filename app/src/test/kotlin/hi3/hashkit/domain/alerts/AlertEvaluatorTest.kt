@@ -115,4 +115,24 @@ class AlertEvaluatorTest {
         )
         assertTrue(signals.any { it.type == AlertType.FAN_STOPPED && it.active })
     }
+
+    @Test
+    fun `fallback pool raises pool disconnected and clears on reconnect`() {
+        var state = AlertEvaluator.PreviousState()
+        val onFallback = telemetry().copy(usingFallbackPool = true)
+
+        var signals = eval(onFallback, state)
+        assertTrue(signals.any { it.type == AlertType.POOL_DISCONNECTED && it.active })
+        state = AlertEvaluator.nextState(state, onFallback, signals)
+
+        // No duplicate while still on fallback.
+        signals = eval(onFallback, state)
+        assertTrue(signals.none { it.type == AlertType.POOL_DISCONNECTED })
+        state = AlertEvaluator.nextState(state, onFallback, signals)
+
+        // Back on primary -> recovery signal.
+        val primary = telemetry().copy(usingFallbackPool = false)
+        signals = eval(primary, state)
+        assertTrue(signals.any { it.type == AlertType.POOL_DISCONNECTED && !it.active })
+    }
 }

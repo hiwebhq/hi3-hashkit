@@ -129,6 +129,11 @@ class SettingsViewModel @Inject constructor(
     fun setVrTempThreshold(v: Double) = viewModelScope.launch { repo.setVrTempThreshold(v) }
     fun setRejectRateThreshold(v: Double) = viewModelScope.launch { repo.setRejectRateThreshold(v) }
     fun setCooldownMinutes(v: Long) = viewModelScope.launch { repo.setCooldownMinutes(v) }
+    fun setQuietHoursEnabled(v: Boolean) = viewModelScope.launch { repo.setQuietHoursEnabled(v) }
+    fun setQuietStartMinute(v: Int) = viewModelScope.launch { repo.setQuietStartMinute(v) }
+    fun setQuietEndMinute(v: Int) = viewModelScope.launch { repo.setQuietEndMinute(v) }
+    fun setDigestEnabled(v: Boolean) = viewModelScope.launch { repo.setDigestEnabled(v) }
+    fun setDigestHour(v: Int) = viewModelScope.launch { repo.setDigestHour(v) }
     fun setWebhookType(v: hi3.hashkit.data.alerts.WebhookType) = viewModelScope.launch { repo.setWebhookType(v) }
     fun setWebhookUrl(v: String) = viewModelScope.launch { repo.setWebhookUrl(v) }
     fun setWebhookToken(v: String) = viewModelScope.launch { repo.setWebhookToken(v) }

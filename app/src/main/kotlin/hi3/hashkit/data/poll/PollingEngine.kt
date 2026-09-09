@@ -36,10 +36,12 @@ class PollingEngine @Inject constructor(
     private val auditDao: hi3.hashkit.data.db.AuditDao,
     private val remediationEngine: hi3.hashkit.data.remediation.RemediationEngine,
     private val wearSyncManager: hi3.hashkit.data.wear.WearSyncManager,
+    private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
     private val lastPrune = AtomicLong(0)
+    private val lastAnomalyScan = AtomicLong(0)
 
     /** Miners whose plug we've already cut this over-temp episode (avoids repeated commands). */
     private val cutMiners = java.util.Collections.synchronizedSet(mutableSetOf<Long>())
@@ -159,7 +161,47 @@ class PollingEngine @Inject constructor(
             wearSyncManager.publishFleetSummary(domain)
         }
         runCatching { scheduleEngine.runDueSchedules() }
+        if (settings.alertsEnabled) {
+            runCatching { scanTrendsAndFirmware() }
+            runCatching { alertRepository.maybeSendDigest() }
+        }
         pruneIfDue(settings.retentionDays)
+    }
+
+    /**
+     * Throttled (~15 min) background scan for gradual trends (statistical anomalies) and
+     * available firmware updates — too costly to run every poll, and both are slow signals.
+     */
+    private suspend fun scanTrendsAndFirmware() {
+        val now = System.currentTimeMillis()
+        val last = lastAnomalyScan.get()
+        if (now - last < 15 * 60_000L) return
+        if (!lastAnomalyScan.compareAndSet(last, now)) return
+
+        runCatching { firmwareChecker.refreshIfEnabled() }
+        val latest = firmwareChecker.axeOs.value?.tag
+        val miners = repository.observeMinerEntities().first().filter { !it.isDemo && !it.alertsMuted }
+        for (entity in miners) {
+            // Gradual-trend anomalies over the last ~3h of history.
+            runCatching {
+                val history = repository.observeTelemetrySince(entity.id, now - 3 * 3_600_000L).first()
+                alertRepository.processAnomalies(entity.id, entity.name, history)
+            }
+            // Firmware update available (AxeOS family only), once per day per miner.
+            if (latest != null &&
+                hi3.hashkit.integrations.update.FirmwareUpdateChecker.isAxeOsFamily(entity.firmwareFamily) &&
+                hi3.hashkit.integrations.update.FirmwareUpdateChecker.isNewer(latest, entity.firmwareVersion)
+            ) {
+                runCatching {
+                    alertRepository.raiseEvent(
+                        entity.id, entity.name,
+                        hi3.hashkit.domain.alerts.AlertType.FIRMWARE_UPDATE_AVAILABLE,
+                        "${entity.name}: firmware $latest is available (running ${entity.firmwareVersion ?: "unknown"}).",
+                        cooldownMs = 24 * 3_600_000L,
+                    )
+                }
+            }
+        }
     }
 
     /**
@@ -187,7 +229,19 @@ class PollingEngine @Inject constructor(
                 )
             )
         }
-        if (!ok) cutMiners.remove(entity.id) // let it retry next cycle if the command failed
+        if (!ok) {
+            cutMiners.remove(entity.id) // let it retry next cycle if the command failed
+        } else {
+            runCatching {
+                alertRepository.raiseEvent(
+                    entity.id, entity.name,
+                    hi3.hashkit.domain.alerts.AlertType.PLUG_CUTOFF,
+                    "${entity.name}: over-temp cutoff switched its smart plug OFF at ${temp.toInt()}°C " +
+                        "(limit ${cutoff.toInt()}°C). Power stays off until you turn it back on.",
+                    cooldownMs = 10 * 60_000L,
+                )
+            }
+        }
     }
 
     /** Maintenance: downsample completed hours + prune, at most once per 6h of use. */

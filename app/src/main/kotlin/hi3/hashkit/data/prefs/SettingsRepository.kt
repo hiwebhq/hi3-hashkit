@@ -87,6 +87,14 @@ data class AppSettings(
     val webhookUrl: String = "",
     val webhookToken: String = "",
     val webhookTarget: String = "",
+    /** Quiet hours: suppress alert notifications (events are still recorded) in a daily window. */
+    val quietHoursEnabled: Boolean = false,
+    val quietStartMinute: Int = 22 * 60,
+    val quietEndMinute: Int = 7 * 60,
+    /** Daily digest: one summary notification of the last 24h of alerts, at [digestHour]. */
+    val digestEnabled: Boolean = false,
+    val digestHour: Int = 8,
+    val lastDigestSentEpochMs: Long = 0,
     /**
      * Advanced-feature license gate. The stored unlock code (empty until entered).
      * [advancedUnlocked] is the derived flag features check. Defaults to unlocked so
@@ -145,6 +153,12 @@ class SettingsRepository @Inject constructor(
         val webhookUrl = stringPreferencesKey("webhook_url")
         val webhookToken = stringPreferencesKey("webhook_token")
         val webhookTarget = stringPreferencesKey("webhook_target")
+        val quietHoursEnabled = booleanPreferencesKey("quiet_hours_enabled")
+        val quietStartMinute = intPreferencesKey("quiet_start_minute")
+        val quietEndMinute = intPreferencesKey("quiet_end_minute")
+        val digestEnabled = booleanPreferencesKey("digest_enabled")
+        val digestHour = intPreferencesKey("digest_hour")
+        val lastDigestSentEpochMs = longPreferencesKey("last_digest_sent_ms")
         val advancedUnlockCode = stringPreferencesKey("advanced_unlock_code")
     }
 
@@ -207,6 +221,12 @@ class SettingsRepository @Inject constructor(
             webhookUrl = p[Keys.webhookUrl] ?: "",
             webhookToken = p[Keys.webhookToken] ?: "",
             webhookTarget = p[Keys.webhookTarget] ?: "",
+            quietHoursEnabled = p[Keys.quietHoursEnabled] ?: false,
+            quietStartMinute = (p[Keys.quietStartMinute] ?: 22 * 60).coerceIn(0, 1439),
+            quietEndMinute = (p[Keys.quietEndMinute] ?: 7 * 60).coerceIn(0, 1439),
+            digestEnabled = p[Keys.digestEnabled] ?: false,
+            digestHour = (p[Keys.digestHour] ?: 8).coerceIn(0, 23),
+            lastDigestSentEpochMs = p[Keys.lastDigestSentEpochMs] ?: 0,
             advancedUnlockCode = p[Keys.advancedUnlockCode] ?: "",
             advancedUnlocked = ADVANCED_FEATURES_FREE ||
                 hi3.hashkit.core.LicenseValidator.isValid(p[Keys.advancedUnlockCode]),
@@ -273,6 +293,12 @@ class SettingsRepository @Inject constructor(
 
     /** Store the advanced-feature unlock code (validated on read into [AppSettings.advancedUnlocked]). */
     suspend fun setAdvancedUnlockCode(value: String) = edit { it[Keys.advancedUnlockCode] = value.trim() }
+    suspend fun setQuietHoursEnabled(value: Boolean) = edit { it[Keys.quietHoursEnabled] = value }
+    suspend fun setQuietStartMinute(value: Int) = edit { it[Keys.quietStartMinute] = value.coerceIn(0, 1439) }
+    suspend fun setQuietEndMinute(value: Int) = edit { it[Keys.quietEndMinute] = value.coerceIn(0, 1439) }
+    suspend fun setDigestEnabled(value: Boolean) = edit { it[Keys.digestEnabled] = value }
+    suspend fun setDigestHour(value: Int) = edit { it[Keys.digestHour] = value.coerceIn(0, 23) }
+    suspend fun setLastDigestSent(value: Long) = edit { it[Keys.lastDigestSentEpochMs] = value }
 
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit { block(it) }

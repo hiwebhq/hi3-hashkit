@@ -32,6 +32,7 @@ class AlertNotifier @Inject constructor(
             CHANNEL_SHARES to "Rejected shares",
             CHANNEL_STATUS to "Status changes",
             CHANNEL_RECOVERY to "Recoveries",
+            CHANNEL_DIGEST to "Daily digest",
         ).forEach { (id, name) ->
             manager.createNotificationChannel(
                 NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
@@ -82,6 +83,25 @@ class AlertNotifier @Inject constructor(
         NotificationManagerCompat.from(context).notify(id, builder.build())
     }
 
+    /** A single daily-digest notification summarizing the last 24h of alerts. */
+    fun notifyDigest(title: String, body: String) {
+        if (!canNotify()) return
+        val intent = PendingIntent.getActivity(
+            context,
+            0,
+            Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val builder = NotificationCompat.Builder(context, CHANNEL_DIGEST)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(body.lineSequence().firstOrNull() ?: body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setContentIntent(intent)
+            .setAutoCancel(true)
+        NotificationManagerCompat.from(context).notify(DIGEST_NOTIFICATION_ID, builder.build())
+    }
+
     private fun actionIntent(signal: AlertSignal, notificationId: Int, action: String): PendingIntent {
         val intent = Intent(context, AlertActionReceiver::class.java).apply {
             this.action = action
@@ -104,5 +124,7 @@ class AlertNotifier @Inject constructor(
         const val CHANNEL_SHARES = "alerts_shares"
         const val CHANNEL_STATUS = "alerts_status"
         const val CHANNEL_RECOVERY = "alerts_recovery"
+        const val CHANNEL_DIGEST = "alerts_digest"
+        const val DIGEST_NOTIFICATION_ID = 424242
     }
 }

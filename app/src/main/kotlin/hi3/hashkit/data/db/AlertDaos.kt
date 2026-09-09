@@ -40,6 +40,9 @@ interface AlertDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertState(state: AlertStateEntity)
 
+    @Query("SELECT * FROM alert_events WHERE raisedAtEpochMs >= :sinceEpochMs ORDER BY raisedAtEpochMs DESC")
+    suspend fun eventsSince(sinceEpochMs: Long): List<AlertEventEntity>
+
     @Query("DELETE FROM alert_events WHERE raisedAtEpochMs < :beforeEpochMs")
     suspend fun pruneBefore(beforeEpochMs: Long)
 }

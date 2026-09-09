@@ -24,15 +24,15 @@ data class AlertEventEntity(
 @Entity(tableName = "alert_states")
 data class AlertStateEntity(
     @PrimaryKey val minerId: Long,
-    val consecutiveFailures: Int,
-    val wasOffline: Boolean,
-    val previousUptimeS: Long?,
-    val previousPoolUrl: String?,
-    val previousBestDifficulty: Double?,
+    val consecutiveFailures: Int = 0,
+    val wasOffline: Boolean = false,
+    val previousUptimeS: Long? = null,
+    val previousPoolUrl: String? = null,
+    val previousBestDifficulty: Double? = null,
     /** CSV of active AlertType names. */
-    val activeTypesCsv: String,
+    val activeTypesCsv: String = "",
     /** JSON map of AlertType -> last-notified epoch ms, for cooldowns. */
-    val lastNotifiedJson: String,
+    val lastNotifiedJson: String = "{}",
 )
 
 /** Local audit trail of every control action the app performs. */

@@ -13,6 +13,14 @@ enum class AlertType {
     UNEXPECTED_RESTART,
     POOL_CHANGED,
     NEW_BEST_DIFFICULTY,
+    /** Primary pool unreachable — the miner fell back to a backup pool. */
+    POOL_DISCONNECTED,
+    /** Statistical trend (hashrate drift / rising reject rate) from AnomalyDetector. */
+    PERFORMANCE_ANOMALY,
+    /** The over-temp smart-plug safety cutoff switched a miner's plug off. */
+    PLUG_CUTOFF,
+    /** A newer firmware release is available for this miner. */
+    FIRMWARE_UPDATE_AVAILABLE,
 }
 
 /** Global alert thresholds; per-miner values override via [AlertOverrides]. */
@@ -147,6 +155,17 @@ object AlertEvaluator {
                     ?: "$minerName fans are spinning again.",
             )
 
+            // Primary pool unreachable: the miner reports it's running on its fallback pool.
+            telemetry.usingFallbackPool?.let { onFallback ->
+                condition(
+                    AlertType.POOL_DISCONNECTED,
+                    active = onFallback,
+                    message = if (onFallback)
+                        "$minerName lost its primary pool and is mining on a fallback."
+                    else "$minerName reconnected to its primary pool.",
+                )
+            }
+
             val accepted = telemetry.sharesAccepted
             val rejected = telemetry.sharesRejected
             if (accepted != null && rejected != null && accepted + rejected > 100) {
@@ -218,5 +237,6 @@ object AlertEvaluator {
         AlertType.VR_OVER_TEMP,
         AlertType.FAN_STOPPED,
         AlertType.REJECT_RATE_HIGH,
+        AlertType.POOL_DISCONNECTED,
     )
 }

@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.52.0
+
+Wave B — alerting:
+
+- **Quiet hours.** Suppress alert notifications during a nightly window (Settings → Quiet
+  hours & digest). Alerts are still recorded and show in the app and the digest — only the
+  system/webhook notification is held. Window can wrap past midnight.
+- **Daily digest.** One summary notification per day (at your chosen hour) of the last 24h
+  of alerts, grouped by type, with an unresolved count.
+- **New alert types:**
+  - **Pool disconnected** — the miner fell back to a backup pool (primary stratum
+    unreachable); clears on reconnect.
+  - **Plug cutoff triggered** — the over-temp safety cutoff switched a miner's smart plug
+    off (with the temp and limit).
+  - **Firmware update available** — a newer AxeOS release exists for a Bitaxe-family miner
+    (checked at most daily; uses the opt-in GitHub release feed).
+  - **Performance anomaly** — the statistical detector from Wave A now raises an alert on
+    sustained hashrate drift or a rising reject rate, scanned ~every 15 min in the
+    background.
+
 ## 0.51.0
 
 Wave A — telemetry insights:
