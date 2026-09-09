@@ -47,6 +47,7 @@ object AppModule {
                 HashkitDatabase.MIGRATION_8_9,
                 HashkitDatabase.MIGRATION_9_10,
                 HashkitDatabase.MIGRATION_10_11,
+                HashkitDatabase.MIGRATION_11_12,
             )
             .build()
 
@@ -70,6 +71,9 @@ object AppModule {
 
     @Provides
     fun farmDao(db: HashkitDatabase): hi3.hashkit.data.db.FarmDao = db.farmDao()
+
+    @Provides
+    fun maintenanceDao(db: HashkitDatabase): hi3.hashkit.data.db.MaintenanceDao = db.maintenanceDao()
 }
 
 @Module

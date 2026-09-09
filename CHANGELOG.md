@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.54.0
+
+Wave D — fleet & fun:
+
+- **Maintenance log.** Per-miner timestamped notes (repastes, fan swaps, cleanings) on the
+  detail screen, stored locally and included in backups. (Photo attachment is a planned
+  follow-up.)
+- **mDNS discovery.** The network screen can now browse mDNS/DNS-SD for miner web UIs and
+  probe whatever private addresses turn up — no subnet typing required.
+- **Panic — whole fleet.** A guarded dashboard action to Pause-all or Reboot-all across
+  every miner at once, routed through the normal plan → confirm → execute flow (shows
+  supported/skipped first).
+- **Bitcoin network card.** A dashboard card with the current block height, block subsidy,
+  next difficulty-adjustment countdown (blocks/ETA/estimated change), and next-halving
+  countdown — from the opt-in mempool.space feed.
+- **Solo block-found celebration.** If a miner's best share meets the network target (a
+  solved block!), the app raises a celebratory alert.
+
+Pool payout tracking was dropped from the wishlist — it doesn't apply to a solo pool (Hi3 /
+Public Pool), where a found block pays the full reward straight to your address.
+
 ## 0.53.0
 
 Wave C (part 1) — integrations:

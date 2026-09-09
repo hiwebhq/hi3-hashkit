@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.discovery.AutoScanManager
+import hi3.hashkit.discovery.NsdDiscoverer
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -17,9 +19,24 @@ import javax.inject.Inject
 class NetworkScanViewModel @Inject constructor(
     private val autoScan: AutoScanManager,
     private val settingsRepository: SettingsRepository,
+    private val nsdDiscoverer: NsdDiscoverer,
 ) : ViewModel() {
 
     val state: StateFlow<AutoScanManager.State> = autoScan.state
+
+    /** True while an mDNS discovery pass is running (before the host scan starts). */
+    val mdnsRunning = MutableStateFlow(false)
+
+    /** Browse mDNS for miner web UIs, then probe whatever private addresses turn up. */
+    fun discoverMdns() {
+        if (mdnsRunning.value || state.value.running) return
+        viewModelScope.launch {
+            mdnsRunning.value = true
+            val hosts = runCatching { nsdDiscoverer.discover() }.getOrDefault(emptyList())
+            mdnsRunning.value = false
+            autoScan.startWithHosts(hosts, sourceLabel = "mDNS")
+        }
+    }
 
     val autoScanOnStartup: StateFlow<Boolean> =
         settingsRepository.settings

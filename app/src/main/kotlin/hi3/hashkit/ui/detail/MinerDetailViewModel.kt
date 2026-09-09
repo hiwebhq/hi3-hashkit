@@ -67,11 +67,39 @@ class MinerDetailViewModel @Inject constructor(
     private val pollingEngine: PollingEngine,
     private val exporter: hi3.hashkit.data.export.Exporter,
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
+    private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
     alertDao: AlertDao,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
+
+    /** User-written maintenance notes for this miner, newest first. */
+    val maintenanceNotes: StateFlow<List<hi3.hashkit.data.db.MaintenanceNoteEntity>> =
+        maintenanceDao.observeForMiner(minerId)
+            .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun addMaintenanceNote(text: String, photoPath: String? = null) {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty() && photoPath == null) return
+        viewModelScope.launch {
+            maintenanceDao.insert(
+                hi3.hashkit.data.db.MaintenanceNoteEntity(
+                    minerId = minerId,
+                    atEpochMs = System.currentTimeMillis(),
+                    text = trimmed,
+                    photoPath = photoPath,
+                )
+            )
+        }
+    }
+
+    fun deleteMaintenanceNote(note: hi3.hashkit.data.db.MaintenanceNoteEntity) {
+        viewModelScope.launch {
+            maintenanceDao.delete(note)
+            note.photoPath?.let { runCatching { java.io.File(it).delete() } }
+        }
+    }
 
     /** Current smart-plug config, surfaced to the detail UI (null type = disabled). */
     val plug: StateFlow<PlugConfig> = repository.observeMinerEntity(minerId)

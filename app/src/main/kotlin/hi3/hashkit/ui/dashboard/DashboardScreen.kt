@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.filled.Warehouse
 import androidx.compose.material.icons.filled.Wifi
@@ -107,6 +108,7 @@ fun DashboardScreen(
     val mmpState by viewModel.mmpState.collectAsStateWithLifecycle()
     val fleetTrend by viewModel.fleetTrend.collectAsStateWithLifecycle()
     val fleetWindow by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
+    val networkEpoch by viewModel.networkEpoch.collectAsStateWithLifecycle()
     // Count of AxeOS miners behind the latest release; the banner item only exists when > 0
     // so a disabled banner doesn't add phantom LazyColumn spacing.
     val firmwareOutdated = firmwareLatest?.let { latest ->
@@ -120,6 +122,7 @@ fun DashboardScreen(
     }
     var confirmExit by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     var menuOpen by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var panicOpen by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
     rescanMessage?.let { msg ->
         val ctx = androidx.compose.ui.platform.LocalContext.current
@@ -270,6 +273,18 @@ fun DashboardScreen(
                                 leadingIcon = { Icon(Icons.Filled.Shield, contentDescription = null) },
                                 onClick = { menuOpen = false; onPrivacy() },
                             )
+                            androidx.compose.material3.HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text("Panic — whole fleet", color = HiBrand.statusOffline) },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Filled.Warning,
+                                        contentDescription = null,
+                                        tint = HiBrand.statusOffline,
+                                    )
+                                },
+                                onClick = { menuOpen = false; panicOpen = true },
+                            )
                         }
                     }
                 },
@@ -321,6 +336,7 @@ fun DashboardScreen(
             if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
             }
+            networkEpoch?.let { epoch -> item { HalvingCountdownCard(epoch) } }
             if (poolState.enabled) {
                 item { Hi3PoolCard(poolState) }
             }
@@ -477,6 +493,36 @@ fun DashboardScreen(
             },
             dismissButton = {
                 androidx.compose.material3.TextButton(onClick = { confirmExit = false }) { Text("Cancel") }
+            },
+        )
+    }
+
+    if (panicOpen) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { panicOpen = false },
+            title = { Text("Panic — whole fleet") },
+            text = {
+                Text(
+                    "Apply an action to every miner at once. You'll see which are supported " +
+                        "and get a final confirmation before anything is sent.\n\n" +
+                        "• Pause all — stop hashing on every miner that supports it (reversible).\n" +
+                        "• Reboot all — restart every miner that supports reboot.",
+                )
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    panicOpen = false
+                    viewModel.planPanic(hi3.hashkit.data.repo.BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.PAUSE))
+                }) { Text("Pause all") }
+            },
+            dismissButton = {
+                Row {
+                    androidx.compose.material3.TextButton(onClick = {
+                        panicOpen = false
+                        viewModel.planPanic(hi3.hashkit.data.repo.BulkAction.Reboot)
+                    }) { Text("Reboot all", color = HiBrand.statusOffline) }
+                    androidx.compose.material3.TextButton(onClick = { panicOpen = false }) { Text("Cancel") }
+                }
             },
         )
     }
@@ -1044,6 +1090,47 @@ private fun SoloCard(solo: hi3.hashkit.ui.dashboard.SoloSummary) {
             )
             Text(
                 "Statistical expectation, not a prediction — each share is an independent lottery ticket.",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HalvingCountdownCard(epoch: hi3.hashkit.data.repo.DifficultyRepository.NetworkEpoch) {
+    val math = hi3.hashkit.domain.model.HalvingMath
+    val blocksToHalving = math.blocksToHalving(epoch.currentHeight)
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("BITCOIN NETWORK", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                Metric("Block", "%,d".format(epoch.currentHeight))
+                Metric("Subsidy", "%.3f BTC".format(math.subsidyBtc(epoch.currentHeight)))
+            }
+            Spacer(Modifier.height(10.dp))
+            val changeSign = if (epoch.difficultyChangePercent >= 0) "+" else ""
+            Text(
+                "Next difficulty adjustment: ${epoch.remainingBlocks} blocks " +
+                    "(~${math.humanDuration(epoch.remainingTimeMs)}), " +
+                    "est. $changeSign${"%.1f".format(epoch.difficultyChangePercent)}%",
+                style = MaterialTheme.typography.bodySmall,
+                color = HiBrand.textPrimary,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "Next halving: block ${"%,d".format(math.nextHalvingBlock(epoch.currentHeight))} " +
+                    "— $blocksToHalving blocks (~${math.humanDuration(math.timeToHalvingMs(epoch.currentHeight))})",
+                style = MaterialTheme.typography.bodySmall,
+                color = HiBrand.textPrimary,
+            )
+            Text(
+                "Estimates from mempool.space (opt-in). ~10-min blocks; actual timing varies.",
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )

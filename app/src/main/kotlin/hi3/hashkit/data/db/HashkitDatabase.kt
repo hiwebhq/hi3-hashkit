@@ -17,8 +17,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ScheduleEntity::class,
         TelemetryHourlyEntity::class,
         FarmEntity::class,
+        MaintenanceNoteEntity::class,
     ],
-    version = 11,
+    version = 12,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -29,6 +30,7 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun scheduleDao(): ScheduleDao
     abstract fun hourlyDao(): HourlyDao
     abstract fun farmDao(): FarmDao
+    abstract fun maintenanceDao(): MaintenanceDao
 
     companion object {
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
@@ -148,6 +150,22 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `perChainJson` TEXT DEFAULT NULL")
+            }
+        }
+
+        /** v11 -> v12: maintenance_notes table (additive). */
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `maintenance_notes` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`minerId` INTEGER NOT NULL, `atEpochMs` INTEGER NOT NULL, " +
+                        "`text` TEXT NOT NULL, `photoPath` TEXT)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_maintenance_notes_minerId_atEpochMs` " +
+                        "ON `maintenance_notes` (`minerId`, `atEpochMs`)"
+                )
             }
         }
 

@@ -111,6 +111,9 @@ class DashboardViewModel @Inject constructor(
     val poolState = hi3PoolRepository.state
     val mmpState = mmpRepository.state
 
+    /** Chain epoch (halving + difficulty-adjustment countdown); null until fetched. */
+    val networkEpoch = difficultyRepository.networkEpoch
+
     private val fleetWindow = kotlinx.coroutines.flow.MutableStateFlow(6 * 3_600_000L)
     val fleetWindowMs: StateFlow<Long> = fleetWindow
 
@@ -145,6 +148,7 @@ class DashboardViewModel @Inject constructor(
         // Both run only when the user has opted in; otherwise they no-op locally.
         viewModelScope.launch { difficultyRepository.refreshIfEnabled() }
         viewModelScope.launch { difficultyRepository.refreshPriceIfEnabled() }
+        viewModelScope.launch { difficultyRepository.refreshEpochIfEnabled() }
         viewModelScope.launch { firmwareChecker.refreshIfEnabled() }
         viewModelScope.launch {
             while (true) {
@@ -245,6 +249,18 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val entities = repository.observeMinerEntities().first()
                 .filter { it.id in selection.value }
+            bulkFlow.value = BulkFlowState(plan = fleetControl.plan(action, entities))
+        }
+    }
+
+    /**
+     * Plan a fleet-wide "panic" action against every real miner (not just the selection),
+     * routing through the same plan→confirm→execute flow so it still shows supported/skipped
+     * and requires an explicit confirm before anything runs.
+     */
+    fun planPanic(action: hi3.hashkit.data.repo.BulkAction) {
+        viewModelScope.launch {
+            val entities = repository.observeMinerEntities().first().filter { !it.isDemo }
             bulkFlow.value = BulkFlowState(plan = fleetControl.plan(action, entities))
         }
     }

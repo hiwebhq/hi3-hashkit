@@ -88,6 +88,21 @@ class AlertRepository @Inject constructor(
             }
         }
 
+        // Solo block-found celebration: a best-share difficulty that meets the network
+        // target means this miner (very likely) solved a block. Rare and momentous.
+        val netDiff = telemetry.networkDifficulty?.takeIf { it > 0 }
+            ?: settingsRepository.current().networkDifficulty.takeIf { it > 0 }
+        val best = telemetry.bestDifficulty
+        if (netDiff != null && best != null && best >= netDiff) {
+            raiseEvent(
+                minerId, minerName, AlertType.BLOCK_FOUND,
+                "🎉 $minerName may have found a BLOCK — best share ${
+                    hi3.hashkit.core.Units.formatDifficulty(best)
+                } met the network target ${hi3.hashkit.core.Units.formatDifficulty(netDiff)}!",
+                cooldownMs = 12 * 3_600_000L,
+            )
+        }
+
         val next = AlertEvaluator.nextState(previous, telemetry, signals)
         alertDao.upsertState(
             AlertStateEntity(

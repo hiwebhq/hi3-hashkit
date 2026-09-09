@@ -21,6 +21,8 @@ enum class AlertType {
     PLUG_CUTOFF,
     /** A newer firmware release is available for this miner. */
     FIRMWARE_UPDATE_AVAILABLE,
+    /** A share met the network target — a block was (very likely) found. Celebrate! */
+    BLOCK_FOUND,
 }
 
 /** Global alert thresholds; per-miner values override via [AlertOverrides]. */

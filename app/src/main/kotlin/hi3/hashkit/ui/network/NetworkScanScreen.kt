@@ -164,6 +164,14 @@ fun NetworkScanScreen(
                         Spacer(Modifier.size(6.dp))
                         Text("Start scan")
                     }
+                    val mdnsRunning by viewModel.mdnsRunning.collectAsStateWithLifecycle()
+                    OutlinedButton(
+                        onClick = { viewModel.discoverMdns() },
+                        enabled = !mdnsRunning,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(if (mdnsRunning) "Discovering…" else "mDNS discover")
+                    }
                 }
             }
 

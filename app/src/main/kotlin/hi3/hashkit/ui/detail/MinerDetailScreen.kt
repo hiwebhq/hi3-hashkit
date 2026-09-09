@@ -4,6 +4,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -254,6 +256,57 @@ fun MinerDetailScreen(
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
+                }
+            }
+
+            SectionCard("MAINTENANCE LOG") {
+                val notes by viewModel.maintenanceNotes.collectAsStateWithLifecycle()
+                var noteText by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = noteText,
+                    onValueChange = { noteText = it },
+                    label = { Text("Add a note (e.g. \"repasted\", \"replaced fan 2\")") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                androidx.compose.material3.TextButton(
+                    enabled = noteText.isNotBlank(),
+                    onClick = { viewModel.addMaintenanceNote(noteText); noteText = "" },
+                ) { Text("Add note") }
+                if (notes.isEmpty()) {
+                    Text(
+                        "No maintenance notes yet. Log repastes, fan swaps, cleanings — they " +
+                            "stay on this device and are included in a full backup.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                } else {
+                    notes.forEach { note ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top,
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                Text(note.text, style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    java.text.DateFormat.getDateTimeInstance(
+                                        java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT,
+                                    ).format(java.util.Date(note.atEpochMs)),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = HiBrand.textSecondary,
+                                )
+                            }
+                            androidx.compose.material3.IconButton(
+                                onClick = { viewModel.deleteMaintenanceNote(note) },
+                            ) {
+                                Icon(
+                                    androidx.compose.material.icons.Icons.Filled.Delete,
+                                    contentDescription = "Delete note",
+                                    tint = HiBrand.statusOffline,
+                                )
+                            }
+                        }
+                    }
                 }
             }
 

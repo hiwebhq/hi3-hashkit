@@ -110,8 +110,30 @@ class AutoScanManager @Inject constructor(
             )
             return
         }
+        _state.value = _state.value.copy(cidr = target)
+        runScan(hosts, assignFarmId, farmName)
+    }
+
+    /**
+     * Scan a specific set of hosts (e.g. addresses discovered via mDNS) with the same
+     * probe pipeline and result handling as a subnet scan.
+     */
+    fun startWithHosts(hosts: List<String>, sourceLabel: String = "mDNS") {
+        if (_state.value.running) return
+        if (hosts.isEmpty()) {
+            _state.value = _state.value.copy(message = "$sourceLabel found no candidate hosts.")
+            return
+        }
+        runScan(hosts, assignFarmId = null, farmName = null, sourceLabel = sourceLabel)
+    }
+
+    private fun runScan(
+        hosts: List<String>,
+        assignFarmId: Long?,
+        farmName: String?,
+        sourceLabel: String? = null,
+    ) {
         _state.value = _state.value.copy(
-            cidr = target,
             running = true, message = null, scanned = 0, total = hosts.size, found = 0,
             farmId = assignFarmId, farmName = farmName,
         )
@@ -138,9 +160,10 @@ class AutoScanManager @Inject constructor(
                         _state.value = _state.value.copy(found = _state.value.found + 1)
                     }
                     is ScanEvent.Finished -> {
+                        val via = sourceLabel?.let { " via $it" } ?: ""
                         _state.value = _state.value.copy(
                             running = false,
-                            message = "Found ${event.found} miner(s) across ${event.scanned} hosts.",
+                            message = "Found ${event.found} miner(s) across ${event.scanned} hosts$via.",
                             lastFinishedAtMs = System.currentTimeMillis(),
                         )
                         pollingEngine.pollAllOnce()
