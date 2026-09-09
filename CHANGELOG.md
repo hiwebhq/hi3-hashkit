@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.61.0
+
+- **Automation rules engine.** A new "if condition then action" builder (Dashboard menu →
+  Automation rules): **when** chip/VR temp above X, hashrate below X% of expected, reject
+  rate above X%, or miner offline — **then** pause / resume / reboot / plug off / plug on /
+  notify, on all miners or a target group, at most once per the rule's interval. Control
+  actions use the verified control path (skipped where unsupported); every fire is recorded.
+  Unifies what used to take separate schedules + remediation + alert settings.
+
 ## 0.60.0
 
 - **Sortable fleet table view.** A new dense, spreadsheet-style list (Dashboard menu →

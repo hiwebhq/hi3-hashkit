@@ -23,6 +23,8 @@ enum class AlertType {
     FIRMWARE_UPDATE_AVAILABLE,
     /** A share met the network target — a block was (very likely) found. Celebrate! */
     BLOCK_FOUND,
+    /** An automation rule fired (notify action, or logged alongside a control action). */
+    RULE_TRIGGERED,
 }
 
 /** Global alert thresholds; per-miner values override via [AlertOverrides]. */

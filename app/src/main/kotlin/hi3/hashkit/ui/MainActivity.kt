@@ -217,6 +217,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onRack = { nav.navigate("rack") },
                 onWall = { nav.navigate("wall") },
                 onTable = { nav.navigate("table") },
+                onRules = { nav.navigate("rules") },
                 onExit = onExit,
             )
         }
@@ -234,6 +235,9 @@ private fun AppNavHost(onExit: () -> Unit) {
         }
         composable("schedules") {
             hi3.hashkit.ui.schedules.SchedulesScreen(onBack = { nav.popBackStack() })
+        }
+        composable("rules") {
+            hi3.hashkit.ui.rules.RulesScreen(onBack = { nav.popBackStack() })
         }
         composable("rack") {
             hi3.hashkit.ui.rack.RackScreen(

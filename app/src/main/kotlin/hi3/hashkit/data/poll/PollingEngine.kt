@@ -39,6 +39,7 @@ class PollingEngine @Inject constructor(
     private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker,
     private val mqttPublisher: hi3.hashkit.integrations.mqtt.MqttPublisher,
     private val prometheusServer: hi3.hashkit.integrations.metrics.PrometheusServer,
+    private val ruleRunner: hi3.hashkit.data.rules.RuleRunner,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
@@ -172,6 +173,7 @@ class PollingEngine @Inject constructor(
             )
         }
         runCatching { scheduleEngine.runDueSchedules() }
+        runCatching { ruleRunner.runRules() }
         if (settings.alertsEnabled) {
             runCatching { scanTrendsAndFirmware() }
             runCatching { alertRepository.maybeSendDigest() }

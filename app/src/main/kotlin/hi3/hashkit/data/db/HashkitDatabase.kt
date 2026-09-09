@@ -18,8 +18,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         TelemetryHourlyEntity::class,
         FarmEntity::class,
         MaintenanceNoteEntity::class,
+        RuleEntity::class,
     ],
-    version = 12,
+    version = 13,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -31,6 +32,7 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun hourlyDao(): HourlyDao
     abstract fun farmDao(): FarmDao
     abstract fun maintenanceDao(): MaintenanceDao
+    abstract fun ruleDao(): RuleDao
 
     companion object {
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
@@ -150,6 +152,21 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `perChainJson` TEXT DEFAULT NULL")
+            }
+        }
+
+        /** v12 -> v13: rules table (additive). */
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `rules` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`enabled` INTEGER NOT NULL, `label` TEXT NOT NULL, " +
+                        "`conditionType` TEXT NOT NULL, `threshold` REAL, " +
+                        "`actionType` TEXT NOT NULL, `targetGroup` TEXT, " +
+                        "`minIntervalMinutes` INTEGER NOT NULL, " +
+                        "`lastFiredAtEpochMs` INTEGER, `lastResult` TEXT)"
+                )
             }
         }
 
