@@ -3,6 +3,7 @@ package hi3.hashkit.ui.schedules
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -221,10 +222,11 @@ private fun ScheduleEditorDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf(
                         "reboot" to "Restart", "set_pool" to "Pool", "set_fan" to "Fan",
                         "pause" to "Pause", "resume" to "Resume",
+                        "plug_off" to "Plug off", "plug_on" to "Plug on",
                     ).forEach { (key, text) ->
                         FilterChip(selected = action == key, onClick = { action = key }, label = { Text(text) })
                     }
@@ -260,10 +262,17 @@ private fun ScheduleEditorDialog(
                 }
                 OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all miners)") }, singleLine = true)
                 Spacer(Modifier.height(2.dp))
-                Text(
+                val hint = if (action == "plug_on" || action == "plug_off") {
+                    "Plug on/off switches each target miner's configured smart plug over the LAN. " +
+                        "Miners without a plug set up are skipped. Pair a nightly Plug off with a " +
+                        "morning Plug on for time-of-use power control; each run is recorded."
+                } else {
                     "Time-of-use: schedule Pause at your peak-rate start and Resume at the end " +
                         "(pause needs a device that supports it). Unsupported devices are skipped " +
-                        "with a reason; each run is recorded in the audit log.",
+                        "with a reason; each run is recorded in the audit log."
+                }
+                Text(
+                    hint,
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )

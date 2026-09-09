@@ -8,6 +8,8 @@ import hi3.hashkit.data.repo.FleetControl
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.adapter.ActionResult
 import hi3.hashkit.domain.adapter.FanControl
+import hi3.hashkit.integrations.plug.PlugType
+import hi3.hashkit.integrations.plug.SmartPlugClient
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.booleanOrNull
@@ -78,6 +80,10 @@ object ScheduleDueLogic {
             else -> null
         }
     }
+
+    /** Plug actions drive the miner's configured smart plug directly, not a miner control API. */
+    fun isPlugAction(schedule: ScheduleEntity): Boolean =
+        schedule.actionType == "plug_on" || schedule.actionType == "plug_off"
 }
 
 /**
@@ -90,12 +96,17 @@ class ScheduleEngine @Inject constructor(
     private val scheduleDao: ScheduleDao,
     private val minerRepository: MinerRepository,
     private val fleetControl: FleetControl,
+    private val smartPlugClient: SmartPlugClient,
 ) {
     suspend fun runDueSchedules() {
         val zone = ZoneId.systemDefault()
         val now = LocalDateTime.now(zone)
         for (schedule in scheduleDao.enabled()) {
             if (!ScheduleDueLogic.isDue(schedule, now, zone)) continue
+            if (ScheduleDueLogic.isPlugAction(schedule)) {
+                runPlugSchedule(schedule)
+                continue
+            }
             val action = ScheduleDueLogic.actionOf(schedule)
             if (action == null) {
                 scheduleDao.recordRun(schedule.id, System.currentTimeMillis(), "invalid action")
@@ -112,6 +123,31 @@ class ScheduleEngine @Inject constructor(
                 "$ok ok, $failed failed, ${plan.skipped.size} skipped",
             )
         }
+    }
+
+    /**
+     * Switch each target miner's configured smart plug on or off. Miners without a plug
+     * configured are skipped (counted, not failed). Turning power back on is normally a
+     * manual action, but a user-authored scheduled `plug_on` is an explicit opt-in.
+     */
+    private suspend fun runPlugSchedule(schedule: ScheduleEntity) {
+        val on = schedule.actionType == "plug_on"
+        val targets = resolveTargets(schedule)
+        var ok = 0
+        var failed = 0
+        var skipped = 0
+        for (entity in targets) {
+            val type = PlugType.fromName(entity.plugType)
+            if (type == null) { skipped++; continue }
+            val plug = SmartPlugClient.Plug(type, entity.plugHost, entity.plugOnUrl, entity.plugOffUrl)
+            val success = if (on) smartPlugClient.turnOn(plug) else smartPlugClient.turnOff(plug)
+            if (success) ok++ else failed++
+        }
+        scheduleDao.recordRun(
+            schedule.id,
+            System.currentTimeMillis(),
+            "plug ${if (on) "on" else "off"}: $ok ok, $failed failed, $skipped no-plug",
+        )
     }
 
     private suspend fun resolveTargets(schedule: ScheduleEntity): List<MinerEntity> {

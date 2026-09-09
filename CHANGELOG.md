@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.47.0
+
+- **Scheduled smart-plug on/off.** Schedules gained **Plug off** and **Plug on** actions
+  that switch each target miner's configured plug over the LAN — pair a night-off with a
+  morning-on for time-of-use power control. Miners without a plug are skipped; every run is
+  recorded. (A scheduled Plug on is the one path by which the app turns a plug back on on
+  its own — a deliberate opt-in; see docs/SECURITY.md.)
+- **Rack & site layout view.** A new screen arranges miners by their **Location**
+  (room / rack / shelf) with live per-tile status, hashrate and temperature, and a
+  per-location up/total + hashrate rollup.
+- **Wall / TV mode.** A full-screen, glanceable, read-only kiosk board for a spare
+  phone, tablet, or **Android TV** left on the shelf — big fleet total and per-location
+  tiles; keeps the screen awake while shown. The app now installs on Android TV
+  (leanback launcher, no touchscreen required).
+- **Advanced-features gate (scaffold).** Groundwork for a future licensing model: an
+  offline unlock-code check (Settings → Advanced features). **All advanced features remain
+  unlocked and free in this release** — nothing is locked; a later build can flip the
+  default to require a code.
+
 ## 0.46.0
 
 - **Push alerts to your own webhook.** Mirror active alerts to **ntfy, Gotify, Telegram,

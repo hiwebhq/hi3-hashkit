@@ -85,6 +85,14 @@ data class AppSettings(
     val webhookUrl: String = "",
     val webhookToken: String = "",
     val webhookTarget: String = "",
+    /**
+     * Advanced-feature license gate. The stored unlock code (empty until entered).
+     * [advancedUnlocked] is the derived flag features check. Defaults to unlocked so
+     * nothing is locked in this release; a future build flips the default to false and
+     * requires a valid code. See [hi3.hashkit.core.LicenseValidator].
+     */
+    val advancedUnlockCode: String = "",
+    val advancedUnlocked: Boolean = true,
 )
 
 @Singleton
@@ -134,6 +142,16 @@ class SettingsRepository @Inject constructor(
         val webhookUrl = stringPreferencesKey("webhook_url")
         val webhookToken = stringPreferencesKey("webhook_token")
         val webhookTarget = stringPreferencesKey("webhook_target")
+        val advancedUnlockCode = stringPreferencesKey("advanced_unlock_code")
+    }
+
+    companion object {
+        /**
+         * While true, advanced features stay unlocked for everyone regardless of code —
+         * the whole set ships free in this release. Flip to false in a future build to
+         * require a valid unlock code (see [hi3.hashkit.core.LicenseValidator]).
+         */
+        const val ADVANCED_FEATURES_FREE = true
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -185,6 +203,9 @@ class SettingsRepository @Inject constructor(
             webhookUrl = p[Keys.webhookUrl] ?: "",
             webhookToken = p[Keys.webhookToken] ?: "",
             webhookTarget = p[Keys.webhookTarget] ?: "",
+            advancedUnlockCode = p[Keys.advancedUnlockCode] ?: "",
+            advancedUnlocked = ADVANCED_FEATURES_FREE ||
+                hi3.hashkit.core.LicenseValidator.isValid(p[Keys.advancedUnlockCode]),
         )
     }
 
@@ -244,6 +265,9 @@ class SettingsRepository @Inject constructor(
     suspend fun setWebhookUrl(value: String) = edit { it[Keys.webhookUrl] = value.trim() }
     suspend fun setWebhookToken(value: String) = edit { it[Keys.webhookToken] = value.trim() }
     suspend fun setWebhookTarget(value: String) = edit { it[Keys.webhookTarget] = value.trim() }
+
+    /** Store the advanced-feature unlock code (validated on read into [AppSettings.advancedUnlocked]). */
+    suspend fun setAdvancedUnlockCode(value: String) = edit { it[Keys.advancedUnlockCode] = value.trim() }
 
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit { block(it) }

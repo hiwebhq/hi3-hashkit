@@ -32,7 +32,9 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Store
@@ -90,6 +92,8 @@ fun DashboardScreen(
     onPrivacy: () -> Unit,
     onFleet: () -> Unit,
     onLeaderboard: () -> Unit,
+    onRack: () -> Unit,
+    onWall: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -208,6 +212,16 @@ fun DashboardScreen(
                                 text = { Text("Schedules") },
                                 leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
                                 onClick = { menuOpen = false; onSchedules() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Rack & site") },
+                                leadingIcon = { Icon(Icons.Filled.GridView, contentDescription = null) },
+                                onClick = { menuOpen = false; onRack() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Wall / TV mode") },
+                                leadingIcon = { Icon(Icons.Filled.Tv, contentDescription = null) },
+                                onClick = { menuOpen = false; onWall() },
                             )
                             androidx.compose.material3.HorizontalDivider()
                             DropdownMenuItem(

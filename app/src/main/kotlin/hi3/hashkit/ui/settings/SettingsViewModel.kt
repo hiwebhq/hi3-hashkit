@@ -140,4 +140,5 @@ class SettingsViewModel @Inject constructor(
     fun setBtcPrice(v: Double) = viewModelScope.launch { repo.setBtcPrice(v) }
     fun setBtcPriceAutoFetch(v: Boolean) = viewModelScope.launch { repo.setBtcPriceAutoFetch(v) }
     fun setDemoMode(v: Boolean) = viewModelScope.launch { repo.setDemoMode(v) }
+    fun setAdvancedUnlockCode(v: String) = viewModelScope.launch { repo.setAdvancedUnlockCode(v) }
 }

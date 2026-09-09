@@ -214,6 +214,8 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onPrivacy = { nav.navigate("privacy") },
                 onFleet = { nav.navigate("fleet") },
                 onLeaderboard = { nav.navigate("leaderboard") },
+                onRack = { nav.navigate("rack") },
+                onWall = { nav.navigate("wall") },
                 onExit = onExit,
             )
         }
@@ -231,6 +233,15 @@ private fun AppNavHost(onExit: () -> Unit) {
         }
         composable("schedules") {
             hi3.hashkit.ui.schedules.SchedulesScreen(onBack = { nav.popBackStack() })
+        }
+        composable("rack") {
+            hi3.hashkit.ui.rack.RackScreen(
+                onBack = { nav.popBackStack() },
+                onMinerClick = { id -> nav.navigate("miner/$id") },
+            )
+        }
+        composable("wall") {
+            hi3.hashkit.ui.wall.WallScreen(onExit = { nav.popBackStack() })
         }
         composable("network") {
             hi3.hashkit.ui.network.NetworkScanScreen(onBack = { nav.popBackStack() })

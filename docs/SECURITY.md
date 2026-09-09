@@ -45,10 +45,14 @@ In this build:
    updates" is enabled, the app makes one HTTPS GET to
    `api.github.com/repos/bitaxeorg/ESP-Miner/releases/latest` (at most every 6h) to read
    the latest AxeOS version tag. No device data is sent; nothing is flashed.
-6. **Smart-plug safety cutoff (local only):** when you configure a plug for a miner, the
+6. **Smart-plug control (local only):** when you configure a plug for a miner, the
    app sends its on/off command over the LAN only — Tasmota/Shelly/Kasa on a private
    address, or a generic webhook URL you supply. Plug hosts must be private/Tailscale
-   addresses. Automatic cutoff only ever turns power OFF; turning back on is manual.
+   addresses. The always-on **safety cutoff only ever turns power OFF**, and
+   auto-recovery power-cycles a plug it just turned off. The only way the app turns a
+   plug back ON on its own is a **scheduled `plug_on` you create yourself** in Schedules
+   (a deliberate opt-in, e.g. a morning-on / night-off time-of-use pair); nothing turns a
+   plug on automatically otherwise.
 
 **Per-miner credentials:** a miner's own admin password / API token (e.g. the VNish web
 password used for Reboot and Pause/Resume) is stored **encrypted with the Android

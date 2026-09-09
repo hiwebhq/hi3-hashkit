@@ -348,6 +348,31 @@ fun SettingsScreen(
                 )
             }
 
+            Section("ADVANCED FEATURES") {
+                val unlocked = settings.advancedUnlocked
+                Text(
+                    if (unlocked)
+                        "All advanced features are unlocked in this release — no code needed. " +
+                            "A future version may move power tools (plug scheduling, wall/TV mode, " +
+                            "pool round-trips) behind an unlock code entered here."
+                    else
+                        "Enter your unlock code to enable advanced features.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HiBrand.textSecondary,
+                )
+                var codeInput by remember { mutableStateOf(settings.advancedUnlockCode) }
+                OutlinedTextField(
+                    value = codeInput,
+                    onValueChange = { codeInput = it },
+                    label = { Text(if (unlocked) "Unlock code (optional)" else "Unlock code") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                androidx.compose.material3.TextButton(onClick = {
+                    viewModel.setAdvancedUnlockCode(codeInput)
+                }) { Text("Apply code") }
+            }
+
             Section("SOLO MINING") {
                 NumberRow(
                     "Network difficulty",
