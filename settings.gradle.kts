@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Hi3MinerWatch"
 include(":app")
+include(":wear")

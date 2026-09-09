@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.48.0
+
+- **Wear OS tile.** A new `:wear` module adds a glanceable watch **tile** (and a small
+  companion app) showing the fleet's total hashrate, online/total count, and worst chip
+  temp. The phone publishes a tiny summary — totals and counts only, no addresses,
+  credentials, or per-worker data — over the local **Wearable Data Layer** (Bluetooth/Wi-Fi
+  to the paired watch, nothing over the internet) on each poll; the tile refreshes when it
+  arrives. *Built and compiled, but not yet verified on a physical watch.*
+- **Wave 3 write paths are documented as hardware-gated.** VNish and Bitmain **pool
+  changes** and **Bitaxe OTA** stay unsupported (shown as such) until each is verified on a
+  real device — see docs/DEVICE_MATRIX.md → "Pending hardware verification". No invented
+  endpoints.
+
 ## 0.47.0
 
 - **Scheduled smart-plug on/off.** Schedules gained **Plug off** and **Plug on** actions

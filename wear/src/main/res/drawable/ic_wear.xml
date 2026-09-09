@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple brand mark for the Wear app icon and tile preview. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#0B0F14"
+        android:pathData="M0,0h48v48h-48z" />
+    <path
+        android:fillColor="#3987E5"
+        android:pathData="M15,13h5v9h8v-9h5v22h-5v-9h-8v9h-5z" />
+</vector>

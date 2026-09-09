@@ -23,6 +23,11 @@ androidxJunit = "1.2.1"
 espresso = "3.6.1"
 robolectric = "4.14.1"
 zxingEmbedded = "4.3.0"
+playServicesWearable = "18.2.0"
+wearComposeMaterial = "1.4.1"
+wearTiles = "1.4.1"
+wearProtolayout = "1.2.1"
+concurrentFutures = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +69,13 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingEmbedded" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
+androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearComposeMaterial" }
+androidx-wear-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "wearTiles" }
+androidx-wear-protolayout = { group = "androidx.wear.protolayout", name = "protolayout", version.ref = "wearProtolayout" }
+androidx-wear-protolayout-material = { group = "androidx.wear.protolayout", name = "protolayout-material", version.ref = "wearProtolayout" }
+androidx-concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

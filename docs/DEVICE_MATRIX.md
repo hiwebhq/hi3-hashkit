@@ -16,6 +16,23 @@
 | FutureBit | Apollo BTC (Gen1/Gen2) | cgminer TCP API on 4028 (`version`/`summary`/`pools`) | ✅ Basic (hashrate, shares, uptime, pool) via the generic cgminer path; recognized as "FutureBit" by its version strings | ❌ Controls use the Apollo's own HTTP dashboard API — not verified | Compat-gated; nominal hashrate/power seeded from the model spec registry when the device doesn't report expected |
 | Generic cgminer (long tail) | Any miner exposing the standard cgminer API on 4028 (older Antminers, ePIC/Hiveon-flashed units, etc.) | cgminer `version`/`summary`/`pools` | ✅ Basic (hashrate, shares, uptime, pool) — accepted as "Generic ASIC (cgminer)" when the family isn't specifically recognized | ❌ None (unverified firmware) | The generic adapter now accepts unrecognized cgminer devices for monitoring instead of declining them; declines only Avalon/BOSer (owned by specific adapters) and non-cgminer hosts |
 
+## Pending hardware verification (gated write paths)
+
+These write paths are **deliberately not implemented** until each can be verified against a
+real device — consistent with the project rule to never invent or guess an endpoint. The
+transports are understood; what's missing is a confirmed request/response schema and a
+safe-value check on hardware. Each stays capability-gated OFF (the UI shows it as
+unsupported) until then.
+
+| Gated action | Family | Intended path | Why it's gated | To unlock |
+|---|---|---|---|---|
+| **Pool change** | VNish | `GET /api/v1/settings` → mutate pools → `POST /api/v1/settings` (Bearer from `/unlock`) | The settings object is large and firmware-version-specific; a wrong round-trip could wipe unrelated config or passwords | Capture a real `GET /settings` from a unit, diff a pools-only edit, confirm the password-mask behavior, lock with a payload test |
+| **Pool change** | Stock Bitmain | `POST /cgi-bin/set_miner_conf.cgi` (HTTP Digest as root) | Full miner-conf POST; an incomplete body can brick pool/fan config. Reboot already verified, pool change is not | Capture `get_miner_conf.cgi` from a real S21, round-trip a pools-only change, verify persistence + reboot behavior |
+| **Firmware OTA** | Bitaxe / AxeOS | `POST /api/system/OTA` (+ `OTAWWW`) with the firmware binary | Destructive and irreversible if interrupted; must confirm the multipart shape, size limits, and progress/verify semantics from ESP-Miner source **and** a spare board | Verify the endpoint against tagged ESP-Miner source, test on a sacrificial Bitaxe, add a strong in-app confirmation + failure recovery guidance |
+
+When a unit is available, each becomes a normal capability-gated control with the standard
+confirm → audit → (where possible) rollback flow.
+
 ## ESP-Miner endpoint & field notes
 
 - `GET /api/system/info` — sole endpoint used in v1. Response size observed 54–114 keys

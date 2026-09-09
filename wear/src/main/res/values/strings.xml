@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hi3 Hashkit</string>
+    <string name="tile_label">Fleet</string>
+</resources>

@@ -35,6 +35,7 @@ class PollingEngine @Inject constructor(
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
     private val auditDao: hi3.hashkit.data.db.AuditDao,
     private val remediationEngine: hi3.hashkit.data.remediation.RemediationEngine,
+    private val wearSyncManager: hi3.hashkit.data.wear.WearSyncManager,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
@@ -153,6 +154,10 @@ class PollingEngine @Inject constructor(
         totalPollMs += lastPollDurationMs
         pollCount += 1
         runCatching { hi3.hashkit.widget.HashkitWidget().updateAll(appContext) }
+        runCatching {
+            val domain = miners.map { repository.toDomain(it, Instant.now()) }
+            wearSyncManager.publishFleetSummary(domain)
+        }
         runCatching { scheduleEngine.runDueSchedules() }
         pruneIfDue(settings.retentionDays)
     }

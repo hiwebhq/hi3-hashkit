@@ -67,6 +67,15 @@ on the LAN, and is never logged, exported, or sent anywhere else.
    destination you choose (so, unlike miner traffic, it may be a public host); nothing is
    sent while the push service is set to Off.
 
+8. **Paired Wear OS watch (local, no internet):** if you have the companion watch app
+   installed on a paired Wear OS device, the phone publishes a small **fleet summary** —
+   total hashrate, online/offline/total counts, and the worst chip temperature — to the
+   Google **Wearable Data Layer** on each poll, so the watch tile can show it. This is a
+   local Bluetooth/Wi-Fi link between the phone and its own paired watch (brokered by Play
+   services), **not an internet request**, and it carries no miner addresses, credentials,
+   worker names, or per-miner detail. It happens only when a paired watch with the app is
+   present; otherwise the publish silently no-ops.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server unless you explicitly configure one of the opt-in integrations above.
 
