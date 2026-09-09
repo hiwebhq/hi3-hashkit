@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.53.0
+
+Wave C (part 1) — integrations:
+
+- **Home Assistant / MQTT publish.** Opt-in MQTT publishing of fleet + per-miner telemetry
+  to a local broker (Settings → MQTT / Home Assistant), with optional Home Assistant
+  MQTT-discovery so miners appear as HA devices automatically. One-way, LAN-only, best
+  effort; broker password stored encrypted in the Keystore. Uses a tiny hand-rolled MQTT
+  3.1.1 publisher (no heavy client dependency).
+- **Prometheus /metrics endpoint (Advanced feature).** Opt-in local HTTP endpoint serving
+  fleet + per-miner gauges in Prometheus format for Grafana/Prometheus. Read-only,
+  GET /metrics only, no auth — private LAN/tailnet only. Gated behind the advanced-features
+  flag.
+
+Pool payout tracking is deferred pending a verified pool API sample (see notes below) — the
+app won't guess payout fields.
+
 ## 0.52.0
 
 Wave B — alerting:

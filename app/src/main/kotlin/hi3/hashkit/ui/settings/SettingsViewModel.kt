@@ -134,6 +134,15 @@ class SettingsViewModel @Inject constructor(
     fun setQuietEndMinute(v: Int) = viewModelScope.launch { repo.setQuietEndMinute(v) }
     fun setDigestEnabled(v: Boolean) = viewModelScope.launch { repo.setDigestEnabled(v) }
     fun setDigestHour(v: Int) = viewModelScope.launch { repo.setDigestHour(v) }
+    fun setMqttEnabled(v: Boolean) = viewModelScope.launch { repo.setMqttEnabled(v) }
+    fun setMqttHost(v: String) = viewModelScope.launch { repo.setMqttHost(v) }
+    fun setMqttPort(v: Int) = viewModelScope.launch { repo.setMqttPort(v) }
+    fun setMqttUsername(v: String) = viewModelScope.launch { repo.setMqttUsername(v) }
+    fun setMqttPassword(v: String) = viewModelScope.launch { repo.setMqttPassword(v) }
+    fun setMqttBaseTopic(v: String) = viewModelScope.launch { repo.setMqttBaseTopic(v) }
+    fun setMqttHaDiscovery(v: Boolean) = viewModelScope.launch { repo.setMqttHaDiscovery(v) }
+    fun setPrometheusEnabled(v: Boolean) = viewModelScope.launch { repo.setPrometheusEnabled(v) }
+    fun setPrometheusPort(v: Int) = viewModelScope.launch { repo.setPrometheusPort(v) }
     fun setWebhookType(v: hi3.hashkit.data.alerts.WebhookType) = viewModelScope.launch { repo.setWebhookType(v) }
     fun setWebhookUrl(v: String) = viewModelScope.launch { repo.setWebhookUrl(v) }
     fun setWebhookToken(v: String) = viewModelScope.launch { repo.setWebhookToken(v) }

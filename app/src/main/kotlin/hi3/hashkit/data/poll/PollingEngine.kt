@@ -37,6 +37,8 @@ class PollingEngine @Inject constructor(
     private val remediationEngine: hi3.hashkit.data.remediation.RemediationEngine,
     private val wearSyncManager: hi3.hashkit.data.wear.WearSyncManager,
     private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker,
+    private val mqttPublisher: hi3.hashkit.integrations.mqtt.MqttPublisher,
+    private val prometheusServer: hi3.hashkit.integrations.metrics.PrometheusServer,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
@@ -88,6 +90,7 @@ class PollingEngine @Inject constructor(
         job = null
         safetyJob?.cancel()
         safetyJob = null
+        runCatching { prometheusServer.stop() }
     }
 
     /** Public entry point for the always-on foreground safety service to run one pass. */
@@ -159,6 +162,14 @@ class PollingEngine @Inject constructor(
         runCatching {
             val domain = miners.map { repository.toDomain(it, Instant.now()) }
             wearSyncManager.publishFleetSummary(domain)
+            if (settings.mqttEnabled) mqttPublisher.publish(domain)
+        }
+        // Prometheus /metrics endpoint (Advanced feature): start/stop to match settings.
+        runCatching {
+            prometheusServer.apply(
+                enabled = settings.prometheusEnabled && settings.advancedUnlocked,
+                port = settings.prometheusPort,
+            )
         }
         runCatching { scheduleEngine.runDueSchedules() }
         if (settings.alertsEnabled) {

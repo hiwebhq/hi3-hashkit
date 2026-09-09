@@ -171,6 +171,75 @@ fun SettingsScreen(
                 }
             }
 
+            Section("MQTT / HOME ASSISTANT") {
+                ToggleRow(
+                    "Publish to MQTT",
+                    "Send fleet + per-miner telemetry to a local MQTT broker (e.g. the " +
+                        "Mosquitto add-on in Home Assistant). Opt-in; totals and per-miner " +
+                        "hashrate/power/temp only — no addresses or credentials.",
+                    settings.mqttEnabled,
+                ) { viewModel.setMqttEnabled(it) }
+                if (settings.mqttEnabled) {
+                    NumberRow("Broker host", settings.mqttHost) { viewModel.setMqttHost(it) }
+                    NumberRow("Broker port", settings.mqttPort.toString()) {
+                        it.toIntOrNull()?.let { v -> viewModel.setMqttPort(v) }
+                    }
+                    NumberRow("Base topic", settings.mqttBaseTopic) { viewModel.setMqttBaseTopic(it) }
+                    NumberRow("Username (optional)", settings.mqttUsername) { viewModel.setMqttUsername(it) }
+                    var mqttPass by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = mqttPass,
+                        onValueChange = { mqttPass = it },
+                        label = {
+                            Text(
+                                if (settings.mqttPasswordConfigured) "Password (saved — enter to replace, blank to clear)"
+                                else "Password (optional)",
+                            )
+                        },
+                        singleLine = true,
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    androidx.compose.material3.TextButton(onClick = {
+                        viewModel.setMqttPassword(mqttPass)
+                        mqttPass = ""
+                    }) { Text(if (settings.mqttPasswordConfigured) "Replace password" else "Save password") }
+                    ToggleRow(
+                        "Home Assistant discovery",
+                        "Publish MQTT-discovery config so miners appear as HA devices/entities automatically.",
+                        settings.mqttHomeAssistantDiscovery,
+                    ) { viewModel.setMqttHaDiscovery(it) }
+                    Text(
+                        "Published while the app is open, each poll. The password is stored " +
+                            "encrypted in the Android Keystore. Point Prometheus/HA at this broker.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
+            }
+
+            if (settings.advancedUnlocked) {
+                Section("PROMETHEUS METRICS (ADVANCED)") {
+                    ToggleRow(
+                        "Expose /metrics endpoint",
+                        "Run a local Prometheus scrape endpoint so Grafana/Prometheus can " +
+                            "graph your fleet. Read-only, no auth — for a private LAN/tailnet only.",
+                        settings.prometheusEnabled,
+                    ) { viewModel.setPrometheusEnabled(it) }
+                    if (settings.prometheusEnabled) {
+                        NumberRow("Port", settings.prometheusPort.toString()) {
+                            it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
+                        }
+                        Text(
+                            "Scrape http://<this-device-ip>:${settings.prometheusPort}/metrics while the " +
+                                "app is open. Serves only GET /metrics; exposes totals + per-miner gauges.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
+                        )
+                    }
+                }
+            }
+
             Section("DISCOVERY") {
                 NumberRow(
                     "Extra scan subnets (CSV of CIDRs)",

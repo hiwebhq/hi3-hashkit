@@ -95,6 +95,19 @@ data class AppSettings(
     val digestEnabled: Boolean = false,
     val digestHour: Int = 8,
     val lastDigestSentEpochMs: Long = 0,
+    /** MQTT publish to a local broker (Home Assistant etc.) — OPT-IN; off by default. */
+    val mqttEnabled: Boolean = false,
+    val mqttHost: String = "",
+    val mqttPort: Int = 1883,
+    val mqttUsername: String = "",
+    /** Whether an (encrypted) MQTT password is stored; the value itself never enters this flow. */
+    val mqttPasswordConfigured: Boolean = false,
+    val mqttBaseTopic: String = "hi3hashkit",
+    /** Publish Home Assistant MQTT-discovery config so entities auto-appear. */
+    val mqttHomeAssistantDiscovery: Boolean = true,
+    /** Prometheus /metrics endpoint (Advanced feature) — OPT-IN; off by default. */
+    val prometheusEnabled: Boolean = false,
+    val prometheusPort: Int = 9184,
     /**
      * Advanced-feature license gate. The stored unlock code (empty until entered).
      * [advancedUnlocked] is the derived flag features check. Defaults to unlocked so
@@ -159,6 +172,15 @@ class SettingsRepository @Inject constructor(
         val digestEnabled = booleanPreferencesKey("digest_enabled")
         val digestHour = intPreferencesKey("digest_hour")
         val lastDigestSentEpochMs = longPreferencesKey("last_digest_sent_ms")
+        val mqttEnabled = booleanPreferencesKey("mqtt_enabled")
+        val mqttHost = stringPreferencesKey("mqtt_host")
+        val mqttPort = intPreferencesKey("mqtt_port")
+        val mqttUsername = stringPreferencesKey("mqtt_username")
+        val mqttPasswordEnc = stringPreferencesKey("mqtt_password_enc")
+        val mqttBaseTopic = stringPreferencesKey("mqtt_base_topic")
+        val mqttHaDiscovery = booleanPreferencesKey("mqtt_ha_discovery")
+        val prometheusEnabled = booleanPreferencesKey("prometheus_enabled")
+        val prometheusPort = intPreferencesKey("prometheus_port")
         val advancedUnlockCode = stringPreferencesKey("advanced_unlock_code")
     }
 
@@ -227,6 +249,15 @@ class SettingsRepository @Inject constructor(
             digestEnabled = p[Keys.digestEnabled] ?: false,
             digestHour = (p[Keys.digestHour] ?: 8).coerceIn(0, 23),
             lastDigestSentEpochMs = p[Keys.lastDigestSentEpochMs] ?: 0,
+            mqttEnabled = p[Keys.mqttEnabled] ?: false,
+            mqttHost = p[Keys.mqttHost] ?: "",
+            mqttPort = (p[Keys.mqttPort] ?: 1883).coerceIn(1, 65535),
+            mqttUsername = p[Keys.mqttUsername] ?: "",
+            mqttPasswordConfigured = !p[Keys.mqttPasswordEnc].isNullOrBlank(),
+            mqttBaseTopic = (p[Keys.mqttBaseTopic] ?: "hi3hashkit").ifBlank { "hi3hashkit" },
+            mqttHomeAssistantDiscovery = p[Keys.mqttHaDiscovery] ?: true,
+            prometheusEnabled = p[Keys.prometheusEnabled] ?: false,
+            prometheusPort = (p[Keys.prometheusPort] ?: 9184).coerceIn(1024, 65535),
             advancedUnlockCode = p[Keys.advancedUnlockCode] ?: "",
             advancedUnlocked = ADVANCED_FEATURES_FREE ||
                 hi3.hashkit.core.LicenseValidator.isValid(p[Keys.advancedUnlockCode]),
@@ -299,6 +330,27 @@ class SettingsRepository @Inject constructor(
     suspend fun setDigestEnabled(value: Boolean) = edit { it[Keys.digestEnabled] = value }
     suspend fun setDigestHour(value: Int) = edit { it[Keys.digestHour] = value.coerceIn(0, 23) }
     suspend fun setLastDigestSent(value: Long) = edit { it[Keys.lastDigestSentEpochMs] = value }
+    suspend fun setMqttEnabled(value: Boolean) = edit { it[Keys.mqttEnabled] = value }
+    suspend fun setMqttHost(value: String) = edit { it[Keys.mqttHost] = value.trim() }
+    suspend fun setMqttPort(value: Int) = edit { it[Keys.mqttPort] = value.coerceIn(1, 65535) }
+    suspend fun setMqttUsername(value: String) = edit { it[Keys.mqttUsername] = value.trim() }
+    suspend fun setMqttBaseTopic(value: String) = edit { it[Keys.mqttBaseTopic] = value.trim().ifBlank { "hi3hashkit" } }
+    suspend fun setMqttHaDiscovery(value: Boolean) = edit { it[Keys.mqttHaDiscovery] = value }
+    suspend fun setPrometheusEnabled(value: Boolean) = edit { it[Keys.prometheusEnabled] = value }
+    suspend fun setPrometheusPort(value: Int) = edit { it[Keys.prometheusPort] = value.coerceIn(1024, 65535) }
+
+    /** Store the MQTT password encrypted with the Android Keystore; blank clears it. */
+    suspend fun setMqttPassword(plaintext: String) = edit {
+        val trimmed = plaintext.trim()
+        it[Keys.mqttPasswordEnc] =
+            if (trimmed.isEmpty()) "" else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed)
+    }
+
+    /** Decrypt the MQTT password on demand; never surfaced through the settings flow. */
+    suspend fun mqttPassword(): String? =
+        context.dataStore.data.first()[Keys.mqttPasswordEnc]
+            ?.takeIf { it.isNotBlank() }
+            ?.let { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }
 
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit { block(it) }
