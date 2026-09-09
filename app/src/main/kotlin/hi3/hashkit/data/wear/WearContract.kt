@@ -17,4 +17,7 @@ object WearContract {
     /** Hottest chip temp across online miners, in °C; absent when unknown. */
     const val KEY_WORST_TEMP_C = "worst_temp_c"
     const val KEY_UPDATED_AT_MS = "updated_at_ms"
+
+    /** The app's selected accent color (ARGB int), so the watch tile matches the UI theme. */
+    const val KEY_ACCENT_ARGB = "accent_argb"
 }

@@ -10,8 +10,14 @@ data class FleetSummary(
     val total: Int,
     val worstTempC: Double?,
     val updatedAtMs: Long,
+    /** Accent color (ARGB) mirrored from the phone's UI theme; brand blue default. */
+    val accentArgb: Int = DEFAULT_ACCENT,
 ) {
     val isEmpty: Boolean get() = updatedAtMs == 0L
+
+    companion object {
+        const val DEFAULT_ACCENT: Int = 0xFF3987E5.toInt()
+    }
 }
 
 /**
@@ -30,6 +36,7 @@ object FleetStore {
             .putInt(WearContract.KEY_TOTAL, s.total)
             .putFloat(WearContract.KEY_WORST_TEMP_C, (s.worstTempC ?: Double.NaN).toFloat())
             .putLong(WearContract.KEY_UPDATED_AT_MS, s.updatedAtMs)
+            .putInt(WearContract.KEY_ACCENT_ARGB, s.accentArgb)
             .apply()
     }
 
@@ -43,6 +50,7 @@ object FleetStore {
             total = p.getInt(WearContract.KEY_TOTAL, 0),
             worstTempC = worst.takeUnless { it.isNaN() }?.toDouble(),
             updatedAtMs = p.getLong(WearContract.KEY_UPDATED_AT_MS, 0L),
+            accentArgb = p.getInt(WearContract.KEY_ACCENT_ARGB, FleetSummary.DEFAULT_ACCENT),
         )
     }
 }

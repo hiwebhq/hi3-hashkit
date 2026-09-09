@@ -61,6 +61,7 @@ data class PlugConfig(
 @HiltViewModel
 class MinerDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val controlRepository: ControlRepository,
     private val registry: AdapterRegistry,
@@ -79,10 +80,13 @@ class MinerDetailViewModel @Inject constructor(
         maintenanceDao.observeForMiner(minerId)
             .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    fun addMaintenanceNote(text: String, photoPath: String? = null) {
+    fun addMaintenanceNote(text: String, photoUri: android.net.Uri? = null) {
         val trimmed = text.trim()
-        if (trimmed.isEmpty() && photoPath == null) return
+        if (trimmed.isEmpty() && photoUri == null) return
         viewModelScope.launch {
+            val photoPath = photoUri?.let {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { copyPhoto(it) }
+            }
             maintenanceDao.insert(
                 hi3.hashkit.data.db.MaintenanceNoteEntity(
                     minerId = minerId,
@@ -93,6 +97,16 @@ class MinerDetailViewModel @Inject constructor(
             )
         }
     }
+
+    /** Copy a picked image into app-private storage; returns the absolute path or null. */
+    private fun copyPhoto(uri: android.net.Uri): String? = runCatching {
+        val dir = java.io.File(appContext.filesDir, "maintenance").apply { mkdirs() }
+        val file = java.io.File(dir, "note_${System.currentTimeMillis()}.jpg")
+        appContext.contentResolver.openInputStream(uri)?.use { input ->
+            file.outputStream().use { input.copyTo(it) }
+        } ?: return null
+        file.absolutePath
+    }.getOrNull()
 
     fun deleteMaintenanceNote(note: hi3.hashkit.data.db.MaintenanceNoteEntity) {
         viewModelScope.launch {

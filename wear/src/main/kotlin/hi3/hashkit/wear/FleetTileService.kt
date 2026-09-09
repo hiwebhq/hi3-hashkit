@@ -15,7 +15,6 @@ import androidx.wear.tiles.TileService
 import com.google.common.util.concurrent.ListenableFuture
 
 private const val RES_VERSION = "1"
-private const val BRAND_BLUE = 0xFF3987E5.toInt()
 private const val ONLINE_GREEN = 0xFF2BD97C.toInt()
 private const val TEXT_DIM = 0xFF93A3B4.toInt()
 
@@ -55,6 +54,7 @@ class FleetTileService : TileService() {
         summary: FleetSummary,
         device: DeviceParameters,
     ): LayoutElementBuilders.LayoutElement {
+        val accent = summary.accentArgb
         val column = LayoutElementBuilders.Column.Builder()
             .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
 
@@ -62,7 +62,7 @@ class FleetTileService : TileService() {
             column.addContent(
                 Text.Builder(this, "Hi3 Hashkit")
                     .setTypography(Typography.TYPOGRAPHY_TITLE3)
-                    .setColor(argb(BRAND_BLUE))
+                    .setColor(argb(accent))
                     .build(),
             )
             column.addContent(
@@ -76,7 +76,7 @@ class FleetTileService : TileService() {
             column.addContent(
                 Text.Builder(this, WearFormat.hashrate(summary.totalHashrateGhs))
                     .setTypography(Typography.TYPOGRAPHY_DISPLAY2)
-                    .setColor(argb(BRAND_BLUE))
+                    .setColor(argb(accent))
                     .build(),
             )
             column.addContent(

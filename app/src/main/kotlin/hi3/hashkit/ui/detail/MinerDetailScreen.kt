@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -262,16 +264,32 @@ fun MinerDetailScreen(
             SectionCard("MAINTENANCE LOG") {
                 val notes by viewModel.maintenanceNotes.collectAsStateWithLifecycle()
                 var noteText by remember { mutableStateOf("") }
+                var pendingPhoto by remember { mutableStateOf<android.net.Uri?>(null) }
+                val photoPicker = androidx.activity.compose.rememberLauncherForActivityResult(
+                    androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia(),
+                ) { uri -> pendingPhoto = uri }
                 OutlinedTextField(
                     value = noteText,
                     onValueChange = { noteText = it },
                     label = { Text("Add a note (e.g. \"repasted\", \"replaced fan 2\")") },
                     modifier = Modifier.fillMaxWidth(),
                 )
-                androidx.compose.material3.TextButton(
-                    enabled = noteText.isNotBlank(),
-                    onClick = { viewModel.addMaintenanceNote(noteText); noteText = "" },
-                ) { Text("Add note") }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    androidx.compose.material3.TextButton(
+                        enabled = noteText.isNotBlank() || pendingPhoto != null,
+                        onClick = {
+                            viewModel.addMaintenanceNote(noteText, pendingPhoto)
+                            noteText = ""; pendingPhoto = null
+                        },
+                    ) { Text("Add note") }
+                    androidx.compose.material3.TextButton(onClick = {
+                        photoPicker.launch(
+                            androidx.activity.result.PickVisualMediaRequest(
+                                androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly,
+                            )
+                        )
+                    }) { Text(if (pendingPhoto != null) "📷 attached" else "Attach photo") }
+                }
                 if (notes.isEmpty()) {
                     Text(
                         "No maintenance notes yet. Log repastes, fan swaps, cleanings — they " +
@@ -287,7 +305,9 @@ fun MinerDetailScreen(
                             verticalAlignment = Alignment.Top,
                         ) {
                             Column(Modifier.weight(1f)) {
-                                Text(note.text, style = MaterialTheme.typography.bodyMedium)
+                                if (note.text.isNotBlank()) {
+                                    Text(note.text, style = MaterialTheme.typography.bodyMedium)
+                                }
                                 Text(
                                     java.text.DateFormat.getDateTimeInstance(
                                         java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT,
@@ -295,6 +315,7 @@ fun MinerDetailScreen(
                                     style = MaterialTheme.typography.labelSmall,
                                     color = HiBrand.textSecondary,
                                 )
+                                note.photoPath?.let { NotePhoto(it) }
                             }
                             androidx.compose.material3.IconButton(
                                 onClick = { viewModel.deleteMaintenanceNote(note) },
@@ -491,6 +512,28 @@ fun MinerDetailScreen(
             dismissButton = {
                 TextButton(onClick = { confirmDelete = false }) { Text("Cancel") }
             },
+        )
+    }
+}
+
+/** A downsampled thumbnail of a maintenance-note photo, decoded off-path and cached. */
+@Composable
+private fun NotePhoto(path: String) {
+    val bitmap = androidx.compose.runtime.remember(path) {
+        runCatching {
+            val opts = android.graphics.BitmapFactory.Options().apply { inSampleSize = 4 }
+            android.graphics.BitmapFactory.decodeFile(path, opts)?.asImageBitmap()
+        }.getOrNull()
+    }
+    if (bitmap != null) {
+        androidx.compose.foundation.Image(
+            bitmap = bitmap,
+            contentDescription = "Maintenance photo",
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .height(120.dp)
+                .clip(RoundedCornerShape(8.dp)),
         )
     }
 }

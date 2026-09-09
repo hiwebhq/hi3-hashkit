@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.tasks.Tasks
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,6 +27,7 @@ import javax.inject.Singleton
 @Singleton
 class WearSyncManager @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -43,6 +45,10 @@ class WearSyncManager @Inject constructor(
             .maxOrNull()
 
         scope.launch {
+            // Accent color from the app's selected UI theme (dark variant for the watch).
+            val accentArgb = runCatching {
+                settingsRepository.current().themeColor.darkAccent.toArgb()
+            }.getOrElse { 0xFF3987E5.toInt() }
             runCatching {
                 val request = PutDataMapRequest.create(WearContract.PATH_FLEET_SUMMARY).apply {
                     dataMap.putDouble(WearContract.KEY_TOTAL_HASHRATE_GHS, totalHashrate)
@@ -50,6 +56,7 @@ class WearSyncManager @Inject constructor(
                     dataMap.putInt(WearContract.KEY_OFFLINE, offline)
                     dataMap.putInt(WearContract.KEY_TOTAL, real.size)
                     if (worstTemp != null) dataMap.putDouble(WearContract.KEY_WORST_TEMP_C, worstTemp)
+                    dataMap.putInt(WearContract.KEY_ACCENT_ARGB, accentArgb)
                     // Ensures each poll produces a distinct DataItem so the watch is notified.
                     dataMap.putLong(WearContract.KEY_UPDATED_AT_MS, System.currentTimeMillis())
                 }.asPutDataRequest().setUrgent()

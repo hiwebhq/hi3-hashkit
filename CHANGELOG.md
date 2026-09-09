@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.55.0
+
+- **Maintenance-log photos.** Notes can now include a photo (via the system photo picker,
+  no storage permission); it's copied into app-private storage and shown as a thumbnail,
+  and removed when the note is deleted.
+- **Wear tile follows the UI theme.** The phone now sends its selected accent color over
+  the Wearable Data Layer, so the watch tile and companion app match the theme you picked
+  (defaults to brand blue).
+
 ## 0.54.0
 
 Wave D — fleet & fun:

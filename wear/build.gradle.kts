@@ -13,8 +13,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 34
-        versionCode = 53
-        versionName = "0.48.0"
+        versionCode = 60
+        versionName = "0.55.0"
     }
 
     buildTypes {

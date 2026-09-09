@@ -13,4 +13,5 @@ object WearContract {
     const val KEY_TOTAL = "total"
     const val KEY_WORST_TEMP_C = "worst_temp_c"
     const val KEY_UPDATED_AT_MS = "updated_at_ms"
+    const val KEY_ACCENT_ARGB = "accent_argb"
 }

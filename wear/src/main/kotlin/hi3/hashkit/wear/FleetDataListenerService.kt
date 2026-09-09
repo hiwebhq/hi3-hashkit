@@ -29,6 +29,8 @@ class FleetDataListenerService : WearableListenerService() {
                     worstTempC = if (map.containsKey(WearContract.KEY_WORST_TEMP_C))
                         map.getDouble(WearContract.KEY_WORST_TEMP_C) else null,
                     updatedAtMs = map.getLong(WearContract.KEY_UPDATED_AT_MS, 0L),
+                    accentArgb = if (map.containsKey(WearContract.KEY_ACCENT_ARGB))
+                        map.getInt(WearContract.KEY_ACCENT_ARGB) else FleetSummary.DEFAULT_ACCENT,
                 ),
             )
             changed = true
