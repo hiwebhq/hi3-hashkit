@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hi3 Hashkit — Product Summary</title>
+  <meta name="description" content="Hi3 Hashkit: privacy-first, local-first Android app for monitoring and safely controlling Bitcoin miners. No account, no cloud.">
+  <style>
+    :root {
+      --ink: #0b0f14; --body: #1c2530; --muted: #5a6b7b;
+      --accent: #1c6fd0; --line: #e2e8f0; --bg: #ffffff; --card: #f7f9fc;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--body);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 44px 20px 80px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 12px; }
+    h1 { font-size: 34px; margin: 0 0 6px; letter-spacing: -0.02em; color: var(--ink); }
+    .tagline { font-size: 19px; color: var(--accent); font-weight: 600; margin: 0 0 16px; }
+    .lead { font-size: 17px; color: var(--body); }
+    .badges { color: var(--muted); font-size: 14px; margin-top: 14px; }
+    h2 { font-size: 21px; margin: 34px 0 10px; letter-spacing: -0.01em; color: var(--ink); }
+    .note { font-size: 14px; color: var(--muted); }
+    ul { padding-left: 22px; margin: 8px 0; }
+    li { margin: 7px 0; }
+    a { color: var(--accent); }
+    code { background: var(--card); padding: 1px 5px; border-radius: 4px; font-size: 90%; }
+    .cta { margin-top: 12px; font-weight: 600; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: #e8eef4; --body: #d3dde6; --muted: #93a3b4; --accent: #6fb1ff;
+        --line: #1f2a36; --bg: #0b0f14; --card: #121820; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Hi3 Hashkit</h1>
+      <p class="tagline">Your whole mining fleet, in your pocket. On your network. Nobody else's.</p>
+      <p class="lead">
+        <strong>Hi3 Hashkit</strong> is a privacy-first, local-first Android app for
+        monitoring and safely controlling Bitcoin miners — from a single Bitaxe on your desk
+        to a multi-site farm of Antminers. No account. No cloud. No analytics. No ads. It
+        talks only to the miners on <strong>your</strong> network — over your LAN or your own
+        Tailscale VPN — and every reading is honestly labeled (measured, reported, calculated,
+        or estimated), so an estimate is never dressed up as a fact.
+      </p>
+      <p class="badges">Android 8.0+ · Optional Wear OS companion &amp; Android TV · Sideload and go.</p>
+    </header>
+
+    <h2>🔍 Find every miner, instantly</h2>
+    <ul>
+      <li><strong>Auto-discovery</strong> scans your subnet at launch, plus <strong>mDNS/DNS-SD</strong> — or add by IP/CIDR.</li>
+      <li><strong>Farms &amp; sites</strong>: group miners by location, each with its own subnet and refresh interval, and switch between them from the dashboard.</li>
+    </ul>
+
+    <h2>📊 Monitoring that tells you the truth</h2>
+    <ul>
+      <li><strong>Live fleet dashboard</strong>: hashrate, temps, power, efficiency and health per miner — plus fleet totals, trend charts, sparklines, search, and four layout densities.</li>
+      <li><strong>Sortable fleet table</strong> — a dense, spreadsheet-style view with tap-to-sort columns and a filter box.</li>
+      <li><strong>Per-chip / per-board health</strong> (Antminer-class): hashrate, working/dead chip counts, hardware errors and hottest-chip temp — catch a failing board before it drags the fleet down.</li>
+      <li><strong>Efficiency (J/TH) trend</strong> and <strong>statistical anomaly detection</strong> that flags gradual hashrate drift or a creeping reject rate a fixed threshold would miss.</li>
+      <li><strong>Profitability &amp; energy</strong>: revenue/day, power cost, net, BTC/day, kWh/day and heat — plus a <strong>Bitcoin network card</strong> (block height, subsidy, next difficulty adjustment and halving countdown).</li>
+      <li>A <strong>rack/site layout view</strong>, a <strong>wall / TV kiosk mode</strong> (Small/Medium/Large), a <strong>3D flow view</strong>, and a <strong>home-screen widget</strong>.</li>
+    </ul>
+
+    <h2>🎛️ Control — only where it's verified</h2>
+    <p class="note">Every control ships only after verification against real firmware. Unverified means unsupported, never guessed.</p>
+    <ul>
+      <li><strong>Reboot, pool change, fan control, firmware-bounded tuning</strong> — with confirmations, bounds and rollback — plus bulk actions and a fleet-wide <strong>Panic</strong> (pause/reboot all).</li>
+      <li><strong>Automation rules engine</strong>: <em>if</em> temp / hashrate / reject-rate / offline, <em>then</em> pause / resume / reboot / plug on-off / notify.</li>
+      <li><strong>Bitaxe auto-tuner</strong>: sweeps firmware-approved frequencies <strong>under a chip-temp ceiling</strong> and recommends the best point for <strong>efficiency or hashrate</strong>, with rollback.</li>
+      <li><strong>Schedules</strong> (including time-of-use power presets), a <strong>pool &amp; wallet address book</strong>, and <strong>auto-recover</strong> for stuck miners.</li>
+      <li>Admin passwords/tokens stored <strong>encrypted in the Android Keystore</strong>.</li>
+    </ul>
+
+    <h2>🔔 Alerts &amp; integrations</h2>
+    <ul>
+      <li><strong>Smart alerts</strong> — offline, hot chips/VR, fan stall, reject rate, pool disconnect, plug cutoff, firmware-available, and a solo <strong>block-found</strong> celebration — with per-miner overrides, <strong>quiet hours</strong> and a <strong>daily digest</strong>.</li>
+      <li><strong>Push to your own webhook</strong> (ntfy / Gotify / Telegram / generic), with Reboot / Acknowledge quick-actions.</li>
+      <li><strong>Home Assistant / MQTT</strong> publish, a <strong>local web dashboard + Prometheus <code>/metrics</code></strong> endpoint, and a <strong>Wear OS tile</strong> themed to your app accent.</li>
+    </ul>
+
+    <h2>⚡ Run it like an operator</h2>
+    <ul>
+      <li><strong>Measured wall power from metering plugs</strong> (Tasmota/Shelly/Kasa) — true watts and efficiency even for miners that don't report their own power.</li>
+      <li><strong>Smart-plug over-temp safety cutoff</strong> — cuts power if a miner overheats, with an optional always-on background monitor that survives reboot.</li>
+      <li><strong>Efficiency leaderboard</strong>, honest offline/stale states, local history with CSV export and JSON backup/restore, and a per-miner <strong>maintenance log</strong> (timestamped notes with photos).</li>
+    </ul>
+
+    <h2>⛏️ Supported miners</h2>
+    <p class="note">Support is by <strong>firmware family</strong>, verified on real hardware (✅) or against the vendor's documented API (compat-gated):</p>
+    <ul>
+      <li><strong>Bitaxe / AxeOS</strong> (Max, Ultra, Supra, Gamma, Gamma Turbo, Supra Hex) — full monitoring + reboot, pool, fan, tuning &amp; auto-tune</li>
+      <li><strong>NerdQAxe</strong> and ESP-Miner forks — monitoring + reboot</li>
+      <li><strong>Antminer</strong> on <strong>stock Bitmain</strong> (reboot), <strong>VNish</strong> (reboot + pause/resume, incl. wall power), <strong>LuxOS</strong> (pause/resume)</li>
+      <li><strong>Canaan Avalon</strong> Nano 3 / 3S / Q / Mini 3 — monitoring + pause/resume + reboot</li>
+      <li><strong>Braiins OS</strong> (BMM 100) — monitoring + pause/resume</li>
+      <li><strong>WhatsMiner</strong>, <strong>FutureBit</strong>, and the <strong>generic cgminer</strong> long tail — monitoring</li>
+    </ul>
+
+    <h2>🔒 Private by design</h2>
+    <p>
+      An enforced network boundary refuses any non-private address, so miner traffic never
+      leaves your LAN/VPN. Secrets are AES-256-GCM in the Android Keystore; Android
+      auto-backup is disabled; the camera is used only for on-demand QR scanning. No
+      analytics, no ads, no account. Everything that can leave the device is opt-in and off
+      by default — and fully disclosed.
+    </p>
+
+    <p class="cta">Requires Android 8.0+. Miners reachable on your LAN or over Tailscale.</p>
+
+    <footer>
+      Hi3 Hashkit is not affiliated with any miner or pool vendor. Cryptocurrency mining
+      involves risk; controls are provided as-is.
+    </footer>
+  </div>
+</body>
+</html>
