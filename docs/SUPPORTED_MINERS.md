@@ -1,6 +1,6 @@
 # Supported miners
 
-Complete model-by-model support for Hi3 Hashkit (as of **v0.45.0**).
+Complete model-by-model support for Hi3 Hashkit (as of **v0.64.0**).
 
 **Status:** ✅ Verified on real hardware · 🟡 Compat‑gated (same firmware/API, basic
 telemetry is safe, pending confirmation on that exact model).
@@ -53,6 +53,17 @@ need the exact unit that was tested.
   verified on hardware or against the vendor's documented API.
 - **Expected hashrate / attainment %** is seeded from a built-in model spec registry
   (public spec-sheet nominals) when neither the device nor the user provides one.
+- **Per-chip / per-chain health** is surfaced for **Antminer-class** miners (stock Bitmain,
+  VNish) that report it — per-board hashrate, working/dead chip counts, hardware errors and
+  hottest-chip temp — parsed only from fields present in real captures (`chain_rate/acn/acs/
+  hw`, `temp_chip`).
+- **Measured wall power via metering plugs:** for a miner that doesn't report its own power
+  (e.g. **stock Bitmain**, **Braiins BMM 100**), configuring a metering smart plug
+  (Tasmota/Shelly/Kasa energy monitor) fills in **measured** watts and efficiency over the
+  LAN.
+- **Bitaxe auto-tuner** sweeps only firmware-approved frequencies, under a chip-temp ceiling,
+  and optimizes for efficiency or hashrate — no invented tune values; original setpoint is
+  restored and applying the winner is a separate tap.
 - Every miner API is verified against real hardware (or, for compat‑gated entries, the
   vendor's documented API) before it ships — endpoints are never invented.
 
