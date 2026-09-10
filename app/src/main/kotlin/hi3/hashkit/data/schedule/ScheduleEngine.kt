@@ -77,6 +77,12 @@ object ScheduleDueLogic {
                     FanControl.Manual(params["percent"]?.jsonPrimitive?.intOrNull ?: return null)
                 )
             }
+            // Time-of-use power management: apply a low-power preset at peak, normal off-peak.
+            "apply_tune" -> {
+                val freq = params?.get("frequency")?.jsonPrimitive?.intOrNull ?: return null
+                val volt = params["voltage"]?.jsonPrimitive?.intOrNull ?: return null
+                BulkAction.SetTune(freq, volt)
+            }
             else -> null
         }
     }

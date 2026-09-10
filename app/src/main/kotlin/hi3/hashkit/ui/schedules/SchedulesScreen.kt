@@ -204,6 +204,9 @@ private fun ScheduleEditorDialog(
     // Fan params
     var fanAuto by rememberSaveable { mutableStateOf(true) }
     var fanPercent by rememberSaveable { mutableStateOf(70f) }
+    // Tune params (time-of-use power preset)
+    var tuneFreq by rememberSaveable { mutableStateOf("") }
+    var tuneVolt by rememberSaveable { mutableStateOf("") }
 
     val timeMinutes = time.split(":").let { parts ->
         val h = parts.getOrNull(0)?.trim()?.toIntOrNull()
@@ -212,6 +215,7 @@ private fun ScheduleEditorDialog(
     }
     val paramsValid = when (action) {
         "set_pool" -> poolUrl.isNotBlank() && poolWorker.isNotBlank() && poolPort.toIntOrNull() in 1..65535
+        "apply_tune" -> (tuneFreq.toIntOrNull() ?: 0) > 0 && (tuneVolt.toIntOrNull() ?: 0) > 0
         else -> true
     }
     val valid = label.isNotBlank() && timeMinutes != null && days.isNotEmpty() && paramsValid
@@ -227,6 +231,7 @@ private fun ScheduleEditorDialog(
                         "reboot" to "Restart", "set_pool" to "Pool", "set_fan" to "Fan",
                         "pause" to "Pause", "resume" to "Resume",
                         "plug_off" to "Plug off", "plug_on" to "Plug on",
+                        "apply_tune" to "Tune preset",
                     ).forEach { (key, text) ->
                         FilterChip(selected = action == key, onClick = { action = key }, label = { Text(text) })
                     }
@@ -247,6 +252,10 @@ private fun ScheduleEditorDialog(
                             Slider(value = fanPercent, onValueChange = { fanPercent = it }, valueRange = 20f..100f)
                         }
                     }
+                    "apply_tune" -> {
+                        OutlinedTextField(value = tuneFreq, onValueChange = { tuneFreq = it }, label = { Text("Frequency (MHz)") }, singleLine = true)
+                        OutlinedTextField(value = tuneVolt, onValueChange = { tuneVolt = it }, label = { Text("Core voltage (mV)") }, singleLine = true)
+                    }
                 }
                 OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text("Time (HH:MM, device timezone)") }, singleLine = true)
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -266,6 +275,11 @@ private fun ScheduleEditorDialog(
                     "Plug on/off switches each target miner's configured smart plug over the LAN. " +
                         "Miners without a plug set up are skipped. Pair a nightly Plug off with a " +
                         "morning Plug on for time-of-use power control; each run is recorded."
+                } else if (action == "apply_tune") {
+                    "Time-of-use power target: applies a fixed frequency/voltage preset. Use a " +
+                        "low-power preset at peak-rate start and your normal preset at the end. " +
+                        "Only firmware that accepts these values (e.g. Bitaxe/AxeOS) runs it; " +
+                        "others are skipped. Use values your miner's tuner accepts."
                 } else {
                     "Time-of-use: schedule Pause at your peak-rate start and Resume at the end " +
                         "(pause needs a device that supports it). Unsupported devices are skipped " +
@@ -291,6 +305,10 @@ private fun ScheduleEditorDialog(
                         "set_fan" -> buildJsonObject {
                             put("auto", fanAuto)
                             if (!fanAuto) put("percent", fanPercent.roundToInt())
+                        }.toString()
+                        "apply_tune" -> buildJsonObject {
+                            put("frequency", tuneFreq.toInt())
+                            put("voltage", tuneVolt.toInt())
                         }.toString()
                         else -> "{}"
                     }

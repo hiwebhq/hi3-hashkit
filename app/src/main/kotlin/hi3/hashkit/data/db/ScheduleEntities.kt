@@ -19,7 +19,8 @@ data class ScheduleEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val enabled: Boolean,
     val label: String,
-    /** One of: set_pool, set_fan, apply_tune, reboot, pause, resume, plug_on, plug_off. */
+    /** One of: set_pool, set_fan, apply_tune, reboot, pause, resume, plug_on, plug_off.
+     *  apply_tune carries {frequency, voltage} for a time-of-use power preset. */
     val actionType: String,
     val paramsJson: String,
     val targetMinerIdsCsv: String,

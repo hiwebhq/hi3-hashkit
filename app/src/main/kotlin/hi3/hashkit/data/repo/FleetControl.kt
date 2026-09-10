@@ -38,6 +38,12 @@ sealed interface BulkAction {
             hi3.hashkit.domain.adapter.PowerAction.RESUME -> "Resume hashing"
         }
     }
+
+    /** Apply a specific (firmware-approved) frequency/voltage — e.g. a low-power TOU preset. */
+    data class SetTune(val frequencyMhz: Int, val coreVoltageMv: Int) : BulkAction {
+        override val capability = Capability.APPLY_APPROVED_TUNE
+        override val label = "Tune to ${frequencyMhz} MHz @ ${coreVoltageMv} mV"
+    }
 }
 
 data class BulkPlan(
@@ -99,6 +105,8 @@ class FleetControl @Inject constructor(
                         controlRepository.setPrimaryPool(entity, action.url, action.port, action.worker)
                     is BulkAction.SetFan -> controlRepository.setFan(entity, action.config)
                     is BulkAction.Power -> controlRepository.powerControl(entity, action.action)
+                    is BulkAction.SetTune ->
+                        controlRepository.applyTune(entity, action.frequencyMhz, action.coreVoltageMv)
                 }
             }.getOrElse { ActionResult.Failure(it.message ?: "Unexpected error") }
             BulkOutcome(entity.id, entity.name, result)

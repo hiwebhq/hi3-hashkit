@@ -1,31 +1,45 @@
 # Architecture
 
-Single-module Android app (`app`), Kotlin + Jetpack Compose + Material 3, with
-package boundaries that mirror a future multi-module split.
+Two Gradle modules — the phone app (`app`) and a Wear OS companion (`wear`) — Kotlin +
+Jetpack Compose + Material 3, with package boundaries inside `app` that mirror a future
+multi-module split.
 
 ```
 hi3.hashkit
-├── core            Units & formatting (canonical units: GH/s, W, °C, mV, MHz, J/TH)
+├── core            Units & formatting (canonical units: GH/s, W, °C, mV, MHz, J/TH),
+│                   KeystoreCrypto (AES-256-GCM), LicenseValidator (advanced-features gate)
 ├── domain
-│   ├── model       Miner, MinerIdentity, MinerTelemetry, MinerCapabilities,
-│   │               Sourced<T> + ValueSource (MEASURED/REPORTED/CALCULATED/ESTIMATED/UNAVAILABLE)
-│   └── adapter     MinerAdapter (read path) / MinerControlAdapter (write path),
-│                   ProbeResult, TelemetryResult, ActionResult, AdapterRegistry
-├── adapters
-│   ├── espminer    Bitaxe/ESP-Miner/AxeOS + forks — tolerant JsonObject parser
-│   ├── demo        Synthetic miners, demo mode only, isDemo-flagged and badged
-│   └── canaan      (Phase 3, capture-driven)
-├── discovery       MinerHostValidator (private/CGNAT-only boundary), SubnetUtils
-│                   (CIDR expansion, /22 safety cap), MinerScanner (bounded concurrent
-│                   probe with progress + cancellation), NetworkInspector
+│   ├── model       Miner, MinerIdentity, MinerTelemetry (incl. per-chain ChainReading),
+│   │               MinerCapabilities, Sourced<T> + ValueSource, HalvingMath
+│   ├── adapter     MinerAdapter (read) / MinerControlAdapter (write), *Result types, registry
+│   ├── alerts      AlertEvaluator + AlertType, NotificationWindow (quiet hours/digest)
+│   ├── analysis    AnomalyDetector (gradual drift / rising reject rate)
+│   ├── rules       RuleEngine (if-condition-then-action evaluation)
+│   └── solo        Solo-mining probability math
+├── adapters        espminer (AxeOS + forks), cgminer (Antminer/VNish/LuxOS/WhatsMiner/
+│                   generic), canaan, braiins, demo — all tolerant JsonObject parsers
+├── discovery       MinerHostValidator (private/CGNAT-only boundary), SubnetUtils (/22 cap),
+│                   MinerScanner, AutoScanManager, NsdDiscoverer (mDNS), NetworkInspector
 ├── data
-│   ├── db          Room: miners, miner_addresses, telemetry_samples, raw_responses
-│   ├── repo        MinerRepository (identity re-binding, poll persistence), mappers
-│   ├── poll        PollingEngine — foreground-only in v1, honest lastRefresh
-│   └── prefs       DataStore settings (temp unit, demo mode, poll interval)
-├── integrations/hi3  DISABLED placeholder interfaces for pool.hi3.cc / mmp.hi3.cc
-├── ui              theme (central branding layer), dashboard, detail, discovery
-└── di              Hilt modules (OkHttp, Room, adapter multibinding)
+│   ├── db          Room v14: miners, telemetry_samples (+perChainJson), raw_responses,
+│   │               alerts, audit, schedules, rules, saved_pools, maintenance_notes, farms, hourly
+│   ├── repo        MinerRepository (identity re-binding, plug-power augmentation),
+│   │               ControlRepository, FleetControl (bulk plan/execute), DifficultyRepository
+│   ├── alerts      AlertRepository, AlertNotifier, WebhookNotifier, AlertActionReceiver
+│   ├── rules       RuleRunner        ├── schedule  ScheduleEngine
+│   ├── remediation RemediationEngine ├── wear      WearSyncManager (Data Layer publish)
+│   ├── poll        PollingEngine (foreground) + MonitorWorker (background), SafetyMonitorService
+│   └── prefs       DataStore settings
+├── integrations    hi3 (pool/MMP), plug (SmartPlugClient: switch + power read),
+│                   mqtt (MqttClient + MqttPublisher), metrics (PrometheusServer +
+│                   HtmlDashboard), update (FirmwareUpdateChecker)
+├── ui              theme (branding + UI-theme accents), dashboard, detail, table, rack,
+│                   wall (TV), flow, rules, schedules, addressbook, autotune, alerts,
+│                   settings, network, farms, leaderboard, onboarding, widget
+└── di              Hilt modules (OkHttp, Room + migrations, adapter multibinding)
+
+wear                Wear OS companion: FleetTileService (ProtoLayout), FleetDataListenerService,
+                    MainActivity (Wear Compose) — fed by the phone over the Wearable Data Layer
 ```
 
 ## Key decisions
@@ -47,10 +61,25 @@ hi3.hashkit
   OFFLINE samples so charts show gaps, never interpolations.
 - **Network boundary in code.** Cleartext HTTP is required by miner firmware; since
   Android can't scope cleartext by IP range, `MinerHostValidator` refuses any non-private
-  destination at connect time and discovery refuses CIDRs wider than /22.
+  destination at connect time and discovery refuses CIDRs wider than /22. The only
+  deliberately-public traffic is opt-in and documented (mempool.space, GitHub release
+  check, the alert webhook you configure).
+- **Pure cores, thin runners.** Decision logic is pure and unit-tested (`AlertEvaluator`,
+  `AnomalyDetector`, `RuleEngine`, `HalvingMath`, `MetricsFormatter`, `HtmlDashboard`,
+  `LicenseValidator`); the repositories/runners wire them to Room, the network, and Android.
+- **One poll tick drives everything.** `PollingEngine.pollAllOnce` (foreground) and
+  `MonitorWorker` (background) both fan out to alerts, schedules, the rules engine,
+  remediation, the widget, the Wear publish, MQTT, and the Prometheus/web server — so
+  every subsystem sees the same fresh sample.
+- **Secrets at rest.** Per-miner admin passwords/tokens and the MMP/MQTT keys are
+  AES-256-GCM via a non-exportable Android Keystore key (`KeystoreCrypto`); Android
+  auto-backup is disabled.
 
 ## Telemetry storage
 
-High-resolution samples in `telemetry_samples` (indexed by miner + timestamp). Raw API
-bodies are kept ~1 h for diagnostics only. Hourly/daily downsampling and configurable
-retention land in Phase 4 (schema kept additive to avoid destructive migrations).
+High-resolution samples in `telemetry_samples` (indexed by miner + timestamp), each
+carrying per-chain health JSON where the firmware reports it. Raw API bodies are kept ~1 h
+for diagnostics only. Completed hours roll into `telemetry_hourly` aggregates with
+configurable raw retention; the merged history feeds the detail charts. Room is at
+schema **v14**, and every migration is additive (columns/tables only) to avoid destructive
+upgrades.

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.65.0
+
+- **Time-of-use power scheduling (tune presets).** Schedules gained an **Apply tune preset**
+  action (frequency + core voltage): schedule a low-power preset at your peak-rate start and
+  your normal preset at the end for genuine TOU power management. Only firmware that accepts
+  those values (e.g. Bitaxe/AxeOS) runs it; others are skipped. Also available as a fleet
+  bulk action.
+- **Docs.** Documented two BTC-Tools-style batch operations — **mass firmware upgrade** and
+  **batch static-IP / network config** — in the DEVICE_MATRIX "pending hardware verification"
+  list (gated until each family's endpoints are verified on real hardware; no invented
+  endpoints). Refreshed ARCHITECTURE for the current package layout (two modules, all
+  subsystems, Room v14).
+
 ## 0.64.0
 
 - **Local web dashboard (Advanced).** The local server (formerly just Prometheus /metrics)
