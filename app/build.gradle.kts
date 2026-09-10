@@ -28,6 +28,9 @@ android {
         versionName = "0.65.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Hidden dev link (7 logo taps). On in debug; the release/store build turns it off.
+        buildConfigField("boolean", "EASTER_EGG", "true")
     }
 
     ksp {
@@ -56,6 +59,8 @@ android {
             if (keystoreProps.isNotEmpty()) {
                 signingConfig = signingConfigs.getByName("release")
             }
+            // Store build ships without the hidden dev link.
+            buildConfigField("boolean", "EASTER_EGG", "false")
         }
     }
     compileOptions {
@@ -67,6 +72,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {

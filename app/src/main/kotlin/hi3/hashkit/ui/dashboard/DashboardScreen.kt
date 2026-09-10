@@ -149,7 +149,7 @@ fun DashboardScreen(
                             interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
                         ) {
                             logoTaps++
-                            if (logoTaps >= 7) {
+                            if (hi3.hashkit.BuildConfig.EASTER_EGG && logoTaps >= 7) {
                                 logoTaps = 0
                                 runCatching {
                                     context.startActivity(
