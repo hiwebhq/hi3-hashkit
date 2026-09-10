@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hi3 Hashkit — Privacy Policy</title>
+  <meta name="description" content="Privacy policy for the Hi3 Hashkit Android app: local-first, no account, no cloud, no analytics.">
+  <style>
+    :root {
+      --ink: #0b0f14;
+      --muted: #5a6b7b;
+      --accent: #1c6fd0;
+      --line: #e2e8f0;
+      --bg: #ffffff;
+      --card: #f7f9fc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 72px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 28px; }
+    h1 { font-size: 30px; margin: 0 0 4px; letter-spacing: -0.01em; }
+    .updated { color: var(--muted); font-size: 14px; }
+    h2 {
+      font-size: 20px; margin: 34px 0 10px; padding-top: 6px;
+      letter-spacing: -0.01em;
+    }
+    p, li { color: #1c2530; }
+    a { color: var(--accent); }
+    ul { padding-left: 22px; }
+    li { margin: 6px 0; }
+    .lead {
+      background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px 18px; color: #2a3644;
+    }
+    .muted { color: var(--muted); }
+    code { background: var(--card); padding: 1px 5px; border-radius: 4px; font-size: 90%; }
+    footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: #e8eef4; --muted: #93a3b4; --accent: #6fb1ff; --line: #1f2a36; --bg: #0b0f14; --card: #121820; }
+      p, li { color: #d3dde6; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Hi3 Hashkit — Privacy Policy</h1>
+      <div class="updated">Last updated: 2026-09-09</div>
+    </header>
+
+    <p class="lead">
+      Hi3 Hashkit ("the app") is a privacy-first, local-first Android application for
+      monitoring and controlling Bitcoin miners on your own network. In short: the app has
+      no account, no ads, no analytics, and no cloud of ours. Your data stays on your device
+      unless you explicitly turn on one of the optional integrations described below.
+    </p>
+
+    <h2>1. Who we are</h2>
+    <p>
+      Hi3 Hashkit is developed and published by the developer identified on the app's Google
+      Play listing. Questions about this policy can be sent to the contact address shown on
+      that listing.
+    </p>
+
+    <h2>2. The short version</h2>
+    <ul>
+      <li>We do not collect, transmit, sell, or share your personal data.</li>
+      <li>There is no user account and no login to any service of ours.</li>
+      <li>There are no analytics SDKs, advertising SDKs, or trackers in the app.</li>
+      <li>All monitoring data (miners, telemetry history, settings, notes) is stored locally
+        on your device.</li>
+      <li>Nothing leaves your device except (a) requests to the miners you add, on your own
+        local network or VPN, and (b) optional integrations that are OFF by default and only
+        contact a destination you configure.</li>
+    </ul>
+
+    <h2>3. Data stored on your device</h2>
+    <p>The app stores the following locally, on your device only:</p>
+    <ul>
+      <li>The miners you add (name, network address, model, group/site, notes).</li>
+      <li>Telemetry history (hashrate, temperatures, power, efficiency, shares, uptime, pool).</li>
+      <li>Your settings and preferences.</li>
+      <li>Optional per-miner maintenance notes and photos you add.</li>
+      <li>Optionally, a miner's own admin password or API token, if you enter one to use a
+        control feature. Such secrets are encrypted at rest using a non-exportable key in the
+        Android Keystore (AES-256-GCM), decrypted only in memory to authenticate a request to
+        that miner, and never logged, exported, or sent anywhere else.</li>
+    </ul>
+    <p>
+      This data is not backed up to the cloud by the app: Android's automatic backup is
+      disabled (<code>allowBackup="false"</code>). You can export data only through actions
+      you start yourself (CSV, diagnostics, or a JSON backup), which go to a destination you
+      choose via the Android share sheet.
+    </p>
+
+    <h2>4. What can leave your device</h2>
+    <p><strong>a) Requests to your miners (core function).</strong>
+      The app communicates with the miner addresses you add, over your local network (LAN)
+      or your own VPN (e.g. Tailscale). These destinations must be private/local addresses;
+      the app refuses to connect to public internet addresses for miner traffic. No third
+      party is involved.</p>
+    <p><strong>b) Optional integrations — all OFF by default</strong>, each enabled
+      individually in Settings:</p>
+    <ul>
+      <li><strong>Network difficulty and Bitcoin price:</strong> a single read-only request
+        to mempool.space to support solo-odds and profitability estimates. No miner data is
+        sent.</li>
+      <li><strong>Pool statistics:</strong> read-only requests to the mining pool you select
+        (e.g. Hi3/Public Pool, CKPool, OCEAN, F2Pool, Braiins Pool), identified by your
+        payout address, account, or a read-only token you provide. No miner telemetry or
+        passwords are sent.</li>
+      <li><strong>Hi3 MMP fleet view:</strong> read-only requests to a Mining Management
+        Platform URL you configure, authenticated by an API key you provide (stored encrypted
+        in the Android Keystore). Nothing is uploaded.</li>
+      <li><strong>Firmware update check:</strong> at most one read-only request to GitHub to
+        read the latest public firmware version tag. No device data is sent.</li>
+      <li><strong>Alert webhook (push notifications):</strong> if you configure a push service
+        (ntfy, Gotify, Telegram, or a generic URL), an active alert triggers one message to
+        the endpoint you specify, containing the miner's name and the alert type/message only
+        — no credentials, addresses, or telemetry beyond that.</li>
+      <li><strong>MQTT publish (e.g. Home Assistant):</strong> if enabled, the app publishes a
+        small fleet and per-miner telemetry summary to the local MQTT broker you configure.
+        This is a local-network publish only.</li>
+      <li><strong>Local web dashboard / metrics endpoint:</strong> if enabled, the app runs a
+        small read-only web server on your local network so a browser or a Prometheus/Grafana
+        instance can view fleet status. It serves data only; it accepts no input and offers no
+        controls.</li>
+      <li><strong>Paired Wear OS watch:</strong> if you install the companion watch app, a
+        small fleet summary is sent to your paired watch over the local Wearable Data Layer
+        (Bluetooth/Wi-Fi), not the internet.</li>
+      <li><strong>Smart plug control/metering:</strong> if you configure a smart plug for a
+        miner, the app sends on/off commands and reads power over your local network only.</li>
+    </ul>
+    <p>
+      We (the developer) do not receive any of this data. The app never uploads your miner
+      data to any server operated by us.
+    </p>
+
+    <h2>5. Permissions and why they are used</h2>
+    <ul>
+      <li><strong>Internet / Network state / Wi-Fi state:</strong> to reach and monitor miners
+        on your LAN or VPN, and to detect the active network for scanning.</li>
+      <li><strong>Notifications:</strong> to show miner alerts you enable.</li>
+      <li><strong>Camera:</strong> used only, on demand, to scan a payout-address QR code. No
+        image is stored or transmitted. The camera is optional.</li>
+      <li><strong>Foreground service (special use):</strong> only if you enable the optional
+        always-on over-temperature safety cutoff, which watches a configured smart plug and
+        cuts power if a miner overheats. It shows a persistent notification while active and
+        does nothing else.</li>
+      <li><strong>Receive boot completed:</strong> only to re-arm that safety cutoff after a
+        device restart, if you enabled it.</li>
+    </ul>
+    <p>The app does not request location, contacts, microphone, or background-location
+      permissions.</p>
+
+    <h2>6. Data we do not collect</h2>
+    <ul>
+      <li>No personal identifiers, contacts, location, or advertising IDs.</li>
+      <li>No usage analytics or crash telemetry sent to us or any third party.</li>
+      <li>No selling or sharing of any data with third parties.</li>
+    </ul>
+
+    <h2>7. Children</h2>
+    <p>
+      The app is a technical tool for cryptocurrency-mining hardware and is not directed to
+      children under 13 (or the equivalent minimum age in your jurisdiction). We do not
+      knowingly collect data from children.
+    </p>
+
+    <h2>8. Data retention and deletion</h2>
+    <p>Because data is stored only on your device, you control it entirely:</p>
+    <ul>
+      <li>Deleting a miner removes its stored data.</li>
+      <li>Adjusting the retention setting prunes older telemetry.</li>
+      <li>Uninstalling the app deletes all of its data from your device.</li>
+    </ul>
+
+    <h2>9. Third-party services</h2>
+    <p>
+      The app does not embed third-party advertising or analytics services. Optional
+      integrations you choose to enable (a mining pool, mempool.space, GitHub, your push
+      provider, your MQTT broker) are operated by those third parties under their own privacy
+      policies; the app only contacts them when you enable and configure them, and only sends
+      the minimal data described in Section 4.
+    </p>
+
+    <h2>10. Security</h2>
+    <p>
+      Secrets are encrypted at rest with the Android Keystore. Cleartext local connections to
+      miners are permitted only toward private/local network addresses, enforced in code. The
+      app has no account system and stores no credentials on any server.
+    </p>
+
+    <h2>11. Changes to this policy</h2>
+    <p>
+      We may update this policy as the app evolves. Material changes will be reflected by the
+      "Last updated" date above and in the app's release notes.
+    </p>
+
+    <h2>12. Contact</h2>
+    <p>
+      For privacy questions, contact the developer at the email address listed on the app's
+      Google Play Store page.
+    </p>
+
+    <footer>
+      Hi3 Hashkit — privacy-first, local-first Bitcoin miner monitoring for Android.
+    </footer>
+  </div>
+</body>
+</html>
