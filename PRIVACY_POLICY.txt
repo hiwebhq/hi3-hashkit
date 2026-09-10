@@ -1,0 +1,154 @@
+HI3 HASHKIT — PRIVACY POLICY
+
+Last updated: 2026-09-09
+
+Hi3 Hashkit ("the app") is a privacy-first, local-first Android application for
+monitoring and controlling Bitcoin miners on your own network. This policy explains what
+the app does and does not do with your data. In short: the app has no account, no ads, no
+analytics, and no cloud of ours. Your data stays on your device unless you explicitly turn
+on one of the optional integrations described below.
+
+
+1. WHO WE ARE
+
+Hi3 Hashkit is developed and published by the developer identified on the app's Google
+Play listing. Questions about this policy can be sent to the contact address shown on that
+listing.
+
+
+2. THE SHORT VERSION
+
+- We do not collect, transmit, sell, or share your personal data.
+- There is no user account and no login to any service of ours.
+- There are no analytics SDKs, advertising SDKs, or trackers in the app.
+- All monitoring data (miners, telemetry history, settings, notes) is stored locally on
+  your device.
+- Nothing leaves your device except (a) requests to the miners you add, on your own local
+  network or VPN, and (b) optional integrations that are OFF by default and only contact a
+  destination you configure.
+
+
+3. DATA STORED ON YOUR DEVICE
+
+The app stores the following locally, on your device only:
+
+- The miners you add (name, network address, model, group/site, notes).
+- Telemetry history (hashrate, temperatures, power, efficiency, shares, uptime, pool).
+- Your settings and preferences.
+- Optional per-miner maintenance notes and photos you add.
+- Optionally, a miner's own admin password or API token, if you enter one to use a control
+  feature. Such secrets are encrypted at rest using a non-exportable key in the Android
+  Keystore (AES-256-GCM), decrypted only in memory to authenticate a request to that miner,
+  and never logged, exported, or sent anywhere else.
+
+This data is not backed up to the cloud by the app: Android's automatic backup is disabled
+(allowBackup="false"). You can export data only through actions you start yourself (CSV,
+diagnostics, or a JSON backup), which go to a destination you choose via the Android share
+sheet.
+
+
+4. WHAT CAN LEAVE YOUR DEVICE
+
+a) Requests to your miners (core function).
+   The app communicates with the miner addresses you add, over your local network (LAN) or
+   your own VPN (e.g. Tailscale). These destinations must be private/local addresses; the
+   app refuses to connect to public internet addresses for miner traffic. No third party is
+   involved.
+
+b) Optional integrations — all OFF by default, each enabled individually in Settings:
+
+   - Network difficulty and Bitcoin price: a single read-only request to mempool.space to
+     support solo-odds and profitability estimates. No miner data is sent.
+   - Pool statistics: read-only requests to the mining pool you select (e.g. Hi3/Public
+     Pool, CKPool, OCEAN, F2Pool, Braiins Pool), identified by your payout address,
+     account, or a read-only token you provide. No miner telemetry or passwords are sent.
+   - Hi3 MMP fleet view: read-only requests to a Mining Management Platform URL you
+     configure, authenticated by an API key you provide (stored encrypted in the Android
+     Keystore). Nothing is uploaded.
+   - Firmware update check: at most one read-only request to GitHub to read the latest
+     public firmware version tag. No device data is sent.
+   - Alert webhook (push notifications): if you configure a push service (ntfy, Gotify,
+     Telegram, or a generic URL), an active alert triggers one message to the endpoint YOU
+     specify, containing the miner's name and the alert type/message only — no credentials,
+     addresses, or telemetry beyond that.
+   - MQTT publish (e.g. Home Assistant): if enabled, the app publishes a small fleet and
+     per-miner telemetry summary to the local MQTT broker you configure. This is a local-
+     network publish only.
+   - Local web dashboard / metrics endpoint: if enabled, the app runs a small read-only
+     web server on your local network so a browser or a Prometheus/Grafana instance can view
+     fleet status. It serves data only; it accepts no input and offers no controls.
+   - Paired Wear OS watch: if you install the companion watch app, a small fleet summary is
+     sent to your paired watch over the local Wearable Data Layer (Bluetooth/Wi-Fi), not the
+     internet.
+   - Smart plug control/metering: if you configure a smart plug for a miner, the app sends
+     on/off commands and reads power over your local network only.
+
+We (the developer) do not receive any of this data. The app never uploads your miner data
+to any server operated by us.
+
+
+5. PERMISSIONS AND WHY THEY ARE USED
+
+- Internet / Network state / Wi-Fi state: to reach and monitor miners on your LAN or VPN,
+  and to detect the active network for scanning.
+- Notifications: to show miner alerts you enable.
+- Camera: used only, on demand, to scan a payout-address QR code. No image is stored or
+  transmitted. The camera is optional.
+- Foreground service (special use): only if you enable the optional always-on over-
+  temperature safety cutoff, which watches a configured smart plug and cuts power if a
+  miner overheats. It shows a persistent notification while active and does nothing else.
+- Receive boot completed: only to re-arm that safety cutoff after a device restart, if you
+  enabled it.
+
+The app does not request location, contacts, microphone, or background-location
+permissions.
+
+
+6. DATA WE DO NOT COLLECT
+
+- No personal identifiers, contacts, location, or advertising IDs.
+- No usage analytics or crash telemetry sent to us or any third party.
+- No selling or sharing of any data with third parties.
+
+
+7. CHILDREN
+
+The app is a technical tool for cryptocurrency-mining hardware and is not directed to
+children under 13 (or the equivalent minimum age in your jurisdiction). We do not knowingly
+collect data from children.
+
+
+8. DATA RETENTION AND DELETION
+
+Because data is stored only on your device, you control it entirely:
+- Deleting a miner removes its stored data.
+- Adjusting the retention setting prunes older telemetry.
+- Uninstalling the app deletes all of its data from your device.
+
+
+9. THIRD-PARTY SERVICES
+
+The app does not embed third-party advertising or analytics services. Optional integrations
+you choose to enable (a mining pool, mempool.space, GitHub, your push provider, your MQTT
+broker) are operated by those third parties under their own privacy policies; the app only
+contacts them when you enable and configure them, and only sends the minimal data described
+in Section 4.
+
+
+10. SECURITY
+
+Secrets are encrypted at rest with the Android Keystore. Cleartext local connections to
+miners are permitted only toward private/local network addresses, enforced in code. The app
+has no account system and stores no credentials on any server.
+
+
+11. CHANGES TO THIS POLICY
+
+We may update this policy as the app evolves. Material changes will be reflected by the
+"Last updated" date above and in the app's release notes.
+
+
+12. CONTACT
+
+For privacy questions, contact the developer at the email address listed on the app's
+Google Play Store page.
