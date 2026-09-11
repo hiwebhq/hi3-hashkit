@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.73.2
+
+- Version bump.
+
 ## 0.73.1
 
 - **Automation rules** is now an Advanced feature — moved out of the dashboard overflow into
