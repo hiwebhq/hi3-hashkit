@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.4
+
+- **Pool speed test simplified.** Removed the "Also compare public pools" toggle — the speed test
+  now runs each miner's own pool plus the pools you've enabled in the Pool address book (public
+  pools live there now too).
+
 ## 0.76.3
 
 - **Hash rental: sat / USD toggle.** A unit toggle switches prices between **sat/PH·day** and your

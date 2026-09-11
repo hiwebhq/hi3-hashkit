@@ -54,8 +54,6 @@ data class PoolSpeedState(
     val running: Boolean = false,
     val results: List<PoolSpeedResult> = emptyList(),
     val message: String? = null,
-    /** Also test the well-known public pools (off by default; your own pools are always tested). */
-    val includePublic: Boolean = false,
 )
 
 @HiltViewModel
@@ -69,20 +67,14 @@ class PoolSpeedViewModel @Inject constructor(
     val state: StateFlow<PoolSpeedState> = _state
 
     init {
-        viewModelScope.launch { _state.value = _state.value.copy(candidates = collect(false).size) }
-    }
-
-    fun setIncludePublic(v: Boolean) {
-        _state.value = _state.value.copy(includePublic = v)
-        viewModelScope.launch { _state.value = _state.value.copy(candidates = collect(v).size) }
+        viewModelScope.launch { _state.value = _state.value.copy(candidates = collect().size) }
     }
 
     /**
-     * Pools to test. Your fleet's actual pools (from each miner's reported config — this is
-     * how a PRIVATE/LAN stratum gets tested) and saved address-book pools are always included.
-     * The well-known PUBLIC pools are added only when [includePublic] is on.
+     * Pools to test: each miner's actual reported pool (so a PRIVATE/LAN stratum is tested), plus
+     * the address-book pools you've enabled for testing (the public pools now live there too).
      */
-    private suspend fun collect(includePublic: Boolean): List<Candidate> {
+    private suspend fun collect(): List<Candidate> {
         val fromMiners = repository.observeMinerEntities().first()
             .filter { !it.isDemo }
             .map { repository.toDomain(it, Instant.now()) }
@@ -96,17 +88,13 @@ class PoolSpeedViewModel @Inject constructor(
             .mapNotNull { sp ->
                 PoolSpeedTester.parseStratum(sp.url, sp.port)?.let { (h, p) -> Candidate(sp.label, h, p) }
             }
-        val fromPublic = if (!includePublic) emptyList() else
-            hi3.hashkit.integrations.hi3.PoolType.entries
-                .filter { !it.comingSoon && it.stratumHost != null }
-                .map { Candidate("${it.displayName} (public)", it.stratumHost!!, it.stratumPort) }
-        return (fromMiners + fromSaved + fromPublic).distinctBy { "${it.host}:${it.port}" }
+        return (fromMiners + fromSaved).distinctBy { "${it.host}:${it.port}" }
     }
 
     fun runTest() {
         if (_state.value.running) return
         viewModelScope.launch {
-            val candidates = collect(_state.value.includePublic)
+            val candidates = collect()
             if (candidates.isEmpty()) {
                 _state.value = _state.value.copy(message = "No pools found. Configure a pool on a miner or in the address book.")
                 return@launch
@@ -164,29 +152,11 @@ fun PoolSpeedScreen(
                     "Measures stratum latency — the TCP handshake and a real mining.subscribe " +
                         "round-trip, no packet sniffing. It tests the pools your fleet actually " +
                         "uses (read from each miner's own pool config, so PRIVATE/LAN stratum " +
-                        "works because the phone shares the fleet network) plus any saved pools. " +
-                        "Measured from THIS phone's network.",
+                        "works because the phone shares the fleet network) plus the pools you've " +
+                        "enabled in the Pool address book. Measured from THIS phone's network.",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
-            }
-            item {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Also compare public pools", style = MaterialTheme.typography.bodyMedium)
-                        Text(
-                            "CKPool, OCEAN, F2Pool, Braiins, Public Pool — their documented public " +
-                                "stratum endpoints (a regional server may be faster).",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = HiBrand.textSecondary,
-                        )
-                    }
-                    androidx.compose.material3.Switch(
-                        checked = state.includePublic,
-                        onCheckedChange = viewModel::setIncludePublic,
-                        enabled = !state.running,
-                    )
-                }
             }
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
