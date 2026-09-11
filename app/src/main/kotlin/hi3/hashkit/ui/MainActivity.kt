@@ -233,6 +233,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onPriceCurtailment = { nav.navigate("price") },
                 onAcoustic = { nav.navigate("acoustic") },
                 onArOverlay = { nav.navigate("ar") },
+                onNfcProgram = { nav.navigate("nfcprog") },
                 onLiveBitcoin = {
                     runCatching {
                         context.startActivity(
@@ -297,7 +298,14 @@ private fun AppNavHost(onExit: () -> Unit) {
             hi3.hashkit.ui.table.TableScreen(
                 onBack = { nav.popBackStack() },
                 onMinerClick = { id -> nav.navigate("miner/$id") },
+                onProgramNfc = { ids -> nav.navigate("nfcprog?ids=${ids.joinToString(",")}") },
             )
+        }
+        composable(
+            route = "nfcprog?ids={ids}",
+            arguments = listOf(navArgument("ids") { type = NavType.StringType; nullable = true; defaultValue = null }),
+        ) {
+            hi3.hashkit.ui.nfcprog.NfcProgramScreen(onBack = { nav.popBackStack() })
         }
         composable("wall") {
             hi3.hashkit.ui.wall.WallScreen(onExit = { nav.popBackStack() })

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.73.6
+
+- **NFC tag programmer (Advanced).** Write miner NFC tags in a guided sequence: it steps through
+  the miners, shows each one's payload (`name`/`mac`/`ip`/`location`), and you tap a blank tag to
+  write it, then it auto-advances to the next. Launch it from the **Fleet table** ("Program NFC
+  tags") to program exactly the rows currently filtered/sorted, or from the **Advanced hub** for
+  the whole fleet. Each miner also has a **Show QR** of the same payload to screenshot/print as a
+  sticker. Tags are written as a standard NDEF Text record (handles blank and already-written
+  tags) and are left rewritable — never locked. Uses the existing NFC permission; writing is local
+  and nothing leaves the device.
+
 ## 0.73.5
 
 - **AR overlay now reads NFC tags too.** While the AR overlay is open, tap a miner's NFC tag to

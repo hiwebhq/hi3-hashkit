@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CurrencyBitcoin
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Hearing
+import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.PriceChange
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Speed
@@ -74,6 +75,7 @@ fun AdvancedScreen(
     onPriceCurtailment: () -> Unit,
     onAcoustic: () -> Unit,
     onArOverlay: () -> Unit,
+    onNfcProgram: () -> Unit,
     onLiveBitcoin: () -> Unit,
 ) {
     val items = listOf(
@@ -101,6 +103,11 @@ fun AdvancedScreen(
             "AR rack overlay",
             "Scan a miner's QR sticker or tap its NFC tag to float its live stats",
             Icons.Filled.CameraAlt, onArOverlay,
+        ),
+        AdvancedItem(
+            "NFC tag programmer",
+            "Write miner NFC tags (and QR) — whole fleet, or filtered from the Fleet table",
+            Icons.Filled.Nfc, onNfcProgram,
         ),
         AdvancedItem(
             "Automation rules",

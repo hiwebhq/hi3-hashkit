@@ -65,6 +65,7 @@ data class TableState(
     val query: String = "",
     val sort: SortColumn = SortColumn.NAME,
     val ascending: Boolean = true,
+    val advancedUnlocked: Boolean = false,
 )
 
 @HiltViewModel
@@ -93,17 +94,20 @@ class TableViewModel @Inject constructor(
                 settingsRepository.settings,
             ) { entities, _, settings ->
                 val now = Instant.now()
-                entities.filter { settings.demoModeEnabled || !it.isDemo }
-                    .map { repository.toDomain(it, now) } to settings.useFahrenheit
+                Triple(
+                    entities.filter { settings.demoModeEnabled || !it.isDemo }.map { repository.toDomain(it, now) },
+                    settings.useFahrenheit,
+                    settings.advancedUnlocked,
+                )
             },
             query, sort, ascending,
-        ) { (miners, fahrenheit), q, s, asc ->
+        ) { (miners, fahrenheit, advanced), q, s, asc ->
             val filtered = if (q.isBlank()) miners else miners.filter {
                 it.name.contains(q, true) || it.host.contains(q, true) ||
                     (it.identity.model?.contains(q, true) == true) ||
                     (it.lastTelemetry?.poolUrl?.contains(q, true) == true)
             }
-            TableState(sortMiners(filtered, s, asc), fahrenheit, q, s, asc)
+            TableState(sortMiners(filtered, s, asc), fahrenheit, q, s, asc, advancedUnlocked = advanced)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TableState())
 
     companion object {
@@ -149,6 +153,7 @@ private val COLUMNS = listOf(
 fun TableScreen(
     onBack: () -> Unit,
     onMinerClick: (Long) -> Unit,
+    onProgramNfc: (List<Long>) -> Unit = {},
     viewModel: TableViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -198,6 +203,13 @@ fun TableScreen(
                     },
                     enabled = state.miners.isNotEmpty(),
                 ) { Text("Print QR codes") }
+                if (state.advancedUnlocked) {
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = { onProgramNfc(state.miners.map { it.id }) },
+                        enabled = state.miners.isNotEmpty(),
+                        modifier = Modifier.padding(start = 8.dp),
+                    ) { Text("Program NFC tags") }
+                }
                 Text(
                     "${state.miners.size} tag(s) · scannable in the AR rack overlay",
                     style = MaterialTheme.typography.labelSmall,
