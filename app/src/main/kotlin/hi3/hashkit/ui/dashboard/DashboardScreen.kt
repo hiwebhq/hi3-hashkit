@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
@@ -89,20 +90,16 @@ fun DashboardScreen(
     onAddMiner: () -> Unit,
     onAlerts: () -> Unit,
     onSettings: () -> Unit,
-    onSchedules: () -> Unit,
     onFlow: () -> Unit,
     onNetworkScan: () -> Unit,
-    onFarms: () -> Unit,
     onAbout: () -> Unit,
     onPrivacy: () -> Unit,
     onFleet: () -> Unit,
     onLeaderboard: () -> Unit,
-    onRack: () -> Unit,
     onWall: () -> Unit,
     onTable: () -> Unit,
     onRules: () -> Unit,
-    onAddressBook: () -> Unit,
-    onPoolSpeed: () -> Unit,
+    onAdvanced: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -219,34 +216,6 @@ fun DashboardScreen(
                                 leadingIcon = { Icon(Icons.Filled.Bolt, contentDescription = null) },
                                 onClick = { menuOpen = false; onRules() },
                             )
-                            // Advanced features (revealed once unlocked in Settings).
-                            if (state.settings.advancedUnlocked) {
-                                DropdownMenuItem(
-                                    text = { Text("Schedules") },
-                                    leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
-                                    onClick = { menuOpen = false; onSchedules() },
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Farms") },
-                                    leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = null) },
-                                    onClick = { menuOpen = false; onFarms() },
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Pool address book") },
-                                    leadingIcon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },
-                                    onClick = { menuOpen = false; onAddressBook() },
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Rack & site") },
-                                    leadingIcon = { Icon(Icons.Filled.GridView, contentDescription = null) },
-                                    onClick = { menuOpen = false; onRack() },
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Pool speed test") },
-                                    leadingIcon = { Icon(Icons.Filled.Speed, contentDescription = null) },
-                                    onClick = { menuOpen = false; onPoolSpeed() },
-                                )
-                            }
                             DropdownMenuItem(
                                 text = { Text("Fleet table") },
                                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
@@ -257,28 +226,16 @@ fun DashboardScreen(
                                 leadingIcon = { Icon(Icons.Filled.Tv, contentDescription = null) },
                                 onClick = { menuOpen = false; onWall() },
                             )
-                            androidx.compose.material3.HorizontalDivider()
-                            // Advanced feature: only revealed once the unlock code is applied
-                            // (Settings → Advanced features). Ships unlocked while
-                            // ADVANCED_FEATURES_FREE is true.
+                            // Advanced hub: one entry gathering every advanced-gated feature.
+                            // Revealed once unlocked in Settings → Advanced features.
                             if (state.settings.advancedUnlocked) {
                                 DropdownMenuItem(
-                                    text = { Text("Live Bitcoin") },
-                                    leadingIcon = { Icon(Icons.Filled.CurrencyBitcoin, contentDescription = null) },
-                                    onClick = {
-                                        menuOpen = false
-                                        // Open in a fresh external browser session.
-                                        runCatching {
-                                            context.startActivity(
-                                                android.content.Intent(
-                                                    android.content.Intent.ACTION_VIEW,
-                                                    android.net.Uri.parse("https://hi3.cc/bitcoin"),
-                                                ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            )
-                                        }
-                                    },
+                                    text = { Text("Advanced") },
+                                    leadingIcon = { Icon(Icons.Filled.Tune, contentDescription = null) },
+                                    onClick = { menuOpen = false; onAdvanced() },
                                 )
                             }
+                            androidx.compose.material3.HorizontalDivider()
                             DropdownMenuItem(
                                 text = { Text("Store") },
                                 leadingIcon = { Icon(Icons.Filled.Store, contentDescription = null) },

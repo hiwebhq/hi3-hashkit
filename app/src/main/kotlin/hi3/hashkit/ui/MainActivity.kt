@@ -206,21 +206,61 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onAddMiner = { nav.navigate("add") },
                 onAlerts = { nav.navigate("alerts") },
                 onSettings = { nav.navigate("settings") },
-                onSchedules = { nav.navigate("schedules") },
                 onFlow = { nav.navigate("flow") },
                 onNetworkScan = { nav.navigate("network") },
-                onFarms = { nav.navigate("farms") },
                 onAbout = { nav.navigate("about") },
                 onPrivacy = { nav.navigate("privacy") },
                 onFleet = { nav.navigate("fleet") },
                 onLeaderboard = { nav.navigate("leaderboard") },
-                onRack = { nav.navigate("rack") },
                 onWall = { nav.navigate("wall") },
                 onTable = { nav.navigate("table") },
                 onRules = { nav.navigate("rules") },
-                onAddressBook = { nav.navigate("addressbook") },
-                onPoolSpeed = { nav.navigate("poolspeed") },
+                onAdvanced = { nav.navigate("advanced") },
                 onExit = onExit,
+            )
+        }
+        composable("advanced") {
+            val context = androidx.compose.ui.platform.LocalContext.current
+            hi3.hashkit.ui.advanced.AdvancedScreen(
+                onBack = { nav.popBackStack() },
+                onSchedules = { nav.navigate("schedules") },
+                onFarms = { nav.navigate("farms") },
+                onAddressBook = { nav.navigate("addressbook") },
+                onRack = { nav.navigate("rack") },
+                onPoolSpeed = { nav.navigate("poolspeed") },
+                onHeatReuse = { nav.navigate("heatreuse") },
+                onSolar = { nav.navigate("solar") },
+                onPriceCurtailment = { nav.navigate("price") },
+                onAcoustic = { nav.navigate("acoustic") },
+                onArOverlay = { nav.navigate("ar") },
+                onLiveBitcoin = {
+                    runCatching {
+                        context.startActivity(
+                            android.content.Intent(
+                                android.content.Intent.ACTION_VIEW,
+                                android.net.Uri.parse("https://hi3.cc/bitcoin"),
+                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                        )
+                    }
+                },
+            )
+        }
+        composable("heatreuse") {
+            hi3.hashkit.ui.heat.HeatReuseScreen(onBack = { nav.popBackStack() })
+        }
+        composable("solar") {
+            hi3.hashkit.ui.solar.SolarSurplusScreen(onBack = { nav.popBackStack() })
+        }
+        composable("price") {
+            hi3.hashkit.ui.price.PriceCurtailmentScreen(onBack = { nav.popBackStack() })
+        }
+        composable("acoustic") {
+            hi3.hashkit.ui.acoustic.AcousticScreen(onBack = { nav.popBackStack() })
+        }
+        composable("ar") {
+            hi3.hashkit.ui.ar.ArOverlayScreen(
+                onBack = { nav.popBackStack() },
+                onMinerClick = { id -> nav.navigate("miner/$id") },
             )
         }
         composable("leaderboard") {

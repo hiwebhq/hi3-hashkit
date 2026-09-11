@@ -48,6 +48,7 @@ fun AutotuneScreen(
     viewModel: AutotuneViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val optimizer by viewModel.optimizer.collectAsStateWithLifecycle()
     var settle by remember { mutableStateOf(60) }
     var maxTemp by remember { mutableStateOf(70) }
     var optimizeHashrate by remember { mutableStateOf(false) }
@@ -160,6 +161,63 @@ fun AutotuneScreen(
                 }
                 items(state.results, key = { it.frequencyMhz }) { r ->
                     ResultRow(r, isBest = r.frequencyMhz == state.bestFrequencyMhz)
+                }
+            }
+
+            // Persistent tuning optimizer: recommendation built from every past sweep.
+            if (optimizer.sampleCount > 0) {
+                item {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            "OPTIMIZER — ${optimizer.sampleCount} saved point(s)",
+                            style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
+                            modifier = Modifier.weight(1f),
+                        )
+                        OutlinedButton(onClick = { viewModel.clearHistory() }, enabled = !state.running) {
+                            Text("Clear")
+                        }
+                    }
+                }
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(Modifier.padding(14.dp)) {
+                            optimizer.bestEfficiency?.let {
+                                Text(
+                                    "Most efficient: ${it.frequencyMhz} MHz @ ${it.voltageMv} mV — " +
+                                        "%.1f J/TH".format(it.efficiencyJTh),
+                                    style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary,
+                                )
+                            }
+                            optimizer.bestHashrate?.let {
+                                Text(
+                                    "Most hashrate: ${it.frequencyMhz} MHz @ ${it.voltageMv} mV — " +
+                                        Units.formatHashrate(it.hashrateGhs),
+                                    style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary,
+                                    modifier = Modifier.padding(top = 2.dp),
+                                )
+                            }
+                            Text(
+                                "Built from all sweeps on this miner — run more sweeps to sharpen the curve.",
+                                style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
+                                modifier = Modifier.padding(top = 6.dp),
+                            )
+                        }
+                    }
+                }
+                if (optimizer.efficiencyCurve.isNotEmpty()) {
+                    item { Text("EFFICIENCY CURVE", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
+                    items(optimizer.efficiencyCurve, key = { "curve-${it.frequencyMhz}" }) { p ->
+                        Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("${p.frequencyMhz} MHz", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
+                            Text(
+                                "%.1f J/TH · %s".format(p.efficiencyJTh, Units.formatHashrate(p.hashrateGhs)),
+                                style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary,
+                            )
+                        }
+                    }
                 }
             }
         }

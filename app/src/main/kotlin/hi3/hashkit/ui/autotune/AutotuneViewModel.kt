@@ -5,14 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hi3.hashkit.core.Units
+import hi3.hashkit.data.db.TuneSweepDao
+import hi3.hashkit.data.db.TuneSweepEntity
 import hi3.hashkit.data.repo.ControlRepository
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.adapter.ActionResult
+import hi3.hashkit.domain.tune.TuneOptimizer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -56,12 +62,37 @@ class AutotuneViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: MinerRepository,
     private val controlRepository: ControlRepository,
+    private val tuneSweepDao: TuneSweepDao,
 ) : ViewModel() {
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
     private val _state = MutableStateFlow(AutotuneUiState())
     val state: StateFlow<AutotuneUiState> = _state
     private var job: Job? = null
+
+    /** Persisted efficiency curve across all past sweeps for this miner. */
+    val optimizer: StateFlow<TuneOptimizer.Summary> =
+        tuneSweepDao.observeForMiner(minerId)
+            .map { rows ->
+                TuneOptimizer.summarize(
+                    rows.map {
+                        TuneOptimizer.Point(
+                            frequencyMhz = it.frequencyMhz,
+                            voltageMv = it.voltageMv,
+                            hashrateGhs = it.hashrateGhs,
+                            powerW = it.powerW,
+                            efficiencyJTh = it.efficiencyJTh,
+                            chipTempC = it.chipTempC,
+                            overTemp = it.overTemp,
+                        )
+                    }
+                )
+            }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TuneOptimizer.summarize(emptyList()))
+
+    fun clearHistory() {
+        viewModelScope.launch { tuneSweepDao.deleteForMiner(minerId) }
+    }
 
     /**
      * @param settleSeconds settle time per step — ASICs need time to reach steady state.
@@ -93,6 +124,7 @@ class AutotuneViewModel @Inject constructor(
                 message = "Sweeping ${candidates.size} frequencies at ${voltage} mV, ceiling ${maxChipTempC}°C…",
             )
             val results = mutableListOf<TuneResult>()
+            val sweepStart = System.currentTimeMillis()
             var stoppedForHeat = false
             try {
                 for ((i, freq) in candidates.withIndex()) {
@@ -122,6 +154,20 @@ class AutotuneViewModel @Inject constructor(
             } finally {
                 // Always restore the original setpoint; the user opts in to any change.
                 if (origFreq != null) runCatching { controlRepository.applyTune(entity, origFreq, voltage) }
+            }
+            // Persist the measured points so the optimizer curve survives across sweeps.
+            if (results.isNotEmpty()) runCatching {
+                val at = System.currentTimeMillis()
+                tuneSweepDao.insertAll(
+                    results.map { r ->
+                        TuneSweepEntity(
+                            minerId = minerId, sweepStartEpochMs = sweepStart, atEpochMs = at,
+                            frequencyMhz = r.frequencyMhz, voltageMv = r.voltageMv,
+                            hashrateGhs = r.hashrateGhs, powerW = r.powerW,
+                            efficiencyJTh = r.efficiencyJTh, chipTempC = r.chipTempC, overTemp = r.overTemp,
+                        )
+                    }
+                )
             }
             val safe = results.filter { !it.overTemp && (it.hashrateGhs ?: 0.0) > 0 && it.efficiencyJTh != null }
             val best = if (optimizeForHashrate) safe.maxByOrNull { it.hashrateGhs!! }

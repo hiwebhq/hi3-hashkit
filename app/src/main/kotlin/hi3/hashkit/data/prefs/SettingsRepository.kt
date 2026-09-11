@@ -111,6 +111,27 @@ data class AppSettings(
     val prometheusEnabled: Boolean = false,
     val prometheusPort: Int = 9184,
     /**
+     * Solar-surplus mining (Advanced). Reads grid-export/surplus watts from a local Home
+     * Assistant sensor over its REST API. The long-lived token is stored encrypted; only
+     * [homeAssistantTokenConfigured] surfaces here.
+     */
+    val homeAssistantBaseUrl: String = "",
+    val homeAssistantEntityId: String = "",
+    val homeAssistantTokenConfigured: Boolean = false,
+    /** Resume mining when surplus export ≥ this many watts (hysteresis high band). */
+    val solarResumeWatts: Double = 500.0,
+    /** Curtail when surplus export ≤ this many watts (hysteresis low band; ≤0 = importing). */
+    val solarCurtailWatts: Double = 0.0,
+    /**
+     * Electricity-price curtailment (Advanced) via the Octopus Agile half-hourly feed (UK).
+     * Region is the single tariff letter A–P; empty until configured.
+     */
+    val octopusRegion: String = "",
+    /** Resume mining when price ≤ this many p/kWh (hysteresis low band). */
+    val priceResumePence: Double = 15.0,
+    /** Curtail when price ≥ this many p/kWh (hysteresis high band). */
+    val priceCurtailPence: Double = 30.0,
+    /**
      * Advanced-feature license gate. The stored unlock code (empty until entered).
      * [advancedUnlocked] is the derived flag features check. Defaults to unlocked so
      * nothing is locked in this release; a future build flips the default to false and
@@ -184,6 +205,14 @@ class SettingsRepository @Inject constructor(
         val mqttHaDiscovery = booleanPreferencesKey("mqtt_ha_discovery")
         val prometheusEnabled = booleanPreferencesKey("prometheus_enabled")
         val prometheusPort = intPreferencesKey("prometheus_port")
+        val haBaseUrl = stringPreferencesKey("ha_base_url")
+        val haEntityId = stringPreferencesKey("ha_entity_id")
+        val haTokenEnc = stringPreferencesKey("ha_token_enc")
+        val solarResumeWatts = doublePreferencesKey("solar_resume_watts")
+        val solarCurtailWatts = doublePreferencesKey("solar_curtail_watts")
+        val octopusRegion = stringPreferencesKey("octopus_region")
+        val priceResumePence = doublePreferencesKey("price_resume_pence")
+        val priceCurtailPence = doublePreferencesKey("price_curtail_pence")
         val advancedUnlockCode = stringPreferencesKey("advanced_unlock_code")
     }
 
@@ -262,6 +291,14 @@ class SettingsRepository @Inject constructor(
             mqttHomeAssistantDiscovery = p[Keys.mqttHaDiscovery] ?: true,
             prometheusEnabled = p[Keys.prometheusEnabled] ?: false,
             prometheusPort = (p[Keys.prometheusPort] ?: 9184).coerceIn(1024, 65535),
+            homeAssistantBaseUrl = p[Keys.haBaseUrl] ?: "",
+            homeAssistantEntityId = p[Keys.haEntityId] ?: "",
+            homeAssistantTokenConfigured = !p[Keys.haTokenEnc].isNullOrBlank(),
+            solarResumeWatts = p[Keys.solarResumeWatts] ?: 500.0,
+            solarCurtailWatts = p[Keys.solarCurtailWatts] ?: 0.0,
+            octopusRegion = p[Keys.octopusRegion] ?: "",
+            priceResumePence = p[Keys.priceResumePence] ?: 15.0,
+            priceCurtailPence = p[Keys.priceCurtailPence] ?: 30.0,
             advancedUnlockCode = p[Keys.advancedUnlockCode] ?: "",
             advancedUnlocked = ADVANCED_FEATURES_FREE ||
                 hi3.hashkit.core.LicenseValidator.isValid(p[Keys.advancedUnlockCode]),
@@ -343,6 +380,30 @@ class SettingsRepository @Inject constructor(
     suspend fun setMqttHaDiscovery(value: Boolean) = edit { it[Keys.mqttHaDiscovery] = value }
     suspend fun setPrometheusEnabled(value: Boolean) = edit { it[Keys.prometheusEnabled] = value }
     suspend fun setPrometheusPort(value: Int) = edit { it[Keys.prometheusPort] = value.coerceIn(1024, 65535) }
+
+    // Solar-surplus / Home Assistant
+    suspend fun setHomeAssistantBaseUrl(value: String) = edit { it[Keys.haBaseUrl] = value.trim() }
+    suspend fun setHomeAssistantEntityId(value: String) = edit { it[Keys.haEntityId] = value.trim() }
+    suspend fun setSolarResumeWatts(value: Double) = edit { it[Keys.solarResumeWatts] = value }
+    suspend fun setSolarCurtailWatts(value: Double) = edit { it[Keys.solarCurtailWatts] = value }
+
+    /** Store the Home Assistant long-lived token encrypted with the Android Keystore; blank clears it. */
+    suspend fun setHomeAssistantToken(plaintext: String) = edit {
+        val trimmed = plaintext.trim()
+        it[Keys.haTokenEnc] =
+            if (trimmed.isEmpty()) "" else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed)
+    }
+
+    /** Decrypt the Home Assistant token on demand; never surfaced through the settings flow. */
+    suspend fun homeAssistantToken(): String? =
+        context.dataStore.data.first()[Keys.haTokenEnc]
+            ?.takeIf { it.isNotBlank() }
+            ?.let { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }
+
+    // Electricity-price curtailment / Octopus Agile
+    suspend fun setOctopusRegion(value: String) = edit { it[Keys.octopusRegion] = value.trim().uppercase() }
+    suspend fun setPriceResumePence(value: Double) = edit { it[Keys.priceResumePence] = value }
+    suspend fun setPriceCurtailPence(value: Double) = edit { it[Keys.priceCurtailPence] = value }
 
     /** Store the MQTT password encrypted with the Android Keystore; blank clears it. */
     suspend fun setMqttPassword(plaintext: String) = edit {

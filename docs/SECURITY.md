@@ -104,6 +104,21 @@ on the LAN, and is never logged, exported, or sent anywhere else.
     OCEAN, F2Pool, Braiins and Public Pool. It sends nothing else — no credentials, worker
     names, or telemetry — and runs only when you press the button.
 
+12. **On-demand — solar-surplus mining (Advanced):** when you tap "Check now", the app makes
+    one HTTP GET to your **local** Home Assistant (`/api/states/{entity_id}`, private/Tailscale
+    hosts only) with your long-lived token in the `Authorization` header, to read the surplus/
+    export watts. The token is stored encrypted in the Android Keystore, sent only to your own
+    HA host, and never logged. Applying a curtailment (pause/resume) acts only on your miners.
+
+13. **On-demand — electricity-price curtailment (Advanced):** when you refresh prices, the app
+    makes one HTTPS GET to Octopus Energy's free, public, keyless Agile rate API for the region
+    letter you set (`api.octopus.energy/v1/products/.../standard-unit-rates/`). No account, key,
+    or personal data is sent — only the public product/region is in the URL.
+
+14. **On-demand — acoustic fan check (Advanced):** when you press record, the app captures a few
+    seconds of microphone audio, runs an on-device FFT, and shows the result. The audio is never
+    written to a file, kept after analysis, or sent anywhere.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server unless you explicitly configure one of the opt-in integrations above.
 
@@ -115,7 +130,8 @@ with any other server unless you explicitly configure one of the opt-in integrat
 | `ACCESS_NETWORK_STATE` | Detect the active network before scanning |
 | `ACCESS_WIFI_STATE` | Read the Wi-Fi interface address to derive the default scan /24 |
 | `POST_NOTIFICATIONS` | Miner alert notifications (requested contextually when alerts/background monitoring are enabled) |
-| `CAMERA` | On-demand only, to scan a payout-address QR code; no image is stored or sent. Optional (`android.hardware.camera` not required) |
+| `CAMERA` | On-demand only, to scan a payout-address QR code and the AR-overlay miner stickers; no image is stored or sent. Optional (`android.hardware.camera` not required) |
+| `RECORD_AUDIO` | On-demand only, for the Advanced acoustic fan check; audio is analysed on-device (FFT) and never saved or sent. Optional (`android.hardware.microphone` not required) |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | The opt-in always-on safety monitor that runs the smart-plug over-temp cutoff in the background |
 | `RECEIVE_BOOT_COMPLETED` | Re-arm the safety monitor after a reboot, only if the user enabled it |
 

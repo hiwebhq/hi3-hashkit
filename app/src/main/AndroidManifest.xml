@@ -13,6 +13,10 @@
     <!-- Optional: only used on-demand to scan a payout-address QR code. No image leaves the device. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Optional: only used on-demand for the acoustic fan health check. Audio is analysed
+         on-device (FFT) and never recorded to a file or sent anywhere. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
     <!-- Android TV / wall-dashboard support: run on leanback devices, don't require a touchscreen. -->
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />

@@ -51,6 +51,7 @@ object AppModule {
                 HashkitDatabase.MIGRATION_12_13,
                 HashkitDatabase.MIGRATION_13_14,
                 HashkitDatabase.MIGRATION_14_15,
+                HashkitDatabase.MIGRATION_15_16,
             )
             .build()
 
@@ -86,6 +87,9 @@ object AppModule {
 
     @Provides
     fun logDao(db: HashkitDatabase): hi3.hashkit.data.db.LogDao = db.logDao()
+
+    @Provides
+    fun tuneSweepDao(db: HashkitDatabase): hi3.hashkit.data.db.TuneSweepDao = db.tuneSweepDao()
 }
 
 @Module

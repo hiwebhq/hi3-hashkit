@@ -21,8 +21,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         RuleEntity::class,
         SavedPoolEntity::class,
         LogLineEntity::class,
+        TuneSweepEntity::class,
     ],
-    version = 15,
+    version = 16,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -37,8 +38,27 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun ruleDao(): RuleDao
     abstract fun savedPoolDao(): SavedPoolDao
     abstract fun logDao(): LogDao
+    abstract fun tuneSweepDao(): TuneSweepDao
 
     companion object {
+        /** v15 -> v16: tune_sweeps table for the persistent tuning optimizer (additive). */
+        val MIGRATION_15_16 = object : Migration(15, 16) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `tune_sweeps` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`minerId` INTEGER NOT NULL, `sweepStartEpochMs` INTEGER NOT NULL, " +
+                        "`atEpochMs` INTEGER NOT NULL, `frequencyMhz` INTEGER NOT NULL, " +
+                        "`voltageMv` INTEGER NOT NULL, `hashrateGhs` REAL, `powerW` REAL, " +
+                        "`efficiencyJTh` REAL, `chipTempC` REAL, `overTemp` INTEGER NOT NULL)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_tune_sweeps_minerId_atEpochMs` " +
+                        "ON `tune_sweeps` (`minerId`, `atEpochMs`)"
+                )
+            }
+        }
+
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {

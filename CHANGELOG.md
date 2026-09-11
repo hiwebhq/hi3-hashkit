@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.73.0
+
+- **Advanced hub.** The advanced-gated features now live behind a single **Advanced** entry in
+  the overflow menu (shown once unlocked) that opens a dedicated hub screen listing them all —
+  Heat reuse, Solar-surplus, Price curtailment, Acoustic fan check, AR overlay, Schedules,
+  Farms, Pool address book, Rack & site, Pool speed test, and Live Bitcoin.
+- **Heat-reuse dashboard (Advanced).** Values your fleet's waste heat as space heating: live
+  BTU/hr and kW thermal, thermal kWh/day, and the cash value of that heat vs. resistive electric
+  heat (1:1) and vs. a heat pump (÷COP), from live fleet power and your electricity rate.
+- **Solar-surplus mining (Advanced).** Reads a grid-export/surplus sensor (watts) from your
+  **local** Home Assistant over its REST API (token stored encrypted, sent only to your HA host)
+  and recommends run/curtail with a hysteresis band; apply pause/resume to the fleet in a tap.
+- **Electricity-price curtailment (Advanced).** Pulls the free, public **Octopus Agile** (UK)
+  half-hourly price for your region, shows the current price and next slots, and recommends
+  run/curtail against your thresholds; shares the curtailment engine with solar.
+- **Acoustic fan health check (Advanced).** Records a few seconds of a miner's fans and runs an
+  on-device FFT to flag likely imbalance or bearing wear. Audio never leaves the device.
+- **AR rack overlay (Advanced).** Point the camera at a QR/ID sticker on a miner (its name, IP,
+  MAC or id) to float its live stats over the camera; tap to open the miner.
+- **Per-miner tuning optimizer (Advanced).** Auto-tune sweeps are now persisted per miner, so the
+  Auto-tune screen shows an efficiency-vs-frequency curve and a most-efficient / most-hashrate
+  recommendation built from every sweep over time.
+- New encrypted setting for the Home Assistant token; new settings for HA URL/sensor, solar and
+  price thresholds, and Octopus region. Database migrated to v16 (additive `tune_sweeps` table).
+
 ## 0.72.2
 
 - Hi3 MMP card: move Realization onto the top metrics line (right of Power); that row now
