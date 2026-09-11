@@ -3,6 +3,7 @@ package hi3.hashkit.ui.ar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.data.nfc.NfcRouter
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.repo.AddMinerResult
 import hi3.hashkit.data.repo.MinerRepository
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class ArOverlayViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val pollingEngine: PollingEngine,
+    private val nfcRouter: NfcRouter,
 ) : ViewModel() {
 
     private val matchedId = MutableStateFlow<Long?>(null)
@@ -57,6 +59,18 @@ class ArOverlayViewModel @Inject constructor(
                 entity?.let { repository.toDomain(it, Instant.now()) }
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    init {
+        // Tags scanned by the OS (which auto-opened/foregrounded the app) arrive via the router.
+        viewModelScope.launch {
+            nfcRouter.pending.collect { payload ->
+                if (payload != null) {
+                    onScanned(payload)
+                    nfcRouter.consume()
+                }
+            }
+        }
+    }
 
     /** Resolve a scanned marker (QR text or NFC payload) to a miner. */
     fun onScanned(code: String) {

@@ -1,5 +1,7 @@
 package hi3.hashkit.ui
 
+import android.content.Intent
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -64,9 +66,30 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var autoScanManager: AutoScanManager
 
+    @Inject
+    lateinit var nfcRouter: hi3.hashkit.data.nfc.NfcRouter
+
+    /** Publish a scanned Hi3 Hashkit tag (from an NFC launch/foreground intent) to the router. */
+    private fun handleNfcIntent(intent: Intent?) {
+        intent ?: return
+        val a = intent.action
+        if (a == NfcAdapter.ACTION_NDEF_DISCOVERED || a == NfcAdapter.ACTION_TAG_DISCOVERED ||
+            a == NfcAdapter.ACTION_TECH_DISCOVERED
+        ) {
+            hi3.hashkit.ui.nfc.payloadFromIntent(intent)?.let { nfcRouter.emit(it) }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNfcIntent(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        handleNfcIntent(intent)
         lifecycleScope.launch {
             val settings = settingsRepository.current()
             if (savedInstanceState == null && settings.appLockEnabled) {
@@ -103,10 +126,13 @@ class MainActivity : FragmentActivity() {
                                 }
                             },
                         )
-                        else -> AppNavHost(onExit = {
-                            pollingEngine.stop()
-                            finishAndRemoveTask()
-                        })
+                        else -> AppNavHost(
+                            nfcRouter = nfcRouter,
+                            onExit = {
+                                pollingEngine.stop()
+                                finishAndRemoveTask()
+                            },
+                        )
                     }
                 }
             }
@@ -197,8 +223,13 @@ class MainActivity : FragmentActivity() {
 }
 
 @Composable
-private fun AppNavHost(onExit: () -> Unit) {
+private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> Unit) {
     val nav = rememberNavController()
+    // A Hi3 Hashkit tag scanned by the OS routes us to the AR overlay, which resolves the miner.
+    val pendingScan by nfcRouter.pending.collectAsState()
+    LaunchedEffect(pendingScan) {
+        if (pendingScan != null) nav.navigate("ar")
+    }
     NavHost(navController = nav, startDestination = "dashboard") {
         composable("dashboard") {
             DashboardScreen(

@@ -132,7 +132,7 @@ with any other server unless you explicitly configure one of the opt-in integrat
 | `POST_NOTIFICATIONS` | Miner alert notifications (requested contextually when alerts/background monitoring are enabled) |
 | `CAMERA` | On-demand only, to scan a payout-address QR code and the AR-overlay miner stickers; no image is stored or sent. Optional (`android.hardware.camera` not required) |
 | `RECORD_AUDIO` | On-demand only, for the Advanced acoustic fan check; audio is analysed on-device (FFT) and never saved or sent. Optional (`android.hardware.microphone` not required) |
-| `NFC` | On-demand only: in the AR overlay to read a miner's NFC tag, and in the Advanced NFC tag programmer to write one (name/MAC/IP/location). Tag data stays local — nothing is sent off the device; written tags are left rewritable, never locked. Optional (`android.hardware.nfc` not required) |
+| `NFC` | On-demand only: reading a miner's NFC tag (scanning a Hi3 Hashkit tag opens the app to that miner via an NDEF intent-filter for the custom MIME type `application/vnd.hi3.hashkit`), and writing one in the Advanced NFC tag programmer (name/MAC/IP/location). Tag data stays local — nothing is sent off the device; written tags are left rewritable, never locked. Optional (`android.hardware.nfc` not required) |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | The opt-in always-on safety monitor that runs the smart-plug over-temp cutoff in the background |
 | `RECEIVE_BOOT_COMPLETED` | Re-arm the safety monitor after a reboot, only if the user enabled it |
 

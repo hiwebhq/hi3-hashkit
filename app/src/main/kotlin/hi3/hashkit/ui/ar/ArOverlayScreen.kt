@@ -80,9 +80,10 @@ fun ArOverlayScreen(
     }
 
     // NFC reader mode: active only while this screen is resumed.
+    // NFC is handled by the OS: scanning a Hi3 Hashkit tag opens/foregrounds the app and the
+    // payload arrives through NfcRouter → the ViewModel. No in-app reader mode needed here.
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(context) }
     val nfcAvailable = nfcAdapter?.isEnabled == true
-    hi3.hashkit.ui.nfc.NfcReaderEffect(nfcAdapter, onText = viewModel::onScanned)
 
     Scaffold(
         topBar = {

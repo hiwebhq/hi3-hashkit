@@ -3,79 +3,60 @@ package hi3.hashkit.ui.nfc
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
+import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+
+/** Custom MIME type Hi3 Hashkit tags carry so Android dispatches them straight to this app. */
+const val HASHKIT_MIME = "application/vnd.hi3.hashkit"
+
+/** The AAR package written as the last tag record, so a scan opens Hashkit (or offers install). */
+const val HASHKIT_AAR_PACKAGE = "hi3.hashkit"
 
 /**
- * Enables NFC reader mode while the calling screen is on-screen and delivers each tag's text
- * payload to [onText] on the main thread.
- *
- * Reader mode is turned on **immediately** when the effect runs and again on every ON_RESUME —
- * not only via the lifecycle observer — because on a Navigation-Compose destination the back-stack
- * entry can already be RESUMED (or still settling) when the composable first runs, so relying on a
- * future ON_RESUME alone can miss enabling it. It's turned off on ON_PAUSE and on dispose.
+ * Build the NDEF message written to a Hi3 Hashkit tag: the canonical `key=value` payload as a
+ * custom-MIME record first (this is what makes Android auto-open Hashkit), a plain Text record so
+ * generic NFC tools stay human-readable, and an Android Application Record last so a scan opens
+ * Hashkit specifically (or the Play page if it isn't installed).
  */
-@Composable
-fun NfcReaderEffect(adapter: NfcAdapter?, enabled: Boolean = true, onText: (String) -> Unit) {
-    if (adapter == null || !enabled) return
-    val context = LocalContext.current
-    val activity = remember(context) { context.findActivity() }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val currentOnText by rememberUpdatedState(onText)
+fun hashkitNdefMessage(payload: String): NdefMessage = NdefMessage(
+    arrayOf(
+        NdefRecord.createMime(HASHKIT_MIME, payload.toByteArray(Charsets.UTF_8)),
+        NdefRecord.createTextRecord("en", payload),
+        NdefRecord.createApplicationRecord(HASHKIT_AAR_PACKAGE),
+    )
+)
 
-    DisposableEffect(lifecycleOwner, activity, adapter) {
-        if (activity == null) return@DisposableEffect onDispose { }
-        val main = Handler(Looper.getMainLooper())
-        val callback = NfcAdapter.ReaderCallback { tag ->
-            readNdefText(tag)?.let { text -> main.post { currentOnText(text) } }
-        }
-        val flags = NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_NFC_B or
-            NfcAdapter.FLAG_READER_NFC_F or NfcAdapter.FLAG_READER_NFC_V
-
-        fun enable() = runCatching { adapter.enableReaderMode(activity, callback, flags, null) }
-        fun disable() = runCatching { adapter.disableReaderMode(activity) }
-
-        enable() // don't wait for a possibly-missed ON_RESUME
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> enable()
-                Lifecycle.Event.ON_PAUSE -> disable()
-                else -> Unit
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            disable()
-        }
-    }
+/** Extract a miner-tag payload from an NFC intent (EXTRA_NDEF_MESSAGES, else the raw tag). */
+fun payloadFromIntent(intent: Intent): String? {
+    @Suppress("DEPRECATION")
+    val raw = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+    val messages = raw?.filterIsInstance<NdefMessage>().orEmpty()
+    payloadFromMessages(messages)?.let { return it }
+    @Suppress("DEPRECATION")
+    val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
+    return tag?.let { readNdefText(it) }
 }
 
-/** Read the first usable text from an NFC tag's NDEF message (Text/URI records), or null. */
+/** First usable payload across the message records (skips the AAR package record). */
+fun payloadFromMessages(messages: List<NdefMessage>): String? {
+    for (msg in messages) for (record in msg.records) {
+        decodeRecord(record)?.let { if (it.isNotBlank() && it != HASHKIT_AAR_PACKAGE) return it }
+    }
+    return null
+}
+
+/** Read the first usable text from an NFC tag's NDEF message (Text/MIME/URI records), or null. */
 fun readNdefText(tag: Tag): String? {
     val ndef = Ndef.get(tag) ?: return null
     val message = ndef.cachedNdefMessage ?: runCatching {
         ndef.connect()
         try { ndef.ndefMessage } finally { runCatching { ndef.close() } }
     }.getOrNull()
-    val records = message?.records ?: return null
-    for (record in records) {
-        decodeRecord(record)?.let { if (it.isNotBlank()) return it }
-    }
-    return null
+    return message?.let { payloadFromMessages(listOf(it)) }
 }
 
 private fun decodeRecord(record: NdefRecord): String? {
@@ -89,7 +70,10 @@ private fun decodeRecord(record: NdefRecord): String? {
         if (payload.size <= 1 + langLen) return null
         return runCatching { String(payload, 1 + langLen, payload.size - 1 - langLen, charset) }.getOrNull()
     }
-    // URI records (well-known RTD_URI or absolute URI), else raw UTF-8.
+    // MIME media (our custom type) and everything else: raw UTF-8, or a URI.
+    if (record.tnf == NdefRecord.TNF_MIME_MEDIA) {
+        return runCatching { String(record.payload, Charsets.UTF_8) }.getOrNull()
+    }
     return runCatching { record.toUri()?.toString() }.getOrNull()
         ?: runCatching { String(record.payload, Charsets.UTF_8) }.getOrNull()
 }

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.74.0
+
+- **NFC tags now auto-open Hi3 Hashkit.** Programmed tags carry a Hashkit-specific record
+  (custom MIME `application/vnd.hi3.hashkit` + an Android Application Record), so tapping one —
+  even with the app closed — opens Hashkit straight to that miner (and offers the Play page if the
+  app isn't installed). Handling tags through the OS this way also **fixes the unreliable NFC read
+  in the AR overlay** (the in-app reader mode is gone; the system delivers the tag every time).
+  Note: re-tap your existing tags in the NFC tag programmer once to upgrade them to the new format.
+
 ## 0.73.9
 
 - **Flow view redesign:** text enlarged again and the ASIC machine glyphs are ~2× bigger; the

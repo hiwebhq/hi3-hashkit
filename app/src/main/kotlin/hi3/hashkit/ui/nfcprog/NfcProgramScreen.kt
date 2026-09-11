@@ -3,8 +3,6 @@ package hi3.hashkit.ui.nfcprog
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
@@ -259,10 +257,12 @@ private sealed interface WriteOutcome {
     data class Err(val message: String) : WriteOutcome
 }
 
-/** Write [payload] to an NFC tag as a single NDEF Text record. Handles blank & pre-formatted tags. */
+/**
+ * Write [payload] to an NFC tag as the Hi3 Hashkit record set (custom-MIME + Text + AAR) so the
+ * tag auto-opens the app when scanned. Handles blank & pre-formatted tags.
+ */
 private fun writeTag(tag: Tag, payload: String): WriteOutcome {
-    val record = NdefRecord.createTextRecord("en", payload)
-    val message = NdefMessage(arrayOf(record))
+    val message = hi3.hashkit.ui.nfc.hashkitNdefMessage(payload)
     val size = message.toByteArray().size
     Ndef.get(tag)?.let { ndef ->
         return runCatching {
