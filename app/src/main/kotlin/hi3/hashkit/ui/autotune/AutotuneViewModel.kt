@@ -111,10 +111,16 @@ class AutotuneViewModel @Inject constructor(
                 return@launch
             }
             val telemetry = repository.latestTelemetry(entity.id)
-            val voltage = telemetry?.coreVoltageMv?.value?.toInt()
+            // Hold voltage constant at an APPROVED setpoint. Telemetry reports the live *measured*
+            // core voltage (e.g. 1245 mV), which drifts off the firmware's approved list — snap it
+            // to the nearest allowed option so applyTune isn't rejected every step.
+            val rawVoltage = telemetry?.coreVoltageMv?.value?.toInt()
                 ?: options.defaultVoltageMv ?: options.voltageOptionsMv.firstOrNull()
                 ?: run { _state.value = _state.value.copy(message = "No core voltage to hold constant."); return@launch }
-            val origFreq = telemetry?.frequencyMhz?.value?.toInt() ?: options.defaultFrequencyMhz
+            val voltage = nearestOption(rawVoltage, options.voltageOptionsMv)
+            // Snap the original frequency to an approved option too, so the restore never fails.
+            val rawFreq = telemetry?.frequencyMhz?.value?.toInt() ?: options.defaultFrequencyMhz
+            val origFreq = rawFreq?.let { nearestOption(it, options.frequencyOptionsMhz) } ?: rawFreq
             val candidates = options.frequencyOptionsMhz.sorted()
 
             _state.value = AutotuneUiState(
@@ -206,6 +212,16 @@ class AutotuneViewModel @Inject constructor(
                 else "Apply failed: ${(result as? ActionResult.Failure)?.message ?: "unsupported"}",
             )
         }
+    }
+
+    companion object {
+        /**
+         * Snap [value] to the nearest firmware-approved option. The auto-tuner holds voltage at a
+         * measured value that drifts off the approved set (e.g. 1245 vs the allowed 1250); without
+         * snapping, applyTune rejects every step. Returns [value] unchanged if [options] is empty.
+         */
+        fun nearestOption(value: Int, options: List<Int>): Int =
+            options.minByOrNull { kotlin.math.abs(it - value) } ?: value
     }
 
     fun cancel() {

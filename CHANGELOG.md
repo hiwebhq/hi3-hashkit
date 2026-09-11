@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.74.4
+
+- **Fixed the auto-tuner failing every step on GammaHex (and any miner).** It held voltage at the
+  live *measured* core voltage (e.g. 1245 mV), which drifts off the firmware's approved setpoints
+  (…1200, 1250), so applyTune rejected every step with "not in the firmware-approved list." The
+  held voltage (and the restore frequency) now snap to the nearest approved option, so sweeps run.
+
 ## 0.74.3
 
 - **Inventory tag setting (Settings → Display).** Choose the default make-tag method — QR, NFC, or
