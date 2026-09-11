@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.75.3
+
+- **Scan reliably lands on Live Telemetry.** The scroll-to-telemetry offset was captured before the
+  chart sections finished laying out, so a scan could land above Live Telemetry. The offset is now
+  kept current and the scroll runs once the layout settles.
+
 ## 0.75.2
 
 - **Wall / TV mode: grid columns + compact controls.** New **Grid columns** option (Auto, or a

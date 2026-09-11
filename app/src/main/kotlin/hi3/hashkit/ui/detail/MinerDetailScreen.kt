@@ -67,11 +67,19 @@ fun MinerDetailScreen(
     var confirmDelete by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf(false) }
     val context = androidx.compose.ui.platform.LocalContext.current
-    // When opened by a scan, scroll straight to the LIVE TELEMETRY section.
+    // When opened by a scan, scroll straight to the LIVE TELEMETRY section. Its offset is kept
+    // current (charts above it change height as they render), and we scroll once the layout has
+    // settled so we don't land above it on a stale offset.
     val scrollState = rememberScrollState()
     var telemetryY by remember { mutableStateOf(-1) }
-    LaunchedEffect(focusTelemetry, telemetryY, miner?.id) {
-        if (focusTelemetry && telemetryY >= 0) scrollState.animateScrollTo(telemetryY)
+    LaunchedEffect(focusTelemetry, miner?.id) {
+        if (!focusTelemetry || miner == null) return@LaunchedEffect
+        // Let the heavy sections (history/efficiency charts) lay out, then scroll to the settled
+        // position; scroll again shortly after in case content is still growing.
+        repeat(2) {
+            kotlinx.coroutines.delay(400)
+            if (telemetryY >= 0) scrollState.animateScrollTo(telemetryY)
+        }
     }
 
     Scaffold(
@@ -214,7 +222,7 @@ fun MinerDetailScreen(
             SectionCard(
                 "LIVE TELEMETRY",
                 modifier = Modifier.onGloballyPositioned {
-                    if (telemetryY < 0) telemetryY = it.boundsInParent().top.toInt()
+                    telemetryY = it.boundsInParent().top.toInt()
                 },
             ) {
                 Row(
