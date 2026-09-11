@@ -151,6 +151,34 @@ fun AboutScreen(onBack: () -> Unit) {
             )
         }
     }
+    // Open the bundled user guide: copy the asset into the FileProvider's cache dir, then hand it
+    // to whatever PDF viewer the user has. The PDF ships in the app — no network needed.
+    fun openGuide() {
+        runCatching {
+            val outDir = java.io.File(context.cacheDir, "exports").apply { mkdirs() }
+            val out = java.io.File(outDir, "USER_GUIDE.pdf")
+            context.assets.open("USER_GUIDE.pdf").use { input ->
+                out.outputStream().use { input.copyTo(it) }
+            }
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                context, "${context.packageName}.files", out,
+            )
+            context.startActivity(
+                android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/pdf")
+                    addFlags(
+                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            android.content.Intent.FLAG_ACTIVITY_NEW_TASK,
+                    )
+                },
+            )
+        }.onFailure {
+            android.widget.Toast.makeText(
+                context, "Couldn't open the guide — no PDF viewer installed?",
+                android.widget.Toast.LENGTH_LONG,
+            ).show()
+        }
+    }
     fun shareApp() {
         val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -202,6 +230,12 @@ fun AboutScreen(onBack: () -> Unit) {
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
+                    LinkRow(
+                        title = "User guide",
+                        subtitle = "How to use Hi3 Hashkit (PDF, offline)",
+                        linkLabel = "Open PDF",
+                        highlight = true,
+                    ) { openGuide() }
                     LinkRow(
                         title = "Hi3",
                         subtitle = "The Hi3 mining platform",

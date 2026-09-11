@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.74.6
+
+- **User guide in About.** About now has an "Open PDF" link that opens the bundled user guide
+  (ships in the app, opens offline in your PDF viewer).
+
 ## 0.74.5
 
 - **Exit confirmation is now optional.** The "Exit Hi3 Hashkit?" dialog gained a "Don't ask again —
