@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.73.7
+
+- **Fixed NFC reading in the AR rack overlay.** Reader mode is now enabled immediately (not only
+  on a lifecycle event that a Navigation destination can miss) and tag callbacks are posted to the
+  main thread — tapping a written tag now reliably brings up the miner. NFC read/write is unified
+  in one shared helper used by the AR overlay and the Fleet-table scanner.
+- **Scan from the Fleet table.** New "Scan tag / QR" button (Advanced) opens the scanner to read a
+  miner's NFC tag or QR sticker and jump to it.
+- **Fleet-only view now has the 4 display formats.** The Fleet card → Fleet view gets the same
+  Large / Medium / Compact / Grid selector as the main dashboard (shared card-density setting).
+- Fleet table: the tag count moved onto its own line below the buttons.
+
 ## 0.73.6
 
 - **NFC tag programmer (Advanced).** Write miner NFC tags in a guided sequence: it steps through

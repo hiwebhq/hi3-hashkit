@@ -1,14 +1,8 @@
 package hi3.hashkit.ui.ar
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.pm.PackageManager
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import android.nfc.tech.Ndef
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -44,14 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
@@ -91,7 +82,7 @@ fun ArOverlayScreen(
     // NFC reader mode: active only while this screen is resumed.
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(context) }
     val nfcAvailable = nfcAdapter?.isEnabled == true
-    NfcReader(nfcAdapter, onText = viewModel::onScanned)
+    hi3.hashkit.ui.nfc.NfcReaderEffect(nfcAdapter, onText = viewModel::onScanned)
 
     Scaffold(
         topBar = {
@@ -173,36 +164,6 @@ fun ArOverlayScreen(
             confirmButton = { TextButton(onClick = viewModel::addFromTag) { Text("Add") } },
             dismissButton = { TextButton(onClick = viewModel::dismissAdd) { Text("Cancel") } },
         )
-    }
-}
-
-@Composable
-private fun NfcReader(adapter: NfcAdapter?, onText: (String) -> Unit) {
-    if (adapter == null) return
-    val context = LocalContext.current
-    val activity = remember(context) { context.findActivity() }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner, activity) {
-        if (activity == null) return@DisposableEffect onDispose { }
-        val callback = NfcAdapter.ReaderCallback { tag ->
-            readNdefText(tag)?.let(onText)
-        }
-        val flags = NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_NFC_B or
-            NfcAdapter.FLAG_READER_NFC_F or NfcAdapter.FLAG_READER_NFC_V
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME ->
-                    runCatching { adapter.enableReaderMode(activity, callback, flags, null) }
-                Lifecycle.Event.ON_PAUSE ->
-                    runCatching { adapter.disableReaderMode(activity) }
-                else -> Unit
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            runCatching { adapter.disableReaderMode(activity) }
-        }
     }
 }
 
@@ -294,40 +255,4 @@ private fun statusColor(miner: Miner) = when (miner.status) {
 private fun hashLabel(ghs: Double?): String {
     if (ghs == null) return "—"
     return if (ghs >= 1000) "%.2f TH/s".format(ghs / 1000) else "%.0f GH/s".format(ghs)
-}
-
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
-
-/** Read the first usable text from an NFC tag's NDEF message (Text/URI records), or null. */
-private fun readNdefText(tag: android.nfc.Tag): String? {
-    val ndef = Ndef.get(tag) ?: return null
-    val message: NdefMessage? = ndef.cachedNdefMessage ?: runCatching {
-        ndef.connect()
-        try { ndef.ndefMessage } finally { runCatching { ndef.close() } }
-    }.getOrNull()
-    val records = message?.records ?: return null
-    for (record in records) {
-        decodeRecord(record)?.let { if (it.isNotBlank()) return it }
-    }
-    return null
-}
-
-private fun decodeRecord(record: NdefRecord): String? {
-    // Well-known Text record: [status byte][language code][UTF-8/16 text].
-    if (record.tnf == NdefRecord.TNF_WELL_KNOWN && record.type.contentEquals(NdefRecord.RTD_TEXT)) {
-        val payload = record.payload
-        if (payload.isEmpty()) return null
-        val status = payload[0].toInt()
-        val langLen = status and 0x3F
-        val charset = if (status and 0x80 == 0) Charsets.UTF_8 else Charsets.UTF_16
-        if (payload.size <= 1 + langLen) return null
-        return runCatching { String(payload, 1 + langLen, payload.size - 1 - langLen, charset) }.getOrNull()
-    }
-    // URI records (well-known RTD_URI or absolute URI).
-    return runCatching { record.toUri()?.toString() }.getOrNull()
-        ?: runCatching { String(record.payload, Charsets.UTF_8) }.getOrNull()
 }

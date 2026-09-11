@@ -299,6 +299,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onBack = { nav.popBackStack() },
                 onMinerClick = { id -> nav.navigate("miner/$id") },
                 onProgramNfc = { ids -> nav.navigate("nfcprog?ids=${ids.joinToString(",")}") },
+                onScan = { nav.navigate("ar") },
             )
         }
         composable(

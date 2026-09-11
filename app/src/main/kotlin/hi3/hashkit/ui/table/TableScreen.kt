@@ -148,12 +148,13 @@ private val COLUMNS = listOf(
     Col("J/TH", SortColumn.EFFICIENCY, 78),
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun TableScreen(
     onBack: () -> Unit,
     onMinerClick: (Long) -> Unit,
     onProgramNfc: (List<Long>) -> Unit = {},
+    onScan: () -> Unit = {},
     viewModel: TableViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -182,11 +183,11 @@ fun TableScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            val context = androidx.compose.ui.platform.LocalContext.current
+            androidx.compose.foundation.layout.FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             ) {
-                val context = androidx.compose.ui.platform.LocalContext.current
                 androidx.compose.material3.OutlinedButton(
                     onClick = {
                         hi3.hashkit.integrations.print.AssetTagPrinter.print(
@@ -207,16 +208,18 @@ fun TableScreen(
                     androidx.compose.material3.OutlinedButton(
                         onClick = { onProgramNfc(state.miners.map { it.id }) },
                         enabled = state.miners.isNotEmpty(),
-                        modifier = Modifier.padding(start = 8.dp),
                     ) { Text("Program NFC tags") }
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = onScan,
+                    ) { Text("Scan tag / QR") }
                 }
-                Text(
-                    "${state.miners.size} tag(s) · scannable in the AR rack overlay",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                    modifier = Modifier.padding(start = 10.dp),
-                )
             }
+            Text(
+                "${state.miners.size} tag(s) · scannable in the AR rack overlay",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            )
             Column(Modifier.horizontalScroll(hScroll)) {
                 // Header
                 Row(

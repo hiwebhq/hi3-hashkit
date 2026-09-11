@@ -532,16 +532,28 @@ fun FleetDetailScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
+                actions = {
+                    DensitySelector(
+                        current = state.settings.cardDensity,
+                        onSelect = viewModel::setDensity,
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
             )
         },
         containerColor = HiBrand.background,
     ) { padding ->
         androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
-            val cols = when {
+            val wideCols = when {
                 maxWidth >= 1000.dp -> 3
                 maxWidth >= 640.dp -> 2
                 else -> 1
+            }
+            // Same 4 display formats as the main dashboard: GRID packs into a >=2-col grid;
+            // LARGE/MEDIUM/COMPACT flow one-per-row (multi-column on wide screens).
+            val cols = when {
+                state.settings.cardDensity == hi3.hashkit.data.prefs.CardDensity.GRID -> maxOf(wideCols, 2)
+                else -> wideCols
             }
             LazyColumn(
                 modifier = Modifier.fillMaxSize().widthIn(max = 1200.dp).align(Alignment.TopCenter),
@@ -555,7 +567,9 @@ fun FleetDetailScreen(
                                 Box(Modifier.weight(1f)) {
                                     MinerCard(
                                         miner = miner,
-                                        density = hi3.hashkit.data.prefs.CardDensity.MEDIUM,
+                                        density = if (state.settings.cardDensity == hi3.hashkit.data.prefs.CardDensity.GRID)
+                                            hi3.hashkit.data.prefs.CardDensity.GRID
+                                        else hi3.hashkit.data.prefs.CardDensity.MEDIUM,
                                         selected = false,
                                         selectionMode = false,
                                         onClick = { onMinerClick(miner.id) },
