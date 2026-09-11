@@ -21,6 +21,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <!-- Re-arm the safety monitor after a reboot, only if the user enabled it. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- SIDELOAD builds only: install a downloaded app update over the top (data preserved).
+         The self-update CODE is compiled out of the Play build (BuildConfig.SELF_UPDATE=false
+         via -PplayStore). For the Play submission, also strip this permission (see
+         docs/PLAY_STORE_SUBMISSION.md) since Play handles updates and forbids self-updating. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".HashkitApplication"

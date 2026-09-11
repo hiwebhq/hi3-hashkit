@@ -227,16 +227,19 @@ fun DashboardScreen(
                                 leadingIcon = { Icon(Icons.Filled.Bolt, contentDescription = null) },
                                 onClick = { menuOpen = false; onRules() },
                             )
-                            DropdownMenuItem(
-                                text = { Text("Pool address book") },
-                                leadingIcon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },
-                                onClick = { menuOpen = false; onAddressBook() },
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Rack & site") },
-                                leadingIcon = { Icon(Icons.Filled.GridView, contentDescription = null) },
-                                onClick = { menuOpen = false; onRack() },
-                            )
+                            // Advanced features (revealed once unlocked in Settings).
+                            if (state.settings.advancedUnlocked) {
+                                DropdownMenuItem(
+                                    text = { Text("Pool address book") },
+                                    leadingIcon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },
+                                    onClick = { menuOpen = false; onAddressBook() },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Rack & site") },
+                                    leadingIcon = { Icon(Icons.Filled.GridView, contentDescription = null) },
+                                    onClick = { menuOpen = false; onRack() },
+                                )
+                            }
                             DropdownMenuItem(
                                 text = { Text("Fleet table") },
                                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
@@ -804,7 +807,7 @@ private fun FleetSummary(
                 Metric("Efficiency", Units.formatEfficiency(totals?.fleetEfficiencyJTh))
                 Metric("Hottest", Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
                 totals?.dailyCost?.let { cost ->
-                    Metric("Est. cost", "%.2f %s/d".format(cost, totals.currencyCode))
+                    Metric("Daily Energy Est.", "%.2f USD".format(cost))
                 }
             }
             Spacer(Modifier.height(12.dp))

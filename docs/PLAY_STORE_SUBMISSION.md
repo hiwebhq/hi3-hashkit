@@ -18,9 +18,17 @@ Current build target: **versionName 0.65.0 / versionCode 70**, `targetSdk 35`.
 
 ## 1. Technical build (mostly done)
 
-- [x] Signed release **AAB**: `./gradlew bundleRelease` →
+- [x] Signed release **AAB** for Play — build with **`-PplayStore`** so the in-app
+      self-update code is compiled out (`BuildConfig.SELF_UPDATE=false`):
+      `./gradlew bundleRelease -PplayStore` →
       `app/build/outputs/bundle/release/app-release.aab` (R8-minified, resource-shrunk,
       signed with `hi3-release.jks`; `jarsigner -verify` passes).
+- [ ] **Strip `REQUEST_INSTALL_PACKAGES` from the Play build.** The in-app updater is a
+      sideload-only feature; Play forbids self-updating and flags this permission. `-PplayStore`
+      compiles out the *code* but the manifest still declares the permission. Before Play
+      submission, remove it — cleanest is a `play` product flavor whose manifest drops the
+      permission (`tools:node="remove"`); do this when the account clears. (Sideload APKs keep
+      it and the update feature.)
 - [x] Hidden dev link (7 logo taps) compiled out of release via `BuildConfig.EASTER_EGG=false`.
 - [x] `targetSdk 35`; minimal permissions.
 - [ ] Enroll in **Play App Signing** on first upload.

@@ -526,6 +526,62 @@ fun SettingsScreen(
                 ) { viewModel.setBtcPriceAutoFetch(it) }
             }
 
+            if (viewModel.selfUpdateEnabled) {
+                Section("UPDATE HASHKIT") {
+                    val ctx = androidx.compose.ui.platform.LocalContext.current
+                    val status by viewModel.updateStatus.collectAsStateWithLifecycle()
+                    Text("Installed: v${viewModel.currentVersion}", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        "Checks the official GitHub release and installs the signed update over " +
+                            "the top — your miners, telemetry history, logs and settings are all kept. " +
+                            "Android may ask you to allow installing updates from this app.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    when (val s = status) {
+                        is SettingsViewModel.UpdateStatus.Downloading -> {
+                            androidx.compose.material3.LinearProgressIndicator(
+                                progress = { s.progress },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                            Text(
+                                "Downloading ${(s.progress * 100).toInt()}%…",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = HiBrand.textSecondary,
+                            )
+                        }
+                        is SettingsViewModel.UpdateStatus.Available -> {
+                            Text(
+                                "Update available: v${s.info.latestVersion}" +
+                                    if (s.info.sizeBytes > 0) " (${s.info.sizeBytes / 1_000_000} MB)" else "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = HiBrand.accentAlt,
+                            )
+                            androidx.compose.material3.Button(onClick = {
+                                viewModel.downloadAndInstall { intent ->
+                                    runCatching { ctx.startActivity(intent) }
+                                }
+                            }) { Text("Download & install v${s.info.latestVersion}") }
+                        }
+                        else -> {
+                            androidx.compose.material3.OutlinedButton(
+                                onClick = { viewModel.checkForUpdate() },
+                                enabled = s !is SettingsViewModel.UpdateStatus.Checking,
+                            ) {
+                                Text(if (s is SettingsViewModel.UpdateStatus.Checking) "Checking…" else "Check for updates")
+                            }
+                            when (s) {
+                                is SettingsViewModel.UpdateStatus.UpToDate ->
+                                    Text("You're on the latest version.", style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOnline)
+                                is SettingsViewModel.UpdateStatus.Error ->
+                                    Text(s.message, style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOffline)
+                                else -> {}
+                            }
+                        }
+                    }
+                }
+            }
+
             Section("DATA & EXPORTS") {
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val restoreMessage by viewModel.restoreMessage.collectAsStateWithLifecycle()

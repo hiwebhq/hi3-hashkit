@@ -23,9 +23,55 @@ class SettingsViewModel @Inject constructor(
     private val repo: SettingsRepository,
     private val exporter: hi3.hashkit.data.export.Exporter,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
+    private val appUpdater: hi3.hashkit.integrations.update.AppUpdater,
 ) : ViewModel() {
 
     val restoreMessage = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+
+    // ---- Self-update (sideload builds only) --------------------------------------------
+    val selfUpdateEnabled: Boolean get() = appUpdater.enabled
+    val currentVersion: String get() = appUpdater.currentVersion
+
+    sealed interface UpdateStatus {
+        data object Idle : UpdateStatus
+        data object Checking : UpdateStatus
+        data object UpToDate : UpdateStatus
+        data class Available(val info: hi3.hashkit.integrations.update.AppUpdater.UpdateInfo) : UpdateStatus
+        data class Downloading(val progress: Float) : UpdateStatus
+        data class Error(val message: String) : UpdateStatus
+    }
+
+    val updateStatus = kotlinx.coroutines.flow.MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
+
+    fun checkForUpdate() {
+        if (!selfUpdateEnabled) return
+        updateStatus.value = UpdateStatus.Checking
+        viewModelScope.launch {
+            val info = appUpdater.check()
+            updateStatus.value = when {
+                info == null -> UpdateStatus.Error("Couldn't reach the update server.")
+                info.isNewer -> UpdateStatus.Available(info)
+                else -> UpdateStatus.UpToDate
+            }
+        }
+    }
+
+    /** Download the available update and hand back an installer intent to launch. */
+    fun downloadAndInstall(onReadyToInstall: (android.content.Intent) -> Unit) {
+        val available = updateStatus.value as? UpdateStatus.Available ?: return
+        updateStatus.value = UpdateStatus.Downloading(0f)
+        viewModelScope.launch {
+            val file = appUpdater.download(available.info.apkUrl) { p ->
+                updateStatus.value = UpdateStatus.Downloading(p)
+            }
+            if (file == null) {
+                updateStatus.value = UpdateStatus.Error("Download failed.")
+            } else {
+                updateStatus.value = UpdateStatus.Available(available.info)
+                onReadyToInstall(appUpdater.installIntent(file))
+            }
+        }
+    }
 
     /** Farms, so Settings can show a per-farm refresh-interval control for each. */
     val farms: StateFlow<List<hi3.hashkit.data.db.FarmEntity>> =

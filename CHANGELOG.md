@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.66.0
+
+- **Update Hashkit (in-app self-update).** Settings → Update Hashkit checks the official
+  GitHub release, downloads the signed APK, and installs it over the top — so **all your
+  miners, telemetry history, logs and settings are kept** (a same-key APK update, not a
+  reinstall). Sideload builds only: it's compiled out of the Play build (`-PplayStore`),
+  since Google Play forbids self-updating and handles updates itself.
+- **Advanced-gated menu items.** "Pool address book" and "Rack & site" now sit behind the
+  advanced-features gate (like Live Bitcoin); they still show while advanced features ship
+  free.
+- **Fleet card:** the daily-cost metric is now labeled **"Daily Energy Est."** and shows the
+  value in **USD**.
+
 ## 0.65.0
 
 - **Time-of-use power scheduling (tune presets).** Schedules gained an **Apply tune preset**

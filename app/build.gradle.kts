@@ -24,13 +24,18 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 70
-        versionName = "0.65.0"
+        versionCode = 71
+        versionName = "0.66.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Hidden dev link (7 logo taps). On in debug; the release/store build turns it off.
         buildConfigField("boolean", "EASTER_EGG", "true")
+
+        // In-app self-update (download + install a signed APK) is for SIDELOAD builds only —
+        // Google Play forbids apps updating themselves. Build the Play AAB with -PplayStore
+        // to compile it out. On by default so normal/sideload builds include it.
+        buildConfigField("boolean", "SELF_UPDATE", (!project.hasProperty("playStore")).toString())
     }
 
     ksp {
