@@ -19,13 +19,22 @@ enum class PoolType(
     val usesToken: Boolean = false,
     /** Placeholder pools have no verified endpoint yet — the app contacts nothing. */
     val comingSoon: Boolean = false,
+    /** Documented public stratum host for the pool speed test; null = not benchmarkable. */
+    val stratumHost: String? = null,
+    val stratumPort: Int = 3333,
 ) {
-    HI3("Hi3 Pool", "https://pool.hi3.cc", baseUrlEditable = true, identifierLabel = "Payout address"),
-    PUBLIC_POOL("Public Pool", "https://web.public-pool.io", baseUrlEditable = true, identifierLabel = "Payout address"),
-    CKPOOL("CKPool", "https://raw.stats.ckpool.org", baseUrlEditable = false, identifierLabel = "Payout address"),
-    OCEAN("OCEAN", "https://api.ocean.xyz", baseUrlEditable = false, identifierLabel = "Address / username"),
-    F2POOL("F2Pool", "https://api.f2pool.com", baseUrlEditable = false, identifierLabel = "Mining account / username"),
-    BRAIINS("Braiins Pool", "https://pool.braiins.com", baseUrlEditable = false, identifierLabel = "Username (optional)", usesToken = true),
+    HI3("Hi3 Pool", "https://pool.hi3.cc", baseUrlEditable = true, identifierLabel = "Payout address",
+        stratumHost = "pool.hi3.cc", stratumPort = 3333),
+    PUBLIC_POOL("Public Pool", "https://web.public-pool.io", baseUrlEditable = true, identifierLabel = "Payout address",
+        stratumHost = "public-pool.io", stratumPort = 21496),
+    CKPOOL("CKPool", "https://raw.stats.ckpool.org", baseUrlEditable = false, identifierLabel = "Payout address",
+        stratumHost = "solo.ckpool.org", stratumPort = 3333),
+    OCEAN("OCEAN", "https://api.ocean.xyz", baseUrlEditable = false, identifierLabel = "Address / username",
+        stratumHost = "mine.ocean.xyz", stratumPort = 3334),
+    F2POOL("F2Pool", "https://api.f2pool.com", baseUrlEditable = false, identifierLabel = "Mining account / username",
+        stratumHost = "btc.f2pool.com", stratumPort = 3333),
+    BRAIINS("Braiins Pool", "https://pool.braiins.com", baseUrlEditable = false, identifierLabel = "Username (optional)", usesToken = true,
+        stratumHost = "stratum.braiins.com", stratumPort = 3333),
 
     // Endpoints not yet verified — shown but do nothing. See Hi3PoolRepository/fetchAccountFor.
     LUXOR("Luxor (coming soon)", "https://app.luxor.tech", baseUrlEditable = false, identifierLabel = "Subaccount", comingSoon = true),

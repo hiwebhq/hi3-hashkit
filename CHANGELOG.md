@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.71.0
+
+- **Pool speed test now includes the supported public pools.** Alongside your fleet's pools
+  and saved address-book pools, the test also benchmarks the Pool-Stats-supported pools using
+  their documented public stratum endpoints — Hi3 (pool.hi3.cc:3333), Public Pool
+  (public-pool.io:21496), CKPool (solo.ckpool.org:3333), OCEAN (mine.ocean.xyz:3334), F2Pool
+  (btc.f2pool.com:3333), Braiins (stratum.braiins.com:3333). Regional servers may be faster;
+  add specific ones via the address book.
+
 ## 0.70.0
 
 - **Pool speed test (Advanced).** A new screen (dashboard menu, advanced-gated) benchmarks

@@ -83,7 +83,12 @@ class PoolSpeedViewModel @Inject constructor(
         val fromSaved = savedPoolDao.observeAll().first().mapNotNull { sp ->
             PoolSpeedTester.parseStratum(sp.url, sp.port)?.let { (h, p) -> Candidate(sp.label, h, p) }
         }
-        return (fromSaved + fromMiners).distinctBy { "${it.host}:${it.port}" }
+        // Every Pool Stats-supported pool with a documented public stratum endpoint.
+        val fromKnownPools = hi3.hashkit.integrations.hi3.PoolType.entries
+            .filter { !it.comingSoon && it.stratumHost != null }
+            .map { Candidate(it.displayName, it.stratumHost!!, it.stratumPort) }
+        // User's own pools first, then saved, then the built-in public pools; de-dup by host:port.
+        return (fromMiners + fromSaved + fromKnownPools).distinctBy { "${it.host}:${it.port}" }
     }
 
     fun runTest() {
@@ -144,10 +149,12 @@ fun PoolSpeedScreen(
         ) {
             item {
                 Text(
-                    "Measures stratum latency to each pool your fleet uses (plus saved pools): " +
-                        "the TCP handshake and a real mining.subscribe round-trip — no packet " +
-                        "sniffing. Measured from THIS phone's network, so it best reflects your " +
-                        "rigs when the phone shares their LAN/uplink.",
+                    "Measures stratum latency to each pool your fleet uses, your saved pools, and " +
+                        "the supported public pools (Hi3, Public Pool, CKPool, OCEAN, F2Pool, " +
+                        "Braiins): the TCP handshake and a real mining.subscribe round-trip — no " +
+                        "packet sniffing. Measured from THIS phone's network, so it best reflects " +
+                        "your rigs when the phone shares their LAN/uplink. Public endpoints are the " +
+                        "pools' documented defaults; a regional server may be faster.",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
