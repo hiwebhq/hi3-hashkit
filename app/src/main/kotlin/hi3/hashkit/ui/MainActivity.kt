@@ -237,8 +237,13 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
     val nfcTarget by nfcRouter.target.collectAsState()
     LaunchedEffect(nfcTarget) {
         when (val t = nfcTarget) {
-            is hi3.hashkit.data.nfc.NfcRouter.Target.MinerDetail -> {
-                nav.navigate("miner/${t.id}?focus=telemetry")
+            is hi3.hashkit.data.nfc.NfcRouter.Target.HighlightMiner -> {
+                // Open the Fleet table (the list of machines) and highlight the scanned miner.
+                nav.navigate("table") {
+                    popUpTo("dashboard") { inclusive = false }
+                    launchSingleTop = true
+                }
+                nfcRouter.requestHighlight(t.id)
                 nfcRouter.consume()
             }
             // The AR overlay's ViewModel reads the Overlay payload and then consumes it.

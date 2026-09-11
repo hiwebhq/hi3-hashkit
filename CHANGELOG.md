@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.75.7
+
+- **NFC scan → Fleet table, scanned machine highlighted.** A scanned tag opens the Fleet table
+  (the list of machines), scrolls to the scanned miner, and highlights its row (accent
+  border/background for a few seconds). Tapping the row opens the miner's full detail.
+
 ## 0.75.6
 
 - **Scan lands on Live Telemetry (not the bottom).** Reverted the Fleet-table detour — a scanned

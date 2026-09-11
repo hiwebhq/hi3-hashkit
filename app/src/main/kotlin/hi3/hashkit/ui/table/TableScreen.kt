@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.border
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -84,7 +87,12 @@ class TableViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val pollingEngine: PollingEngine,
     private val settingsRepository: SettingsRepository,
+    private val nfcRouter: hi3.hashkit.data.nfc.NfcRouter,
 ) : ViewModel() {
+
+    /** (miner id, nonce) to highlight after a scan; nonce lets the same miner re-highlight. */
+    val highlight: StateFlow<Pair<Long, Long>?> = nfcRouter.highlight
+    fun clearHighlight() = nfcRouter.clearHighlight()
 
     private val query = MutableStateFlow("")
     private val sort = MutableStateFlow(SortColumn.NAME)
@@ -175,6 +183,22 @@ fun TableScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val hScroll = rememberScrollState()
     var showPrintSize by remember { mutableStateOf(false) }
+    // After a scan, scroll to and highlight the scanned miner in the list.
+    val highlight by viewModel.highlight.collectAsStateWithLifecycle()
+    val highlightId = highlight?.first
+    val listState = rememberLazyListState()
+    LaunchedEffect(highlight?.second) {
+        val id = highlight?.first ?: return@LaunchedEffect
+        var idx = -1
+        var tries = 0
+        while (idx < 0 && tries < 20) {
+            idx = viewModel.state.value.miners.indexOfFirst { it.id == id }
+            if (idx < 0) { kotlinx.coroutines.delay(100); tries++ }
+        }
+        if (idx >= 0) runCatching { listState.animateScrollToItem(idx) }
+        kotlinx.coroutines.delay(4000)
+        viewModel.clearHighlight()
+    }
     val totalWidth = COLUMNS.sumOf { it.width }.dp
 
     Scaffold(
@@ -251,9 +275,9 @@ fun TableScreen(
                         )
                     }
                 }
-                LazyColumn(contentPadding = PaddingValues(bottom = 24.dp)) {
+                LazyColumn(state = listState, contentPadding = PaddingValues(bottom = 24.dp)) {
                     items(state.miners, key = { it.id }) { m ->
-                        TableRow(m, state.fahrenheit, totalWidth) { onMinerClick(m.id) }
+                        TableRow(m, state.fahrenheit, totalWidth, highlighted = m.id == highlightId) { onMinerClick(m.id) }
                     }
                 }
             }
@@ -310,7 +334,13 @@ private fun PrintSizeDialog(
 }
 
 @Composable
-private fun TableRow(miner: Miner, fahrenheit: Boolean, totalWidth: androidx.compose.ui.unit.Dp, onClick: () -> Unit) {
+private fun TableRow(
+    miner: Miner,
+    fahrenheit: Boolean,
+    totalWidth: androidx.compose.ui.unit.Dp,
+    highlighted: Boolean = false,
+    onClick: () -> Unit,
+) {
     val t = miner.lastTelemetry
     val statusColor = when (miner.status) {
         MinerStatus.ONLINE -> HiBrand.statusOnline
@@ -331,7 +361,14 @@ private fun TableRow(miner: Miner, fahrenheit: Boolean, totalWidth: androidx.com
         t?.efficiencyJTh?.value?.let { "%.1f".format(it) } ?: "—",
     )
     Row(
-        Modifier.width(totalWidth).clickable(onClick = onClick)
+        Modifier.width(totalWidth)
+            .then(
+                if (highlighted) {
+                    Modifier.background(HiBrand.accent.copy(alpha = 0.22f))
+                        .border(2.dp, HiBrand.accent, RoundedCornerShape(8.dp))
+                } else Modifier,
+            )
+            .clickable(onClick = onClick)
             .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

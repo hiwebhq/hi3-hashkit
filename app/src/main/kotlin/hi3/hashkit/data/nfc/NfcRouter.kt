@@ -18,8 +18,8 @@ import javax.inject.Singleton
 class NfcRouter @Inject constructor() {
 
     sealed interface Target {
-        /** Tag matched a known miner — open its full detail card at Live Telemetry. */
-        data class MinerDetail(val id: Long) : Target
+        /** Tag matched a known miner — open the Fleet table and highlight that miner's card. */
+        data class HighlightMiner(val id: Long) : Target
         /** No direct match — hand the raw payload to the AR overlay (add prompt / no-match hint). */
         data class Overlay(val payload: String) : Target
     }
@@ -29,4 +29,13 @@ class NfcRouter @Inject constructor() {
 
     fun emit(target: Target) { _target.value = target }
     fun consume() { _target.value = null }
+
+    /** (miner id, nonce) to highlight in the Fleet table after a scan; the nonce lets the same
+     *  miner scanned again re-trigger the highlight. */
+    private val _highlight = MutableStateFlow<Pair<Long, Long>?>(null)
+    val highlight: StateFlow<Pair<Long, Long>?> = _highlight
+    private var nonce = 0L
+
+    fun requestHighlight(id: Long) { _highlight.value = id to nonce++ }
+    fun clearHighlight() { _highlight.value = null }
 }
