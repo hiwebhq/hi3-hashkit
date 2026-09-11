@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.68.0
+
+- **Log Analyzer — persistent tier.** Viewing a miner's logs now **captures** them to a local
+  per-miner ring buffer (up to ~10k lines / ~7 days, wallets redacted), so the analyzer can
+  review **past** logs, not just the live stream. The Analyze panel gains a window selector
+  (**Live / 1h / 24h / 7d**) that runs the analysis over stored history, plus **Export
+  captured logs**. Retention is trimmed automatically (per-miner cap + 7-day prune).
+- **More items moved into Advanced features:** **Schedules**, **Farms**, **Pool address
+  book** and **Rack & site** now sit behind the advanced-features gate (like Live Bitcoin).
+  They still show while advanced features ship free (`ADVANCED_FEATURES_FREE`).
+
 ## 0.67.0
 
 - **Log Analyzer (advanced).** On a Bitaxe/AxeOS miner's live log stream, tap the new

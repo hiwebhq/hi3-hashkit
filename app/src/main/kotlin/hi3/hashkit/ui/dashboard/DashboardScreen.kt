@@ -203,11 +203,6 @@ fun DashboardScreen(
                                 onClick = { menuOpen = false; onFlow() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Farms") },
-                                leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = null) },
-                                onClick = { menuOpen = false; onFarms() },
-                            )
-                            DropdownMenuItem(
                                 text = { Text("Network scan") },
                                 leadingIcon = { Icon(Icons.Filled.Wifi, contentDescription = null) },
                                 onClick = { menuOpen = false; onNetworkScan() },
@@ -218,17 +213,22 @@ fun DashboardScreen(
                                 onClick = { menuOpen = false; onLeaderboard() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Schedules") },
-                                leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
-                                onClick = { menuOpen = false; onSchedules() },
-                            )
-                            DropdownMenuItem(
                                 text = { Text("Automation rules") },
                                 leadingIcon = { Icon(Icons.Filled.Bolt, contentDescription = null) },
                                 onClick = { menuOpen = false; onRules() },
                             )
                             // Advanced features (revealed once unlocked in Settings).
                             if (state.settings.advancedUnlocked) {
+                                DropdownMenuItem(
+                                    text = { Text("Schedules") },
+                                    leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
+                                    onClick = { menuOpen = false; onSchedules() },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Farms") },
+                                    leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = null) },
+                                    onClick = { menuOpen = false; onFarms() },
+                                )
                                 DropdownMenuItem(
                                     text = { Text("Pool address book") },
                                     leadingIcon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },

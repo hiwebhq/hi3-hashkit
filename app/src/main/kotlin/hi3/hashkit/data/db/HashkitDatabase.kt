@@ -20,8 +20,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         MaintenanceNoteEntity::class,
         RuleEntity::class,
         SavedPoolEntity::class,
+        LogLineEntity::class,
     ],
-    version = 14,
+    version = 15,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -35,6 +36,7 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun maintenanceDao(): MaintenanceDao
     abstract fun ruleDao(): RuleDao
     abstract fun savedPoolDao(): SavedPoolDao
+    abstract fun logDao(): LogDao
 
     companion object {
         /** v1 -> v2: additive alert/audit tables; existing telemetry history untouched. */
@@ -154,6 +156,22 @@ abstract class HashkitDatabase : RoomDatabase() {
         val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `perChainJson` TEXT DEFAULT NULL")
+            }
+        }
+
+        /** v14 -> v15: log_lines capture buffer (additive). */
+        val MIGRATION_14_15 = object : Migration(14, 15) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `log_lines` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`minerId` INTEGER NOT NULL, `atEpochMs` INTEGER NOT NULL, " +
+                        "`severity` TEXT NOT NULL, `category` TEXT NOT NULL, `text` TEXT NOT NULL)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_log_lines_minerId_atEpochMs` " +
+                        "ON `log_lines` (`minerId`, `atEpochMs`)"
+                )
             }
         }
 

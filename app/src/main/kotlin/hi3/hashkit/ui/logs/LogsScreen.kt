@@ -47,7 +47,9 @@ import hi3.hashkit.ui.theme.HiBrand
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -63,8 +65,10 @@ data class LogsUiState(
 @HiltViewModel
 class LogsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val logStream: EspMinerLogStream,
+    private val logRepository: hi3.hashkit.data.repo.LogRepository,
     settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
 ) : ViewModel() {
 
@@ -77,10 +81,43 @@ class LogsViewModel @Inject constructor(
         .map { it.advancedUnlocked }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
+    /** Analysis window in ms; 0 = the live in-memory buffer, else stored history. */
+    val windowMs = MutableStateFlow(0L)
+
+    /** Analysis for the Analyze panel — live buffer, or stored history over [windowMs]. */
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val analysis: StateFlow<hi3.hashkit.domain.logs.LogAnalyzer.Analysis> =
+        windowMs.flatMapLatest { w ->
+            if (w == 0L) _state.map { hi3.hashkit.domain.logs.LogAnalyzer.analyze(it.lines) }
+            else kotlinx.coroutines.flow.flow {
+                emit(logRepository.analyzeSince(minerId, w))
+            }
+        }.stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(5_000),
+            hi3.hashkit.domain.logs.LogAnalyzer.analyze(emptyList()),
+        )
+
     private var job: Job? = null
+    private val pending = java.util.Collections.synchronizedList(mutableListOf<String>())
 
     init {
         connect()
+        // Flush captured lines to storage on a light cadence.
+        viewModelScope.launch {
+            while (true) {
+                kotlinx.coroutines.delay(2000)
+                flushPending()
+            }
+        }
+    }
+
+    private suspend fun flushPending() {
+        val batch: List<String>
+        synchronized(pending) {
+            if (pending.isEmpty()) return
+            batch = pending.toList(); pending.clear()
+        }
+        runCatching { logRepository.record(minerId, batch) }
     }
 
     private fun connect() {
@@ -91,6 +128,7 @@ class LogsViewModel @Inject constructor(
             logStream.stream(MinerHost(entity.host, entity.port)).collect { event ->
                 when (event) {
                     is EspMinerLogStream.LogEvent.Line -> {
+                        pending.add(event.text) // always captured, even while paused
                         if (!_state.value.paused) {
                             _state.value = _state.value.copy(
                                 status = "Live",
@@ -113,7 +151,31 @@ class LogsViewModel @Inject constructor(
         _state.value = _state.value.copy(lines = emptyList())
     }
 
+    fun setWindow(ms: Long) { windowMs.value = ms }
+
     fun reconnect() = connect()
+
+    /** Export the captured logs for the current window (or ~24h for the live view) to a file. */
+    fun exportLogs(onReady: (android.content.Intent) -> Unit) {
+        viewModelScope.launch {
+            flushPending()
+            val w = windowMs.value.takeIf { it > 0 } ?: 86_400_000L
+            val texts = runCatching { logRepository.textsSince(minerId, w) }.getOrDefault(emptyList())
+            val dir = java.io.File(appContext.cacheDir, "exports").apply { mkdirs() }
+            val file = java.io.File(dir, "hashkit-logs-${minerId}.txt")
+            runCatching { file.writeText(texts.joinToString("\n")) }
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                appContext, "${appContext.packageName}.files", file,
+            )
+            onReady(
+                android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                    addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+        }
+    }
 
     override fun onCleared() {
         job?.cancel()
@@ -199,7 +261,7 @@ fun LogsScreen(
         }
         if (analyze) {
             LogAnalysisPanel(
-                lines = state.lines,
+                viewModel = viewModel,
                 modifier = Modifier.fillMaxSize().padding(padding),
             )
             return@Scaffold
@@ -229,15 +291,31 @@ fun LogsScreen(
 }
 
 @Composable
-private fun LogAnalysisPanel(lines: List<String>, modifier: Modifier = Modifier) {
-    val analysis = androidx.compose.runtime.remember(lines) {
-        hi3.hashkit.domain.logs.LogAnalyzer.analyze(lines)
-    }
+private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modifier) {
+    val analysis by viewModel.analysis.collectAsStateWithLifecycle()
+    val window by viewModel.windowMs.collectAsStateWithLifecycle()
+    val ctx = androidx.compose.ui.platform.LocalContext.current
     LazyColumn(
         modifier = modifier.background(HiBrand.background),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        item {
+            // Window selector: Live in-memory buffer, or stored history windows.
+            androidx.compose.foundation.layout.FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                listOf(
+                    0L to "Live", 3_600_000L to "1h", 86_400_000L to "24h", 604_800_000L to "7d",
+                ).forEach { (ms, label) ->
+                    androidx.compose.material3.FilterChip(
+                        selected = window == ms,
+                        onClick = { viewModel.setWindow(ms) },
+                        label = { Text(label) },
+                    )
+                }
+            }
+        }
         item {
             Text(
                 "LOG ANALYSIS  ·  ${analysis.summary.total} lines" +
@@ -277,9 +355,16 @@ private fun LogAnalysisPanel(lines: List<String>, modifier: Modifier = Modifier)
             }
         }
         item {
+            androidx.compose.material3.OutlinedButton(onClick = {
+                viewModel.exportLogs { intent ->
+                    ctx.startActivity(android.content.Intent.createChooser(intent, "Export logs"))
+                }
+            }) { Text("Export captured logs") }
+        }
+        item {
             Text(
-                "Heuristic, on-device analysis of the live AxeOS log — no cloud. Keep the " +
-                    "stream open to catch intermittent issues.",
+                "Heuristic, on-device analysis — no cloud. Live analyzes the current stream; " +
+                    "1h/24h/7d analyze captured history (kept per miner, ~7 days). Wallets redacted.",
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
