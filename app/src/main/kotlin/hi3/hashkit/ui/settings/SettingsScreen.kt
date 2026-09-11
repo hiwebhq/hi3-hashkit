@@ -91,6 +91,32 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            Section("ADVANCED FEATURES") {
+                val unlocked = settings.advancedUnlocked
+                Text(
+                    if (unlocked)
+                        "Advanced features are unlocked. This reveals the dashboard menu's " +
+                            "\"Live Bitcoin\" link; more may move here in future versions " +
+                            "(secure pages, power tools)."
+                    else
+                        "Enter your unlock code to reveal advanced features (currently the " +
+                            "dashboard menu's \"Live Bitcoin\" link).",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HiBrand.textSecondary,
+                )
+                var codeInput by remember { mutableStateOf(settings.advancedUnlockCode) }
+                OutlinedTextField(
+                    value = codeInput,
+                    onValueChange = { codeInput = it },
+                    label = { Text(if (unlocked) "Unlock code (optional)" else "Unlock code") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                androidx.compose.material3.TextButton(onClick = {
+                    viewModel.setAdvancedUnlockCode(codeInput)
+                }) { Text("Apply code") }
+            }
+
             Section("ALERTS") {
                 ToggleRow(
                     "Alerts & notifications",
@@ -116,129 +142,6 @@ fun SettingsScreen(
                 }
                 NumberRow("Re-notify cooldown (min)", (settings.alertThresholds.cooldownMs / 60000).toString()) {
                     it.toLongOrNull()?.let { v -> viewModel.setCooldownMinutes(v) }
-                }
-            }
-
-            Section("QUIET HOURS & DIGEST") {
-                ToggleRow(
-                    "Quiet hours",
-                    "Suppress alert notifications during a nightly window. Alerts are still " +
-                        "recorded and appear in the daily digest.",
-                    settings.quietHoursEnabled,
-                ) { viewModel.setQuietHoursEnabled(it) }
-                if (settings.quietHoursEnabled) {
-                    NumberRow("Quiet from (HH:MM)", minutesToHhMm(settings.quietStartMinute)) {
-                        hhMmToMinutes(it)?.let { m -> viewModel.setQuietStartMinute(m) }
-                    }
-                    NumberRow("Quiet until (HH:MM)", minutesToHhMm(settings.quietEndMinute)) {
-                        hhMmToMinutes(it)?.let { m -> viewModel.setQuietEndMinute(m) }
-                    }
-                }
-                ToggleRow(
-                    "Daily digest",
-                    "One summary notification per day of the last 24h of alerts.",
-                    settings.digestEnabled,
-                ) { viewModel.setDigestEnabled(it) }
-                if (settings.digestEnabled) {
-                    NumberRow("Digest time (hour, 0–23)", settings.digestHour.toString()) {
-                        it.toIntOrNull()?.let { v -> viewModel.setDigestHour(v) }
-                    }
-                }
-            }
-
-            Section("PUSH (WEBHOOK)") {
-                Text(
-                    "Mirror alerts to your own push service so they reach you when the app is " +
-                        "closed — no cloud account of ours. Fires only for active alerts.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = HiBrand.textSecondary,
-                )
-                WebhookTypeRow(current = settings.webhookType, onSelect = { viewModel.setWebhookType(it) })
-                when (settings.webhookType) {
-                    hi3.hashkit.data.alerts.WebhookType.NONE -> Unit
-                    hi3.hashkit.data.alerts.WebhookType.NTFY ->
-                        NumberRow("ntfy topic URL (https://ntfy.sh/your-topic)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
-                    hi3.hashkit.data.alerts.WebhookType.GOTIFY -> {
-                        NumberRow("Gotify server URL", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
-                        NumberRow("Gotify app token", settings.webhookToken) { viewModel.setWebhookToken(it) }
-                    }
-                    hi3.hashkit.data.alerts.WebhookType.TELEGRAM -> {
-                        NumberRow("Telegram bot token", settings.webhookToken) { viewModel.setWebhookToken(it) }
-                        NumberRow("Telegram chat ID", settings.webhookTarget) { viewModel.setWebhookTarget(it) }
-                    }
-                    hi3.hashkit.data.alerts.WebhookType.GENERIC ->
-                        NumberRow("POST URL (JSON body)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
-                }
-            }
-
-            Section("MQTT / HOME ASSISTANT") {
-                ToggleRow(
-                    "Publish to MQTT",
-                    "Send fleet + per-miner telemetry to a local MQTT broker (e.g. the " +
-                        "Mosquitto add-on in Home Assistant). Opt-in; totals and per-miner " +
-                        "hashrate/power/temp only — no addresses or credentials.",
-                    settings.mqttEnabled,
-                ) { viewModel.setMqttEnabled(it) }
-                if (settings.mqttEnabled) {
-                    NumberRow("Broker host", settings.mqttHost) { viewModel.setMqttHost(it) }
-                    NumberRow("Broker port", settings.mqttPort.toString()) {
-                        it.toIntOrNull()?.let { v -> viewModel.setMqttPort(v) }
-                    }
-                    NumberRow("Base topic", settings.mqttBaseTopic) { viewModel.setMqttBaseTopic(it) }
-                    NumberRow("Username (optional)", settings.mqttUsername) { viewModel.setMqttUsername(it) }
-                    var mqttPass by remember { mutableStateOf("") }
-                    OutlinedTextField(
-                        value = mqttPass,
-                        onValueChange = { mqttPass = it },
-                        label = {
-                            Text(
-                                if (settings.mqttPasswordConfigured) "Password (saved — enter to replace, blank to clear)"
-                                else "Password (optional)",
-                            )
-                        },
-                        singleLine = true,
-                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    androidx.compose.material3.TextButton(onClick = {
-                        viewModel.setMqttPassword(mqttPass)
-                        mqttPass = ""
-                    }) { Text(if (settings.mqttPasswordConfigured) "Replace password" else "Save password") }
-                    ToggleRow(
-                        "Home Assistant discovery",
-                        "Publish MQTT-discovery config so miners appear as HA devices/entities automatically.",
-                        settings.mqttHomeAssistantDiscovery,
-                    ) { viewModel.setMqttHaDiscovery(it) }
-                    Text(
-                        "Published while the app is open, each poll. The password is stored " +
-                            "encrypted in the Android Keystore. Point Prometheus/HA at this broker.",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = HiBrand.textSecondary,
-                    )
-                }
-            }
-
-            if (settings.advancedUnlocked) {
-                Section("LOCAL WEB SERVER (ADVANCED)") {
-                    ToggleRow(
-                        "Expose web dashboard + /metrics",
-                        "Run a local, read-only web server: an HTML fleet dashboard any browser " +
-                            "or TV on the LAN can open, plus a Prometheus /metrics endpoint for " +
-                            "Grafana. No auth — for a private LAN/tailnet only.",
-                        settings.prometheusEnabled,
-                    ) { viewModel.setPrometheusEnabled(it) }
-                    if (settings.prometheusEnabled) {
-                        NumberRow("Port", settings.prometheusPort.toString()) {
-                            it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
-                        }
-                        Text(
-                            "While the app is open: dashboard at " +
-                                "http://<this-device-ip>:${settings.prometheusPort}/ and metrics at " +
-                                "/metrics. Read-only (GET only); exposes totals + per-miner data, no controls.",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = HiBrand.textSecondary,
-                        )
-                    }
                 }
             }
 
@@ -331,49 +234,27 @@ fun SettingsScreen(
                 )
             }
 
-            Section("POOL") {
-                ToggleRow(
-                    "Pool stats",
-                    "Read-only pool-side view of your workers, correlated with local miner " +
-                        "readings on the dashboard.",
-                    settings.hi3PoolEnabled,
-                ) { viewModel.setHi3PoolEnabled(it) }
-                if (settings.hi3PoolEnabled) {
-                    PoolTypeRow(current = settings.poolType, onSelect = { viewModel.setPoolType(it) })
-                    if (settings.poolType.comingSoon) {
-                        Text(
-                            "${settings.poolType.displayName.removeSuffix(" (coming soon)")} support is on " +
-                                "the way. Its API needs verifying before we send anything, so this pool " +
-                                "contacts nothing yet — pick another pool to load live stats.",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = HiBrand.statusDegraded,
-                        )
-                    } else {
-                        if (settings.poolType.baseUrlEditable) {
-                            NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+            if (settings.advancedUnlocked) {
+                Section("LOCAL WEB SERVER (ADVANCED)") {
+                    ToggleRow(
+                        "Expose web dashboard + /metrics",
+                        "Run a local, read-only web server: an HTML fleet dashboard any browser " +
+                            "or TV on the LAN can open, plus a Prometheus /metrics endpoint for " +
+                            "Grafana. No auth — for a private LAN/tailnet only.",
+                        settings.prometheusEnabled,
+                    ) { viewModel.setPrometheusEnabled(it) }
+                    if (settings.prometheusEnabled) {
+                        NumberRow("Port", settings.prometheusPort.toString()) {
+                            it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
                         }
-                        PayoutAddressRow(
-                            label = settings.poolType.identifierLabel,
-                            value = settings.hi3PoolPayoutAddress,
-                            onChange = { viewModel.setHi3PoolPayoutAddress(it) },
+                        Text(
+                            "While the app is open: dashboard at " +
+                                "http://<this-device-ip>:${settings.prometheusPort}/ and metrics at " +
+                                "/metrics. Read-only (GET only); exposes totals + per-miner data, no controls.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
                         )
-                        NumberRow(
-                            if (settings.poolType.usesToken) "Access token"
-                            else "API key / watcher token (optional)",
-                            settings.poolApiToken,
-                        ) { viewModel.setPoolApiToken(it) }
                     }
-                }
-                if (!settings.poolType.comingSoon) {
-                    Text(
-                        "What is transmitted while enabled: your ${settings.poolType.identifierLabel.lowercase()} " +
-                            "(and token if set), inside an HTTPS request to ${settings.poolType.displayName}, " +
-                            "about once a minute while the app is open. Nothing else — no miner telemetry, " +
-                            "no local IPs, no worker passwords. Off by default; turning it off stops all " +
-                            "pool requests immediately.",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = HiBrand.textSecondary,
-                    )
                 }
             }
 
@@ -442,6 +323,151 @@ fun SettingsScreen(
                 }
             }
 
+            Section("MQTT / HOME ASSISTANT") {
+                ToggleRow(
+                    "Publish to MQTT",
+                    "Send fleet + per-miner telemetry to a local MQTT broker (e.g. the " +
+                        "Mosquitto add-on in Home Assistant). Opt-in; totals and per-miner " +
+                        "hashrate/power/temp only — no addresses or credentials.",
+                    settings.mqttEnabled,
+                ) { viewModel.setMqttEnabled(it) }
+                if (settings.mqttEnabled) {
+                    NumberRow("Broker host", settings.mqttHost) { viewModel.setMqttHost(it) }
+                    NumberRow("Broker port", settings.mqttPort.toString()) {
+                        it.toIntOrNull()?.let { v -> viewModel.setMqttPort(v) }
+                    }
+                    NumberRow("Base topic", settings.mqttBaseTopic) { viewModel.setMqttBaseTopic(it) }
+                    NumberRow("Username (optional)", settings.mqttUsername) { viewModel.setMqttUsername(it) }
+                    var mqttPass by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = mqttPass,
+                        onValueChange = { mqttPass = it },
+                        label = {
+                            Text(
+                                if (settings.mqttPasswordConfigured) "Password (saved — enter to replace, blank to clear)"
+                                else "Password (optional)",
+                            )
+                        },
+                        singleLine = true,
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    androidx.compose.material3.TextButton(onClick = {
+                        viewModel.setMqttPassword(mqttPass)
+                        mqttPass = ""
+                    }) { Text(if (settings.mqttPasswordConfigured) "Replace password" else "Save password") }
+                    ToggleRow(
+                        "Home Assistant discovery",
+                        "Publish MQTT-discovery config so miners appear as HA devices/entities automatically.",
+                        settings.mqttHomeAssistantDiscovery,
+                    ) { viewModel.setMqttHaDiscovery(it) }
+                    Text(
+                        "Published while the app is open, each poll. The password is stored " +
+                            "encrypted in the Android Keystore. Point Prometheus/HA at this broker.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
+            }
+
+            Section("POOL") {
+                ToggleRow(
+                    "Pool stats",
+                    "Read-only pool-side view of your workers, correlated with local miner " +
+                        "readings on the dashboard.",
+                    settings.hi3PoolEnabled,
+                ) { viewModel.setHi3PoolEnabled(it) }
+                if (settings.hi3PoolEnabled) {
+                    PoolTypeRow(current = settings.poolType, onSelect = { viewModel.setPoolType(it) })
+                    if (settings.poolType.comingSoon) {
+                        Text(
+                            "${settings.poolType.displayName.removeSuffix(" (coming soon)")} support is on " +
+                                "the way. Its API needs verifying before we send anything, so this pool " +
+                                "contacts nothing yet — pick another pool to load live stats.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.statusDegraded,
+                        )
+                    } else {
+                        if (settings.poolType.baseUrlEditable) {
+                            NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                        }
+                        PayoutAddressRow(
+                            label = settings.poolType.identifierLabel,
+                            value = settings.hi3PoolPayoutAddress,
+                            onChange = { viewModel.setHi3PoolPayoutAddress(it) },
+                        )
+                        NumberRow(
+                            if (settings.poolType.usesToken) "Access token"
+                            else "API key / watcher token (optional)",
+                            settings.poolApiToken,
+                        ) { viewModel.setPoolApiToken(it) }
+                    }
+                }
+                if (!settings.poolType.comingSoon) {
+                    Text(
+                        "What is transmitted while enabled: your ${settings.poolType.identifierLabel.lowercase()} " +
+                            "(and token if set), inside an HTTPS request to ${settings.poolType.displayName}, " +
+                            "about once a minute while the app is open. Nothing else — no miner telemetry, " +
+                            "no local IPs, no worker passwords. Off by default; turning it off stops all " +
+                            "pool requests immediately.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
+            }
+
+            Section("PUSH (WEBHOOK)") {
+                Text(
+                    "Mirror alerts to your own push service so they reach you when the app is " +
+                        "closed — no cloud account of ours. Fires only for active alerts.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                WebhookTypeRow(current = settings.webhookType, onSelect = { viewModel.setWebhookType(it) })
+                when (settings.webhookType) {
+                    hi3.hashkit.data.alerts.WebhookType.NONE -> Unit
+                    hi3.hashkit.data.alerts.WebhookType.NTFY ->
+                        NumberRow("ntfy topic URL (https://ntfy.sh/your-topic)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                    hi3.hashkit.data.alerts.WebhookType.GOTIFY -> {
+                        NumberRow("Gotify server URL", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                        NumberRow("Gotify app token", settings.webhookToken) { viewModel.setWebhookToken(it) }
+                    }
+                    hi3.hashkit.data.alerts.WebhookType.TELEGRAM -> {
+                        NumberRow("Telegram bot token", settings.webhookToken) { viewModel.setWebhookToken(it) }
+                        NumberRow("Telegram chat ID", settings.webhookTarget) { viewModel.setWebhookTarget(it) }
+                    }
+                    hi3.hashkit.data.alerts.WebhookType.GENERIC ->
+                        NumberRow("POST URL (JSON body)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                }
+            }
+
+            Section("QUIET HOURS & DIGEST") {
+                ToggleRow(
+                    "Quiet hours",
+                    "Suppress alert notifications during a nightly window. Alerts are still " +
+                        "recorded and appear in the daily digest.",
+                    settings.quietHoursEnabled,
+                ) { viewModel.setQuietHoursEnabled(it) }
+                if (settings.quietHoursEnabled) {
+                    NumberRow("Quiet from (HH:MM)", minutesToHhMm(settings.quietStartMinute)) {
+                        hhMmToMinutes(it)?.let { m -> viewModel.setQuietStartMinute(m) }
+                    }
+                    NumberRow("Quiet until (HH:MM)", minutesToHhMm(settings.quietEndMinute)) {
+                        hhMmToMinutes(it)?.let { m -> viewModel.setQuietEndMinute(m) }
+                    }
+                }
+                ToggleRow(
+                    "Daily digest",
+                    "One summary notification per day of the last 24h of alerts.",
+                    settings.digestEnabled,
+                ) { viewModel.setDigestEnabled(it) }
+                if (settings.digestEnabled) {
+                    NumberRow("Digest time (hour, 0–23)", settings.digestHour.toString()) {
+                        it.toIntOrNull()?.let { v -> viewModel.setDigestHour(v) }
+                    }
+                }
+            }
+
             Section("SECURITY") {
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val canLock = remember {
@@ -465,32 +491,6 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
-            }
-
-            Section("ADVANCED FEATURES") {
-                val unlocked = settings.advancedUnlocked
-                Text(
-                    if (unlocked)
-                        "Advanced features are unlocked. This reveals the dashboard menu's " +
-                            "\"Live Bitcoin\" link; more may move here in future versions " +
-                            "(secure pages, power tools)."
-                    else
-                        "Enter your unlock code to reveal advanced features (currently the " +
-                            "dashboard menu's \"Live Bitcoin\" link).",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = HiBrand.textSecondary,
-                )
-                var codeInput by remember { mutableStateOf(settings.advancedUnlockCode) }
-                OutlinedTextField(
-                    value = codeInput,
-                    onValueChange = { codeInput = it },
-                    label = { Text(if (unlocked) "Unlock code (optional)" else "Unlock code") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                androidx.compose.material3.TextButton(onClick = {
-                    viewModel.setAdvancedUnlockCode(codeInput)
-                }) { Text("Apply code") }
             }
 
             Section("SOLO MINING") {
