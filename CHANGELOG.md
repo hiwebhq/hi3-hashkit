@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.75.1
+
+- **Scanner button in the header.** A scan icon next to Settings opens the scanner directly —
+  the NFC indicator or the QR camera, per your Inventory tag setting — for a one-tap jump to a
+  miner's Live Telemetry. (Shown when advanced features are unlocked.)
+
 ## 0.75.0
 
 - **NFC-only scan shows no camera.** When the inventory tag method is set to NFC (Settings →

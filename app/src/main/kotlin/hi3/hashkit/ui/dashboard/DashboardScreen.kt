@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.GridView
@@ -98,6 +99,7 @@ fun DashboardScreen(
     onWall: () -> Unit,
     onTable: () -> Unit,
     onAdvanced: () -> Unit,
+    onScan: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -172,6 +174,11 @@ fun DashboardScreen(
                             }
                         ) {
                             Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
+                        }
+                    }
+                    if (state.settings.advancedUnlocked) {
+                        IconButton(onClick = onScan) {
+                            Icon(Icons.Filled.QrCodeScanner, contentDescription = "Scan a miner tag")
                         }
                     }
                     IconButton(onClick = onSettings) {

@@ -262,6 +262,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
                 onWall = { nav.navigate("wall") },
                 onTable = { nav.navigate("table") },
                 onAdvanced = { nav.navigate("advanced") },
+                onScan = { nav.navigate("ar") },
                 onExit = onExit,
             )
         }
