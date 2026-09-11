@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.2
+
+- **Public pools added to the address book.** The well-known pools the speed test can test —
+  Public Pool, CKPool, OCEAN, F2Pool, Braiins — are seeded into the Pool address book (worker set
+  to a placeholder; edit as needed), so you can manage/toggle them like any saved pool.
+
 ## 0.76.1
 
 - **Hash rental price unit fixed.** Prices now show in **sat/PH·day** (the API returns sats per

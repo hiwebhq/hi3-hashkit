@@ -111,6 +111,24 @@ class MainActivity : FragmentActivity() {
                     settingsRepository.setPplnsSeeded(true)
                 }
             }
+            // One-time seed of the well-known public pools (the ones the speed test can test).
+            if (!settings.publicPoolsSeeded) {
+                runCatching {
+                    hi3.hashkit.integrations.hi3.PoolType.entries
+                        .filter { !it.comingSoon && it.stratumHost != null }
+                        .forEach { pt ->
+                            savedPoolDao.upsert(
+                                hi3.hashkit.data.db.SavedPoolEntity(
+                                    label = pt.displayName,
+                                    url = pt.stratumHost!!,
+                                    port = pt.stratumPort,
+                                    worker = "test",
+                                ),
+                            )
+                        }
+                    settingsRepository.setPublicPoolsSeeded(true)
+                }
+            }
             if (savedInstanceState == null && settings.appLockEnabled) {
                 appLockManager.lockOnLaunch()
                 showUnlockPrompt()
