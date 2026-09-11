@@ -219,6 +219,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onTable = { nav.navigate("table") },
                 onRules = { nav.navigate("rules") },
                 onAddressBook = { nav.navigate("addressbook") },
+                onPoolSpeed = { nav.navigate("poolspeed") },
                 onExit = onExit,
             )
         }
@@ -242,6 +243,9 @@ private fun AppNavHost(onExit: () -> Unit) {
         }
         composable("addressbook") {
             hi3.hashkit.ui.addressbook.AddressBookScreen(onBack = { nav.popBackStack() })
+        }
+        composable("poolspeed") {
+            hi3.hashkit.ui.poolspeed.PoolSpeedScreen(onBack = { nav.popBackStack() })
         }
         composable("rack") {
             hi3.hashkit.ui.rack.RackScreen(

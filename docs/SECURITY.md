@@ -96,6 +96,12 @@ on the LAN, and is never logged, exported, or sent anywhere else.
     for a private LAN/tailnet only — expose it no further. It runs only while the app is open
     and the toggle is on.
 
+11. **On-demand — pool speed test (Advanced):** when you tap "Run speed test", the app
+    makes a few TCP connections to the stratum host:port of each pool your fleet already
+    uses (and any saved address-book pools) and sends one `mining.subscribe` line per pool
+    to time the response. It sends nothing else — no credentials, worker names, or telemetry
+    — contacts only pools you already mine to or saved, and only when you press the button.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server unless you explicitly configure one of the opt-in integrations above.
 

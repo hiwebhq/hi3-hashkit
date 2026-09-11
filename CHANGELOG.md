@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.70.0
+
+- **Pool speed test (Advanced).** A new screen (dashboard menu, advanced-gated) benchmarks
+  stratum latency to every pool your fleet uses plus any saved address-book pools — no packet
+  sniffing/root. For each pool it measures the **TCP handshake RTT** (min/avg/jitter over a
+  few samples) and a real **`mining.subscribe` round-trip** (which also confirms it's a live
+  stratum endpoint), then ranks them fastest→slowest. On-demand, opt-in outbound to pools you
+  already use; measured from the phone's network (best proxy when it shares the rigs' uplink).
+
 ## 0.69.0
 
 - **Advanced features now require an unlock code.** `ADVANCED_FEATURES_FREE` is off, so the

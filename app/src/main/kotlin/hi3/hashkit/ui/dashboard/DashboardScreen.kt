@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material.icons.filled.Warehouse
@@ -101,6 +102,7 @@ fun DashboardScreen(
     onTable: () -> Unit,
     onRules: () -> Unit,
     onAddressBook: () -> Unit,
+    onPoolSpeed: () -> Unit,
     onExit: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
@@ -238,6 +240,11 @@ fun DashboardScreen(
                                     text = { Text("Rack & site") },
                                     leadingIcon = { Icon(Icons.Filled.GridView, contentDescription = null) },
                                     onClick = { menuOpen = false; onRack() },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Pool speed test") },
+                                    leadingIcon = { Icon(Icons.Filled.Speed, contentDescription = null) },
+                                    onClick = { menuOpen = false; onPoolSpeed() },
                                 )
                             }
                             DropdownMenuItem(
