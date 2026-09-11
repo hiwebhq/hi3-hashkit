@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.73.8
+
+- **Flow view:** larger text throughout (miner/network/stratum labels and the summary cards ~45%
+  bigger, with spacing widened so labels still don't overlap), and a live-data indicator in the
+  upper-right header — a pulsing green **LIVE** that turns amber **STALE** when no miner is
+  currently reachable and red **OFFLINE** when the uplink is down.
+
 ## 0.73.7
 
 - **Fixed NFC reading in the AR rack overlay.** Reader mode is now enabled immediately (not only

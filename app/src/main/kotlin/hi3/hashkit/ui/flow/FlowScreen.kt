@@ -1,14 +1,21 @@
 package hi3.hashkit.ui.flow
 
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.draw.alpha
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -74,6 +81,7 @@ fun FlowScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
+                actions = { LiveIndicator(liveStatusOf(state)) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
             )
         },
@@ -97,6 +105,52 @@ fun FlowScreen(
                 drawPipeline(state, timeMs)
             }
         }
+    }
+}
+
+private enum class LiveStatus(val label: String, val color: Color, val pulse: Boolean) {
+    LIVE("LIVE", HiBrand.statusOnline, true),
+    STALE("STALE", HiBrand.statusDegraded, false),
+    OFFLINE("OFFLINE", HiBrand.statusOffline, false),
+}
+
+/** Honest liveness for the header badge: red if the uplink is down, amber if no miner is
+ *  currently reachable, otherwise green. */
+private fun liveStatusOf(state: FlowUiState): LiveStatus = when {
+    !state.internetUp -> LiveStatus.OFFLINE
+    state.minerCount > 0 && state.onlineCount == 0 -> LiveStatus.STALE
+    else -> LiveStatus.LIVE
+}
+
+@Composable
+private fun LiveIndicator(status: LiveStatus) {
+    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "live")
+    val alpha by transition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.25f,
+        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+            animation = androidx.compose.animation.core.tween(900),
+            repeatMode = androidx.compose.animation.core.RepeatMode.Reverse,
+        ),
+        label = "pulse",
+    )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(end = 16.dp),
+    ) {
+        Box(
+            Modifier
+                .size(10.dp)
+                .alpha(if (status.pulse) alpha else 1f)
+                .background(status.color, androidx.compose.foundation.shape.CircleShape),
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            status.label,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = status.color,
+        )
     }
 }
 
@@ -145,9 +199,9 @@ private fun StatCard(label: String, value: String, valueColor: Color) {
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(12.dp),
     ) {
-        Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
-            Text(value, style = MaterialTheme.typography.titleMedium, color = valueColor, fontWeight = FontWeight.Bold)
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+            Text(label, style = MaterialTheme.typography.titleSmall, color = HiBrand.textSecondary)
+            Text(value, style = MaterialTheme.typography.headlineSmall, color = valueColor, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -235,42 +289,42 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
     drawContext.canvas.nativeCanvas.apply {
         val label = android.graphics.Paint().apply {
             color = android.graphics.Color.parseColor("#93A3B4")
-            textSize = 26f
+            textSize = 38f
             isAntiAlias = true
             textAlign = android.graphics.Paint.Align.CENTER
         }
         val strong = android.graphics.Paint(label).apply {
             color = android.graphics.Color.parseColor("#E8EEF4")
-            textSize = 28f
+            textSize = 40f
         }
-        drawText("BITCOIN NETWORK", networkPos.x, networkPos.y - 44f, strong)
+        drawText("BITCOIN NETWORK", networkPos.x, networkPos.y - 56f, strong)
         state.networkDifficulty?.let {
-            drawText("diff ${Units.formatDifficulty(it)}", networkPos.x, networkPos.y + 52f, label)
+            drawText("diff ${Units.formatDifficulty(it)}", networkPos.x, networkPos.y + 68f, label)
         }
         stratums.forEachIndexed { i, s ->
-            drawText(s.label, stratumPos[i].x, stratumPos[i].y - 34f, label)
+            drawText(s.label, stratumPos[i].x, stratumPos[i].y - 44f, label)
             val lat = s.latencyMs?.let { "${it}ms" } ?: "unreachable"
             drawText(
                 (if (s.anyFallback) "fallback · " else "") + lat,
-                stratumPos[i].x, stratumPos[i].y + 44f, label,
+                stratumPos[i].x, stratumPos[i].y + 58f, label,
             )
         }
-        // Miner labels: smaller, and staggered across two rows + ellipsized to the slot so
-        // adjacent labels never overlap, however many miners there are.
-        val minerLabel = android.graphics.Paint(label).apply { textSize = 22f }
-        val minerHash = android.graphics.Paint(strong).apply { textSize = 22f }
+        // Miner labels: staggered across two rows + ellipsized to the slot so adjacent labels
+        // never overlap, however many miners there are. Spacing scales with the larger text.
+        val minerLabel = android.graphics.Paint(label).apply { textSize = 32f }
+        val minerHash = android.graphics.Paint(strong).apply { textSize = 32f }
         val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
         val boxW = (adjSpacing * 0.82f).coerceAtMost(52f)
         val boxH = boxW * 0.6f
         // Staggered rows double the effective horizontal room for a given row.
         val maxLabelW = (adjSpacing * 1.85f - 8f).coerceAtLeast(40f)
-        val lineH = 24f
+        val lineH = 34f
         miners.forEachIndexed { i, m ->
             val stagger = (i % 2) * lineH
             val name = fitText(minerLabel, m.name, maxLabelW)
             val hash = fitText(minerHash, Units.formatHashrate(m.hashrateGhs), maxLabelW)
-            drawText(hash, minerPos[i].x, minerPos[i].y - boxH / 2f - 12f - stagger, minerHash)
-            drawText(name, minerPos[i].x, minerPos[i].y + boxH / 2f + 24f + stagger, minerLabel)
+            drawText(hash, minerPos[i].x, minerPos[i].y - boxH / 2f - 18f - stagger, minerHash)
+            drawText(name, minerPos[i].x, minerPos[i].y + boxH / 2f + 34f + stagger, minerLabel)
         }
     }
 }
