@@ -909,10 +909,11 @@ private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardU
             dash.totals?.let { totals ->
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "This app sees ${Units.formatHashrate(totals.totalHashrateGhs)} locally; " +
-                        "MMP reports ${Units.formatHashrate(s.hashrateThs?.times(1000.0))} fleet-wide.",
+                    "Local = ${Units.formatHashrate(totals.totalHashrateGhs)} vs " +
+                        "MMP Fleet-Wide = ${Units.formatHashrate(s.hashrateThs?.times(1000.0))}",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
+                    maxLines = 1,
                 )
             }
         }

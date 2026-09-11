@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.73.3
+
+- Hi3 MMP card: shorten the local-vs-fleet hashrate comparison to one line
+  ("Local = … vs MMP Fleet-Wide = …").
+
 ## 0.73.2
 
 - Version bump.
