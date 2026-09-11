@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.76.6
+
+- **Header fits one row.** The logo/name no longer wraps to two lines on narrower phones — the
+  wordmark is single-line and slightly smaller in the dashboard header.
+
 ## 0.76.5
 
 - **Energy cost module (Advanced).** New screen listing each miner with its power, energy/day

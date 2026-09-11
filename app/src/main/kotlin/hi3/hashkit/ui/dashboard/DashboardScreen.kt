@@ -70,6 +70,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.core.Units
@@ -143,6 +144,8 @@ fun DashboardScreen(
             TopAppBar(
                 title = {
                     hi3.hashkit.ui.theme.HiLogo(
+                        markSize = 22.dp,
+                        fontSize = 18.sp,
                         modifier = Modifier.clickable(
                             indication = null,
                             interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() },

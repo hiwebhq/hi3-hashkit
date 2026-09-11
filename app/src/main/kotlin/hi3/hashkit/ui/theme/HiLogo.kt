@@ -41,7 +41,13 @@ fun HiLogo(
             HiPulseMark(Modifier.size(markSize))
             Spacer(Modifier.width(8.dp))
         }
-        Text(text = wordmark(), fontSize = fontSize, fontWeight = FontWeight.Bold)
+        Text(
+            text = wordmark(),
+            fontSize = fontSize,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            softWrap = false,
+        )
     }
 }
 
