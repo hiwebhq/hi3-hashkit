@@ -15,8 +15,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -63,6 +69,7 @@ fun ArOverlayScreen(
             android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
         }
     }
+    val cameraEnabled by viewModel.cameraEnabled.collectAsStateWithLifecycle()
     val matched by viewModel.matched.collectAsStateWithLifecycle()
     // A scanned QR that resolves to a miner jumps straight to its detail (Live Telemetry).
     androidx.compose.runtime.LaunchedEffect(matched?.id) {
@@ -83,8 +90,9 @@ fun ArOverlayScreen(
         ActivityResultContracts.RequestPermission()
     ) { granted -> hasCamera = granted }
 
-    DisposableEffect(hasCamera) {
-        if (!hasCamera) permissionLauncher.launch(Manifest.permission.CAMERA)
+    DisposableEffect(hasCamera, cameraEnabled) {
+        // Only ask for the camera when QR scanning is actually used (NFC-only skips the camera).
+        if (cameraEnabled && !hasCamera) permissionLauncher.launch(Manifest.permission.CAMERA)
         onDispose { }
     }
 
@@ -97,7 +105,7 @@ fun ArOverlayScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("AR rack overlay", fontWeight = FontWeight.Bold) },
+                title = { Text(if (cameraEnabled) "Scan tag / QR" else "Scan NFC", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -109,51 +117,57 @@ fun ArOverlayScreen(
         containerColor = HiBrand.background,
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
-            if (hasCamera) {
-                CameraScanner(onScanned = viewModel::onScanned, modifier = Modifier.fillMaxSize())
+            if (!cameraEnabled) {
+                // NFC-only: no camera. Just an on-screen "hold a tag" indicator; the OS delivers
+                // the tag and the app jumps straight to that miner's Live Telemetry.
+                NfcOnlyIndicator(nfcAvailable = nfcAvailable, hasNfcHardware = nfcAdapter != null)
             } else {
-                Column(
-                    Modifier.fillMaxSize().padding(24.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        "Camera access is needed to read the miner QR stickers." +
-                            if (nfcAvailable) " NFC tags still work — just tap one." else "",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = HiBrand.textSecondary,
-                    )
-                    Button(
-                        onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-                        modifier = Modifier.padding(top = 12.dp),
-                    ) { Text("Grant camera") }
+                if (hasCamera) {
+                    CameraScanner(onScanned = viewModel::onScanned, modifier = Modifier.fillMaxSize())
+                } else {
+                    Column(
+                        Modifier.fillMaxSize().padding(24.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            "Camera access is needed to read the miner QR stickers." +
+                                if (nfcAvailable) " NFC tags still work — just tap one." else "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = HiBrand.textSecondary,
+                        )
+                        Button(
+                            onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                            modifier = Modifier.padding(top = 12.dp),
+                        ) { Text("Grant camera") }
+                    }
                 }
-            }
 
-            // Bottom overlay: matched miner's live card, or guidance.
-            Column(
-                Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                message?.let { OverlayHint(it) }
-                when {
-                    matched != null -> MatchedCard(
-                        matched!!, tagLocation,
-                        onOpen = { onMinerClick(matched!!.id) },
-                        onClear = viewModel::clear,
-                    )
-                    unmatched != null -> OverlayHint(
-                        "No miner matches \"$unmatched\". Program the tag/QR with the miner's name, " +
-                            "IP, MAC or id."
-                    )
-                    else -> OverlayHint(
-                        buildString {
-                            append("Point at a miner's QR sticker")
-                            if (nfcAvailable) append(" or tap its NFC tag")
-                            append(" — name, IP, MAC or id. Live stats appear here.")
-                            if (nfcAdapter != null && !nfcAvailable) append("  (Turn on NFC to tap tags.)")
-                        }
-                    )
+                // Bottom overlay: matched miner's live card, or guidance (camera mode only).
+                Column(
+                    Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    message?.let { OverlayHint(it) }
+                    when {
+                        matched != null -> MatchedCard(
+                            matched!!, tagLocation,
+                            onOpen = { onMinerClick(matched!!.id) },
+                            onClear = viewModel::clear,
+                        )
+                        unmatched != null -> OverlayHint(
+                            "No miner matches \"$unmatched\". Program the tag/QR with the miner's name, " +
+                                "IP, MAC or id."
+                        )
+                        else -> OverlayHint(
+                            buildString {
+                                append("Point at a miner's QR sticker")
+                                if (nfcAvailable) append(" or tap its NFC tag")
+                                append(" — name, IP, MAC or id. Live stats appear here.")
+                                if (nfcAdapter != null && !nfcAvailable) append("  (Turn on NFC to tap tags.)")
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -173,6 +187,53 @@ fun ArOverlayScreen(
             },
             confirmButton = { TextButton(onClick = viewModel::addFromTag) { Text("Add") } },
             dismissButton = { TextButton(onClick = viewModel::dismissAdd) { Text("Cancel") } },
+        )
+    }
+}
+
+@Composable
+private fun NfcOnlyIndicator(nfcAvailable: Boolean, hasNfcHardware: Boolean) {
+    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "nfc")
+    val scale by transition.animateFloat(
+        initialValue = 1f, targetValue = 1.18f,
+        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+            animation = androidx.compose.animation.core.tween(900),
+            repeatMode = androidx.compose.animation.core.RepeatMode.Reverse,
+        ),
+        label = "pulse",
+    )
+    Column(
+        Modifier.fillMaxSize().padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            Icons.Filled.Nfc,
+            contentDescription = null,
+            tint = if (nfcAvailable) HiBrand.accent else HiBrand.textSecondary,
+            modifier = Modifier
+                .size(112.dp)
+                .graphicsLayer {
+                    if (nfcAvailable) { scaleX = scale; scaleY = scale }
+                },
+        )
+        Spacer(Modifier.height(24.dp))
+        Text(
+            when {
+                !hasNfcHardware -> "This device has no NFC."
+                !nfcAvailable -> "Turn on NFC to scan tags."
+                else -> "Hold a miner's NFC tag to the back of your phone."
+            },
+            style = MaterialTheme.typography.titleMedium,
+            color = HiBrand.textPrimary,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "It opens that miner's live telemetry straight away — no camera needed.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = HiBrand.textSecondary,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         )
     }
 }

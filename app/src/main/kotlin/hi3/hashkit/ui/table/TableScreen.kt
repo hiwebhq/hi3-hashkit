@@ -219,7 +219,7 @@ fun TableScreen(
                     }
                     androidx.compose.material3.OutlinedButton(
                         onClick = onScan,
-                    ) { Text("Scan tag / QR") }
+                    ) { Text(if (state.inventoryTagType.showQr) "Scan tag / QR" else "Scan NFC") }
                 }
             }
             Text(

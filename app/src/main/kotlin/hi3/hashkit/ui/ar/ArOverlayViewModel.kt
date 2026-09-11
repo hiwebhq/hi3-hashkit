@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hi3.hashkit.data.nfc.NfcRouter
 import hi3.hashkit.data.poll.PollingEngine
+import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.AddMinerResult
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.discovery.MinerHostValidator
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -35,7 +37,14 @@ class ArOverlayViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val pollingEngine: PollingEngine,
     private val nfcRouter: NfcRouter,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
+
+    /** Show the camera only when QR is an enabled inventory-tag method; NFC-only skips it. */
+    val cameraEnabled: StateFlow<Boolean> =
+        settingsRepository.settings
+            .map { it.inventoryTagType.showQr }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
     private val matchedId = MutableStateFlow<Long?>(null)
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.75.0
+
+- **NFC-only scan shows no camera.** When the inventory tag method is set to NFC (Settings →
+  Display), the scan screen is now a simple pulsing NFC indicator ("Hold a miner's NFC tag to the
+  back of your phone") instead of the camera/AR overlay — and tapping a tag jumps straight to that
+  miner's Live Telemetry. The camera (and its permission prompt) is only used when QR is enabled.
+
 ## 0.74.9
 
 - **Scanning jumps to Live Telemetry.** Scanning a miner's NFC tag or QR code now opens its full
