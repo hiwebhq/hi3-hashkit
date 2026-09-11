@@ -37,11 +37,32 @@ class SettingsViewModel @Inject constructor(
         data object Checking : UpdateStatus
         data object UpToDate : UpdateStatus
         data class Available(val info: hi3.hashkit.integrations.update.AppUpdater.UpdateInfo) : UpdateStatus
+        data class NeedsPermission(val info: hi3.hashkit.integrations.update.AppUpdater.UpdateInfo) : UpdateStatus
         data class Downloading(val progress: Float) : UpdateStatus
+        /** [confirming] = Android is showing its one-tap install dialog (first update only). */
+        data class Installing(val confirming: Boolean = false) : UpdateStatus
         data class Error(val message: String) : UpdateStatus
     }
 
     val updateStatus = kotlinx.coroutines.flow.MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
+
+    init {
+        // Relay install-session outcomes into the settings UI. On success the process is
+        // usually replaced before this runs; the branch covers the rare survival case.
+        viewModelScope.launch {
+            hi3.hashkit.integrations.update.AppUpdater.installEvents.collect { event ->
+                when (event) {
+                    is hi3.hashkit.integrations.update.AppUpdater.InstallEvent.AwaitingConfirm ->
+                        updateStatus.value = UpdateStatus.Installing(confirming = true)
+                    is hi3.hashkit.integrations.update.AppUpdater.InstallEvent.Success ->
+                        updateStatus.value = UpdateStatus.UpToDate
+                    is hi3.hashkit.integrations.update.AppUpdater.InstallEvent.Failed ->
+                        updateStatus.value = UpdateStatus.Error(event.message)
+                    null -> {}
+                }
+            }
+        }
+    }
 
     fun checkForUpdate() {
         if (!selfUpdateEnabled) return
@@ -56,19 +77,32 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    /** Download the available update and hand back an installer intent to launch. */
-    fun downloadAndInstall(onReadyToInstall: (android.content.Intent) -> Unit) {
-        val available = updateStatus.value as? UpdateStatus.Available ?: return
+    /**
+     * Download the available update and install it in place. If the user hasn't yet granted
+     * "install unknown apps", [onLaunchIntent] receives the system settings screen for that
+     * grant instead, and the button can be tapped again on return.
+     */
+    fun downloadAndInstall(onLaunchIntent: (android.content.Intent) -> Unit) {
+        val info = when (val s = updateStatus.value) {
+            is UpdateStatus.Available -> s.info
+            is UpdateStatus.NeedsPermission -> s.info
+            else -> return
+        }
+        if (!appUpdater.canInstall()) {
+            updateStatus.value = UpdateStatus.NeedsPermission(info)
+            onLaunchIntent(appUpdater.unknownSourcesIntent())
+            return
+        }
         updateStatus.value = UpdateStatus.Downloading(0f)
         viewModelScope.launch {
-            val file = appUpdater.download(available.info.apkUrl) { p ->
+            val file = appUpdater.download(info.apkUrl) { p ->
                 updateStatus.value = UpdateStatus.Downloading(p)
             }
             if (file == null) {
                 updateStatus.value = UpdateStatus.Error("Download failed.")
             } else {
-                updateStatus.value = UpdateStatus.Available(available.info)
-                onReadyToInstall(appUpdater.installIntent(file))
+                updateStatus.value = UpdateStatus.Installing()
+                appUpdater.startInstall(file)
             }
         }
     }

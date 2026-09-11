@@ -104,6 +104,15 @@
             </intent-filter>
         </receiver>
 
+        <!-- Self-update install-session status (SIDELOAD builds; dead code in Play build). -->
+        <receiver
+            android:name=".integrations.update.UpdateResultReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="hi3.hashkit.ACTION_UPDATE_STATUS" />
+            </intent-filter>
+        </receiver>
+
         <!-- Reboot / Acknowledge quick-actions on alert notifications. -->
         <receiver
             android:name=".data.alerts.AlertActionReceiver"

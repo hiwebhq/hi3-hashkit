@@ -550,6 +550,31 @@ fun SettingsScreen(
                                 color = HiBrand.textSecondary,
                             )
                         }
+                        is SettingsViewModel.UpdateStatus.Installing -> {
+                            androidx.compose.material3.LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                            Text(
+                                if (s.confirming) {
+                                    "Waiting for Android's confirmation — tap Update in the system dialog."
+                                } else {
+                                    "Installing… the app will restart when done."
+                                },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = HiBrand.textSecondary,
+                            )
+                        }
+                        is SettingsViewModel.UpdateStatus.NeedsPermission -> {
+                            Text(
+                                "Allow \"Install unknown apps\" for Hashkit in the settings screen " +
+                                    "that just opened, then come back and tap again.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = HiBrand.accentAlt,
+                            )
+                            androidx.compose.material3.Button(onClick = {
+                                viewModel.downloadAndInstall { intent ->
+                                    runCatching { ctx.startActivity(intent) }
+                                }
+                            }) { Text("Download & install v${s.info.latestVersion}") }
+                        }
                         is SettingsViewModel.UpdateStatus.Available -> {
                             Text(
                                 "Update available: v${s.info.latestVersion}" +
