@@ -64,6 +64,10 @@ fun ArOverlayScreen(
         }
     }
     val matched by viewModel.matched.collectAsStateWithLifecycle()
+    // A scanned QR that resolves to a miner jumps straight to its detail (Live Telemetry).
+    androidx.compose.runtime.LaunchedEffect(matched?.id) {
+        matched?.let { onMinerClick(it.id) }
+    }
     val unmatched by viewModel.unmatched.collectAsStateWithLifecycle()
     val pendingAdd by viewModel.pendingAdd.collectAsStateWithLifecycle()
     val tagLocation by viewModel.tagLocation.collectAsStateWithLifecycle()

@@ -238,7 +238,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
     LaunchedEffect(nfcTarget) {
         when (val t = nfcTarget) {
             is hi3.hashkit.data.nfc.NfcRouter.Target.MinerDetail -> {
-                nav.navigate("miner/${t.id}")
+                nav.navigate("miner/${t.id}?focus=telemetry")
                 nfcRouter.consume()
             }
             // The AR overlay's ViewModel reads the Overlay payload and then consumes it.
@@ -308,7 +308,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
         composable("ar") {
             hi3.hashkit.ui.ar.ArOverlayScreen(
                 onBack = { nav.popBackStack() },
-                onMinerClick = { id -> nav.navigate("miner/$id") },
+                onMinerClick = { id -> nav.navigate("miner/$id?focus=telemetry") },
             )
         }
         composable("leaderboard") {
@@ -383,8 +383,11 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
             hi3.hashkit.ui.settings.SettingsScreen(onBack = { nav.popBackStack() })
         }
         composable(
-            route = "miner/{minerId}",
-            arguments = listOf(navArgument("minerId") { type = NavType.LongType }),
+            route = "miner/{minerId}?focus={focus}",
+            arguments = listOf(
+                navArgument("minerId") { type = NavType.LongType },
+                navArgument("focus") { type = NavType.StringType; nullable = true; defaultValue = null },
+            ),
         ) { entry ->
             MinerDetailScreen(
                 onBack = { nav.popBackStack() },
@@ -396,6 +399,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
                     val id = entry.arguments?.getLong("minerId") ?: return@MinerDetailScreen
                     nav.navigate("miner/$id/autotune")
                 },
+                focusTelemetry = entry.arguments?.getString("focus") == "telemetry",
             )
         }
         composable(

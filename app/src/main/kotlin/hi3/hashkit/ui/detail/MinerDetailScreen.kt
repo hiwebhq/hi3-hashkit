@@ -33,7 +33,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -56,6 +59,7 @@ fun MinerDetailScreen(
     onBack: () -> Unit,
     onLogs: () -> Unit = {},
     onAutotune: () -> Unit = {},
+    focusTelemetry: Boolean = false,
     viewModel: MinerDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,6 +67,12 @@ fun MinerDetailScreen(
     var confirmDelete by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf(false) }
     val context = androidx.compose.ui.platform.LocalContext.current
+    // When opened by a scan, scroll straight to the LIVE TELEMETRY section.
+    val scrollState = rememberScrollState()
+    var telemetryY by remember { mutableStateOf(-1) }
+    LaunchedEffect(focusTelemetry, telemetryY, miner?.id) {
+        if (focusTelemetry && telemetryY >= 0) scrollState.animateScrollTo(telemetryY)
+    }
 
     Scaffold(
         topBar = {
@@ -99,7 +109,7 @@ fun MinerDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -201,7 +211,12 @@ fun MinerDetailScreen(
                 }
             }
 
-            SectionCard("LIVE TELEMETRY") {
+            SectionCard(
+                "LIVE TELEMETRY",
+                modifier = Modifier.onGloballyPositioned {
+                    if (telemetryY < 0) telemetryY = it.boundsInParent().top.toInt()
+                },
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -541,6 +556,7 @@ private fun NotePhoto(path: String) {
 @Composable
 private fun SectionCard(
     title: String,
+    modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -549,6 +565,7 @@ private fun SectionCard(
         shape = RoundedCornerShape(14.dp),
         onClick = onClick ?: {},
         enabled = true,
+        modifier = modifier,
     ) {
         Column(modifier = Modifier.padding(14.dp).fillMaxWidth()) {
             Text(title, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)

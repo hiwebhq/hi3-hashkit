@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.74.9
+
+- **Scanning jumps to Live Telemetry.** Scanning a miner's NFC tag or QR code now opens its full
+  detail card and scrolls straight to the **Live Telemetry** section. QR codes no longer stop at
+  the floating overlay card — they go directly to the miner like NFC does.
+
 ## 0.74.8
 
 - **Print QR codes: pick a sticker size.** Tapping "Print QR codes" now asks for a size —
