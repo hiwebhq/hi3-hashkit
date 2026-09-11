@@ -62,6 +62,25 @@ data class MinerTag(
             return if (tag.hasFields) tag else null
         }
 
+        /**
+         * Canonical `key=value` payload for a printed QR tag (or a written NFC tag) — the
+         * exact inverse of [parse]. Fields that are null/blank are omitted.
+         */
+        fun encode(name: String?, mac: String?, ip: String?, location: String?): String =
+            buildString {
+                fun line(key: String, value: String?) {
+                    val v = value?.trim().orEmpty()
+                    if (v.isNotEmpty()) {
+                        if (isNotEmpty()) append('\n')
+                        append(key).append('=').append(v)
+                    }
+                }
+                line("name", name)
+                line("mac", mac)
+                line("ip", ip)
+                line("location", location)
+            }
+
         /** MAC without separators, lowercased — for tolerant comparison. */
         fun normalizeMac(mac: String?): String? =
             mac?.replace(":", "")?.replace("-", "")?.trim()?.lowercase()?.takeIf { it.isNotEmpty() }

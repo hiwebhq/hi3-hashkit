@@ -46,4 +46,19 @@ class MinerTagTest {
         assertEquals("aabbccddeeff", MinerTag.normalizeMac("aa-bb-cc-dd-ee-ff"))
         assertNull(MinerTag.normalizeMac(null))
     }
+
+    @Test fun encodeRoundTripsThroughParse() {
+        val payload = MinerTag.encode("Bitaxe-01", "AA:BB:CC:DD:EE:FF", "10.0.0.42", "Rack 1 / Shelf 2")
+        assertEquals("name=Bitaxe-01\nmac=AA:BB:CC:DD:EE:FF\nip=10.0.0.42\nlocation=Rack 1 / Shelf 2", payload)
+        val tag = MinerTag.parse(payload)!!
+        assertEquals("Bitaxe-01", tag.name)
+        assertEquals("AA:BB:CC:DD:EE:FF", tag.mac)
+        assertEquals("10.0.0.42", tag.ip)
+        assertEquals("Rack 1 / Shelf 2", tag.location)
+    }
+
+    @Test fun encodeSkipsMissingFields() {
+        assertEquals("name=Solo\nip=10.0.0.9", MinerTag.encode("Solo", null, "10.0.0.9", "  "))
+        assertEquals("", MinerTag.encode(null, null, null, null))
+    }
 }

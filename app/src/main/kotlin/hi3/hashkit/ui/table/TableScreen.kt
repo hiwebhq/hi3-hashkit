@@ -177,6 +177,34 @@ fun TableScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+            ) {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                androidx.compose.material3.OutlinedButton(
+                    onClick = {
+                        hi3.hashkit.integrations.print.AssetTagPrinter.print(
+                            context,
+                            state.miners.map {
+                                hi3.hashkit.integrations.print.AssetTagPrinter.TagData(
+                                    name = it.name,
+                                    mac = it.identity.macAddress,
+                                    ip = it.host,
+                                    location = it.location,
+                                )
+                            },
+                        )
+                    },
+                    enabled = state.miners.isNotEmpty(),
+                ) { Text("Print QR codes") }
+                Text(
+                    "${state.miners.size} tag(s) · scannable in the AR rack overlay",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                    modifier = Modifier.padding(start = 10.dp),
+                )
+            }
             Column(Modifier.horizontalScroll(hScroll)) {
                 // Header
                 Row(
