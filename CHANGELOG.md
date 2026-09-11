@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.75.4
+
+- **Scan-to-telemetry scroll fixed properly.** The section offset was measured relative to the
+  current scroll (so it drifted as the view animated), which is why a scan didn't reliably land on
+  Live Telemetry. It now uses a scroll-invariant offset (scroll value + bounds), so scans settle on
+  the Live Telemetry card.
+
 ## 0.75.3
 
 - **Scan reliably lands on Live Telemetry.** The scroll-to-telemetry offset was captured before the

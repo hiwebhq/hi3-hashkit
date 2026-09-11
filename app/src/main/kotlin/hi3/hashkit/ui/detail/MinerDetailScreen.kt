@@ -222,7 +222,9 @@ fun MinerDetailScreen(
             SectionCard(
                 "LIVE TELEMETRY",
                 modifier = Modifier.onGloballyPositioned {
-                    telemetryY = it.boundsInParent().top.toInt()
+                    // Content-absolute offset (scroll-invariant): boundsInParent is measured
+                    // relative to the current scroll, so add the scroll value back.
+                    telemetryY = scrollState.value + it.boundsInParent().top.toInt()
                 },
             ) {
                 Row(
