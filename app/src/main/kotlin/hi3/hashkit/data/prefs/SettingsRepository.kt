@@ -20,6 +20,18 @@ private val Context.dataStore by preferencesDataStore(name = "settings")
 
 enum class CardDensity { LARGE, MEDIUM, COMPACT, GRID }
 
+/** Which make-tag action the Fleet table offers for labelling inventory. */
+enum class InventoryTagType {
+    QR, NFC, BOTH;
+    val showQr: Boolean get() = this == QR || this == BOTH
+    val showNfc: Boolean get() = this == NFC || this == BOTH
+
+    companion object {
+        fun fromName(name: String?): InventoryTagType =
+            entries.firstOrNull { it.name == name } ?: BOTH
+    }
+}
+
 data class AppSettings(
     val useFahrenheit: Boolean = false,
     val demoModeEnabled: Boolean = false,
@@ -54,6 +66,8 @@ data class AppSettings(
     val activeFarmId: Long = -1,
     /** Miner-card size on the dashboard. */
     val cardDensity: CardDensity = CardDensity.LARGE,
+    /** Default inventory-tag method the Fleet table offers (QR, NFC, or both). */
+    val inventoryTagType: InventoryTagType = InventoryTagType.BOTH,
     /** Pool stats integration — OPT-IN; nothing is contacted while false. */
     val hi3PoolEnabled: Boolean = false,
     val hi3PoolBaseUrl: String = "https://pool.hi3.cc",
@@ -165,6 +179,7 @@ class SettingsRepository @Inject constructor(
         val autoRecoverAfterMin = longPreferencesKey("auto_recover_after_min")
         val activeFarmId = longPreferencesKey("active_farm_id")
         val cardDensity = stringPreferencesKey("card_density")
+        val inventoryTagType = stringPreferencesKey("inventory_tag_type")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
         val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
@@ -247,6 +262,7 @@ class SettingsRepository @Inject constructor(
             activeFarmId = p[Keys.activeFarmId] ?: -1,
             cardDensity = runCatching { CardDensity.valueOf(p[Keys.cardDensity] ?: "LARGE") }
                 .getOrDefault(CardDensity.LARGE),
+            inventoryTagType = InventoryTagType.fromName(p[Keys.inventoryTagType]),
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
             hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
             hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
@@ -326,6 +342,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setAutoRecoverAfterMin(value: Long) = edit { it[Keys.autoRecoverAfterMin] = value }
     suspend fun setActiveFarmId(value: Long) = edit { it[Keys.activeFarmId] = value }
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
+    suspend fun setInventoryTagType(value: InventoryTagType) = edit { it[Keys.inventoryTagType] = value.name }
     suspend fun setHi3PoolEnabled(value: Boolean) = edit { it[Keys.hi3PoolEnabled] = value }
     suspend fun setHi3PoolBaseUrl(value: String) = edit { it[Keys.hi3PoolBaseUrl] = value.trim() }
     suspend fun setHi3PoolPayoutAddress(value: String) = edit { it[Keys.hi3PoolPayoutAddress] = value.trim() }

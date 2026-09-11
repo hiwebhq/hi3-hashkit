@@ -194,6 +194,26 @@ fun SettingsScreen(
                     "Show block-finding probability on the dashboard.",
                     settings.showSoloCard,
                 ) { viewModel.setShowSoloCard(it) }
+                Spacer(Modifier.height(4.dp))
+                Text("Inventory tag", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Which make-tag button the Fleet table shows for labelling miners.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        hi3.hashkit.data.prefs.InventoryTagType.QR to "QR",
+                        hi3.hashkit.data.prefs.InventoryTagType.NFC to "NFC",
+                        hi3.hashkit.data.prefs.InventoryTagType.BOTH to "Both",
+                    ).forEach { (type, label) ->
+                        androidx.compose.material3.FilterChip(
+                            selected = settings.inventoryTagType == type,
+                            onClick = { viewModel.setInventoryTagType(type) },
+                            label = { Text(label) },
+                        )
+                    }
+                }
             }
 
             Section("HI3 MMP") {

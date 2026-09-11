@@ -147,6 +147,7 @@ class SettingsViewModel @Inject constructor(
     fun setShowProfitCard(v: Boolean) = viewModelScope.launch { repo.setShowProfitCard(v) }
     fun setThemeMode(v: hi3.hashkit.ui.theme.ThemeMode) = viewModelScope.launch { repo.setThemeMode(v) }
     fun setThemeColor(v: hi3.hashkit.ui.theme.ThemeColor) = viewModelScope.launch { repo.setThemeColor(v) }
+    fun setInventoryTagType(v: hi3.hashkit.data.prefs.InventoryTagType) = viewModelScope.launch { repo.setInventoryTagType(v) }
     fun setAppLockEnabled(v: Boolean) = viewModelScope.launch { repo.setAppLockEnabled(v) }
     fun setMmpEnabled(v: Boolean) = viewModelScope.launch { repo.setMmpEnabled(v) }
     fun setMmpBaseUrl(v: String) = viewModelScope.launch { repo.setMmpBaseUrl(v) }

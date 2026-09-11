@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.74.3
+
+- **Inventory tag setting (Settings → Display).** Choose the default make-tag method — QR, NFC, or
+  Both — and the Fleet table shows only the matching button(s), to declutter the toolbar. Default
+  is Both (unchanged behavior). The Scan tag / QR button is unaffected.
+
 ## 0.74.2
 
 - AR overlay: a brief confirmation toast on each NFC tap — "Scanned ✓ <miner>" (or a note when the

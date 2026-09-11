@@ -66,6 +66,14 @@ data class TableState(
     val sort: SortColumn = SortColumn.NAME,
     val ascending: Boolean = true,
     val advancedUnlocked: Boolean = false,
+    val inventoryTagType: hi3.hashkit.data.prefs.InventoryTagType = hi3.hashkit.data.prefs.InventoryTagType.BOTH,
+)
+
+private data class TableSettingsBundle(
+    val miners: List<Miner>,
+    val fahrenheit: Boolean,
+    val advancedUnlocked: Boolean,
+    val inventoryTagType: hi3.hashkit.data.prefs.InventoryTagType,
 )
 
 @HiltViewModel
@@ -94,20 +102,24 @@ class TableViewModel @Inject constructor(
                 settingsRepository.settings,
             ) { entities, _, settings ->
                 val now = Instant.now()
-                Triple(
+                TableSettingsBundle(
                     entities.filter { settings.demoModeEnabled || !it.isDemo }.map { repository.toDomain(it, now) },
                     settings.useFahrenheit,
                     settings.advancedUnlocked,
+                    settings.inventoryTagType,
                 )
             },
             query, sort, ascending,
-        ) { (miners, fahrenheit, advanced), q, s, asc ->
-            val filtered = if (q.isBlank()) miners else miners.filter {
+        ) { bundle, q, s, asc ->
+            val filtered = if (q.isBlank()) bundle.miners else bundle.miners.filter {
                 it.name.contains(q, true) || it.host.contains(q, true) ||
                     (it.identity.model?.contains(q, true) == true) ||
                     (it.lastTelemetry?.poolUrl?.contains(q, true) == true)
             }
-            TableState(sortMiners(filtered, s, asc), fahrenheit, q, s, asc, advancedUnlocked = advanced)
+            TableState(
+                sortMiners(filtered, s, asc), bundle.fahrenheit, q, s, asc,
+                advancedUnlocked = bundle.advancedUnlocked, inventoryTagType = bundle.inventoryTagType,
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TableState())
 
     companion object {
@@ -188,27 +200,31 @@ fun TableScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             ) {
-                androidx.compose.material3.OutlinedButton(
-                    onClick = {
-                        hi3.hashkit.integrations.print.AssetTagPrinter.print(
-                            context,
-                            state.miners.map {
-                                hi3.hashkit.integrations.print.AssetTagPrinter.TagData(
-                                    name = it.name,
-                                    mac = it.identity.macAddress,
-                                    ip = it.host,
-                                    location = it.location,
-                                )
-                            },
-                        )
-                    },
-                    enabled = state.miners.isNotEmpty(),
-                ) { Text("Print QR codes") }
-                if (state.advancedUnlocked) {
+                if (state.inventoryTagType.showQr) {
                     androidx.compose.material3.OutlinedButton(
-                        onClick = { onProgramNfc(state.miners.map { it.id }) },
+                        onClick = {
+                            hi3.hashkit.integrations.print.AssetTagPrinter.print(
+                                context,
+                                state.miners.map {
+                                    hi3.hashkit.integrations.print.AssetTagPrinter.TagData(
+                                        name = it.name,
+                                        mac = it.identity.macAddress,
+                                        ip = it.host,
+                                        location = it.location,
+                                    )
+                                },
+                            )
+                        },
                         enabled = state.miners.isNotEmpty(),
-                    ) { Text("Program NFC tags") }
+                    ) { Text("Print QR codes") }
+                }
+                if (state.advancedUnlocked) {
+                    if (state.inventoryTagType.showNfc) {
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = { onProgramNfc(state.miners.map { it.id }) },
+                            enabled = state.miners.isNotEmpty(),
+                        ) { Text("Program NFC tags") }
+                    }
                     androidx.compose.material3.OutlinedButton(
                         onClick = onScan,
                     ) { Text("Scan tag / QR") }
