@@ -78,9 +78,15 @@ fun AdvancedScreen(
     onArOverlay: () -> Unit,
     onNfcProgram: () -> Unit,
     onHashRental: () -> Unit,
+    onEnergyCost: () -> Unit,
     onLiveBitcoin: () -> Unit,
 ) {
     val items = listOf(
+        AdvancedItem(
+            "Energy cost",
+            "Per-miner energy use and estimated cost, with a filter",
+            Icons.Filled.Bolt, onEnergyCost,
+        ),
         AdvancedItem(
             "Heat-reuse dashboard",
             "What your miners' waste heat is worth as space heating",

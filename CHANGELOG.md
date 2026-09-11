@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.5
+
+- **Energy cost module (Advanced).** New screen listing each miner with its power, energy/day
+  (kWh) and **Energy Est. cost** (per day and per month) from your electricity rate, plus a fleet
+  total and a filter by name / IP / model.
+
 ## 0.76.4
 
 - **Pool speed test simplified.** Removed the "Also compare public pools" toggle — the speed test
