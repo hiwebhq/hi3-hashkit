@@ -72,6 +72,9 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var nfcTagResolver: hi3.hashkit.data.nfc.NfcTagResolver
 
+    @Inject
+    lateinit var savedPoolDao: hi3.hashkit.data.db.SavedPoolDao
+
     /**
      * A scanned Hi3 Hashkit tag (from an NFC launch/foreground intent): resolve it to a miner and
      * publish where to go. A matched tag opens that miner's detail directly (no camera).
@@ -99,6 +102,15 @@ class MainActivity : FragmentActivity() {
         handleNfcIntent(intent)
         lifecycleScope.launch {
             val settings = settingsRepository.current()
+            // One-time seed of the local PPLNS test target into the pool address book.
+            if (!settings.pplnsSeeded) {
+                runCatching {
+                    savedPoolDao.upsert(
+                        hi3.hashkit.data.db.SavedPoolEntity(label = "Hi3 PPLNS", url = "10.0.0.42", port = 3344, worker = "test"),
+                    )
+                    settingsRepository.setPplnsSeeded(true)
+                }
+            }
             if (savedInstanceState == null && settings.appLockEnabled) {
                 appLockManager.lockOnLaunch()
                 showUnlockPrompt()

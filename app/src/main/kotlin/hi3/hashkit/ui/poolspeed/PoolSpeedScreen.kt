@@ -91,9 +91,11 @@ class PoolSpeedViewModel @Inject constructor(
                 val port = m.lastTelemetry?.poolPort ?: 3333
                 PoolSpeedTester.parseStratum(url, port)?.let { (h, p) -> Candidate(h, h, p) }
             }
-        val fromSaved = savedPoolDao.observeAll().first().mapNotNull { sp ->
-            PoolSpeedTester.parseStratum(sp.url, sp.port)?.let { (h, p) -> Candidate(sp.label, h, p) }
-        }
+        val fromSaved = savedPoolDao.observeAll().first()
+            .filter { it.includeInTest }
+            .mapNotNull { sp ->
+                PoolSpeedTester.parseStratum(sp.url, sp.port)?.let { (h, p) -> Candidate(sp.label, h, p) }
+            }
         val fromPublic = if (!includePublic) emptyList() else
             hi3.hashkit.integrations.hi3.PoolType.entries
                 .filter { !it.comingSoon && it.stratumHost != null }

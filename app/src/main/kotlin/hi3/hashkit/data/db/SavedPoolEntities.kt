@@ -21,6 +21,8 @@ data class SavedPoolEntity(
     val url: String,
     val port: Int,
     val worker: String,
+    /** Whether the Advanced pool speed test includes this pool. */
+    val includeInTest: Boolean = true,
 )
 
 @Dao

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,7 +53,9 @@ import hi3.hashkit.domain.adapter.ActionResult
 import hi3.hashkit.ui.theme.HiBrand
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -67,12 +70,30 @@ class AddressBookViewModel @Inject constructor(
     val pools = dao.observeAll()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
+    /** host:port -> number of miners currently mining to it (their active pool). */
+    val activeCounts: StateFlow<Map<String, Int>> =
+        minerRepository.observeMinerEntities().map { entities ->
+            entities.filter { !it.isDemo }.mapNotNull { e ->
+                val m = minerRepository.toDomain(e, java.time.Instant.now())
+                val url = m.lastTelemetry?.poolUrl ?: return@mapNotNull null
+                val port = m.lastTelemetry?.poolPort ?: 3333
+                hi3.hashkit.integrations.poolspeed.PoolSpeedTester.parseStratum(url, port)?.let { (h, p) -> "$h:$p" }
+            }.groupingBy { it }.eachCount()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    /** Key a saved pool the same way, so it can be matched against [activeCounts]. */
+    fun activeKey(pool: SavedPoolEntity): String? =
+        hi3.hashkit.integrations.poolspeed.PoolSpeedTester.parseStratum(pool.url, pool.port)?.let { (h, p) -> "$h:$p" }
+
     /** Non-null while a confirm dialog is up for applying a saved pool. */
     val pendingApply = MutableStateFlow<SavedPoolEntity?>(null)
     val applyMessage = MutableStateFlow<String?>(null)
 
     fun save(pool: SavedPoolEntity) { viewModelScope.launch { dao.upsert(pool) } }
     fun delete(id: Long) { viewModelScope.launch { dao.delete(id) } }
+    fun setTest(pool: SavedPoolEntity, include: Boolean) {
+        viewModelScope.launch { dao.update(pool.copy(includeInTest = include)) }
+    }
 
     fun requestApply(pool: SavedPoolEntity) { pendingApply.value = pool }
     fun cancelApply() { pendingApply.value = null }
@@ -104,9 +125,11 @@ fun AddressBookScreen(
     viewModel: AddressBookViewModel = hiltViewModel(),
 ) {
     val pools by viewModel.pools.collectAsStateWithLifecycle()
+    val activeCounts by viewModel.activeCounts.collectAsStateWithLifecycle()
     val pendingApply by viewModel.pendingApply.collectAsStateWithLifecycle()
     val applyMessage by viewModel.applyMessage.collectAsStateWithLifecycle()
     var editing by remember { mutableStateOf(false) }
+    var editPool by remember { mutableStateOf<SavedPoolEntity?>(null) }
 
     Scaffold(
         topBar = {
@@ -121,7 +144,7 @@ fun AddressBookScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { editing = true }) {
+            FloatingActionButton(onClick = { editPool = null; editing = true }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add pool")
             }
         },
@@ -147,8 +170,11 @@ fun AddressBookScreen(
             items(pools, key = { it.id }) { pool ->
                 PoolRow(
                     pool = pool,
+                    activeCount = activeCounts[viewModel.activeKey(pool)] ?: 0,
                     onApply = { viewModel.requestApply(pool) },
+                    onEdit = { editPool = pool; editing = true },
                     onDelete = { viewModel.delete(pool.id) },
+                    onToggleTest = { viewModel.setTest(pool, it) },
                 )
             }
         }
@@ -156,6 +182,7 @@ fun AddressBookScreen(
 
     if (editing) {
         PoolEditorDialog(
+            existing = editPool,
             onSave = { viewModel.save(it); editing = false },
             onDismiss = { editing = false },
         )
@@ -191,7 +218,14 @@ fun AddressBookScreen(
 }
 
 @Composable
-private fun PoolRow(pool: SavedPoolEntity, onApply: () -> Unit, onDelete: () -> Unit) {
+private fun PoolRow(
+    pool: SavedPoolEntity,
+    activeCount: Int,
+    onApply: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onToggleTest: (Boolean) -> Unit,
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(12.dp),
@@ -202,9 +236,23 @@ private fun PoolRow(pool: SavedPoolEntity, onApply: () -> Unit, onDelete: () -> 
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(pool.label, style = MaterialTheme.typography.titleSmall)
-                IconButton(onClick = onDelete) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = HiBrand.statusOffline)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(pool.label, style = MaterialTheme.typography.titleSmall)
+                    if (activeCount > 0) {
+                        Text(
+                            "  ● ACTIVE ($activeCount)",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.statusOnline,
+                        )
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onEdit) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = HiBrand.textSecondary)
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = HiBrand.statusOffline)
+                    }
                 }
             }
             Text(
@@ -215,26 +263,38 @@ private fun PoolRow(pool: SavedPoolEntity, onApply: () -> Unit, onDelete: () -> 
                 pool.worker,
                 style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary, maxLines = 1,
             )
-            OutlinedButton(onClick = onApply, modifier = Modifier.padding(top = 6.dp)) {
-                Text("Apply to fleet")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+            ) {
+                OutlinedButton(onClick = onApply) { Text("Apply to fleet") }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Speed test", style = MaterialTheme.typography.labelMedium, color = HiBrand.textSecondary)
+                    androidx.compose.material3.Switch(
+                        checked = pool.includeInTest,
+                        onCheckedChange = onToggleTest,
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun PoolEditorDialog(onSave: (SavedPoolEntity) -> Unit, onDismiss: () -> Unit) {
-    var label by rememberSaveable { mutableStateOf("") }
-    var url by rememberSaveable { mutableStateOf("") }
-    var port by rememberSaveable { mutableStateOf("3333") }
-    var worker by rememberSaveable { mutableStateOf("") }
+private fun PoolEditorDialog(existing: SavedPoolEntity?, onSave: (SavedPoolEntity) -> Unit, onDismiss: () -> Unit) {
+    var label by rememberSaveable { mutableStateOf(existing?.label ?: "") }
+    var url by rememberSaveable { mutableStateOf(existing?.url ?: "") }
+    var port by rememberSaveable { mutableStateOf(existing?.port?.toString() ?: "3333") }
+    var worker by rememberSaveable { mutableStateOf(existing?.worker ?: "") }
 
     val valid = label.isNotBlank() && url.isNotBlank() && worker.isNotBlank() &&
         (port.toIntOrNull() ?: 0) in 1..65535
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Saved pool") },
+        title = { Text(if (existing == null) "Saved pool" else "Edit pool") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)
@@ -249,10 +309,12 @@ private fun PoolEditorDialog(onSave: (SavedPoolEntity) -> Unit, onDismiss: () ->
                 onClick = {
                     onSave(
                         SavedPoolEntity(
+                            id = existing?.id ?: 0,
                             label = label.trim(),
                             url = url.trim(),
                             port = port.toInt(),
                             worker = worker.trim(),
+                            includeInTest = existing?.includeInTest ?: true,
                         )
                     )
                 },

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.75.8
+
+- **Pool management + speed-test selection.** The Pool address book now lets you **edit** saved
+  pools, toggle **which pools the speed test runs against** (per-pool "Speed test" switch), and shows
+  an **● ACTIVE (n)** badge for pools your miners are currently mining to. The speed test only runs
+  the pools you've enabled (plus each miner's own pool; public pools stay opt-in). Your local
+  **PPLNS** target (10.0.0.42:3344) is pre-added as a saved pool. (DB migrated to v17.)
+
 ## 0.75.7
 
 - **NFC scan → Fleet table, scanned machine highlighted.** A scanned tag opens the Fleet table

@@ -23,7 +23,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         LogLineEntity::class,
         TuneSweepEntity::class,
     ],
-    version = 16,
+    version = 17,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -41,6 +41,13 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun tuneSweepDao(): TuneSweepDao
 
     companion object {
+        /** v16 -> v17: saved_pools.includeInTest flag for the pool speed test (additive). */
+        val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `saved_pools` ADD COLUMN `includeInTest` INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         /** v15 -> v16: tune_sweeps table for the persistent tuning optimizer (additive). */
         val MIGRATION_15_16 = object : Migration(15, 16) {
             override fun migrate(db: SupportSQLiteDatabase) {
