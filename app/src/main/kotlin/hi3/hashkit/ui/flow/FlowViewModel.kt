@@ -8,6 +8,7 @@ import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.discovery.ConnectivityProbe
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.time.Instant
 import javax.inject.Inject
 
@@ -58,14 +62,19 @@ data class FlowUiState(
 class FlowViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val connectivity: ConnectivityProbe,
+    private val okHttpClient: OkHttpClient,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val probeResults = kotlinx.coroutines.flow.MutableStateFlow(ProbeSnapshot())
 
+    /** Last successfully fetched tip height, kept across transient fetch failures. */
+    private var lastBlockHeight: Long? = null
+
     private data class ProbeSnapshot(
         val internetUp: Boolean = true,
         val latencyByStratum: Map<String, Long?> = emptyMap(),
+        val blockHeight: Long? = null,
         val at: Instant? = null,
     )
 
@@ -99,11 +108,27 @@ class FlowViewModel @Inject constructor(
         val latencies = stratums.associate { s ->
             stratumKey(s.host, s.port) to connectivity.tcpLatencyMs(s.host, s.port)
         }
+        val up = connectivity.internetValidated()
+        // Current tip height from mempool.space (public, keyless) — only while the uplink is up;
+        // keep the last known value across transient failures.
+        if (up) fetchTipHeight()?.let { lastBlockHeight = it }
         probeResults.value = ProbeSnapshot(
-            internetUp = connectivity.internetValidated(),
+            internetUp = up,
             latencyByStratum = latencies,
+            blockHeight = lastBlockHeight,
             at = Instant.now(),
         )
+    }
+
+    /** GET mempool.space/api/blocks/tip/height — the plain-integer current block height. */
+    private suspend fun fetchTipHeight(): Long? = withContext(Dispatchers.IO) {
+        runCatching {
+            val req = Request.Builder()
+                .url("https://mempool.space/api/blocks/tip/height").get().build()
+            okHttpClient.newCall(req).execute().use { resp ->
+                if (resp.isSuccessful) resp.body?.string()?.trim()?.toLongOrNull() else null
+            }
+        }.getOrNull()
     }
 
     private fun stratumKey(host: String, port: Int) = "$host:$port"
@@ -153,7 +178,7 @@ class FlowViewModel @Inject constructor(
         return FlowUiState(
             internetUp = probe.internetUp,
             networkDifficulty = miners.mapNotNull { it.lastTelemetry?.networkDifficulty }.maxOrNull(),
-            blockHeight = null,
+            blockHeight = probe.blockHeight,
             stratums = stratums,
             miners = minerNodes,
             totalHashrateGhs = live.sumOf { it.lastTelemetry?.hashrateGhs?.value ?: 0.0 },

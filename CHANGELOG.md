@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.73.9
+
+- **Flow view redesign:** text enlarged again and the ASIC machine glyphs are ~2× bigger; the
+  Bitcoin network is now a chain of blocks scrolling left→right with the **current block height**
+  shown big (fetched from mempool.space's public tip-height API while the Flow view is open).
+
 ## 0.73.8
 
 - **Flow view:** larger text throughout (miner/network/stratum labels and the summary cards ~45%

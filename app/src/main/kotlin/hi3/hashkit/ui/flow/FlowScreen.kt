@@ -56,7 +56,7 @@ import kotlin.math.sin
 private fun minerLayout(w: Float, h: Float, count: Int): List<Offset> =
     (0 until count).map { i ->
         val x = if (count <= 1) w / 2f else w * (0.08f + 0.84f * i / (count - 1).coerceAtLeast(1))
-        Offset(x, h * 0.80f)
+        Offset(x, h * 0.78f)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -199,9 +199,9 @@ private fun StatCard(label: String, value: String, valueColor: Color) {
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(12.dp),
     ) {
-        Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-            Text(label, style = MaterialTheme.typography.titleSmall, color = HiBrand.textSecondary)
-            Text(value, style = MaterialTheme.typography.headlineSmall, color = valueColor, fontWeight = FontWeight.Bold)
+        Column(Modifier.padding(horizontal = 18.dp, vertical = 12.dp)) {
+            Text(label, style = MaterialTheme.typography.titleMedium, color = HiBrand.textSecondary)
+            Text(value, style = MaterialTheme.typography.headlineMedium, color = valueColor, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -226,7 +226,7 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
     val h = size.height
     val t = timeMs / 1000.0
 
-    val networkPos = Offset(w / 2f, h * 0.10f)
+    val networkPos = Offset(w / 2f, h * 0.13f)
     val stratums = state.stratums
     val stratumY = h * 0.44f
     val stratumPos = stratums.mapIndexed { i, _ ->
@@ -263,8 +263,8 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
         }
     }
 
-    // Nodes.
-    drawNode(networkPos, 30f, HiBrand.accent, pulse = t)
+    // Nodes. The Bitcoin network is a chain of blocks scrolling left→right.
+    drawBlockchain(networkPos, w, t, HiBrand.accent)
     stratums.forEachIndexed { i, s ->
         val col = when {
             !(state.internetUp && s.reachable) -> HiBrand.statusOffline
@@ -273,9 +273,10 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
         }
         drawNode(stratumPos[i], 22f, col, pulse = t + i)
     }
-    // Adjacent-slot spacing; the ASIC glyph is sized to sit comfortably inside one slot.
+    // Adjacent-slot spacing; the ASIC glyph is ~2× bigger now, still capped to the slot so
+    // dense fleets don't overlap.
     val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
-    val boxW = (adjSpacing * 0.82f).coerceAtMost(52f)
+    val boxW = (adjSpacing * 0.82f).coerceAtMost(110f)
     miners.forEachIndexed { i, m ->
         drawAsicMiner(
             minerPos[i], boxW,
@@ -289,42 +290,50 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
     drawContext.canvas.nativeCanvas.apply {
         val label = android.graphics.Paint().apply {
             color = android.graphics.Color.parseColor("#93A3B4")
-            textSize = 38f
+            textSize = 48f
             isAntiAlias = true
             textAlign = android.graphics.Paint.Align.CENTER
         }
         val strong = android.graphics.Paint(label).apply {
             color = android.graphics.Color.parseColor("#E8EEF4")
-            textSize = 40f
+            textSize = 50f
         }
-        drawText("BITCOIN NETWORK", networkPos.x, networkPos.y - 56f, strong)
-        state.networkDifficulty?.let {
-            drawText("diff ${Units.formatDifficulty(it)}", networkPos.x, networkPos.y + 68f, label)
-        }
+        // Bitcoin network node: big current block number, with a small caption below.
+        val bignum = android.graphics.Paint(strong).apply { textSize = 64f }
+        val height = state.blockHeight
+        drawText(
+            if (height != null) "BLOCK ${"%,d".format(height)}" else "BITCOIN NETWORK",
+            networkPos.x, networkPos.y - 66f, bignum,
+        )
+        val caption = if (height != null) "BITCOIN NETWORK" else "waiting for block height…"
+        drawText(
+            caption + (state.networkDifficulty?.let { "   ·   diff ${Units.formatDifficulty(it)}" } ?: ""),
+            networkPos.x, networkPos.y + 80f, label,
+        )
         stratums.forEachIndexed { i, s ->
-            drawText(s.label, stratumPos[i].x, stratumPos[i].y - 44f, label)
+            drawText(s.label, stratumPos[i].x, stratumPos[i].y - 52f, label)
             val lat = s.latencyMs?.let { "${it}ms" } ?: "unreachable"
             drawText(
                 (if (s.anyFallback) "fallback · " else "") + lat,
-                stratumPos[i].x, stratumPos[i].y + 58f, label,
+                stratumPos[i].x, stratumPos[i].y + 68f, label,
             )
         }
         // Miner labels: staggered across two rows + ellipsized to the slot so adjacent labels
         // never overlap, however many miners there are. Spacing scales with the larger text.
-        val minerLabel = android.graphics.Paint(label).apply { textSize = 32f }
-        val minerHash = android.graphics.Paint(strong).apply { textSize = 32f }
+        val minerLabel = android.graphics.Paint(label).apply { textSize = 44f }
+        val minerHash = android.graphics.Paint(strong).apply { textSize = 44f }
         val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
-        val boxW = (adjSpacing * 0.82f).coerceAtMost(52f)
+        val boxW = (adjSpacing * 0.82f).coerceAtMost(110f)
         val boxH = boxW * 0.6f
         // Staggered rows double the effective horizontal room for a given row.
         val maxLabelW = (adjSpacing * 1.85f - 8f).coerceAtLeast(40f)
-        val lineH = 34f
+        val lineH = 46f
         miners.forEachIndexed { i, m ->
             val stagger = (i % 2) * lineH
             val name = fitText(minerLabel, m.name, maxLabelW)
             val hash = fitText(minerHash, Units.formatHashrate(m.hashrateGhs), maxLabelW)
-            drawText(hash, minerPos[i].x, minerPos[i].y - boxH / 2f - 18f - stagger, minerHash)
-            drawText(name, minerPos[i].x, minerPos[i].y + boxH / 2f + 34f + stagger, minerLabel)
+            drawText(hash, minerPos[i].x, minerPos[i].y - boxH / 2f - 26f - stagger, minerHash)
+            drawText(name, minerPos[i].x, minerPos[i].y + boxH / 2f + 46f + stagger, minerLabel)
         }
     }
 }
@@ -358,6 +367,43 @@ private fun DrawScope.drawParticles(
         val alpha = (sin(frac * Math.PI).toFloat()).coerceIn(0.15f, 1f)
         drawCircle(color.copy(alpha = alpha), radius = 4f, center = p)
     }
+}
+
+/**
+ * The Bitcoin network drawn as a chain of blocks scrolling left→right across the top. Blocks
+ * are brightest near screen-center (the current tip the uplinks connect to) and fade toward the
+ * edges. The tip block number is drawn as a big label by the caller.
+ */
+private fun DrawScope.drawBlockchain(center: Offset, w: Float, t: Double, color: Color) {
+    val blockW = 60f
+    val blockH = 44f
+    val gap = 28f
+    val spacing = blockW + gap
+    val scroll = ((t * 34.0) % spacing).toFloat() // px/sec, moving right
+    val y = center.y
+    val corner = androidx.compose.ui.geometry.CornerRadius(9f)
+    val cols = (w / spacing).toInt() + 4
+    for (k in -2..cols) {
+        val cx = k * spacing + scroll - spacing
+        if (cx + blockW < 0f || cx - blockW > w) continue
+        // Brightest at the tip (screen center), fading toward the edges.
+        val bright = (1f - kotlin.math.abs(cx - center.x) / (w * 0.5f)).coerceIn(0.12f, 1f)
+        // Chain link to the next block.
+        drawLine(
+            color.copy(alpha = 0.22f * bright),
+            Offset(cx + blockW / 2f, y), Offset(cx + blockW / 2f + gap, y),
+            strokeWidth = 3f,
+        )
+        val tl = Offset(cx - blockW / 2f, y - blockH / 2f)
+        val sz = androidx.compose.ui.geometry.Size(blockW, blockH)
+        drawRoundRect(color.copy(alpha = 0.05f + 0.14f * bright), topLeft = tl, size = sz, cornerRadius = corner)
+        drawRoundRect(color.copy(alpha = 0.35f + 0.5f * bright), topLeft = tl, size = sz, cornerRadius = corner, style = Stroke(width = 2.5f))
+        // Inner divider so it reads as a block.
+        drawLine(color.copy(alpha = 0.28f * bright), Offset(cx - blockW / 2f + 9f, y), Offset(cx + blockW / 2f - 9f, y), strokeWidth = 1.5f)
+    }
+    // Soft glow at the tip.
+    val pulse = (0.6f + 0.4f * sin(t * 2).toFloat())
+    drawCircle(color.copy(alpha = 0.12f * pulse), radius = blockH * 1.6f, center = center)
 }
 
 private fun DrawScope.drawNode(center: Offset, radius: Float, color: Color, pulse: Double) {
