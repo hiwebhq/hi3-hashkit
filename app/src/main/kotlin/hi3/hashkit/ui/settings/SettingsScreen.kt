@@ -214,6 +214,11 @@ fun SettingsScreen(
                         )
                     }
                 }
+                ToggleRow(
+                    "Pause on exit",
+                    "Show the \"Exit Hi3 Hashkit?\" confirmation when tapping the exit button.",
+                    settings.confirmBeforeExit,
+                ) { viewModel.setConfirmBeforeExit(it) }
             }
 
             Section("HI3 MMP") {

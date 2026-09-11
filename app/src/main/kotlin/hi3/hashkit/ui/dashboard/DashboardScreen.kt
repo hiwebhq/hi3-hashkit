@@ -177,7 +177,9 @@ fun DashboardScreen(
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Filled.Settings, contentDescription = "Setup")
                     }
-                    IconButton(onClick = { confirmExit = true }) {
+                    IconButton(onClick = {
+                        if (state.settings.confirmBeforeExit) confirmExit = true else onExit()
+                    }) {
                         Icon(
                             Icons.Filled.PowerSettingsNew,
                             contentDescription = "Exit app",
@@ -456,18 +458,36 @@ fun DashboardScreen(
     )
 
     if (confirmExit) {
+        var dontAskAgain by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { confirmExit = false },
             title = { Text("Exit Hi3 Hashkit?") },
             text = {
-                Text(
-                    "This closes the app and stops foreground polling. Background " +
-                        "monitoring, if enabled, keeps running.",
-                )
+                Column {
+                    Text(
+                        "This closes the app and stops foreground polling. Background " +
+                            "monitoring, if enabled, keeps running.",
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { dontAskAgain = !dontAskAgain },
+                    ) {
+                        androidx.compose.material3.Checkbox(
+                            checked = dontAskAgain,
+                            onCheckedChange = { dontAskAgain = it },
+                        )
+                        Text(
+                            "Don't ask again — exit straight away next time",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
             },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = {
                     haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                    if (dontAskAgain) viewModel.setConfirmBeforeExit(false)
                     confirmExit = false
                     onExit()
                 }) { Text("Exit", color = HiBrand.statusOffline) }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.74.5
+
+- **Exit confirmation is now optional.** The "Exit Hi3 Hashkit?" dialog gained a "Don't ask again —
+  exit straight away next time" checkbox, and Settings → Display has a **Pause on exit** toggle to
+  turn the confirmation on/off. With it off, the exit button closes the app immediately.
+
 ## 0.74.4
 
 - **Fixed the auto-tuner failing every step on GammaHex (and any miner).** It held voltage at the

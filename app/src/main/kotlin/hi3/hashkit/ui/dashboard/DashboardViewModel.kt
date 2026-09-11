@@ -234,6 +234,10 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch { settingsRepository.setCardDensity(density) }
     }
 
+    fun setConfirmBeforeExit(value: Boolean) {
+        viewModelScope.launch { settingsRepository.setConfirmBeforeExit(value) }
+    }
+
     fun toggleSelect(id: Long) {
         selection.value = selection.value.let { if (id in it) it - id else it + id }
     }
