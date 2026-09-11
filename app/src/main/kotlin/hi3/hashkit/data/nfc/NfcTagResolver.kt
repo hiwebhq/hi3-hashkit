@@ -18,7 +18,7 @@ class NfcTagResolver @Inject constructor(
             MinerTagMatcher.Candidate(e.id, e.name, e.host, e.macAddress, e.serialNumber)
         }
         val hit = MinerTagMatcher.match(tag, candidates)
-        return if (hit != null) NfcRouter.Target.HighlightMiner(hit.id)
+        return if (hit != null) NfcRouter.Target.MinerDetail(hit.id)
         else NfcRouter.Target.Overlay(payload)
     }
 }

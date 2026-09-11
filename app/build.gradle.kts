@@ -24,8 +24,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 106
-        versionName = "0.75.5"
+        versionCode = 107
+        versionName = "0.75.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

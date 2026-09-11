@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.75.6
+
+- **Scan lands on Live Telemetry (not the bottom).** Reverted the Fleet-table detour — a scanned
+  tag again opens that miner's detail — and fixed the scroll: it was double-counting the scroll
+  position and running to the bottom of the page. It now settles on the Live Telemetry card.
+
 ## 0.75.5
 
 - **Scanned miner is highlighted in the list.** Scanning an NFC tag now opens the Fleet table (the
