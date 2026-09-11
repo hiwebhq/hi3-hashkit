@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.67.0
+
+- **Log Analyzer (advanced).** On a Bitaxe/AxeOS miner's live log stream, tap the new
+  Analyze toggle (shown when advanced features are unlocked) to get an on-device,
+  heuristic breakdown: line/error/warning counts, a per-category summary (pool, shares,
+  ASIC, thermal, network, system), and **plain-language findings with suggested actions**
+  — e.g. repeated restarts/resets, pool-disconnect storms, thermal warnings, ASIC errors,
+  high rejects. No cloud, no LLM; wallets stay redacted. (AxeOS-family only — the sole
+  firmware that exposes a log stream.)
+- Settings sections are now sorted alphabetically (Data & Exports and Demo kept last).
+
 ## 0.66.0
 
 - **Update Hashkit (in-app self-update).** Settings → Update Hashkit checks the official

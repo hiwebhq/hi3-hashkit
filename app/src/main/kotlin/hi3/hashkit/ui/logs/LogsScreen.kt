@@ -12,9 +12,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +46,10 @@ import hi3.hashkit.domain.adapter.MinerHost
 import hi3.hashkit.ui.theme.HiBrand
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,11 +65,17 @@ class LogsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: MinerRepository,
     private val logStream: EspMinerLogStream,
+    settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
 ) : ViewModel() {
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
     private val _state = MutableStateFlow(LogsUiState())
     val state = _state
+
+    /** The log analyzer is an advanced feature; the toggle only shows when unlocked. */
+    val advancedUnlocked = settingsRepository.settings
+        .map { it.advancedUnlocked }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
     private var job: Job? = null
 
@@ -118,6 +131,8 @@ fun LogsScreen(
     viewModel: LogsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val advancedUnlocked by viewModel.advancedUnlocked.collectAsStateWithLifecycle()
+    var analyze by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val listState = rememberLazyListState()
 
     // Follow the tail unless paused.
@@ -146,6 +161,15 @@ fun LogsScreen(
                     }
                 },
                 actions = {
+                    if (advancedUnlocked) {
+                        IconButton(onClick = { analyze = !analyze }) {
+                            Icon(
+                                Icons.Filled.Analytics,
+                                contentDescription = if (analyze) "Show raw log" else "Analyze log",
+                                tint = if (analyze) HiBrand.accent else HiBrand.textSecondary,
+                            )
+                        }
+                    }
                     IconButton(onClick = viewModel::togglePause) {
                         Icon(
                             if (state.paused) Icons.Filled.PlayArrow else Icons.Filled.Pause,
@@ -173,6 +197,13 @@ fun LogsScreen(
             }
             return@Scaffold
         }
+        if (analyze) {
+            LogAnalysisPanel(
+                lines = state.lines,
+                modifier = Modifier.fillMaxSize().padding(padding),
+            )
+            return@Scaffold
+        }
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -193,6 +224,65 @@ fun LogsScreen(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun LogAnalysisPanel(lines: List<String>, modifier: Modifier = Modifier) {
+    val analysis = androidx.compose.runtime.remember(lines) {
+        hi3.hashkit.domain.logs.LogAnalyzer.analyze(lines)
+    }
+    LazyColumn(
+        modifier = modifier.background(HiBrand.background),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Text(
+                "LOG ANALYSIS  ·  ${analysis.summary.total} lines" +
+                    "  ·  ${analysis.summary.errors} errors  ·  ${analysis.summary.warnings} warnings",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
+        }
+        if (analysis.summary.byCategory.isNotEmpty()) {
+            item {
+                Text(
+                    analysis.summary.byCategory.entries
+                        .sortedByDescending { it.value }
+                        .joinToString("   ") { "${it.key.label} ${it.value}" },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+        }
+        item {
+            Text("FINDINGS", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+        }
+        items(analysis.findings) { f ->
+            val color = when (f.level) {
+                hi3.hashkit.domain.logs.LogAnalyzer.FindingLevel.ERROR -> HiBrand.statusOffline
+                hi3.hashkit.domain.logs.LogAnalyzer.FindingLevel.WARN -> HiBrand.statusDegraded
+                hi3.hashkit.domain.logs.LogAnalyzer.FindingLevel.INFO -> HiBrand.statusOnline
+            }
+            Card(
+                colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(Modifier.padding(12.dp)) {
+                    Text(f.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = color)
+                    Text(f.suggestion, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                }
+            }
+        }
+        item {
+            Text(
+                "Heuristic, on-device analysis of the live AxeOS log — no cloud. Keep the " +
+                    "stream open to catch intermittent issues.",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
         }
     }
 }
