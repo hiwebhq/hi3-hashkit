@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.72.2
+
+- Hi3 MMP card: move Realization onto the top metrics line (right of Power); that row now
+  scrolls horizontally so all four metrics fit on one line.
+
 ## 0.72.1
 
 - Fleet card: shorten the daily-cost metric label to "Energy Est." (USD).

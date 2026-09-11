@@ -915,7 +915,10 @@ private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardU
                 return@Column
             }
             val s = mmp.summary ?: return@Column
-            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+            ) {
                 Metric(
                     "MMP hashrate",
                     Units.formatHashrate(s.hashrateThs?.times(1000.0)),
@@ -923,15 +926,17 @@ private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardU
                 )
                 Metric("Online", "${s.online ?: "—"}/${s.installed ?: "—"}")
                 Metric("Power", s.powerKw?.let { Units.formatPower(it * 1000.0) } ?: "—")
-            }
-            Spacer(Modifier.height(6.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 s.realizationPct?.let { Metric("Realization", "${it.toInt()}%") }
-                s.needsAttention?.takeIf { it > 0 }?.let {
-                    Metric("Attention", "$it", valueColor = HiBrand.statusDegraded)
-                }
-                s.zeroHash?.takeIf { it > 0 }?.let {
-                    Metric("Zero-hash", "$it", valueColor = HiBrand.statusOffline)
+            }
+            if ((s.needsAttention ?: 0) > 0 || (s.zeroHash ?: 0) > 0) {
+                Spacer(Modifier.height(6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    s.needsAttention?.takeIf { it > 0 }?.let {
+                        Metric("Attention", "$it", valueColor = HiBrand.statusDegraded)
+                    }
+                    s.zeroHash?.takeIf { it > 0 }?.let {
+                        Metric("Zero-hash", "$it", valueColor = HiBrand.statusOffline)
+                    }
                 }
             }
             if (mmp.sites.isNotEmpty()) {
