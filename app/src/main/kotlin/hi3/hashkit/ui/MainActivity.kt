@@ -299,6 +299,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
                 onAcoustic = { nav.navigate("acoustic") },
                 onArOverlay = { nav.navigate("ar") },
                 onNfcProgram = { nav.navigate("nfcprog") },
+                onHashRental = { nav.navigate("hashrental") },
                 onLiveBitcoin = {
                     runCatching {
                         context.startActivity(
@@ -313,6 +314,9 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
         }
         composable("heatreuse") {
             hi3.hashkit.ui.heat.HeatReuseScreen(onBack = { nav.popBackStack() })
+        }
+        composable("hashrental") {
+            hi3.hashkit.ui.hashrental.HashRentalScreen(onBack = { nav.popBackStack() })
         }
         composable("solar") {
             hi3.hashkit.ui.solar.SolarSurplusScreen(onBack = { nav.popBackStack() })

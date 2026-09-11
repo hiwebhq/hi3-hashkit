@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.76.0
+
+- **Hash rental (Advanced).** A new feature that shows the live **Braiins Hashpower** spot market —
+  best ask/bid, last price, available/matched hashrate, and the cheapest offers — from Braiins'
+  public, keyless market API. A "Rent on Braiins Hashpower" button opens the marketplace to
+  complete a rental. Read-only and no account: renting (which moves funds) is done on Braiins, not
+  in the app.
+
 ## 0.75.8
 
 - **Pool management + speed-test selection.** The Pool address book now lets you **edit** saved

@@ -119,6 +119,12 @@ on the LAN, and is never logged, exported, or sent anywhere else.
     seconds of microphone audio, runs an on-device FFT, and shows the result. The audio is never
     written to a file, kept after analysis, or sent anywhere.
 
+15. **On-demand — Hash rental (Advanced):** when you open Hash rental, the app makes a couple of
+    HTTPS GETs to Braiins Hashpower's **public, keyless** market API (`hashpower.braiins.com/v1/spot/
+    stats` and `/orderbook`) to show live spot prices and offers. No account, key, or personal data
+    is sent. Renting itself is never done in-app — the "Rent" button just opens the marketplace in
+    your browser.
+
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server unless you explicitly configure one of the opt-in integrations above.
 

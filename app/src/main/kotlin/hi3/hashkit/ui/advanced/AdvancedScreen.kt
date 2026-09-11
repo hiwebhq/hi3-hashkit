@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Hearing
 import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.PriceChange
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Warehouse
@@ -76,6 +77,7 @@ fun AdvancedScreen(
     onAcoustic: () -> Unit,
     onArOverlay: () -> Unit,
     onNfcProgram: () -> Unit,
+    onHashRental: () -> Unit,
     onLiveBitcoin: () -> Unit,
 ) {
     val items = listOf(
@@ -93,6 +95,11 @@ fun AdvancedScreen(
             "Electricity-price curtailment",
             "Pause on price spikes using the Octopus Agile half-hourly feed",
             Icons.Filled.PriceChange, onPriceCurtailment,
+        ),
+        AdvancedItem(
+            "Hash rental",
+            "Live Braiins Hashpower spot market — rent hashrate",
+            Icons.Filled.ShoppingCart, onHashRental,
         ),
         AdvancedItem(
             "Acoustic fan health check",
