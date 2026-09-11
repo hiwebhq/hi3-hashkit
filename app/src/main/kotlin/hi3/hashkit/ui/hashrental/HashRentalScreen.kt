@@ -135,15 +135,15 @@ fun HashRentalScreen(
                         Column(Modifier.padding(16.dp)) {
                             Text("SPOT MARKET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                             Text(
-                                m.bestAskSat?.let { "${btc(it)} BTC / PH·day" } ?: "—",
+                                m.bestAskSat?.let { "${satPerPhDay(it)} sat/PH·day" } ?: "—",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = HiBrand.accent,
                             )
                             Text("Best ask (cheapest hashrate to rent)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                             Spacer12()
-                            m.lastAvgPriceSat?.let { Line("Last avg price", "${btc(it)} BTC / PH·day") }
-                            m.bestBidSat?.let { Line("Best bid", "${btc(it)} BTC / PH·day") }
+                            m.lastAvgPriceSat?.let { Line("Last avg price", "${satPerPhDay(it)} sat/PH·day") }
+                            m.bestBidSat?.let { Line("Best bid", "${satPerPhDay(it)} sat/PH·day") }
                             m.availablePh?.let { Line("Hashrate available", "%,.0f PH/s".format(it)) }
                             m.matchedPh?.let { Line("Hashrate matched", "%,.0f PH/s".format(it)) }
                         }
@@ -156,7 +156,7 @@ fun HashRentalScreen(
                 for (ask in state.asks) {
                     item {
                         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("${btc(ask.priceSat)} BTC / PH·day", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
+                            Text("${satPerPhDay(ask.priceSat)} sat/PH·day", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
                             Text("%,.0f PH/s avail".format(ask.availablePh), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
                         }
                     }
@@ -191,5 +191,8 @@ private fun Line(label: String, value: String) {
 @Composable
 private fun Spacer12() = androidx.compose.foundation.layout.Spacer(Modifier.padding(6.dp))
 
-/** sats → BTC string. */
-private fun btc(sat: Long): String = "%.4f".format(sat / 100_000_000.0)
+/**
+ * The API quotes price_sat as sats per EH/s per day (≈49,000,000); Braiins' UI shows the
+ * familiar sats per PH/s per day, which is price_sat / 1000.
+ */
+private fun satPerPhDay(sat: Long): String = "%,.0f".format(sat / 1000.0)

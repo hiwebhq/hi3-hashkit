@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.76.1
+
+- **Hash rental price unit fixed.** Prices now show in **sat/PH·day** (the API returns sats per
+  EH/day, ~1000× the familiar figure) instead of the wrong BTC label — matching what Braiins displays.
+
 ## 0.76.0
 
 - **Hash rental (Advanced).** A new feature that shows the live **Braiins Hashpower** spot market —
