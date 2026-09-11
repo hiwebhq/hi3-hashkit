@@ -99,7 +99,7 @@ fun AdvancedScreen(
         ),
         AdvancedItem(
             "AR rack overlay",
-            "Point the camera at a miner's sticker to float its live stats",
+            "Scan a miner's QR sticker or tap its NFC tag to float its live stats",
             Icons.Filled.CameraAlt, onArOverlay,
         ),
         AdvancedItem(

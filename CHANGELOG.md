@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.73.5
+
+- **AR overlay now reads NFC tags too.** While the AR overlay is open, tap a miner's NFC tag to
+  pull up its live stats — same as scanning its QR sticker. Both markers share one `key=value`
+  payload (`name` / `mac` / `ip` / `location`), matched by MAC → IP → name (legacy single-value
+  QR still works). If a tag points to a miner not yet in the app, you're offered to add it by its
+  (private/Tailscale) IP. A tag's Location is shown on the card but never written to the miner.
+  NFC is optional hardware; devices without it just keep using the camera. New `NFC` permission
+  (read-only, on-demand, nothing written to tags, nothing leaves the device).
+
+## 0.73.4
+
+- Self-update: unattended install via PackageInstaller with an unknown-sources prompt.
+
 ## 0.73.3
 
 - Hi3 MMP card: shorten the local-vs-fleet hashrate comparison to one line

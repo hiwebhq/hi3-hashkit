@@ -17,6 +17,11 @@
          on-device (FFT) and never recorded to a file or sent anywhere. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <!-- Optional: only used on-demand in the AR overlay to read a miner's NFC tag while that
+         screen is open. Tag data (name/MAC/IP/location) is read locally; nothing is written to
+         the tag and nothing leaves the device. -->
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
     <!-- Android TV / wall-dashboard support: run on leanback devices, don't require a touchscreen. -->
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />

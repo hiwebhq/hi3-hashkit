@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hi3.hashkit.data.poll.PollingEngine
+import hi3.hashkit.data.repo.AddMinerResult
 import hi3.hashkit.data.repo.MinerRepository
+import hi3.hashkit.discovery.MinerHostValidator
 import hi3.hashkit.domain.model.Miner
+import hi3.hashkit.domain.tag.MinerTag
+import hi3.hashkit.domain.tag.MinerTagMatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,15 +18,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
 
 /**
- * Backs the AR-style overlay: a scanned marker (QR/ID sticker) resolves to a miner, whose live
- * telemetry is then re-read every poll cycle so the floating card stays current.
+ * Backs the AR-style overlay. A scanned marker — a QR sticker or an NFC tag, both carrying the
+ * same `key=value` payload (name/mac/ip/location) — resolves to a miner whose live telemetry is
+ * re-read every poll cycle so the floating card stays current. A tag pointing at a miner not yet
+ * in the app can be added by its (private) IP; a tag's Location is shown but never written back.
  */
 @HiltViewModel
 class ArOverlayViewModel @Inject constructor(
@@ -32,8 +37,17 @@ class ArOverlayViewModel @Inject constructor(
 
     private val matchedId = MutableStateFlow<Long?>(null)
 
-    /** Last scanned code that didn't match any miner, for a helpful message. */
+    /** Last scanned payload that didn't match and couldn't be added, for a helpful message. */
     val unmatched = MutableStateFlow<String?>(null)
+
+    /** A scanned tag whose miner isn't known yet but carries a private IP we can offer to add. */
+    val pendingAdd = MutableStateFlow<MinerTag?>(null)
+
+    /** Location string from the last matched tag (display only — never written to the miner). */
+    val tagLocation = MutableStateFlow<String?>(null)
+
+    /** Transient status (add results, errors). */
+    val message = MutableStateFlow<String?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val matched: StateFlow<Miner?> =
@@ -44,35 +58,69 @@ class ArOverlayViewModel @Inject constructor(
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-    /** Resolve a scanned sticker to a miner. Returns true if it matched. */
+    /** Resolve a scanned marker (QR text or NFC payload) to a miner. */
     fun onScanned(code: String) {
-        val trimmed = code.trim()
-        if (trimmed.isEmpty() || trimmed.equals(lastScan, ignoreCase = true)) return
-        lastScan = trimmed
+        val tag = MinerTag.parse(code) ?: return
+        val dedupe = code.trim()
+        if (dedupe.equals(lastScan, ignoreCase = true)) return
+        lastScan = dedupe
         viewModelScope.launch {
-            val entities = repository.observeMinerEntities().first()
-            val key = trimmed.removePrefix("hi3miner:").removePrefix("hi3:").trim()
-            val normMac = key.replace(":", "").replace("-", "").lowercase()
-            val match = entities.firstOrNull { e ->
-                val id = repository.toDomain(e, Instant.now())
-                key.toLongOrNull()?.let { it == e.id } == true ||
-                    id.name.equals(key, ignoreCase = true) ||
-                    id.host.equals(key, ignoreCase = true) ||
-                    id.identity.macAddress?.replace(":", "")?.replace("-", "")?.lowercase() == normMac ||
-                    id.identity.serialNumber?.equals(key, ignoreCase = true) == true
+            val candidates = repository.observeMinerEntities().first().map { e ->
+                MinerTagMatcher.Candidate(e.id, e.name, e.host, e.macAddress, e.serialNumber)
             }
-            if (match != null) {
-                matchedId.value = match.id
-                unmatched.value = null
-            } else {
-                unmatched.value = trimmed
+            val hit = MinerTagMatcher.match(tag, candidates)
+            when {
+                hit != null -> {
+                    matchedId.value = hit.id
+                    tagLocation.value = tag.location
+                    unmatched.value = null
+                    pendingAdd.value = null
+                }
+                // Not known yet, but the tag gives a private IP → offer to add it.
+                tag.ip != null && MinerHostValidator.resolvesToAllowed(tag.ip) -> {
+                    pendingAdd.value = tag
+                    unmatched.value = null
+                }
+                else -> {
+                    unmatched.value = tag.rawValue ?: tag.name ?: tag.mac ?: tag.ip ?: dedupe
+                    pendingAdd.value = null
+                }
             }
         }
+    }
+
+    /** Add the pending tag's miner by its IP, then show it. */
+    fun addFromTag() {
+        val tag = pendingAdd.value ?: return
+        val ip = tag.ip ?: return
+        viewModelScope.launch {
+            message.value = "Adding $ip…"
+            when (val r = repository.addByHost(ip)) {
+                is AddMinerResult.Added -> {
+                    matchedId.value = r.minerId; tagLocation.value = tag.location
+                    pendingAdd.value = null; message.value = "Added ${tag.name ?: ip}."
+                }
+                is AddMinerResult.AlreadyKnown -> {
+                    matchedId.value = r.minerId; tagLocation.value = tag.location
+                    pendingAdd.value = null; message.value = null
+                }
+                is AddMinerResult.Unreachable -> message.value = "Couldn't reach $ip: ${r.message}"
+                is AddMinerResult.NotSupported -> message.value = r.message
+            }
+        }
+    }
+
+    fun dismissAdd() {
+        pendingAdd.value = null
+        lastScan = null // allow re-scanning the same tag to retry
     }
 
     fun clear() {
         matchedId.value = null
         unmatched.value = null
+        pendingAdd.value = null
+        tagLocation.value = null
+        message.value = null
         lastScan = null
     }
 
