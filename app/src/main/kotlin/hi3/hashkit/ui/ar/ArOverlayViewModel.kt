@@ -65,6 +65,9 @@ class ArOverlayViewModel @Inject constructor(
         viewModelScope.launch {
             nfcRouter.pending.collect { payload ->
                 if (payload != null) {
+                    // NFC taps are discrete — always re-process, even the same tag again (the
+                    // lastScan guard exists only to de-dupe the continuous camera QR stream).
+                    lastScan = null
                     onScanned(payload)
                     nfcRouter.consume()
                 }

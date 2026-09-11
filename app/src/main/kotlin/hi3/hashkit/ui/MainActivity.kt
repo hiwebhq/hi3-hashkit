@@ -226,9 +226,11 @@ class MainActivity : FragmentActivity() {
 private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> Unit) {
     val nav = rememberNavController()
     // A Hi3 Hashkit tag scanned by the OS routes us to the AR overlay, which resolves the miner.
+    // singleTop: if we're already on the overlay, reuse it (its ViewModel handles the new tag)
+    // instead of pushing a fresh empty copy over the matched card.
     val pendingScan by nfcRouter.pending.collectAsState()
     LaunchedEffect(pendingScan) {
-        if (pendingScan != null) nav.navigate("ar")
+        if (pendingScan != null) nav.navigate("ar") { launchSingleTop = true }
     }
     NavHost(navController = nav, startDestination = "dashboard") {
         composable("dashboard") {

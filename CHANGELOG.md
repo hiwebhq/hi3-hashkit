@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.74.1
+
+- **Fixed NFC tags only working once.** The OS was correctly dispatching every tap (confirmed via
+  logcat), but the AR overlay swallowed repeats: the camera-QR de-dupe guard also blocked a second
+  identical tag tap, and re-navigating to the overlay pushed a fresh empty copy over the matched
+  card. NFC taps now always re-process, and the overlay is reused (singleTop) so the same tag can
+  be tapped again and again.
+
 ## 0.74.0
 
 - **NFC tags now auto-open Hi3 Hashkit.** Programmed tags carry a Hashkit-specific record
