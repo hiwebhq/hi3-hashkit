@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.75.2
+
+- **Wall / TV mode: grid columns + compact controls.** New **Grid columns** option (Auto, or a
+  fixed 1–8 across — tiles auto-size to fill the width) alongside the Small/Medium/Large card size.
+  The header controls are now a single compact gear popup, freeing up the top of the wall.
+
 ## 0.75.1
 
 - **Scanner button in the header.** A scan icon next to Settings opens the scanner directly —

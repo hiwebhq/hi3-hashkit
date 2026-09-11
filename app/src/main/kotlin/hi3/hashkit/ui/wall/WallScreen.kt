@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +31,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,7 +103,9 @@ fun WallScreen(
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val fahrenheit by viewModel.useFahrenheit.collectAsStateWithLifecycle()
     val wallSize by viewModel.wallSize.collectAsStateWithLifecycle()
+    val wallColumns by viewModel.wallColumns.collectAsStateWithLifecycle()
     val dims = wallDims(wallSize)
+    var optionsOpen by remember { mutableStateOf(false) }
 
     // Keep the screen on while the wall is up; clear the flag when leaving.
     val context = LocalContext.current
@@ -114,7 +124,15 @@ fun WallScreen(
         .filter { it.status == MinerStatus.ONLINE || it.status == MinerStatus.DEGRADED }
         .sumOf { it.lastTelemetry?.hashrateGhs?.value ?: 0.0 }
 
-    Box(Modifier.fillMaxSize().background(HiBrand.background)) {
+    BoxWithConstraints(Modifier.fillMaxSize().background(HiBrand.background)) {
+        // When a fixed column count is set, size each tile so exactly that many fill the width;
+        // 0 = auto (tiles keep their per-size width and wrap).
+        val tileWidth: Dp = if (wallColumns in 1..8) {
+            ((maxWidth - dims.contentPad * 2 - dims.tileGap * (wallColumns - 1)) / wallColumns)
+                .coerceAtLeast(64.dp)
+        } else {
+            dims.tileWidth
+        }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(dims.contentPad),
@@ -139,15 +157,53 @@ fun WallScreen(
                             color = HiBrand.textSecondary,
                         )
                     }
+                    // Compact controls: a single gear opens a popup with size + grid; then Exit.
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        // Size selector: pick how big the cards render for this screen.
-                        WallSize.entries.forEach { s ->
-                            FilterChip(
-                                selected = s == wallSize,
-                                onClick = { viewModel.setWallSize(s) },
-                                label = { Text(s.label) },
-                                modifier = Modifier.padding(end = 6.dp),
-                            )
+                        Box {
+                            IconButton(onClick = { optionsOpen = true }, modifier = Modifier.size(56.dp)) {
+                                Icon(
+                                    Icons.Filled.Tune,
+                                    contentDescription = "Display options",
+                                    tint = HiBrand.textSecondary,
+                                    modifier = Modifier.size(32.dp),
+                                )
+                            }
+                            DropdownMenu(expanded = optionsOpen, onDismissRequest = { optionsOpen = false }) {
+                                Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                                    Text("CARD SIZE", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                                    Row(Modifier.padding(top = 4.dp)) {
+                                        WallSize.entries.forEach { s ->
+                                            FilterChip(
+                                                selected = s == wallSize,
+                                                onClick = { viewModel.setWallSize(s) },
+                                                label = { Text(s.label) },
+                                                modifier = Modifier.padding(end = 6.dp),
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        "GRID COLUMNS",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = HiBrand.textSecondary,
+                                        modifier = Modifier.padding(top = 12.dp),
+                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
+                                        IconButton(onClick = { viewModel.setWallColumns((wallColumns - 1).coerceAtLeast(0)) }) {
+                                            Icon(Icons.Filled.Remove, contentDescription = "Fewer columns", tint = HiBrand.textPrimary)
+                                        }
+                                        Text(
+                                            if (wallColumns == 0) "Auto" else "$wallColumns",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = HiBrand.textPrimary,
+                                            modifier = Modifier.width(56.dp),
+                                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                        )
+                                        IconButton(onClick = { viewModel.setWallColumns((wallColumns + 1).coerceAtMost(8)) }) {
+                                            Icon(Icons.Filled.Add, contentDescription = "More columns", tint = HiBrand.textPrimary)
+                                        }
+                                    }
+                                }
+                            }
                         }
                         IconButton(onClick = onExit, modifier = Modifier.size(56.dp)) {
                             Icon(
@@ -184,7 +240,7 @@ fun WallScreen(
                             horizontalArrangement = Arrangement.spacedBy(dims.tileGap),
                             verticalArrangement = Arrangement.spacedBy(dims.tileGap),
                         ) {
-                            group.miners.forEach { WallTile(it, fahrenheit, dims) }
+                            group.miners.forEach { WallTile(it, fahrenheit, dims, tileWidth) }
                         }
                     }
                 }
@@ -194,7 +250,7 @@ fun WallScreen(
 }
 
 @Composable
-private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims) {
+private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims, tileWidth: Dp = dims.tileWidth) {
     val color = when (miner.status) {
         MinerStatus.ONLINE -> HiBrand.statusOnline
         MinerStatus.DEGRADED -> HiBrand.statusDegraded
@@ -203,7 +259,7 @@ private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims) {
     }
     Column(
         modifier = Modifier
-            .width(dims.tileWidth)
+            .width(tileWidth)
             .clip(RoundedCornerShape(18.dp))
             .background(HiBrand.surface)
             .padding(dims.tilePad),

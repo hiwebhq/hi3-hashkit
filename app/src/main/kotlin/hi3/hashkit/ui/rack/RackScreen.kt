@@ -91,6 +91,15 @@ class RackViewModel @Inject constructor(
         viewModelScope.launch { settingsRepository.setWallSize(size) }
     }
 
+    val wallColumns: StateFlow<Int> =
+        settingsRepository.settings
+            .map { it.wallColumns }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+    fun setWallColumns(cols: Int) {
+        viewModelScope.launch { settingsRepository.setWallColumns(cols) }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val groups: StateFlow<List<RackGroup>> =
         combine(
