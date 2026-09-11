@@ -51,6 +51,10 @@ class ArOverlayViewModel @Inject constructor(
     /** Transient status (add results, errors). */
     val message = MutableStateFlow<String?>(null)
 
+    /** One-shot confirmation for each discrete NFC tap (shown as a toast). */
+    private val _scanToast = kotlinx.coroutines.flow.MutableSharedFlow<String>(extraBufferCapacity = 4)
+    val scanToast: kotlinx.coroutines.flow.SharedFlow<String> = _scanToast
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val matched: StateFlow<Miner?> =
         matchedId.flatMapLatest { id ->
@@ -68,15 +72,18 @@ class ArOverlayViewModel @Inject constructor(
                     // NFC taps are discrete — always re-process, even the same tag again (the
                     // lastScan guard exists only to de-dupe the continuous camera QR stream).
                     lastScan = null
-                    onScanned(payload)
+                    onScanned(payload, announce = true)
                     nfcRouter.consume()
                 }
             }
         }
     }
 
-    /** Resolve a scanned marker (QR text or NFC payload) to a miner. */
-    fun onScanned(code: String) {
+    /**
+     * Resolve a scanned marker (QR text or NFC payload) to a miner. [announce] emits a one-shot
+     * toast confirmation — set for discrete NFC taps, off for the continuous camera QR stream.
+     */
+    fun onScanned(code: String, announce: Boolean = false) {
         val tag = MinerTag.parse(code) ?: return
         val dedupe = code.trim()
         if (dedupe.equals(lastScan, ignoreCase = true)) return
@@ -92,15 +99,18 @@ class ArOverlayViewModel @Inject constructor(
                     tagLocation.value = tag.location
                     unmatched.value = null
                     pendingAdd.value = null
+                    if (announce) _scanToast.tryEmit("Scanned ✓ ${hit.name ?: "miner"}")
                 }
                 // Not known yet, but the tag gives a private IP → offer to add it.
                 tag.ip != null && MinerHostValidator.resolvesToAllowed(tag.ip) -> {
                     pendingAdd.value = tag
                     unmatched.value = null
+                    if (announce) _scanToast.tryEmit("Scanned tag — ${tag.name ?: tag.ip} not added yet")
                 }
                 else -> {
                     unmatched.value = tag.rawValue ?: tag.name ?: tag.mac ?: tag.ip ?: dedupe
                     pendingAdd.value = null
+                    if (announce) _scanToast.tryEmit("Scanned tag — no matching miner")
                 }
             }
         }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.74.2
+
+- AR overlay: a brief confirmation toast on each NFC tap — "Scanned ✓ <miner>" (or a note when the
+  tag isn't matched / not added yet).
+
 ## 0.74.1
 
 - **Fixed NFC tags only working once.** The OS was correctly dispatching every tap (confirmed via

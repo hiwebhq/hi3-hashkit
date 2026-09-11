@@ -58,6 +58,11 @@ fun ArOverlayScreen(
     viewModel: ArOverlayViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.scanToast.collect { msg ->
+            android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
     val matched by viewModel.matched.collectAsStateWithLifecycle()
     val unmatched by viewModel.unmatched.collectAsStateWithLifecycle()
     val pendingAdd by viewModel.pendingAdd.collectAsStateWithLifecycle()
