@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.71.1
+
+- **Pool speed test:** point the built-in Hi3 stratum entry at `stratum.hi3.cc:3333` instead
+  of `pool.hi3.cc:3333`. The latter is Cloudflare-proxied (HTTP/HTTPS only), so stratum can't
+  reach it; the real stratum needs an unproxied (DNS-only) host. Shows unreachable until that
+  DNS record exists.
+
 ## 0.71.0
 
 - **Pool speed test now includes the supported public pools.** Alongside your fleet's pools
