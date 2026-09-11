@@ -14,8 +14,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,8 +21,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -42,10 +42,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.data.prefs.DEFAULT_HASH_RENTAL_URL
 import hi3.hashkit.integrations.hashpower.BraiinsHashpowerClient
 import hi3.hashkit.ui.theme.HiBrand
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,7 +61,7 @@ data class HashRentalState(
     val btcPrice: Double = 0.0,
     val currency: String = "USD",
     /** URL the "Rent" button opens — configurable (e.g. your Braiins referral link). */
-    val rentUrl: String = "https://hashpower.braiins.com",
+    val rentUrl: String = DEFAULT_HASH_RENTAL_URL,
 )
 
 @HiltViewModel
@@ -70,7 +73,13 @@ class HashRentalViewModel @Inject constructor(
     private val _state = MutableStateFlow(HashRentalState())
     val state: StateFlow<HashRentalState> = _state
 
-    init { refresh() }
+    init {
+        refresh()
+        viewModelScope.launch {
+            settingsRepository.settings.map { it.hashRentalUrl }.distinctUntilChanged()
+                .collect { url -> _state.value = _state.value.copy(rentUrl = url) }
+        }
+    }
 
     fun refresh() {
         _state.value = _state.value.copy(loading = true, error = null)
@@ -78,24 +87,21 @@ class HashRentalViewModel @Inject constructor(
             val s = settingsRepository.current()
             when (val r = client.fetch()) {
                 is BraiinsHashpowerClient.Result.Ok ->
-                    _state.value = HashRentalState(
+                    _state.value = _state.value.copy(
                         loading = false, market = r.market, asks = r.asks.take(6),
-                        btcPrice = s.btcPrice, currency = s.currencyCode, rentUrl = s.hashRentalUrl,
+                        error = null, btcPrice = s.btcPrice, currency = s.currencyCode,
                     )
                 is BraiinsHashpowerClient.Result.Error ->
                     _state.value = _state.value.copy(
                         loading = false, error = r.message, btcPrice = s.btcPrice,
-                        currency = s.currencyCode, rentUrl = s.hashRentalUrl,
+                        currency = s.currencyCode,
                     )
             }
         }
     }
 
     fun setRentUrl(value: String) {
-        viewModelScope.launch {
-            settingsRepository.setHashRentalUrl(value)
-            _state.value = _state.value.copy(rentUrl = settingsRepository.current().hashRentalUrl)
-        }
+        viewModelScope.launch { settingsRepository.setHashRentalUrl(value) }
     }
 }
 
@@ -273,7 +279,7 @@ private fun RentUrlDialog(current: String, onDismiss: () -> Unit, onSave: (Strin
                     onValueChange = { text = it },
                     singleLine = true,
                     label = { Text("URL") },
-                    placeholder = { Text("https://hashpower.braiins.com") },
+                    placeholder = { Text(DEFAULT_HASH_RENTAL_URL) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
