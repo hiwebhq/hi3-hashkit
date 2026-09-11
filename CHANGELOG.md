@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.75.5
+
+- **Scanned miner is highlighted in the list.** Scanning an NFC tag now opens the Fleet table (the
+  list of machines) and scrolls to + highlights the scanned miner (accent border/background for a
+  few seconds), so it's obvious which one was scanned. Replaces the flaky scroll-to-telemetry for
+  NFC. (Tapping the highlighted row still opens the miner's full detail.)
+
 ## 0.75.4
 
 - **Scan-to-telemetry scroll fixed properly.** The section offset was measured relative to the
