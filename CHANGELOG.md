@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.74.7
+
+- **NFC goes straight to the miner.** Tapping a Hi3 Hashkit tag now resolves the miner and opens
+  its full detail card directly — no camera. The camera/AR overlay is used only for QR codes (and
+  as a fallback when a tag's miner isn't in the app yet, to offer adding it).
+
 ## 0.74.6
 
 - **User guide in About.** About now has an "Open PDF" link that opens the bundled user guide

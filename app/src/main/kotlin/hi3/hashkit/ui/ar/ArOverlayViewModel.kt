@@ -65,14 +65,15 @@ class ArOverlayViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     init {
-        // Tags scanned by the OS (which auto-opened/foregrounded the app) arrive via the router.
+        // Matched tags go straight to miner detail (handled by the nav host). Only the fallback
+        // Overlay case (unknown/addable miner, or no match) reaches the overlay here.
         viewModelScope.launch {
-            nfcRouter.pending.collect { payload ->
-                if (payload != null) {
+            nfcRouter.target.collect { target ->
+                if (target is NfcRouter.Target.Overlay) {
                     // NFC taps are discrete — always re-process, even the same tag again (the
                     // lastScan guard exists only to de-dupe the continuous camera QR stream).
                     lastScan = null
-                    onScanned(payload, announce = true)
+                    onScanned(target.payload, announce = true)
                     nfcRouter.consume()
                 }
             }

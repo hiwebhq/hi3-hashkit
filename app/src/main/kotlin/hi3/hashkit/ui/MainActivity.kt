@@ -69,14 +69,21 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var nfcRouter: hi3.hashkit.data.nfc.NfcRouter
 
-    /** Publish a scanned Hi3 Hashkit tag (from an NFC launch/foreground intent) to the router. */
+    @Inject
+    lateinit var nfcTagResolver: hi3.hashkit.data.nfc.NfcTagResolver
+
+    /**
+     * A scanned Hi3 Hashkit tag (from an NFC launch/foreground intent): resolve it to a miner and
+     * publish where to go. A matched tag opens that miner's detail directly (no camera).
+     */
     private fun handleNfcIntent(intent: Intent?) {
         intent ?: return
         val a = intent.action
         if (a == NfcAdapter.ACTION_NDEF_DISCOVERED || a == NfcAdapter.ACTION_TAG_DISCOVERED ||
             a == NfcAdapter.ACTION_TECH_DISCOVERED
         ) {
-            hi3.hashkit.ui.nfc.payloadFromIntent(intent)?.let { nfcRouter.emit(it) }
+            val payload = hi3.hashkit.ui.nfc.payloadFromIntent(intent) ?: return
+            lifecycleScope.launch { nfcRouter.emit(nfcTagResolver.resolve(payload)) }
         }
     }
 
@@ -225,12 +232,19 @@ class MainActivity : FragmentActivity() {
 @Composable
 private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> Unit) {
     val nav = rememberNavController()
-    // A Hi3 Hashkit tag scanned by the OS routes us to the AR overlay, which resolves the miner.
-    // singleTop: if we're already on the overlay, reuse it (its ViewModel handles the new tag)
-    // instead of pushing a fresh empty copy over the matched card.
-    val pendingScan by nfcRouter.pending.collectAsState()
-    LaunchedEffect(pendingScan) {
-        if (pendingScan != null) nav.navigate("ar") { launchSingleTop = true }
+    // A Hi3 Hashkit tag scanned by the OS: a matched tag opens that miner's detail directly (no
+    // camera); an unmatched/addable tag falls back to the AR overlay (which handles add / no-match).
+    val nfcTarget by nfcRouter.target.collectAsState()
+    LaunchedEffect(nfcTarget) {
+        when (val t = nfcTarget) {
+            is hi3.hashkit.data.nfc.NfcRouter.Target.MinerDetail -> {
+                nav.navigate("miner/${t.id}")
+                nfcRouter.consume()
+            }
+            // The AR overlay's ViewModel reads the Overlay payload and then consumes it.
+            is hi3.hashkit.data.nfc.NfcRouter.Target.Overlay -> nav.navigate("ar") { launchSingleTop = true }
+            null -> Unit
+        }
     }
     NavHost(navController = nav, startDestination = "dashboard") {
         composable("dashboard") {
