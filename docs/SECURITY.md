@@ -98,10 +98,11 @@ on the LAN, and is never logged, exported, or sent anywhere else.
 
 11. **On-demand — pool speed test (Advanced):** when you tap "Run speed test", the app
     makes a few TCP connections to the stratum host:port of each pool your fleet already
-    uses, any saved address-book pools, and the supported public pools (their documented
-    stratum endpoints — Hi3, Public Pool, CKPool, OCEAN, F2Pool, Braiins), and sends one
-    `mining.subscribe` line per pool to time the response. It sends nothing else — no
-    credentials, worker names, or telemetry — and runs only when you press the button.
+    uses (read from each miner's own pool config) and any saved address-book pools, and sends
+    one `mining.subscribe` line per pool to time the response. If you turn on "Also compare
+    public pools", it additionally tests the documented public stratum endpoints of CKPool,
+    OCEAN, F2Pool, Braiins and Public Pool. It sends nothing else — no credentials, worker
+    names, or telemetry — and runs only when you press the button.
 
 There is no analytics SDK, no advertising, no account requirement, and no contact
 with any other server unless you explicitly configure one of the opt-in integrations above.

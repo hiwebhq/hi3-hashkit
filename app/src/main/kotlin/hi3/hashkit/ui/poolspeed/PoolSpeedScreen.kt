@@ -54,6 +54,8 @@ data class PoolSpeedState(
     val running: Boolean = false,
     val results: List<PoolSpeedResult> = emptyList(),
     val message: String? = null,
+    /** Also test the well-known public pools (off by default; your own pools are always tested). */
+    val includePublic: Boolean = false,
 )
 
 @HiltViewModel
@@ -67,11 +69,20 @@ class PoolSpeedViewModel @Inject constructor(
     val state: StateFlow<PoolSpeedState> = _state
 
     init {
-        viewModelScope.launch { _state.value = _state.value.copy(candidates = collect().size) }
+        viewModelScope.launch { _state.value = _state.value.copy(candidates = collect(false).size) }
     }
 
-    /** Pools to test: each miner's current pool + every saved address-book pool, de-duped. */
-    private suspend fun collect(): List<Candidate> {
+    fun setIncludePublic(v: Boolean) {
+        _state.value = _state.value.copy(includePublic = v)
+        viewModelScope.launch { _state.value = _state.value.copy(candidates = collect(v).size) }
+    }
+
+    /**
+     * Pools to test. Your fleet's actual pools (from each miner's reported config — this is
+     * how a PRIVATE/LAN stratum gets tested) and saved address-book pools are always included.
+     * The well-known PUBLIC pools are added only when [includePublic] is on.
+     */
+    private suspend fun collect(includePublic: Boolean): List<Candidate> {
         val fromMiners = repository.observeMinerEntities().first()
             .filter { !it.isDemo }
             .map { repository.toDomain(it, Instant.now()) }
@@ -83,23 +94,22 @@ class PoolSpeedViewModel @Inject constructor(
         val fromSaved = savedPoolDao.observeAll().first().mapNotNull { sp ->
             PoolSpeedTester.parseStratum(sp.url, sp.port)?.let { (h, p) -> Candidate(sp.label, h, p) }
         }
-        // Every Pool Stats-supported pool with a documented public stratum endpoint.
-        val fromKnownPools = hi3.hashkit.integrations.hi3.PoolType.entries
-            .filter { !it.comingSoon && it.stratumHost != null }
-            .map { Candidate(it.displayName, it.stratumHost!!, it.stratumPort) }
-        // User's own pools first, then saved, then the built-in public pools; de-dup by host:port.
-        return (fromMiners + fromSaved + fromKnownPools).distinctBy { "${it.host}:${it.port}" }
+        val fromPublic = if (!includePublic) emptyList() else
+            hi3.hashkit.integrations.hi3.PoolType.entries
+                .filter { !it.comingSoon && it.stratumHost != null }
+                .map { Candidate("${it.displayName} (public)", it.stratumHost!!, it.stratumPort) }
+        return (fromMiners + fromSaved + fromPublic).distinctBy { "${it.host}:${it.port}" }
     }
 
     fun runTest() {
         if (_state.value.running) return
         viewModelScope.launch {
-            val candidates = collect()
+            val candidates = collect(_state.value.includePublic)
             if (candidates.isEmpty()) {
                 _state.value = _state.value.copy(message = "No pools found. Configure a pool on a miner or in the address book.")
                 return@launch
             }
-            _state.value = PoolSpeedState(candidates = candidates.size, running = true, results = emptyList())
+            _state.value = _state.value.copy(candidates = candidates.size, running = true, results = emptyList(), message = null)
             val results = mutableListOf<PoolSpeedResult>()
             for (c in candidates) {
                 val r = tester.test(c.label, c.host, c.port)
@@ -149,15 +159,32 @@ fun PoolSpeedScreen(
         ) {
             item {
                 Text(
-                    "Measures stratum latency to each pool your fleet uses, your saved pools, and " +
-                        "the supported public pools (Hi3, Public Pool, CKPool, OCEAN, F2Pool, " +
-                        "Braiins): the TCP handshake and a real mining.subscribe round-trip — no " +
-                        "packet sniffing. Measured from THIS phone's network, so it best reflects " +
-                        "your rigs when the phone shares their LAN/uplink. Public endpoints are the " +
-                        "pools' documented defaults; a regional server may be faster.",
+                    "Measures stratum latency — the TCP handshake and a real mining.subscribe " +
+                        "round-trip, no packet sniffing. It tests the pools your fleet actually " +
+                        "uses (read from each miner's own pool config, so PRIVATE/LAN stratum " +
+                        "works because the phone shares the fleet network) plus any saved pools. " +
+                        "Measured from THIS phone's network.",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
+            }
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Also compare public pools", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "CKPool, OCEAN, F2Pool, Braiins, Public Pool — their documented public " +
+                                "stratum endpoints (a regional server may be faster).",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
+                        )
+                    }
+                    androidx.compose.material3.Switch(
+                        checked = state.includePublic,
+                        onCheckedChange = viewModel::setIncludePublic,
+                        enabled = !state.running,
+                    )
+                }
             }
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {

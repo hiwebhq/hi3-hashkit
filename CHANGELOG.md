@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.72.0
+
+- **Pool speed test reworked for private stratum.** It now focuses on the pools your fleet
+  actually uses — read from each miner's own pool config — so **private/LAN stratum servers
+  are tested correctly** (the phone shares the fleet network), plus any saved address-book
+  pools. Comparing against the well-known **public** pools (CKPool, OCEAN, F2Pool, Braiins,
+  Public Pool) is now an opt-in toggle ("Also compare public pools"). The hardcoded Hi3
+  stratum entry was removed — Hi3's stratum is private and is discovered from the miners.
+
 ## 0.71.1
 
 - **Pool speed test:** point the built-in Hi3 stratum entry at `stratum.hi3.cc:3333` instead

@@ -23,10 +23,10 @@ enum class PoolType(
     val stratumHost: String? = null,
     val stratumPort: Int = 3333,
 ) {
-    HI3("Hi3 Pool", "https://pool.hi3.cc", baseUrlEditable = true, identifierLabel = "Payout address",
-        // pool.hi3.cc is Cloudflare-proxied (HTTP/HTTPS only), so stratum lives on a separate
-        // unproxied host. Requires a DNS-only A record: stratum.hi3.cc -> stratum origin IP.
-        stratumHost = "stratum.hi3.cc", stratumPort = 3333),
+    // Hi3 / self-hosted pools keep stratum on a private/non-public host (pool.hi3.cc is
+    // Cloudflare-proxied, HTTP/HTTPS only). There's no public stratum endpoint to hardcode —
+    // it's tested from each miner's own reported pool config instead. stratumHost stays null.
+    HI3("Hi3 Pool", "https://pool.hi3.cc", baseUrlEditable = true, identifierLabel = "Payout address"),
     PUBLIC_POOL("Public Pool", "https://web.public-pool.io", baseUrlEditable = true, identifierLabel = "Payout address",
         stratumHost = "public-pool.io", stratumPort = 21496),
     CKPOOL("CKPool", "https://raw.stats.ckpool.org", baseUrlEditable = false, identifierLabel = "Payout address",
