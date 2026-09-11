@@ -30,6 +30,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -171,6 +174,7 @@ fun TableScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val hScroll = rememberScrollState()
+    var showPrintSize by remember { mutableStateOf(false) }
     val totalWidth = COLUMNS.sumOf { it.width }.dp
 
     Scaffold(
@@ -202,19 +206,7 @@ fun TableScreen(
             ) {
                 if (state.inventoryTagType.showQr) {
                     androidx.compose.material3.OutlinedButton(
-                        onClick = {
-                            hi3.hashkit.integrations.print.AssetTagPrinter.print(
-                                context,
-                                state.miners.map {
-                                    hi3.hashkit.integrations.print.AssetTagPrinter.TagData(
-                                        name = it.name,
-                                        mac = it.identity.macAddress,
-                                        ip = it.host,
-                                        location = it.location,
-                                    )
-                                },
-                            )
-                        },
+                        onClick = { showPrintSize = true },
                         enabled = state.miners.isNotEmpty(),
                     ) { Text("Print QR codes") }
                 }
@@ -265,8 +257,56 @@ fun TableScreen(
                     }
                 }
             }
+
+            if (showPrintSize) {
+                PrintSizeDialog(
+                    onDismiss = { showPrintSize = false },
+                    onPick = { size ->
+                        showPrintSize = false
+                        hi3.hashkit.integrations.print.AssetTagPrinter.print(
+                            context,
+                            state.miners.map {
+                                hi3.hashkit.integrations.print.AssetTagPrinter.TagData(
+                                    name = it.name,
+                                    mac = it.identity.macAddress,
+                                    ip = it.host,
+                                    location = it.location,
+                                )
+                            },
+                            size,
+                        )
+                    },
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun PrintSizeDialog(
+    onDismiss: () -> Unit,
+    onPick: (hi3.hashkit.integrations.print.AssetTagPrinter.TagSize) -> Unit,
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("QR sticker size") },
+        text = {
+            Column {
+                Text(
+                    "How big should each printed sticker be? Smaller fits more per page.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HiBrand.textSecondary,
+                )
+                hi3.hashkit.integrations.print.AssetTagPrinter.TagSize.entries.forEach { size ->
+                    androidx.compose.material3.TextButton(onClick = { onPick(size) }) { Text(size.label) }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            androidx.compose.material3.TextButton(onClick = onDismiss) { Text("Cancel") }
+        },
+    )
 }
 
 @Composable

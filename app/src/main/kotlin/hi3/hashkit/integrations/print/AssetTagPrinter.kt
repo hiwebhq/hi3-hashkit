@@ -37,18 +37,38 @@ object AssetTagPrinter {
     private const val PAGE_W = (210 * MM)   // A4 portrait
     private const val PAGE_H = (297 * MM)
     private const val MARGIN = 10 * MM
-    private const val TAG = 38 * MM         // sticker edge
-    private const val GAP = 5 * MM
-    private const val QR = 22 * MM          // QR edge inside the tag
 
-    fun print(context: Context, tags: List<TagData>) {
+    /** A sticker layout, in millimetres. All the on-page geometry scales from these. */
+    private class Sheet(tagMm: Float, gapMm: Float, qrMm: Float, nameMm: Float, subMm: Float) {
+        val tag = tagMm * MM        // sticker edge
+        val gap = gapMm * MM
+        val qr = qrMm * MM          // QR edge inside the tag
+        val nameSize = nameMm * MM
+        val subSize = subMm * MM
+        val qrTop = tag * 0.04f     // gap above the QR
+        val lineStep = subSize * 1.3f
+    }
+
+    /** Sticker size the user can pick when printing. */
+    enum class TagSize(val label: String) {
+        STANDARD("Standard — 38 mm"),
+        SMALL("Small — 25 mm"),
+    }
+
+    private fun sheetFor(size: TagSize): Sheet = when (size) {
+        TagSize.STANDARD -> Sheet(38f, 5f, 22f, 3.4f, 2.5f)
+        TagSize.SMALL -> Sheet(25f, 4f, 15f, 2.3f, 1.8f)
+    }
+
+    fun print(context: Context, tags: List<TagData>, size: TagSize = TagSize.STANDARD) {
         if (tags.isEmpty()) return
+        val sheet = sheetFor(size)
         val pdf = File(context.cacheDir, "asset-tags.pdf")
-        renderPdf(tags, pdf)
+        renderPdf(tags, pdf, sheet)
         val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
         printManager.print(
             "Hashkit asset tags",
-            PdfPrintAdapter(pdf, pageCount(tags.size)),
+            PdfPrintAdapter(pdf, pageCount(tags.size, sheet)),
             PrintAttributes.Builder()
                 .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
                 .setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
@@ -56,53 +76,54 @@ object AssetTagPrinter {
         )
     }
 
-    private fun columns() = ((PAGE_W - 2 * MARGIN + GAP) / (TAG + GAP)).toInt()
-    private fun rows() = ((PAGE_H - 2 * MARGIN + GAP) / (TAG + GAP)).toInt()
-    private fun perPage() = columns() * rows()
-    private fun pageCount(n: Int) = (n + perPage() - 1) / perPage()
+    private fun columns(s: Sheet) = ((PAGE_W - 2 * MARGIN + s.gap) / (s.tag + s.gap)).toInt()
+    private fun rows(s: Sheet) = ((PAGE_H - 2 * MARGIN + s.gap) / (s.tag + s.gap)).toInt()
+    private fun perPage(s: Sheet) = columns(s) * rows(s)
+    private fun pageCount(n: Int, s: Sheet) = (n + perPage(s) - 1) / perPage(s)
 
-    private fun renderPdf(tags: List<TagData>, out: File) {
+    private fun renderPdf(tags: List<TagData>, out: File, s: Sheet) {
         val doc = PdfDocument()
         val border = Paint().apply {
             style = Paint.Style.STROKE; strokeWidth = 0.5f; color = Color.LTGRAY
         }
         val nameText = Paint().apply {
-            isAntiAlias = true; textSize = 3.4f * MM; typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true; textSize = s.nameSize; typeface = Typeface.DEFAULT_BOLD
             textAlign = Paint.Align.CENTER; color = Color.BLACK
         }
         val smallText = Paint().apply {
-            isAntiAlias = true; textSize = 2.5f * MM; typeface = Typeface.MONOSPACE
+            isAntiAlias = true; textSize = s.subSize; typeface = Typeface.MONOSPACE
             textAlign = Paint.Align.CENTER; color = Color.DKGRAY
         }
-        tags.chunked(perPage()).forEachIndexed { pageIdx, pageTags ->
+        val cols = columns(s)
+        tags.chunked(perPage(s)).forEachIndexed { pageIdx, pageTags ->
             val page = doc.startPage(
                 PdfDocument.PageInfo.Builder(PAGE_W.toInt(), PAGE_H.toInt(), pageIdx + 1).create()
             )
             val canvas = page.canvas
             pageTags.forEachIndexed { i, tag ->
-                val col = i % columns()
-                val row = i / columns()
-                val x = MARGIN + col * (TAG + GAP)
-                val y = MARGIN + row * (TAG + GAP)
+                val col = i % cols
+                val row = i / cols
+                val x = MARGIN + col * (s.tag + s.gap)
+                val y = MARGIN + row * (s.tag + s.gap)
                 // Cut line.
-                canvas.drawRect(x, y, x + TAG, y + TAG, border)
+                canvas.drawRect(x, y, x + s.tag, y + s.tag, border)
                 // QR, centered near the top.
                 val qr = qrBitmap(
                     MinerTag.encode(tag.name, tag.mac, tag.ip, tag.location),
-                    QR.toInt() * 4, // 4x supersample keeps modules crisp at print resolution
+                    s.qr.toInt() * 4, // 4x supersample keeps modules crisp at print resolution
                 )
-                val qrLeft = x + (TAG - QR) / 2
-                canvas.drawBitmap(qr, null, android.graphics.RectF(qrLeft, y + 1.5f * MM, qrLeft + QR, y + 1.5f * MM + QR), null)
+                val qrLeft = x + (s.tag - s.qr) / 2
+                canvas.drawBitmap(qr, null, android.graphics.RectF(qrLeft, y + s.qrTop, qrLeft + s.qr, y + s.qrTop + s.qr), null)
                 qr.recycle()
                 // Text block under the QR: name, MAC, IP, location (skip blanks).
-                val cx = x + TAG / 2
-                var ty = y + 1.5f * MM + QR + 3.4f * MM
-                canvas.drawText(fit(tag.name, nameText, TAG - 3 * MM), cx, ty, nameText)
+                val cx = x + s.tag / 2
+                var ty = y + s.qrTop + s.qr + s.nameSize
+                canvas.drawText(fit(tag.name, nameText, s.tag - 3 * MM), cx, ty, nameText)
                 listOfNotNull(tag.mac, tag.ip, tag.location)
                     .filter { it.isNotBlank() }
                     .forEach { line ->
-                        ty += 3.1f * MM
-                        canvas.drawText(fit(line, smallText, TAG - 3 * MM), cx, ty, smallText)
+                        ty += s.lineStep
+                        canvas.drawText(fit(line, smallText, s.tag - 3 * MM), cx, ty, smallText)
                     }
             }
             doc.finishPage(page)

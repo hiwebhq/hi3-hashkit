@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.74.8
+
+- **Print QR codes: pick a sticker size.** Tapping "Print QR codes" now asks for a size —
+  **Standard (38 mm)** or **Small (25 mm)** — before printing. Small fits more stickers per page.
+
 ## 0.74.7
 
 - **NFC goes straight to the miner.** Tapping a Hi3 Hashkit tag now resolves the miner and opens
