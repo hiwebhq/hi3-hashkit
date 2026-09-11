@@ -214,7 +214,6 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onLeaderboard = { nav.navigate("leaderboard") },
                 onWall = { nav.navigate("wall") },
                 onTable = { nav.navigate("table") },
-                onRules = { nav.navigate("rules") },
                 onAdvanced = { nav.navigate("advanced") },
                 onExit = onExit,
             )
@@ -228,6 +227,7 @@ private fun AppNavHost(onExit: () -> Unit) {
                 onAddressBook = { nav.navigate("addressbook") },
                 onRack = { nav.navigate("rack") },
                 onPoolSpeed = { nav.navigate("poolspeed") },
+                onRules = { nav.navigate("rules") },
                 onHeatReuse = { nav.navigate("heatreuse") },
                 onSolar = { nav.navigate("solar") },
                 onPriceCurtailment = { nav.navigate("price") },

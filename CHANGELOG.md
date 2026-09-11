@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.73.1
+
+- **Automation rules** is now an Advanced feature — moved out of the dashboard overflow into
+  the Advanced hub, so it's gated with the rest.
+
 ## 0.73.0
 
 - **Advanced hub.** The advanced-gated features now live behind a single **Advanced** entry in

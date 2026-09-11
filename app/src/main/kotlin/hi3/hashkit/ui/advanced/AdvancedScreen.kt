@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CurrencyBitcoin
@@ -67,6 +68,7 @@ fun AdvancedScreen(
     onAddressBook: () -> Unit,
     onRack: () -> Unit,
     onPoolSpeed: () -> Unit,
+    onRules: () -> Unit,
     onHeatReuse: () -> Unit,
     onSolar: () -> Unit,
     onPriceCurtailment: () -> Unit,
@@ -99,6 +101,11 @@ fun AdvancedScreen(
             "AR rack overlay",
             "Point the camera at a miner's sticker to float its live stats",
             Icons.Filled.CameraAlt, onArOverlay,
+        ),
+        AdvancedItem(
+            "Automation rules",
+            "Condition → action rules across the fleet",
+            Icons.Filled.Bolt, onRules,
         ),
         AdvancedItem(
             "Schedules",
