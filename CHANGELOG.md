@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.3
+
+- **Hash rental: sat / USD toggle.** A unit toggle switches prices between **sat/PH·day** and your
+  **currency/PH·day** (USD by default), using the BTC price from Settings. USD is enabled once a BTC
+  price is known (fetched or entered).
+
 ## 0.76.2
 
 - **Public pools added to the address book.** The well-known pools the speed test can test —

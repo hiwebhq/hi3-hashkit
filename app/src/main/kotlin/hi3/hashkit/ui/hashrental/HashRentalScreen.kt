@@ -24,7 +24,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.FilterChip
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -48,11 +52,15 @@ data class HashRentalState(
     val market: BraiinsHashpowerClient.Market? = null,
     val asks: List<BraiinsHashpowerClient.Ask> = emptyList(),
     val error: String? = null,
+    /** Last known BTC price (in [currency]); 0 when not fetched/entered. */
+    val btcPrice: Double = 0.0,
+    val currency: String = "USD",
 )
 
 @HiltViewModel
 class HashRentalViewModel @Inject constructor(
     private val client: BraiinsHashpowerClient,
+    private val settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HashRentalState())
@@ -63,11 +71,17 @@ class HashRentalViewModel @Inject constructor(
     fun refresh() {
         _state.value = _state.value.copy(loading = true, error = null)
         viewModelScope.launch {
+            val s = settingsRepository.current()
             when (val r = client.fetch()) {
                 is BraiinsHashpowerClient.Result.Ok ->
-                    _state.value = HashRentalState(loading = false, market = r.market, asks = r.asks.take(6))
+                    _state.value = HashRentalState(
+                        loading = false, market = r.market, asks = r.asks.take(6),
+                        btcPrice = s.btcPrice, currency = s.currencyCode,
+                    )
                 is BraiinsHashpowerClient.Result.Error ->
-                    _state.value = _state.value.copy(loading = false, error = r.message)
+                    _state.value = _state.value.copy(
+                        loading = false, error = r.message, btcPrice = s.btcPrice, currency = s.currencyCode,
+                    )
             }
         }
     }
@@ -81,6 +95,12 @@ fun HashRentalScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var showUsd by remember { mutableStateOf(false) }
+    // USD needs a known BTC price; fall back to sat if we don't have one.
+    val usd = showUsd && state.btcPrice > 0
+    fun price(sat: Long): String =
+        if (usd) "%,.2f %s/PH·day".format(sat * state.btcPrice / 100_000_000_000.0, state.currency)
+        else "${satPerPhDay(sat)} sat/PH·day"
     fun openRent() {
         runCatching {
             context.startActivity(
@@ -118,6 +138,26 @@ fun HashRentalScreen(
                 )
             }
 
+            item {
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Show in", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
+                    FilterChip(selected = !showUsd, onClick = { showUsd = false }, label = { Text("sat") })
+                    FilterChip(
+                        selected = showUsd,
+                        onClick = { showUsd = true },
+                        enabled = state.btcPrice > 0,
+                        label = { Text(state.currency) },
+                    )
+                }
+            }
+            if (showUsd && state.btcPrice <= 0) {
+                item {
+                    Text(
+                        "Set or fetch the BTC price in Settings to see ${state.currency} values.",
+                        style = MaterialTheme.typography.labelSmall, color = HiBrand.statusDegraded,
+                    )
+                }
+            }
             if (state.loading) {
                 item { CircularProgressIndicator(Modifier.padding(8.dp)) }
             }
@@ -135,15 +175,15 @@ fun HashRentalScreen(
                         Column(Modifier.padding(16.dp)) {
                             Text("SPOT MARKET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                             Text(
-                                m.bestAskSat?.let { "${satPerPhDay(it)} sat/PH·day" } ?: "—",
+                                m.bestAskSat?.let { price(it) } ?: "—",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = HiBrand.accent,
                             )
                             Text("Best ask (cheapest hashrate to rent)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                             Spacer12()
-                            m.lastAvgPriceSat?.let { Line("Last avg price", "${satPerPhDay(it)} sat/PH·day") }
-                            m.bestBidSat?.let { Line("Best bid", "${satPerPhDay(it)} sat/PH·day") }
+                            m.lastAvgPriceSat?.let { Line("Last avg price", price(it)) }
+                            m.bestBidSat?.let { Line("Best bid", price(it)) }
                             m.availablePh?.let { Line("Hashrate available", "%,.0f PH/s".format(it)) }
                             m.matchedPh?.let { Line("Hashrate matched", "%,.0f PH/s".format(it)) }
                         }
@@ -156,7 +196,7 @@ fun HashRentalScreen(
                 for (ask in state.asks) {
                     item {
                         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("${satPerPhDay(ask.priceSat)} sat/PH·day", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
+                            Text(price(ask.priceSat), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
                             Text("%,.0f PH/s avail".format(ask.availablePh), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
                         }
                     }
