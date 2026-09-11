@@ -74,6 +74,8 @@ data class AppSettings(
     val pplnsSeeded: Boolean = false,
     /** One-time seed of the well-known public pools (from the speed test) into the address book. */
     val publicPoolsSeeded: Boolean = false,
+    /** URL the Hash rental "Rent" button opens — set to your Braiins referral link if you have one. */
+    val hashRentalUrl: String = "https://hashpower.braiins.com",
     /** Pool stats integration — OPT-IN; nothing is contacted while false. */
     val hi3PoolEnabled: Boolean = false,
     val hi3PoolBaseUrl: String = "https://pool.hi3.cc",
@@ -191,6 +193,7 @@ class SettingsRepository @Inject constructor(
         val confirmBeforeExit = booleanPreferencesKey("confirm_before_exit")
         val pplnsSeeded = booleanPreferencesKey("pplns_seeded")
         val publicPoolsSeeded = booleanPreferencesKey("public_pools_seeded")
+        val hashRentalUrl = stringPreferencesKey("hash_rental_url")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
         val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
@@ -278,6 +281,7 @@ class SettingsRepository @Inject constructor(
             confirmBeforeExit = p[Keys.confirmBeforeExit] ?: true,
             pplnsSeeded = p[Keys.pplnsSeeded] ?: false,
             publicPoolsSeeded = p[Keys.publicPoolsSeeded] ?: false,
+            hashRentalUrl = p[Keys.hashRentalUrl]?.takeIf { it.isNotBlank() } ?: "https://hashpower.braiins.com",
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
             hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
             hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
@@ -359,6 +363,10 @@ class SettingsRepository @Inject constructor(
     suspend fun setActiveFarmId(value: Long) = edit { it[Keys.activeFarmId] = value }
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
     suspend fun setInventoryTagType(value: InventoryTagType) = edit { it[Keys.inventoryTagType] = value.name }
+    suspend fun setHashRentalUrl(value: String) = edit {
+        val t = value.trim()
+        if (t.isBlank()) it.remove(Keys.hashRentalUrl) else it[Keys.hashRentalUrl] = t
+    }
     suspend fun setConfirmBeforeExit(value: Boolean) = edit { it[Keys.confirmBeforeExit] = value }
     suspend fun setPplnsSeeded(value: Boolean) = edit { it[Keys.pplnsSeeded] = value }
     suspend fun setPublicPoolsSeeded(value: Boolean) = edit { it[Keys.publicPoolsSeeded] = value }

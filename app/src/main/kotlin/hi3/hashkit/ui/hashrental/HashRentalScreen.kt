@@ -11,7 +11,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,8 +49,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val RENT_URL = "https://hashpower.braiins.com"
-
 data class HashRentalState(
     val loading: Boolean = true,
     val market: BraiinsHashpowerClient.Market? = null,
@@ -55,6 +57,8 @@ data class HashRentalState(
     /** Last known BTC price (in [currency]); 0 when not fetched/entered. */
     val btcPrice: Double = 0.0,
     val currency: String = "USD",
+    /** URL the "Rent" button opens — configurable (e.g. your Braiins referral link). */
+    val rentUrl: String = "https://hashpower.braiins.com",
 )
 
 @HiltViewModel
@@ -76,13 +80,21 @@ class HashRentalViewModel @Inject constructor(
                 is BraiinsHashpowerClient.Result.Ok ->
                     _state.value = HashRentalState(
                         loading = false, market = r.market, asks = r.asks.take(6),
-                        btcPrice = s.btcPrice, currency = s.currencyCode,
+                        btcPrice = s.btcPrice, currency = s.currencyCode, rentUrl = s.hashRentalUrl,
                     )
                 is BraiinsHashpowerClient.Result.Error ->
                     _state.value = _state.value.copy(
-                        loading = false, error = r.message, btcPrice = s.btcPrice, currency = s.currencyCode,
+                        loading = false, error = r.message, btcPrice = s.btcPrice,
+                        currency = s.currencyCode, rentUrl = s.hashRentalUrl,
                     )
             }
+        }
+    }
+
+    fun setRentUrl(value: String) {
+        viewModelScope.launch {
+            settingsRepository.setHashRentalUrl(value)
+            _state.value = _state.value.copy(rentUrl = settingsRepository.current().hashRentalUrl)
         }
     }
 }
@@ -96,6 +108,7 @@ fun HashRentalScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showUsd by remember { mutableStateOf(false) }
+    var editingUrl by remember { mutableStateOf(false) }
     // USD needs a known BTC price; fall back to sat if we don't have one.
     val usd = showUsd && state.btcPrice > 0
     fun price(sat: Long): String =
@@ -104,10 +117,18 @@ fun HashRentalScreen(
     fun openRent() {
         runCatching {
             context.startActivity(
-                android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(RENT_URL))
+                android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(state.rentUrl))
                     .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
             )
         }
+    }
+
+    if (editingUrl) {
+        RentUrlDialog(
+            current = state.rentUrl,
+            onDismiss = { editingUrl = false },
+            onSave = { viewModel.setRentUrl(it); editingUrl = false },
+        )
     }
 
     Scaffold(
@@ -117,6 +138,11 @@ fun HashRentalScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { editingUrl = true }) {
+                        Icon(Icons.Filled.Link, contentDescription = "Edit rent link")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -226,6 +252,35 @@ private fun Line(label: String, value: String) {
         Text(label, style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
         Text(value, style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
     }
+}
+
+@Composable
+private fun RentUrlDialog(current: String, onDismiss: () -> Unit, onSave: (String) -> Unit) {
+    var text by remember { mutableStateOf(current) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Rent link") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    "The URL the \"Rent\" button opens. Paste your Braiins Hashpower referral link " +
+                        "here if you have one — leave blank to reset to the default.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HiBrand.textSecondary,
+                )
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    singleLine = true,
+                    label = { Text("URL") },
+                    placeholder = { Text("https://hashpower.braiins.com") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = { TextButton(onClick = { onSave(text) }) { Text("Save") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+    )
 }
 
 @Composable

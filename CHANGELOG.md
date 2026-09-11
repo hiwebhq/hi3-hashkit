@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.7
+
+- **Configurable Rent link.** The Hash rental screen's "Rent on Braiins Hashpower" button now
+  opens a URL you can set yourself — tap the link icon in the top bar to paste your Braiins
+  Hashpower referral link (leave blank to reset to the default hashpower.braiins.com).
+
 ## 0.76.6
 
 - **Header fits one row.** The logo/name no longer wraps to two lines on narrower phones — the
