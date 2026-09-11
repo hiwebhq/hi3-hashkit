@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.72.1
+
+- Fleet card: shorten the daily-cost metric label to "Energy Est." (USD).
+
 ## 0.72.0
 
 - **Pool speed test reworked for private stratum.** It now focuses on the pools your fleet

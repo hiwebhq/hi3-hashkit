@@ -814,7 +814,7 @@ private fun FleetSummary(
                 Metric("Efficiency", Units.formatEfficiency(totals?.fleetEfficiencyJTh))
                 Metric("Hottest", Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
                 totals?.dailyCost?.let { cost ->
-                    Metric("Daily Energy Est.", "%.2f USD".format(cost))
+                    Metric("Energy Est.", "%.2f USD".format(cost))
                 }
             }
             Spacer(Modifier.height(12.dp))
