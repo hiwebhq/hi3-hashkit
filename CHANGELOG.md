@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.69.0
+
+- **Advanced features now require an unlock code.** `ADVANCED_FEATURES_FREE` is off, so the
+  advanced tier is hidden until you enter a valid code in Settings → Advanced features. Gated
+  behind it: Live Bitcoin, Schedules, Farms, Pool address book, Rack & site, the Log Analyzer
+  toggle, and the local web dashboard / Prometheus endpoint. Everything else stays free.
+
 ## 0.68.0
 
 - **Log Analyzer — persistent tier.** Viewing a miner's logs now **captures** them to a local

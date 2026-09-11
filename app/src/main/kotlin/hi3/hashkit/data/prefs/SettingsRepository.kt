@@ -193,7 +193,7 @@ class SettingsRepository @Inject constructor(
          * the whole set ships free in this release. Flip to false in a future build to
          * require a valid unlock code (see [hi3.hashkit.core.LicenseValidator]).
          */
-        const val ADVANCED_FEATURES_FREE = true
+        const val ADVANCED_FEATURES_FREE = false
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { p ->
