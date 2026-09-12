@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.76.8
+
+- **Internal cleanup.** Rent-link code polish: one shared default-URL constant, and the
+  Hash rental screen now picks up the saved URL reactively. No behavior changes.
+
 ## 0.76.7
 
 - **Configurable Rent link.** The Hash rental screen's "Rent on Braiins Hashpower" button now
