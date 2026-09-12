@@ -40,24 +40,27 @@ class BraiinsHashpowerClient @Inject constructor(
         data class Error(val message: String) : Result
     }
 
+    /** Overridable for tests (MockWebServer); production always uses the real endpoint. */
+    internal var baseUrl: String = BASE
+
     suspend fun fetch(): Result = withContext(Dispatchers.IO) {
         runCatching {
-            val statsBody = get("$BASE/spot/stats")
+            val statsBody = get("$baseUrl/spot/stats")
                 ?: return@withContext Result.Error("Couldn't reach Braiins Hashpower.")
             val stats = json.decodeFromString<StatsDto>(statsBody)
-            val asks = get("$BASE/spot/orderbook")?.let {
+            val asks = get("$baseUrl/spot/orderbook")?.let {
                 runCatching { json.decodeFromString<OrderbookDto>(it).asks }.getOrNull()
             }.orEmpty()
                 .mapNotNull { a ->
                     val p = a.priceSat ?: return@mapNotNull null
-                    Ask(p, a.availablePh ?: 0.0)
+                    Ask(Math.round(p), a.availablePh ?: 0.0)
                 }
                 .sortedBy { it.priceSat }
             Result.Ok(
                 Market(
-                    bestAskSat = stats.bestAskSat,
-                    bestBidSat = stats.bestBidSat,
-                    lastAvgPriceSat = stats.lastAvgPriceSat,
+                    bestAskSat = stats.bestAskSat?.let(Math::round),
+                    bestBidSat = stats.bestBidSat?.let(Math::round),
+                    lastAvgPriceSat = stats.lastAvgPriceSat?.let(Math::round),
                     volume24h = stats.volume24h,
                     availablePh = stats.availablePh,
                     matchedPh = stats.matchedPh,
@@ -74,11 +77,13 @@ class BraiinsHashpowerClient @Inject constructor(
             }
         }.getOrNull()
 
+    // Sat prices are decoded as Double: the API returns them as integers or decimals
+    // (last_avg_price_sat went fractional 2026-09) — they're rounded to whole sats above.
     @Serializable
     private data class StatsDto(
-        @SerialName("best_ask_sat") val bestAskSat: Long? = null,
-        @SerialName("best_bid_sat") val bestBidSat: Long? = null,
-        @SerialName("last_avg_price_sat") val lastAvgPriceSat: Long? = null,
+        @SerialName("best_ask_sat") val bestAskSat: Double? = null,
+        @SerialName("best_bid_sat") val bestBidSat: Double? = null,
+        @SerialName("last_avg_price_sat") val lastAvgPriceSat: Double? = null,
         @SerialName("volume_24h_m") val volume24h: Double? = null,
         @SerialName("hash_rate_available_10m_ph") val availablePh: Double? = null,
         @SerialName("hash_rate_matched_10m_ph") val matchedPh: Double? = null,
@@ -89,7 +94,7 @@ class BraiinsHashpowerClient @Inject constructor(
 
     @Serializable
     private data class AskDto(
-        @SerialName("price_sat") val priceSat: Long? = null,
+        @SerialName("price_sat") val priceSat: Double? = null,
         @SerialName("hr_available_ph") val availablePh: Double? = null,
     )
 
