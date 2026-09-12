@@ -1,6 +1,8 @@
 package hi3.hashkit.ui.detail
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -584,6 +587,13 @@ private fun NotePhoto(path: String) {
             onDismissRequest = { viewing = false },
             properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false),
         ) {
+            // Pinch to zoom, drag to pan; a plain tap (anywhere) still closes the viewer.
+            var scale by remember { mutableStateOf(1f) }
+            var pan by remember { mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
+            val transformState = rememberTransformableState { zoom, offset, _ ->
+                scale = (scale * zoom).coerceIn(1f, 6f)
+                pan = if (scale > 1f) pan + offset else androidx.compose.ui.geometry.Offset.Zero
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -595,7 +605,14 @@ private fun NotePhoto(path: String) {
                         bitmap = full,
                         contentDescription = "Maintenance photo",
                         contentScale = androidx.compose.ui.layout.ContentScale.Fit,
-                        modifier = Modifier.fillMaxSize().padding(8.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp)
+                            .graphicsLayer {
+                                scaleX = scale; scaleY = scale
+                                translationX = pan.x; translationY = pan.y
+                            }
+                            .transformable(transformState),
                     )
                 } else {
                     Text("Photo file is missing", color = HiBrand.textSecondary)

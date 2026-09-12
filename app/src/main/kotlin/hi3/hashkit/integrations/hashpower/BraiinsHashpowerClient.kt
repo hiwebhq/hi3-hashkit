@@ -37,13 +37,31 @@ class BraiinsHashpowerClient @Inject constructor(
 
     sealed interface Result {
         data class Ok(val market: Market, val asks: List<Ask>) : Result
-        data class Error(val message: String) : Result
+        data class Error(
+            val message: String,
+            /** Last good snapshot from this app session, if any — the UI shows it stale-stamped. */
+            val cached: Ok? = null,
+            val cachedAtEpochMs: Long = 0,
+        ) : Result
     }
 
     /** Overridable for tests (MockWebServer); production always uses the real endpoint. */
     internal var baseUrl: String = BASE
 
-    suspend fun fetch(): Result = withContext(Dispatchers.IO) {
+    @Volatile private var lastOk: Result.Ok? = null
+
+    @Volatile private var lastOkAtEpochMs: Long = 0
+
+    suspend fun fetch(): Result = when (val r = fetchLive()) {
+        is Result.Ok -> {
+            lastOk = r
+            lastOkAtEpochMs = System.currentTimeMillis()
+            r
+        }
+        is Result.Error -> r.copy(cached = lastOk, cachedAtEpochMs = lastOkAtEpochMs)
+    }
+
+    private suspend fun fetchLive(): Result = withContext(Dispatchers.IO) {
         runCatching {
             val statsBody = get("$baseUrl/spot/stats")
                 ?: return@withContext Result.Error("Couldn't reach Braiins Hashpower.")

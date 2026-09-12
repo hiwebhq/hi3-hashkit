@@ -34,6 +34,13 @@ interface MaintenanceDao {
     @Query("SELECT * FROM maintenance_notes WHERE minerId = :minerId ORDER BY atEpochMs DESC")
     suspend fun listForMiner(minerId: Long): List<MaintenanceNoteEntity>
 
+    @Query("SELECT photoPath FROM maintenance_notes WHERE photoPath IS NOT NULL")
+    suspend fun allPhotoPaths(): List<String>
+
+    /** Drop notes whose miner no longer exists (photo files are swept separately). */
+    @Query("DELETE FROM maintenance_notes WHERE minerId NOT IN (SELECT id FROM miners)")
+    suspend fun deleteOrphans()
+
     @Insert
     suspend fun insert(note: MaintenanceNoteEntity): Long
 

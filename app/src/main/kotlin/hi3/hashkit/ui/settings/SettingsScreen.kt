@@ -647,7 +647,7 @@ fun SettingsScreen(
                 ActionRow("Export fleet telemetry CSV (last 7 days)") {
                     viewModel.exportFleetCsv { share(it, "Export CSV") }
                 }
-                ActionRow("Backup miners, schedules & maintenance log") { backupPassPrompt = true }
+                ActionRow("Full backup (miners, farms, pools, rules, settings…)") { backupPassPrompt = true }
                 ActionRow("Restore from backup…") {
                     restorePicker.launch(arrayOf("application/json", "application/octet-stream", "text/plain", "*/*"))
                 }

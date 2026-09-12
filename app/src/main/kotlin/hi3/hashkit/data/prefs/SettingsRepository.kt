@@ -466,4 +466,51 @@ class SettingsRepository @Inject constructor(
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit { block(it) }
     }
+
+    // ------------------------------------------------------------- config backup ----
+
+    /**
+     * Every stored setting as a type-tagged string ("b:", "i:", "l:", "f:", "d:", "s:"),
+     * for the config backup. Keystore-encrypted secrets are device-bound and excluded;
+     * activeFarmId is a database row id that wouldn't survive a restore.
+     */
+    suspend fun exportForBackup(): Map<String, String> =
+        context.dataStore.data.first().asMap().entries
+            .filter { (k, _) -> k.name !in BACKUP_EXCLUDED_KEYS }
+            .mapNotNull { (k, v) ->
+                val tagged = when (v) {
+                    is Boolean -> "b:$v"
+                    is Int -> "i:$v"
+                    is Long -> "l:$v"
+                    is Float -> "f:$v"
+                    is Double -> "d:$v"
+                    is String -> "s:$v"
+                    else -> null // Set<String> etc. — not used by this app's settings
+                }
+                tagged?.let { k.name to it }
+            }.toMap()
+
+    /** Write settings captured by [exportForBackup] back; unknown/garbled entries are skipped. */
+    suspend fun importFromBackup(entries: Map<String, String>) = edit { p ->
+        for ((name, tagged) in entries) {
+            if (name in BACKUP_EXCLUDED_KEYS) continue
+            val value = tagged.substringAfter(':', "")
+            runCatching {
+                when (tagged.substringBefore(':', "")) {
+                    "b" -> p[booleanPreferencesKey(name)] = value.toBoolean()
+                    "i" -> p[intPreferencesKey(name)] = value.toInt()
+                    "l" -> p[longPreferencesKey(name)] = value.toLong()
+                    "f" -> p[androidx.datastore.preferences.core.floatPreferencesKey(name)] = value.toFloat()
+                    "d" -> p[doublePreferencesKey(name)] = value.toDouble()
+                    "s" -> p[stringPreferencesKey(name)] = value
+                }
+            }
+        }
+    }
+
 }
+
+private val BACKUP_EXCLUDED_KEYS = setOf(
+    "mmp_api_key_encrypted", "mqtt_password_enc", "ha_token_enc", // device-bound Keystore blobs
+    "active_farm_id", // DB row id, not portable
+)

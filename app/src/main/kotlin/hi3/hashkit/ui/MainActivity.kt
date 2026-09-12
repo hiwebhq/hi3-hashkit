@@ -47,8 +47,10 @@ import hi3.hashkit.ui.detail.MinerDetailScreen
 import hi3.hashkit.ui.discovery.AddMinerScreen
 import hi3.hashkit.ui.theme.Hi3MinerWatchTheme
 import hi3.hashkit.ui.theme.HiBrand
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -74,6 +76,9 @@ class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var savedPoolDao: hi3.hashkit.data.db.SavedPoolDao
+
+    @Inject
+    lateinit var minerRepository: hi3.hashkit.data.repo.MinerRepository
 
     /**
      * A scanned Hi3 Hashkit tag (from an NFC launch/foreground intent): resolve it to a miner and
@@ -127,6 +132,8 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         handleNfcIntent(intent)
         lifecycleScope.launch {
+            // Clean up maintenance notes/photos orphaned by past miner deletions.
+            withContext(Dispatchers.IO) { minerRepository.sweepOrphanMaintenance() }
             val settings = settingsRepository.current()
             // One-time seed of the local PPLNS test target into the pool address book.
             if (!settings.pplnsSeeded) {

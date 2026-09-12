@@ -28,10 +28,7 @@ class BraiinsHashpowerClientTest {
         server.shutdown()
     }
 
-    /** The live API returns sat prices as integers or decimals (last_avg_price_sat went
-     *  fractional 2026-09); both must parse, decimals rounding to whole sats. */
-    @Test
-    fun `fetch parses decimal sat prices`() = runTest {
+    private fun enqueueGoodPair() {
         server.enqueue(
             MockResponse().setBody(
                 """{"volume_24h_m":5259996.402522,"best_ask_sat":49055000,
@@ -45,6 +42,13 @@ class BraiinsHashpowerClientTest {
                 """{"asks":[{"hr_matched_ph":53.73,"price_sat":49055000.5,"hr_available_ph":53.73}]}"""
             )
         )
+    }
+
+    /** The live API returns sat prices as integers or decimals (last_avg_price_sat went
+     *  fractional 2026-09); both must parse, decimals rounding to whole sats. */
+    @Test
+    fun `fetch parses decimal sat prices`() = runTest {
+        enqueueGoodPair()
         val result = client.fetch()
         assertTrue("expected Ok, got $result", result is BraiinsHashpowerClient.Result.Ok)
         val ok = result as BraiinsHashpowerClient.Result.Ok
@@ -52,5 +56,18 @@ class BraiinsHashpowerClientTest {
         assertEquals(49055000L, ok.market.bestAskSat)
         assertEquals(65807000L, ok.market.bestBidSat)
         assertEquals(49055001L, ok.asks.single().priceSat)
+    }
+
+    /** After one good fetch, a failed fetch carries the last good snapshot for stale display. */
+    @Test
+    fun `fetch failure returns last good snapshot as cached`() = runTest {
+        enqueueGoodPair()
+        client.fetch()
+        server.enqueue(MockResponse().setBody("not json"))
+        val result = client.fetch()
+        assertTrue("expected Error, got $result", result is BraiinsHashpowerClient.Result.Error)
+        val err = result as BraiinsHashpowerClient.Result.Error
+        assertEquals(53259757L, err.cached?.market?.lastAvgPriceSat)
+        assertTrue(err.cachedAtEpochMs > 0)
     }
 }

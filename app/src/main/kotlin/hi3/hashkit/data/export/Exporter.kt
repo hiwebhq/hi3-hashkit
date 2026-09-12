@@ -32,6 +32,10 @@ class Exporter @Inject constructor(
     private val telemetryDao: TelemetryDao,
     private val scheduleDao: ScheduleDao,
     private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
+    private val farmDao: hi3.hashkit.data.db.FarmDao,
+    private val ruleDao: hi3.hashkit.data.db.RuleDao,
+    private val savedPoolDao: hi3.hashkit.data.db.SavedPoolDao,
+    private val settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
     private val pollingEngine: hi3.hashkit.data.poll.PollingEngine? = null,
 ) {
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
@@ -105,6 +109,49 @@ class Exporter @Inject constructor(
         val notes: String?,
         val tagsCsv: String,
         val expectedHashrateGhs: Double?,
+        // Format 3+ (older backups decode with the defaults). The miner's credential is
+        // Keystore-encrypted (device-bound) and deliberately not backed up.
+        /** Owning farm, referenced by name so it can re-link on restore. */
+        val farm: String? = null,
+        val alertHashBelowPct: Double? = null,
+        val alertChipTempC: Double? = null,
+        val alertVrTempC: Double? = null,
+        val alertRejectPct: Double? = null,
+        val alertsMuted: Boolean = false,
+        val plugType: String? = null,
+        val plugHost: String? = null,
+        val plugOnUrl: String? = null,
+        val plugOffUrl: String? = null,
+        val plugCutoffTempC: Double? = null,
+    )
+
+    @Serializable
+    data class BackupFarm(
+        val name: String,
+        val isDefault: Boolean,
+        val subnetsCsv: String,
+        val notes: String?,
+        val refreshIntervalMs: Long,
+    )
+
+    @Serializable
+    data class BackupPool(
+        val label: String,
+        val url: String,
+        val port: Int,
+        val worker: String,
+        val includeInTest: Boolean,
+    )
+
+    @Serializable
+    data class BackupRule(
+        val enabled: Boolean,
+        val label: String,
+        val conditionType: String,
+        val threshold: Double?,
+        val actionType: String,
+        val targetGroup: String?,
+        val minIntervalMinutes: Int,
     )
 
     @Serializable
@@ -132,29 +179,53 @@ class Exporter @Inject constructor(
 
     @Serializable
     data class Backup(
-        val format: Int = 2,
+        /** Decode default stays 1: pre-format-3 files never wrote this field (defaults are
+         *  not encoded), so an absent field must read as the oldest format, not the newest. */
+        val format: Int = 1,
         val exportedAt: String,
         val miners: List<BackupMiner>,
         val schedules: List<BackupSchedule>,
         /** Added in format 2; older backups decode with no notes. */
         val maintenanceNotes: List<BackupNote> = emptyList(),
+        // Format 3+: the rest of the configuration.
+        val farms: List<BackupFarm> = emptyList(),
+        val pools: List<BackupPool> = emptyList(),
+        val rules: List<BackupRule> = emptyList(),
+        /** Settings as type-tagged strings; Keystore-encrypted secrets are never included. */
+        val settings: Map<String, String> = emptyMap(),
     )
 
     /**
-     * Configuration backup: miners + schedules + maintenance notes (with their photos,
-     * base64-embedded). Telemetry history is not included.
+     * Full configuration backup: miners (with alert overrides + plug config), schedules,
+     * maintenance notes (photos base64-embedded), farms, the pool address book, automation
+     * rules, and app settings. Telemetry history and Keystore-encrypted secrets (miner
+     * credentials, MMP/MQTT/HA tokens — device-bound) are not included.
      * When [passphrase] is non-blank the file is encrypted with [BackupCrypto] and
      * gets a .hi3enc extension; otherwise it is plaintext JSON.
      */
     suspend fun backupJson(passphrase: String? = null): File = withContext(Dispatchers.IO) {
         val miners = minerDao.observeAll().first().filter { !it.isDemo }
         val schedules = scheduleDao.observeAll().first()
+        val farms = farmDao.all()
+        val farmNameById = farms.associate { it.id to it.name }
         val backup = Backup(
+            format = CURRENT_BACKUP_FORMAT,
             exportedAt = Instant.now().toString(),
             miners = miners.map {
                 BackupMiner(
                     it.stableKey, it.adapterType, it.name, it.host, it.port,
                     it.groupName, it.location, it.notes, it.tagsCsv, it.expectedHashrateGhs,
+                    farm = it.farmId?.let(farmNameById::get),
+                    alertHashBelowPct = it.alertHashBelowPct,
+                    alertChipTempC = it.alertChipTempC,
+                    alertVrTempC = it.alertVrTempC,
+                    alertRejectPct = it.alertRejectPct,
+                    alertsMuted = it.alertsMuted,
+                    plugType = it.plugType,
+                    plugHost = it.plugHost,
+                    plugOnUrl = it.plugOnUrl,
+                    plugOffUrl = it.plugOffUrl,
+                    plugCutoffTempC = it.plugCutoffTempC,
                 )
             },
             schedules = schedules.map {
@@ -178,6 +249,19 @@ class Exporter @Inject constructor(
                     )
                 }
             },
+            farms = farms.map {
+                BackupFarm(it.name, it.isDefault, it.subnetsCsv, it.notes, it.refreshIntervalMs)
+            },
+            pools = savedPoolDao.observeAll().first().map {
+                BackupPool(it.label, it.url, it.port, it.worker, it.includeInTest)
+            },
+            rules = ruleDao.observeAll().first().map {
+                BackupRule(
+                    it.enabled, it.label, it.conditionType, it.threshold,
+                    it.actionType, it.targetGroup, it.minIntervalMinutes,
+                )
+            },
+            settings = settingsRepository.exportForBackup(),
         )
         val plain = json.encodeToString(backup)
         val pass = passphrase?.trim().orEmpty()
@@ -205,9 +289,25 @@ class Exporter @Inject constructor(
         } else content
         val backup = runCatching { json.decodeFromString<Backup>(decoded) }.getOrNull()
             ?: return@withContext "Not a valid Hi3 Miner Watch backup file."
+        // Farms first (matched by name) so miners can re-link to them by id.
+        for (f in backup.farms) {
+            if (farmDao.all().none { it.name.equals(f.name, ignoreCase = true) }) {
+                runCatching {
+                    farmDao.insert(
+                        hi3.hashkit.data.db.FarmEntity(
+                            name = f.name, isDefault = false, subnetsCsv = f.subnetsCsv,
+                            notes = f.notes, createdAtEpochMs = System.currentTimeMillis(),
+                            refreshIntervalMs = f.refreshIntervalMs,
+                        )
+                    )
+                }
+            }
+        }
+        val farmIdByName = farmDao.all().associateBy({ it.name.lowercase() }, { it.id })
         var minersAdded = 0
         var minersUpdated = 0
         for (m in backup.miners) {
+            val farmId = m.farm?.let { farmIdByName[it.lowercase()] }
             val existing = minerDao.byStableKey(m.stableKey)
             if (existing == null) {
                 minerDao.insert(
@@ -219,17 +319,32 @@ class Exporter @Inject constructor(
                         groupName = m.group, location = m.location, notes = m.notes,
                         tagsCsv = m.tagsCsv, expectedHashrateGhs = m.expectedHashrateGhs,
                         isDemo = false, createdAtEpochMs = System.currentTimeMillis(),
-                        lastSeenAtEpochMs = null,
+                        lastSeenAtEpochMs = null, farmId = farmId,
+                        alertHashBelowPct = m.alertHashBelowPct, alertChipTempC = m.alertChipTempC,
+                        alertVrTempC = m.alertVrTempC, alertRejectPct = m.alertRejectPct,
+                        alertsMuted = m.alertsMuted, plugType = m.plugType, plugHost = m.plugHost,
+                        plugOnUrl = m.plugOnUrl, plugOffUrl = m.plugOffUrl,
+                        plugCutoffTempC = m.plugCutoffTempC,
                     )
                 )
                 minersAdded++
             } else {
+                val updated = existing.copy(
+                    name = m.name, host = m.host, port = m.port, groupName = m.group,
+                    location = m.location, notes = m.notes, tagsCsv = m.tagsCsv,
+                    expectedHashrateGhs = m.expectedHashrateGhs,
+                    farmId = farmId ?: existing.farmId,
+                )
                 minerDao.update(
-                    existing.copy(
-                        name = m.name, host = m.host, port = m.port, groupName = m.group,
-                        location = m.location, notes = m.notes, tagsCsv = m.tagsCsv,
-                        expectedHashrateGhs = m.expectedHashrateGhs,
-                    )
+                    // A pre-format-3 backup never recorded overrides/plug config — keep the
+                    // device's current values rather than wiping them with absent fields.
+                    if (backup.format >= 3) updated.copy(
+                        alertHashBelowPct = m.alertHashBelowPct, alertChipTempC = m.alertChipTempC,
+                        alertVrTempC = m.alertVrTempC, alertRejectPct = m.alertRejectPct,
+                        alertsMuted = m.alertsMuted, plugType = m.plugType, plugHost = m.plugHost,
+                        plugOnUrl = m.plugOnUrl, plugOffUrl = m.plugOffUrl,
+                        plugCutoffTempC = m.plugCutoffTempC,
+                    ) else updated
                 )
                 minersUpdated++
             }
@@ -245,6 +360,38 @@ class Exporter @Inject constructor(
                 )
             )
         }
+        // Address book, rules, settings (format 3+); duplicates skipped on repeat restores.
+        var poolsAdded = 0
+        val existingPools = savedPoolDao.observeAll().first()
+        for (p in backup.pools) {
+            if (existingPools.any { it.url == p.url && it.port == p.port && it.worker == p.worker && it.label == p.label }) continue
+            savedPoolDao.upsert(
+                hi3.hashkit.data.db.SavedPoolEntity(
+                    label = p.label, url = p.url, port = p.port, worker = p.worker,
+                    includeInTest = p.includeInTest,
+                )
+            )
+            poolsAdded++
+        }
+        var rulesAdded = 0
+        val existingRules = ruleDao.observeAll().first()
+        for (r in backup.rules) {
+            if (existingRules.any {
+                    it.label == r.label && it.conditionType == r.conditionType &&
+                        it.actionType == r.actionType && it.targetGroup == r.targetGroup
+                }
+            ) continue
+            ruleDao.upsert(
+                hi3.hashkit.data.db.RuleEntity(
+                    enabled = r.enabled, label = r.label, conditionType = r.conditionType,
+                    threshold = r.threshold, actionType = r.actionType, targetGroup = r.targetGroup,
+                    minIntervalMinutes = r.minIntervalMinutes, lastFiredAtEpochMs = null,
+                    lastResult = null,
+                )
+            )
+            rulesAdded++
+        }
+        if (backup.settings.isNotEmpty()) settingsRepository.importFromBackup(backup.settings)
         // Maintenance notes (format 2+): re-attach by stableKey; skip duplicates so a repeated
         // restore doesn't multiply notes. Photos are re-materialized into app-private storage.
         var notesAdded = 0
@@ -268,9 +415,11 @@ class Exporter @Inject constructor(
             )
             notesAdded++
         }
-        "Restored: $minersAdded miners added, $minersUpdated updated, " +
-            "${backup.schedules.size} schedules and $notesAdded maintenance notes imported " +
-            "(identity re-verifies on next poll)."
+        "Restored: $minersAdded miners added, $minersUpdated updated; " +
+            "${backup.schedules.size} schedules, $notesAdded maintenance notes, " +
+            "${backup.farms.size} farms, $poolsAdded pools, $rulesAdded rules" +
+            (if (backup.settings.isNotEmpty()) " and app settings" else "") +
+            " imported (identity re-verifies on next poll)."
     }
 
     // -------------------------------------------------------------- diagnostics ----
@@ -336,4 +485,9 @@ class Exporter @Inject constructor(
     private fun timestamp(): String =
         DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")
             .format(java.time.LocalDateTime.now())
+
+    companion object {
+        /** 1: miners+schedules; 2: +maintenance notes/photos; 3: +farms/pools/rules/settings. */
+        const val CURRENT_BACKUP_FORMAT = 3
+    }
 }

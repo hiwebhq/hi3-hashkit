@@ -35,6 +35,8 @@ class MinerRepository @Inject constructor(
     private val registry: AdapterRegistry,
     private val hourlyDao: hi3.hashkit.data.db.HourlyDao? = null,
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient? = null,
+    private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao? = null,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context? = null,
 ) {
     /** Telemetry older than this renders as stale/UNKNOWN rather than pretending freshness. */
     val staleAfterMs: Long = 120_000
@@ -145,7 +147,32 @@ class MinerRepository @Inject constructor(
         return AddMinerResult.Added(id)
     }
 
-    suspend fun deleteMiner(id: Long) = minerDao.delete(id)
+    suspend fun deleteMiner(id: Long) {
+        // Maintenance notes go with the miner — photo files first, then their rows.
+        maintenanceDao?.let { dao ->
+            dao.listForMiner(id).forEach { note ->
+                note.photoPath?.let { runCatching { java.io.File(it).delete() } }
+            }
+            dao.deleteForMiner(id)
+        }
+        minerDao.delete(id)
+    }
+
+    /**
+     * One-time-per-launch cleanup: drop maintenance notes whose miner was deleted before
+     * notes were cleaned up with the miner, and photo files no remaining note references.
+     */
+    suspend fun sweepOrphanMaintenance() {
+        val dao = maintenanceDao ?: return
+        val filesDir = context?.filesDir ?: return
+        runCatching {
+            dao.deleteOrphans()
+            val referenced = dao.allPhotoPaths().toSet()
+            java.io.File(filesDir, "maintenance").listFiles()?.forEach { f ->
+                if (f.absolutePath !in referenced) f.delete()
+            }
+        }
+    }
 
     /** Update user-editable metadata (name, group, location, notes, tags, expected hashrate). */
     suspend fun updateMinerMeta(

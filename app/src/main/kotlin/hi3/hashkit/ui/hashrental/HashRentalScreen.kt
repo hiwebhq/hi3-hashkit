@@ -62,6 +62,8 @@ data class HashRentalState(
     val currency: String = "USD",
     /** URL the "Rent" button opens — configurable (e.g. your Braiins referral link). */
     val rentUrl: String = DEFAULT_HASH_RENTAL_URL,
+    /** When the shown market data was fetched; used to stamp stale data after a failed refresh. */
+    val asOfEpochMs: Long = 0,
 )
 
 @HiltViewModel
@@ -90,11 +92,17 @@ class HashRentalViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         loading = false, market = r.market, asks = r.asks.take(6),
                         error = null, btcPrice = s.btcPrice, currency = s.currencyCode,
+                        asOfEpochMs = System.currentTimeMillis(),
                     )
                 is BraiinsHashpowerClient.Result.Error ->
+                    // Keep showing the last good snapshot (this screen's, or the session cache),
+                    // stale-stamped; the error renders as a banner above it.
                     _state.value = _state.value.copy(
                         loading = false, error = r.message, btcPrice = s.btcPrice,
                         currency = s.currencyCode,
+                        market = _state.value.market ?: r.cached?.market,
+                        asks = _state.value.asks.ifEmpty { r.cached?.asks.orEmpty().take(6) },
+                        asOfEpochMs = if (_state.value.market != null) _state.value.asOfEpochMs else r.cachedAtEpochMs,
                     )
             }
         }
@@ -194,7 +202,34 @@ fun HashRentalScreen(
                 item { CircularProgressIndicator(Modifier.padding(8.dp)) }
             }
             state.error?.let { err ->
-                item { Text(err, style = MaterialTheme.typography.bodyMedium, color = HiBrand.statusDegraded) }
+                item {
+                    var showDetails by remember { mutableStateOf(false) }
+                    Column {
+                        Text(
+                            "Braiins Hashpower is temporarily unavailable.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = HiBrand.statusDegraded,
+                        )
+                        if (state.market != null && state.asOfEpochMs > 0) {
+                            Text(
+                                "Showing prices from " + java.text.DateFormat.getTimeInstance(
+                                    java.text.DateFormat.SHORT,
+                                ).format(java.util.Date(state.asOfEpochMs)) + ".",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = HiBrand.textSecondary,
+                            )
+                        }
+                        Row {
+                            TextButton(onClick = { viewModel.refresh() }) { Text("Retry") }
+                            TextButton(onClick = { showDetails = !showDetails }) {
+                                Text(if (showDetails) "Hide details" else "Details")
+                            }
+                        }
+                        if (showDetails) {
+                            Text(err, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                        }
+                    }
+                }
             }
 
             state.market?.let { m ->
