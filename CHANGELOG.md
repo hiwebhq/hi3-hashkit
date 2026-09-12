@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.76.11
+
+- **Full backup.** Backups now include farms, the pool address book, automation rules, app
+  settings, and each miner's alert overrides and smart-plug config — alongside the miners,
+  schedules and maintenance log already there. Older backup files still restore.
+- **Maintenance cleanup.** Deleting a miner now removes its maintenance notes and photos;
+  leftovers from past deletions are swept on launch.
+- **Hash rental stays useful offline.** If the Braiins market fetch fails you keep the last
+  good prices with an "as of" time, a Retry button, and a readable error message.
+- **Zoom photos.** Pinch to zoom and pan in the maintenance photo viewer.
+
 ## 0.76.10
 
 - **Hash rental error fixed.** The Braiins Hashpower spot API started returning decimal sat
