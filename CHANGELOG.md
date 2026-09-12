@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.76.12
+
+- **Event logs for every miner.** Avalon, Braiins OS and Antminer-class miners now get an
+  event log derived from each poll — reboots, temp-limit crossings, disconnects, fan stops,
+  reject spikes — analyzed by the same Log Analyzer as Bitaxe firmware logs. Avalon also
+  reports its firmware health counters (overheat, thermal cutoff, comms errors).
+- **Miners that change IP reconnect themselves.** A miner that moves to a new address
+  (DHCP) is re-found by hardware identity and re-bound automatically, with an event line.
+- **Weekly auto-backup.** Pick a folder once in Settings and a full backup lands there
+  weekly (newest 8 kept).
+- **Hi3 PPLNS pool stats.** New pool option reading the PPLNS miners API.
+- **Maintenance photos.** Take photos with the camera directly, share any photo from the
+  full-screen viewer, and double-tap to zoom.
+- **In-app NFC scans handle every tag.** Unknown or blank tags open the scanner with a
+  clear message instead of bouncing to another app.
+- Faster poll cycles and log streaming; the dashboard energy estimate now respects your
+  currency setting; backup filenames include the miner count.
+
 ## 0.76.11
 
 - **Full backup.** Backups now include farms, the pool address book, automation rules, app
