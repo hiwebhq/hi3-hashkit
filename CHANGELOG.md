@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.76.9
+
+- **In-app NFC scans fixed.** Scanning a Hashkit tag while the app is open now jumps to the
+  Fleet table with that miner highlighted — same as scanning from the home screen. Previously
+  it bounced you back to the dashboard.
+- **Maintenance log in backups.** Notes and their photos are now included in the backup file
+  and restored with the miner they belong to (repeat restores don't duplicate them).
+- **Tap photos to view.** Maintenance-note photo thumbnails open full-screen on tap.
+
 ## 0.76.8
 
 - **Internal cleanup.** Rent-link code polish: one shared default-URL constant, and the
