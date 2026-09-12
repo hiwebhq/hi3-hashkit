@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.76.10
+
+- **Hash rental error fixed.** The Braiins Hashpower spot API started returning decimal sat
+  prices, which broke the market view with a JSON error. Prices now parse either way and are
+  rounded to whole sats.
+
 ## 0.76.9
 
 - **In-app NFC scans fixed.** Scanning a Hashkit tag while the app is open now jumps to the
