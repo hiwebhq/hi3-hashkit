@@ -31,6 +31,9 @@ interface MaintenanceDao {
     @Query("SELECT * FROM maintenance_notes WHERE minerId = :minerId ORDER BY atEpochMs DESC")
     fun observeForMiner(minerId: Long): Flow<List<MaintenanceNoteEntity>>
 
+    @Query("SELECT * FROM maintenance_notes WHERE minerId = :minerId ORDER BY atEpochMs DESC")
+    suspend fun listForMiner(minerId: Long): List<MaintenanceNoteEntity>
+
     @Insert
     suspend fun insert(note: MaintenanceNoteEntity): Long
 

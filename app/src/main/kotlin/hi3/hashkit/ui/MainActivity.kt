@@ -96,6 +96,32 @@ class MainActivity : FragmentActivity() {
         handleNfcIntent(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Claim Hashkit tags scanned while the app is open. Without foreground dispatch the OS
+        // dispatcher re-launches the task via the tag's AAR record (resetting navigation to the
+        // dashboard, with no NDEF payload) instead of delivering the tag to onNewIntent.
+        runCatching {
+            val filter = android.content.IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
+                addDataType(hi3.hashkit.ui.nfc.HASHKIT_MIME)
+            }
+            val flags =
+                if (android.os.Build.VERSION.SDK_INT >= 31) android.app.PendingIntent.FLAG_MUTABLE else 0
+            val pending = android.app.PendingIntent.getActivity(
+                this, 0,
+                Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                flags,
+            )
+            NfcAdapter.getDefaultAdapter(this)
+                ?.enableForegroundDispatch(this, pending, arrayOf(filter), null)
+        }
+    }
+
+    override fun onPause() {
+        runCatching { NfcAdapter.getDefaultAdapter(this)?.disableForegroundDispatch(this) }
+        super.onPause()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

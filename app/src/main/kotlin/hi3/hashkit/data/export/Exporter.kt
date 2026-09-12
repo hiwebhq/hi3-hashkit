@@ -31,6 +31,7 @@ class Exporter @Inject constructor(
     private val minerDao: MinerDao,
     private val telemetryDao: TelemetryDao,
     private val scheduleDao: ScheduleDao,
+    private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
     private val pollingEngine: hi3.hashkit.data.poll.PollingEngine? = null,
 ) {
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
@@ -120,15 +121,28 @@ class Exporter @Inject constructor(
     )
 
     @Serializable
+    data class BackupNote(
+        /** The owning miner's stableKey — notes are re-attached by it on restore. */
+        val minerStableKey: String,
+        val atEpochMs: Long,
+        val text: String,
+        /** The attached photo's bytes (base64), carried inside the backup; null if none. */
+        val photoBase64: String? = null,
+    )
+
+    @Serializable
     data class Backup(
-        val format: Int = 1,
+        val format: Int = 2,
         val exportedAt: String,
         val miners: List<BackupMiner>,
         val schedules: List<BackupSchedule>,
+        /** Added in format 2; older backups decode with no notes. */
+        val maintenanceNotes: List<BackupNote> = emptyList(),
     )
 
     /**
-     * Configuration backup: miners + schedules. Telemetry history is not included.
+     * Configuration backup: miners + schedules + maintenance notes (with their photos,
+     * base64-embedded). Telemetry history is not included.
      * When [passphrase] is non-blank the file is encrypted with [BackupCrypto] and
      * gets a .hi3enc extension; otherwise it is plaintext JSON.
      */
@@ -149,6 +163,20 @@ class Exporter @Inject constructor(
                     it.targetMinerIdsCsv, it.targetGroup, it.timeMinutesOfDay,
                     it.daysOfWeekCsv, it.minIntervalMinutes,
                 )
+            },
+            maintenanceNotes = miners.flatMap { miner ->
+                maintenanceDao.listForMiner(miner.id).map { note ->
+                    BackupNote(
+                        minerStableKey = miner.stableKey,
+                        atEpochMs = note.atEpochMs,
+                        text = note.text,
+                        photoBase64 = note.photoPath?.let { path ->
+                            runCatching {
+                                java.util.Base64.getEncoder().encodeToString(File(path).readBytes())
+                            }.getOrNull()
+                        },
+                    )
+                }
             },
         )
         val plain = json.encodeToString(backup)
@@ -217,8 +245,32 @@ class Exporter @Inject constructor(
                 )
             )
         }
+        // Maintenance notes (format 2+): re-attach by stableKey; skip duplicates so a repeated
+        // restore doesn't multiply notes. Photos are re-materialized into app-private storage.
+        var notesAdded = 0
+        for (n in backup.maintenanceNotes) {
+            val miner = minerDao.byStableKey(n.minerStableKey) ?: continue
+            val existing = maintenanceDao.listForMiner(miner.id)
+            if (existing.any { it.atEpochMs == n.atEpochMs && it.text == n.text }) continue
+            val photoPath = n.photoBase64?.let { b64 ->
+                runCatching {
+                    val dir = File(context.filesDir, "maintenance").apply { mkdirs() }
+                    val file = File(dir, "note_${n.atEpochMs}_${System.nanoTime()}.jpg")
+                    file.writeBytes(java.util.Base64.getDecoder().decode(b64))
+                    file.absolutePath
+                }.getOrNull()
+            }
+            maintenanceDao.insert(
+                hi3.hashkit.data.db.MaintenanceNoteEntity(
+                    minerId = miner.id, atEpochMs = n.atEpochMs, text = n.text,
+                    photoPath = photoPath,
+                )
+            )
+            notesAdded++
+        }
         "Restored: $minersAdded miners added, $minersUpdated updated, " +
-            "${backup.schedules.size} schedules imported (identity re-verifies on next poll)."
+            "${backup.schedules.size} schedules and $notesAdded maintenance notes imported " +
+            "(identity re-verifies on next poll)."
     }
 
     // -------------------------------------------------------------- diagnostics ----

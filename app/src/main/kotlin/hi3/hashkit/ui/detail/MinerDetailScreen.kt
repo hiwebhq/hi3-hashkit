@@ -1,7 +1,9 @@
 package hi3.hashkit.ui.detail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.OutlinedTextField
@@ -541,9 +543,11 @@ fun MinerDetailScreen(
     }
 }
 
-/** A downsampled thumbnail of a maintenance-note photo, decoded off-path and cached. */
+/** A downsampled thumbnail of a maintenance-note photo, decoded off-path and cached.
+ *  Tap to open the photo full-size (tap again to close). */
 @Composable
 private fun NotePhoto(path: String) {
+    var viewing by remember(path) { mutableStateOf(false) }
     val bitmap = androidx.compose.runtime.remember(path) {
         runCatching {
             val opts = android.graphics.BitmapFactory.Options().apply { inSampleSize = 4 }
@@ -553,13 +557,51 @@ private fun NotePhoto(path: String) {
     if (bitmap != null) {
         androidx.compose.foundation.Image(
             bitmap = bitmap,
-            contentDescription = "Maintenance photo",
+            contentDescription = "Maintenance photo — tap to view full size",
             contentScale = androidx.compose.ui.layout.ContentScale.Crop,
             modifier = Modifier
                 .padding(top = 6.dp)
                 .height(120.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { viewing = true },
         )
+    }
+    if (viewing) {
+        // Full-resolution view, capped near screen size so a large camera JPEG can't OOM.
+        val full = androidx.compose.runtime.remember(path) {
+            runCatching {
+                val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                android.graphics.BitmapFactory.decodeFile(path, bounds)
+                var sample = 1
+                while (bounds.outWidth / (sample * 2) >= 2048 || bounds.outHeight / (sample * 2) >= 2048) {
+                    sample *= 2
+                }
+                val opts = android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+                android.graphics.BitmapFactory.decodeFile(path, opts)?.asImageBitmap()
+            }.getOrNull()
+        }
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = { viewing = false },
+            properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { viewing = false },
+                contentAlignment = Alignment.Center,
+            ) {
+                if (full != null) {
+                    androidx.compose.foundation.Image(
+                        bitmap = full,
+                        contentDescription = "Maintenance photo",
+                        contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize().padding(8.dp),
+                    )
+                } else {
+                    Text("Photo file is missing", color = HiBrand.textSecondary)
+                }
+            }
+        }
     }
 }
 
