@@ -27,6 +27,8 @@ enum class PoolType(
     // Cloudflare-proxied, HTTP/HTTPS only). There's no public stratum endpoint to hardcode —
     // it's tested from each miner's own reported pool config instead. stratumHost stays null.
     HI3("Hi3 Pool", "https://pool.hi3.cc", baseUrlEditable = true, identifierLabel = "Payout address"),
+    // Miningcore-style API; the pool id (hi3-btc-pplns) is part of the request path.
+    HI3_PPLNS("Hi3 PPLNS", "https://pool.hi3.cc/pplns-api", baseUrlEditable = true, identifierLabel = "Payout address"),
     PUBLIC_POOL("Public Pool", "https://web.public-pool.io", baseUrlEditable = true, identifierLabel = "Payout address",
         stratumHost = "public-pool.io", stratumPort = 21496),
     CKPOOL("CKPool", "https://raw.stats.ckpool.org", baseUrlEditable = false, identifierLabel = "Payout address",

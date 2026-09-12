@@ -1,4 +1,5 @@
 [versions]
+detekt = "1.23.8"
 agp = "8.9.2"
 kotlin = "2.1.10"
 ksp = "2.1.10-1.0.31"
@@ -78,6 +79,7 @@ androidx-wear-protolayout-material = { group = "androidx.wear.protolayout", name
 androidx-concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }
 
 [plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

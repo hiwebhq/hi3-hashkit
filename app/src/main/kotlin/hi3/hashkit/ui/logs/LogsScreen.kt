@@ -44,12 +44,15 @@ import hi3.hashkit.adapters.espminer.EspMinerLogStream
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.adapter.MinerHost
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.util.launchChooser
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -69,6 +72,7 @@ class LogsViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val logStream: EspMinerLogStream,
     private val logRepository: hi3.hashkit.data.repo.LogRepository,
+    private val registry: hi3.hashkit.domain.adapter.AdapterRegistry,
     settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
 ) : ViewModel() {
 
@@ -88,8 +92,13 @@ class LogsViewModel @Inject constructor(
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val analysis: StateFlow<hi3.hashkit.domain.logs.LogAnalyzer.Analysis> =
         windowMs.flatMapLatest { w ->
-            if (w == 0L) _state.map { hi3.hashkit.domain.logs.LogAnalyzer.analyze(it.lines) }
-            else kotlinx.coroutines.flow.flow {
+            if (w == 0L) {
+                // Conflate + Default dispatcher: re-analyzing the whole buffer per arriving
+                // line on Main was the old behavior — a steady stream pinned the UI thread.
+                _state.map { hi3.hashkit.domain.logs.LogAnalyzer.analyze(it.lines) }
+                    .conflate()
+                    .flowOn(kotlinx.coroutines.Dispatchers.Default)
+            } else kotlinx.coroutines.flow.flow {
                 emit(logRepository.analyzeSince(minerId, w))
             }
         }.stateIn(
@@ -124,6 +133,20 @@ class LogsViewModel @Inject constructor(
         job?.cancel()
         job = viewModelScope.launch {
             val entity = repository.observeMinerEntity(minerId).first() ?: return@launch
+            // Firmwares without a log stream get the derived event log (recorded per poll
+            // by DerivedLogRecorder) instead of a WebSocket that could never connect.
+            val caps = registry.byType(entity.adapterType)
+                ?.getCapabilities(repository.identityOf(entity))
+            if (caps == null || hi3.hashkit.domain.model.Capability.LOGS !in caps) {
+                _state.value = _state.value.copy(
+                    minerName = entity.name,
+                    status = "Event log — derived from polls (no firmware log stream)",
+                )
+                logRepository.observeRecentTexts(minerId, MAX_LINES).collect { texts ->
+                    if (!_state.value.paused) _state.value = _state.value.copy(lines = texts)
+                }
+                return@launch
+            }
             _state.value = _state.value.copy(minerName = entity.name, status = "Connecting…")
             logStream.stream(MinerHost(entity.host, entity.port)).collect { event ->
                 when (event) {
@@ -357,7 +380,7 @@ private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modi
         item {
             androidx.compose.material3.OutlinedButton(onClick = {
                 viewModel.exportLogs { intent ->
-                    ctx.startActivity(android.content.Intent.createChooser(intent, "Export logs"))
+                    ctx.launchChooser(intent, "Export logs")
                 }
             }) { Text("Export captured logs") }
         }

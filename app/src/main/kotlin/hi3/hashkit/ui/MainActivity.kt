@@ -42,6 +42,7 @@ import hi3.hashkit.core.AppLockManager
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.discovery.AutoScanManager
+import hi3.hashkit.ui.util.openUrl
 import hi3.hashkit.ui.dashboard.DashboardScreen
 import hi3.hashkit.ui.detail.MinerDetailScreen
 import hi3.hashkit.ui.discovery.AddMinerScreen
@@ -90,8 +91,15 @@ class MainActivity : FragmentActivity() {
         if (a == NfcAdapter.ACTION_NDEF_DISCOVERED || a == NfcAdapter.ACTION_TAG_DISCOVERED ||
             a == NfcAdapter.ACTION_TECH_DISCOVERED
         ) {
-            val payload = hi3.hashkit.ui.nfc.payloadFromIntent(intent) ?: return
-            lifecycleScope.launch { nfcRouter.emit(nfcTagResolver.resolve(payload)) }
+            val payload = hi3.hashkit.ui.nfc.payloadFromIntent(intent)
+            lifecycleScope.launch {
+                nfcRouter.emit(
+                    // Unreadable/blank tag: hand the overlay an empty payload so the scan
+                    // screen opens and says so, instead of silently ignoring the tap.
+                    if (payload == null) hi3.hashkit.data.nfc.NfcRouter.Target.Overlay("")
+                    else nfcTagResolver.resolve(payload),
+                )
+            }
         }
     }
 
@@ -103,13 +111,12 @@ class MainActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Claim Hashkit tags scanned while the app is open. Without foreground dispatch the OS
-        // dispatcher re-launches the task via the tag's AAR record (resetting navigation to the
-        // dashboard, with no NDEF payload) instead of delivering the tag to onNewIntent.
+        // Claim every tag scanned while the app is open (null filters = all tags). Hashkit tags
+        // route to the miner highlight; unknown/blank tags open the scan overlay's add flow.
+        // Without foreground dispatch the OS dispatcher re-launches the task via a Hashkit tag's
+        // AAR record (resetting navigation to the dashboard, with no NDEF payload) or bounces
+        // foreign tags to other apps, instead of delivering the tag to onNewIntent.
         runCatching {
-            val filter = android.content.IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED).apply {
-                addDataType(hi3.hashkit.ui.nfc.HASHKIT_MIME)
-            }
             val flags =
                 if (android.os.Build.VERSION.SDK_INT >= 31) android.app.PendingIntent.FLAG_MUTABLE else 0
             val pending = android.app.PendingIntent.getActivity(
@@ -118,7 +125,7 @@ class MainActivity : FragmentActivity() {
                 flags,
             )
             NfcAdapter.getDefaultAdapter(this)
-                ?.enableForegroundDispatch(this, pending, arrayOf(filter), null)
+                ?.enableForegroundDispatch(this, pending, null, null)
         }
     }
 
@@ -352,16 +359,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
                 onNfcProgram = { nav.navigate("nfcprog") },
                 onHashRental = { nav.navigate("hashrental") },
                 onEnergyCost = { nav.navigate("energycost") },
-                onLiveBitcoin = {
-                    runCatching {
-                        context.startActivity(
-                            android.content.Intent(
-                                android.content.Intent.ACTION_VIEW,
-                                android.net.Uri.parse("https://hi3.cc/bitcoin"),
-                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                        )
-                    }
-                },
+                onLiveBitcoin = { context.openUrl("https://hi3.cc/bitcoin") },
             )
         }
         composable("heatreuse") {

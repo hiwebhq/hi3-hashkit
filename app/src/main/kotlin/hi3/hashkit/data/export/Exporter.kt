@@ -265,12 +265,14 @@ class Exporter @Inject constructor(
         )
         val plain = json.encodeToString(backup)
         val pass = passphrase?.trim().orEmpty()
+        // Content summary in the name so backups are tellable apart in a Downloads folder.
+        val stem = "hi3-backup-${timestamp()}-${miners.size}miners"
         val file: File
         if (pass.isNotEmpty()) {
-            file = exportFile("hi3-backup-${timestamp()}.hi3enc")
+            file = exportFile("$stem.hi3enc")
             file.writeText(hi3.hashkit.core.BackupCrypto.encrypt(plain, pass))
         } else {
-            file = exportFile("hi3-backup-${timestamp()}.json")
+            file = exportFile("$stem.json")
             file.writeText(plain)
         }
         file

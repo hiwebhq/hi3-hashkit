@@ -35,8 +35,6 @@ class OctopusAgileClient @Inject constructor(
     }
 
     val defaultProduct = DEFAULT_PRODUCT
-    fun tariffFor(region: String): String = "E-1R-$DEFAULT_PRODUCT-${region.trim().uppercase()}"
-
     suspend fun fetch(region: String, product: String = DEFAULT_PRODUCT): Result =
         withContext(Dispatchers.IO) {
             val r = region.trim().uppercase()

@@ -1,6 +1,7 @@
 package hi3.hashkit.ui.detail
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.horizontalScroll
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -55,6 +58,8 @@ import hi3.hashkit.core.Units
 import hi3.hashkit.ui.components.Metric
 import hi3.hashkit.ui.components.StatusBadge
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.util.launchChooser
+import hi3.hashkit.ui.util.shareFile
 import java.time.Duration
 import java.time.Instant
 
@@ -198,9 +203,7 @@ fun MinerDetailScreen(
                 }
                 androidx.compose.material3.TextButton(onClick = {
                     viewModel.exportCsv { intent ->
-                        context.startActivity(
-                            android.content.Intent.createChooser(intent, "Export telemetry CSV")
-                        )
+                        context.launchChooser(intent, "Export telemetry CSV")
                     }
                 }) { Text("Export CSV") }
             }
@@ -289,6 +292,19 @@ fun MinerDetailScreen(
                         color = HiBrand.textSecondary,
                     )
                 }
+            } else if (state.capabilities != null) {
+                SectionCard("EVENT LOG") {
+                    androidx.compose.material3.OutlinedButton(onClick = onLogs) {
+                        Text("Open event log")
+                    }
+                    Text(
+                        "This firmware exposes no log stream, so Hashkit records health " +
+                            "events derived from each poll — reboots, temp-limit crossings, " +
+                            "disconnects, fan stops, reject spikes — and analyzes those.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
             }
 
             SectionCard("MAINTENANCE LOG") {
@@ -298,6 +314,12 @@ fun MinerDetailScreen(
                 val photoPicker = androidx.activity.compose.rememberLauncherForActivityResult(
                     androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia(),
                 ) { uri -> pendingPhoto = uri }
+                // In-app capture: the camera writes to a staged cache file; "Add note" then
+                // copies it into permanent app-private storage like any picked photo.
+                var cameraTarget by remember { mutableStateOf<android.net.Uri?>(null) }
+                val cameraLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+                    androidx.activity.result.contract.ActivityResultContracts.TakePicture(),
+                ) { saved -> if (saved) pendingPhoto = cameraTarget }
                 OutlinedTextField(
                     value = noteText,
                     onValueChange = { noteText = it },
@@ -318,7 +340,21 @@ fun MinerDetailScreen(
                                 androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly,
                             )
                         )
-                    }) { Text(if (pendingPhoto != null) "📷 attached" else "Attach photo") }
+                    }) { Text("Gallery") }
+                    androidx.compose.material3.TextButton(onClick = {
+                        runCatching {
+                            val dir = java.io.File(context.cacheDir, "camera").apply { mkdirs() }
+                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                context, "${context.packageName}.files",
+                                java.io.File(dir, "capture_${System.currentTimeMillis()}.jpg"),
+                            )
+                            cameraTarget = uri
+                            cameraLauncher.launch(uri)
+                        }
+                    }) { Text("Camera") }
+                    if (pendingPhoto != null) {
+                        Text("📷", style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
                 if (notes.isEmpty()) {
                     Text(
@@ -594,6 +630,7 @@ private fun NotePhoto(path: String) {
                 scale = (scale * zoom).coerceIn(1f, 6f)
                 pan = if (scale > 1f) pan + offset else androidx.compose.ui.geometry.Offset.Zero
             }
+            val context = androidx.compose.ui.platform.LocalContext.current
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -612,8 +649,32 @@ private fun NotePhoto(path: String) {
                                 scaleX = scale; scaleY = scale
                                 translationX = pan.x; translationY = pan.y
                             }
-                            .transformable(transformState),
+                            .transformable(transformState)
+                            // Tap closes; double-tap toggles 1x/3x (gallery convention).
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = { viewing = false },
+                                    onDoubleTap = {
+                                        if (scale > 1f) {
+                                            scale = 1f
+                                            pan = androidx.compose.ui.geometry.Offset.Zero
+                                        } else {
+                                            scale = 3f
+                                        }
+                                    },
+                                )
+                            },
                     )
+                    androidx.compose.material3.IconButton(
+                        onClick = { context.shareFile(java.io.File(path), "image/jpeg", "Share photo") },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
+                    ) {
+                        Icon(
+                            androidx.compose.material.icons.Icons.Filled.Share,
+                            contentDescription = "Share photo",
+                            tint = androidx.compose.ui.graphics.Color.White,
+                        )
+                    }
                 } else {
                     Text("Photo file is missing", color = HiBrand.textSecondary)
                 }

@@ -24,14 +24,21 @@ object LogClassifier {
     fun classify(line: String): Classified =
         Classified(severity(line), category(line), line)
 
+    // Precompiled once — classify runs per stored line and per live-stream line.
+    private val ERROR_WORDS = listOf("error", "fail", "fatal").map(::wordRegex)
+    private val WARN_WORDS = listOf("warn", "retry").map(::wordRegex)
+
+    private fun wordRegex(word: String) =
+        Regex("\\b${Regex.escape(word)}", RegexOption.IGNORE_CASE)
+
     fun severity(line: String): Severity {
         val t = line.trimStart()
         // ESP-IDF prefixes: "E (12345) ...", "W (...) ...", and some builds embed " E (".
         val isErr = t.startsWith("E ") || t.startsWith("E(") || line.contains(" E (") ||
-            containsWord(line, "error") || containsWord(line, "fail") || containsWord(line, "fatal")
+            ERROR_WORDS.any { it.containsMatchIn(line) }
         if (isErr) return Severity.ERROR
         val isWarn = t.startsWith("W ") || t.startsWith("W(") || line.contains(" W (") ||
-            containsWord(line, "warn") || containsWord(line, "retry")
+            WARN_WORDS.any { it.containsMatchIn(line) }
         if (isWarn) return Severity.WARN
         return Severity.INFO
     }
@@ -50,7 +57,4 @@ object LogClassifier {
     }
 
     private fun hasAny(haystack: String, vararg needles: String) = needles.any { it in haystack }
-
-    private fun containsWord(line: String, word: String): Boolean =
-        Regex("\\b${Regex.escape(word)}", RegexOption.IGNORE_CASE).containsMatchIn(line)
 }

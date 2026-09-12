@@ -52,7 +52,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import javax.inject.Inject
 
-private const val DAYS_PER_MONTH = 30.4375
+private const val DAYS_PER_MONTH = hi3.hashkit.domain.heat.HeatReuseMath.DAYS_PER_MONTH
 
 data class EnergyRow(
     val id: Long,
@@ -222,4 +222,5 @@ private fun EnergyRowCard(row: EnergyRow, currency: String, onClick: () -> Unit)
     }
 }
 
-private fun money(value: Double, currency: String): String = "%,.2f %s".format(value, currency)
+private fun money(value: Double, currency: String): String =
+    hi3.hashkit.core.Units.formatMoney(value, currency)

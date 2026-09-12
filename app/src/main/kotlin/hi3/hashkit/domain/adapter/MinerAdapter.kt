@@ -58,6 +58,14 @@ interface MinerAdapter {
     suspend fun getIdentity(host: MinerHost): MinerIdentity?
     suspend fun getTelemetry(host: MinerHost): TelemetryResult
     fun getCapabilities(identity: MinerIdentity?): MinerCapabilities
+
+    /**
+     * Adapter-specific derived health-event lines fetched alongside a poll (e.g. Avalon's
+     * `notify` counter diffs), for firmwares with no log stream. Lines follow the derived
+     * event-line wording (see LogEventDeriver) so the classifier/analyzer understand them.
+     * Default: none.
+     */
+    suspend fun healthEventLines(host: MinerHost): List<String> = emptyList()
 }
 
 /**

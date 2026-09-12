@@ -79,6 +79,10 @@ data class AppSettings(
     val publicPoolsSeeded: Boolean = false,
     /** URL the Hash rental "Rent" button opens — set to your Braiins referral link if you have one. */
     val hashRentalUrl: String = DEFAULT_HASH_RENTAL_URL,
+    /** SAF tree URI weekly auto-backups are written to; blank = auto-backup off. */
+    val autoBackupFolderUri: String = "",
+    /** When the last auto-backup was written (epoch ms); 0 = never. */
+    val autoBackupLastMs: Long = 0,
     /** Pool stats integration — OPT-IN; nothing is contacted while false. */
     val hi3PoolEnabled: Boolean = false,
     val hi3PoolBaseUrl: String = "https://pool.hi3.cc",
@@ -197,6 +201,8 @@ class SettingsRepository @Inject constructor(
         val pplnsSeeded = booleanPreferencesKey("pplns_seeded")
         val publicPoolsSeeded = booleanPreferencesKey("public_pools_seeded")
         val hashRentalUrl = stringPreferencesKey("hash_rental_url")
+        val autoBackupFolderUri = stringPreferencesKey("auto_backup_folder_uri")
+        val autoBackupLastMs = longPreferencesKey("auto_backup_last_ms")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
         val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
@@ -258,7 +264,22 @@ class SettingsRepository @Inject constructor(
         const val ADVANCED_FEATURES_FREE = false
     }
 
-    val settings: Flow<AppSettings> = context.dataStore.data.map { p ->
+    val settings: Flow<AppSettings> = context.dataStore.data.map { p -> settingsFrom(p) }
+
+    /** DataStore emits the same Preferences instance until a write, so the ~90-field
+     *  AppSettings is rebuilt only when the snapshot actually changed — `current()` is
+     *  called from the poll cycle and per-miner paths, where a rebuild per call adds up. */
+    @Volatile
+    private var lastBuild: Pair<androidx.datastore.preferences.core.Preferences, AppSettings>? = null
+
+    private fun settingsFrom(p: androidx.datastore.preferences.core.Preferences): AppSettings {
+        lastBuild?.let { if (it.first === p) return it.second }
+        return buildSettings(p).also { lastBuild = p to it }
+    }
+
+    // One field per preference: inherently long, splitting it would only scatter the mapping.
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    private fun buildSettings(p: androidx.datastore.preferences.core.Preferences): AppSettings =
         AppSettings(
             useFahrenheit = p[Keys.useFahrenheit] ?: false,
             demoModeEnabled = p[Keys.demoMode] ?: false,
@@ -285,6 +306,8 @@ class SettingsRepository @Inject constructor(
             pplnsSeeded = p[Keys.pplnsSeeded] ?: false,
             publicPoolsSeeded = p[Keys.publicPoolsSeeded] ?: false,
             hashRentalUrl = p[Keys.hashRentalUrl]?.takeIf { it.isNotBlank() } ?: DEFAULT_HASH_RENTAL_URL,
+            autoBackupFolderUri = p[Keys.autoBackupFolderUri] ?: "",
+            autoBackupLastMs = p[Keys.autoBackupLastMs] ?: 0,
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
             hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
             hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
@@ -342,16 +365,17 @@ class SettingsRepository @Inject constructor(
             advancedUnlocked = ADVANCED_FEATURES_FREE ||
                 hi3.hashkit.core.LicenseValidator.isValid(p[Keys.advancedUnlockCode]),
         )
-    }
 
     suspend fun current(): AppSettings = settings.first()
 
     suspend fun setUseFahrenheit(value: Boolean) = edit { it[Keys.useFahrenheit] = value }
     suspend fun setDemoMode(value: Boolean) = edit { it[Keys.demoMode] = value }
-    suspend fun setPollIntervalMs(value: Long) = edit { it[Keys.pollIntervalMs] = value }
+    suspend fun setPollIntervalMs(value: Long) =
+        edit { it[Keys.pollIntervalMs] = value.coerceIn(POLL_INTERVAL_MIN_MS, POLL_INTERVAL_MAX_MS) }
     suspend fun setBackgroundMonitoring(value: Boolean) = edit { it[Keys.backgroundMonitoring] = value }
     suspend fun setElectricityRate(value: Double) = edit { it[Keys.electricityRate] = value }
-    suspend fun setCurrencyCode(value: String) = edit { it[Keys.currencyCode] = value }
+    suspend fun setCurrencyCode(value: String) =
+        edit { it[Keys.currencyCode] = value.trim().uppercase().take(CURRENCY_CODE_MAX).ifBlank { "USD" } }
     suspend fun setNetworkDifficulty(value: Double) = edit { it[Keys.networkDifficulty] = value }
     suspend fun setDifficultyAutoFetch(value: Boolean) = edit { it[Keys.difficultyAutoFetch] = value }
     suspend fun setBtcPriceAutoFetch(value: Boolean) = edit { it[Keys.btcPriceAutoFetch] = value }
@@ -367,6 +391,8 @@ class SettingsRepository @Inject constructor(
     suspend fun setCardDensity(value: CardDensity) = edit { it[Keys.cardDensity] = value.name }
     suspend fun setInventoryTagType(value: InventoryTagType) = edit { it[Keys.inventoryTagType] = value.name }
     suspend fun setHashRentalUrl(value: String) = edit { it[Keys.hashRentalUrl] = value.trim() }
+    suspend fun setAutoBackupFolderUri(value: String) = edit { it[Keys.autoBackupFolderUri] = value.trim() }
+    suspend fun setAutoBackupLastMs(value: Long) = edit { it[Keys.autoBackupLastMs] = value }
     suspend fun setConfirmBeforeExit(value: Boolean) = edit { it[Keys.confirmBeforeExit] = value }
     suspend fun setPplnsSeeded(value: Boolean) = edit { it[Keys.pplnsSeeded] = value }
     suspend fun setPublicPoolsSeeded(value: Boolean) = edit { it[Keys.publicPoolsSeeded] = value }
@@ -510,7 +536,12 @@ class SettingsRepository @Inject constructor(
 
 }
 
+const val POLL_INTERVAL_MIN_MS = 5_000L
+const val POLL_INTERVAL_MAX_MS = 86_400_000L
+private const val CURRENCY_CODE_MAX = 6
+
 private val BACKUP_EXCLUDED_KEYS = setOf(
     "mmp_api_key_encrypted", "mqtt_password_enc", "ha_token_enc", // device-bound Keystore blobs
     "active_farm_id", // DB row id, not portable
+    "auto_backup_folder_uri", "auto_backup_last_ms", // SAF grant is device-bound
 )

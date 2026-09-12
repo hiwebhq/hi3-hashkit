@@ -138,8 +138,6 @@ class ControlRepository @Inject constructor(
     /** The audited previous values of the last tune, if any — for the rollback UI. */
     suspend fun lastTune(minerId: Long): AuditEventEntity? = auditDao.latestOf(minerId, ACTION_TUNE)
 
-    fun observeAudit(minerId: Long) = auditDao.observeForMiner(minerId)
-
     private suspend fun audit(minerId: Long, action: String, previous: String, applied: String, result: ActionResult) {
         auditDao.insert(
             AuditEventEntity(

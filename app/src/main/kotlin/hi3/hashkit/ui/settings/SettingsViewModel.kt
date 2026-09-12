@@ -112,9 +112,9 @@ class SettingsViewModel @Inject constructor(
         farmRepository.observeFarms()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    /** Global default cadence used when no farm is active (5s..1d). */
+    /** Global default cadence used when no farm is active (the repository clamps to 5s..1d). */
     fun setDefaultRefreshIntervalMs(ms: Long) = viewModelScope.launch {
-        repo.setPollIntervalMs(ms.coerceIn(5_000L, 86_400_000L))
+        repo.setPollIntervalMs(ms)
     }
 
     fun setFarmRefreshIntervalMs(farmId: Long, ms: Long) = viewModelScope.launch {
@@ -155,6 +155,7 @@ class SettingsViewModel @Inject constructor(
     fun setMmpApiKey(v: String) = viewModelScope.launch { repo.setMmpApiKey(v) }
     fun setHi3PoolEnabled(v: Boolean) = viewModelScope.launch { repo.setHi3PoolEnabled(v) }
     fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
+    fun setAutoBackupFolder(v: String) = viewModelScope.launch { repo.setAutoBackupFolderUri(v) }
     fun setHi3PoolPayoutAddress(v: String) = viewModelScope.launch { repo.setHi3PoolPayoutAddress(v) }
     fun setPoolApiToken(v: String) = viewModelScope.launch { repo.setPoolApiToken(v) }
 
@@ -188,10 +189,6 @@ class SettingsViewModel @Inject constructor(
     fun setBackgroundMonitoring(enabled: Boolean) = viewModelScope.launch {
         repo.setBackgroundMonitoring(enabled)
         if (enabled) MonitorWorker.schedule(context) else MonitorWorker.cancel(context)
-    }
-
-    fun setPollIntervalSeconds(seconds: Long) = viewModelScope.launch {
-        repo.setPollIntervalMs(seconds.coerceIn(5, 300) * 1000)
     }
 
     fun setRetentionDays(days: Int) = viewModelScope.launch { repo.setRetentionDays(days) }
@@ -231,7 +228,7 @@ class SettingsViewModel @Inject constructor(
     fun setWebhookTarget(v: String) = viewModelScope.launch { repo.setWebhookTarget(v) }
     fun setUseFahrenheit(v: Boolean) = viewModelScope.launch { repo.setUseFahrenheit(v) }
     fun setElectricityRate(v: Double) = viewModelScope.launch { repo.setElectricityRate(v) }
-    fun setCurrencyCode(v: String) = viewModelScope.launch { repo.setCurrencyCode(v.take(6)) }
+    fun setCurrencyCode(v: String) = viewModelScope.launch { repo.setCurrencyCode(v) }
     fun setNetworkDifficulty(v: Double) = viewModelScope.launch { repo.setNetworkDifficulty(v) }
     fun setDifficultyAutoFetch(v: Boolean) = viewModelScope.launch { repo.setDifficultyAutoFetch(v) }
     fun setBtcPrice(v: Double) = viewModelScope.launch { repo.setBtcPrice(v) }

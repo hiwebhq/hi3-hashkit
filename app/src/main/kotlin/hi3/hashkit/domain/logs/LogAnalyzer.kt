@@ -41,8 +41,10 @@ object LogAnalyzer {
 
     private fun buildFindings(classified: List<LogClassifier.Classified>, errors: Int): List<Finding> {
         val findings = mutableListOf<Finding>()
+        // Lowercase each line once, not once per needle per call.
+        val lowered = classified.map { it.text.lowercase() }
         fun countText(vararg needles: String) =
-            classified.count { c -> needles.any { it in c.text.lowercase() } }
+            lowered.count { line -> needles.any { it in line } }
 
         val disconnects = countText("disconnect", "connection closed", "reconnect", "socket error", "connection reset")
         if (disconnects >= 3) {

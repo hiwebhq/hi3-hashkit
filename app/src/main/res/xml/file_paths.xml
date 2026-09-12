@@ -2,4 +2,8 @@
 <paths>
     <cache-path name="exports" path="exports/" />
     <cache-path name="updates" path="updates/" />
+    <!-- Camera-capture staging for maintenance-note photos. -->
+    <cache-path name="camera" path="camera/" />
+    <!-- Stored maintenance photos, shareable from the full-screen viewer. -->
+    <files-path name="maintenance" path="maintenance/" />
 </paths>

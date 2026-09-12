@@ -36,9 +36,6 @@ interface TuneSweepDao {
     @Query("SELECT * FROM tune_sweeps WHERE minerId = :minerId ORDER BY atEpochMs")
     fun observeForMiner(minerId: Long): Flow<List<TuneSweepEntity>>
 
-    @Query("SELECT COUNT(DISTINCT sweepStartEpochMs) FROM tune_sweeps WHERE minerId = :minerId")
-    suspend fun sweepCount(minerId: Long): Int
-
     @Query("DELETE FROM tune_sweeps WHERE minerId = :minerId")
     suspend fun deleteForMiner(minerId: Long)
 }

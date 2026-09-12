@@ -45,6 +45,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hi3.hashkit.data.prefs.DEFAULT_HASH_RENTAL_URL
 import hi3.hashkit.integrations.hashpower.BraiinsHashpowerClient
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.util.openUrl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -77,29 +78,31 @@ class HashRentalViewModel @Inject constructor(
 
     init {
         refresh()
+        // All settings this screen shows arrive reactively; refresh() never touches them.
         viewModelScope.launch {
-            settingsRepository.settings.map { it.hashRentalUrl }.distinctUntilChanged()
-                .collect { url -> _state.value = _state.value.copy(rentUrl = url) }
+            settingsRepository.settings
+                .map { Triple(it.hashRentalUrl, it.btcPrice, it.currencyCode) }
+                .distinctUntilChanged()
+                .collect { (url, price, code) ->
+                    _state.value = _state.value.copy(rentUrl = url, btcPrice = price, currency = code)
+                }
         }
     }
 
     fun refresh() {
         _state.value = _state.value.copy(loading = true, error = null)
         viewModelScope.launch {
-            val s = settingsRepository.current()
             when (val r = client.fetch()) {
                 is BraiinsHashpowerClient.Result.Ok ->
                     _state.value = _state.value.copy(
                         loading = false, market = r.market, asks = r.asks.take(6),
-                        error = null, btcPrice = s.btcPrice, currency = s.currencyCode,
-                        asOfEpochMs = System.currentTimeMillis(),
+                        error = null, asOfEpochMs = System.currentTimeMillis(),
                     )
                 is BraiinsHashpowerClient.Result.Error ->
                     // Keep showing the last good snapshot (this screen's, or the session cache),
                     // stale-stamped; the error renders as a banner above it.
                     _state.value = _state.value.copy(
-                        loading = false, error = r.message, btcPrice = s.btcPrice,
-                        currency = s.currencyCode,
+                        loading = false, error = r.message,
                         market = _state.value.market ?: r.cached?.market,
                         asks = _state.value.asks.ifEmpty { r.cached?.asks.orEmpty().take(6) },
                         asOfEpochMs = if (_state.value.market != null) _state.value.asOfEpochMs else r.cachedAtEpochMs,
@@ -128,14 +131,7 @@ fun HashRentalScreen(
     fun price(sat: Long): String =
         if (usd) "%,.2f %s/PH·day".format(sat * state.btcPrice / 100_000_000_000.0, state.currency)
         else "${satPerPhDay(sat)} sat/PH·day"
-    fun openRent() {
-        runCatching {
-            context.startActivity(
-                android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(state.rentUrl))
-                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
-            )
-        }
-    }
+    fun openRent() = context.openUrl(state.rentUrl)
 
     if (editingUrl) {
         RentUrlDialog(

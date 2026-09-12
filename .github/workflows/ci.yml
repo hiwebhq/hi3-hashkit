@@ -28,6 +28,10 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ hashFiles('**/*.gradle.kts', 'gradle/libs.versions.toml') }}
 
+      # Fails only on NEW findings — existing ones are frozen in app/detekt-baseline.xml.
+      - name: Static analysis (detekt)
+        run: ./gradlew detekt --no-daemon
+
       - name: Unit tests
         run: ./gradlew test --no-daemon
 

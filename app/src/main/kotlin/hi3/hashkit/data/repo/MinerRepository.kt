@@ -48,11 +48,6 @@ class MinerRepository @Inject constructor(
         val trimmed = plaintext.trim()
         minerDao.updateCredential(minerId, if (trimmed.isEmpty()) null else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed))
     }
-
-    /** True when a credential is stored for this miner (without decrypting it). */
-    suspend fun hasCredential(minerId: Long): Boolean =
-        !minerDao.byId(minerId)?.credentialEnc.isNullOrBlank()
-
     /** Configure (or clear, with a null type) the per-miner smart-plug safety cutoff. */
     suspend fun setSmartPlug(
         minerId: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?,
@@ -69,6 +64,26 @@ class MinerRepository @Inject constructor(
 
     suspend fun toDomain(entity: MinerEntity, now: Instant = Instant.now()): Miner =
         entity.toDomain(latestTelemetry(entity.id), staleAfterMs, now)
+
+    /** Build the domain miner from telemetry already in hand — no per-miner DB re-read. */
+    fun toDomain(entity: MinerEntity, telemetry: MinerTelemetry?, now: Instant): Miner =
+        entity.toDomain(telemetry, staleAfterMs, now)
+
+    private val lastRawPrune = java.util.concurrent.atomic.AtomicLong(0)
+
+    private companion object {
+        const val RAW_PRUNE_EVERY_MS = 10L * 60_000L
+        const val RAW_RETENTION_MS = 3_600_000L
+    }
+
+    /** Keep only ~1h of raw API bodies (diagnostics, not history); throttled to every 10 min
+     *  — this was previously a full-scan DELETE per miner per poll. */
+    suspend fun pruneRawIfDue() {
+        val now = System.currentTimeMillis()
+        if (now - lastRawPrune.get() < RAW_PRUNE_EVERY_MS) return
+        if (!lastRawPrune.compareAndSet(lastRawPrune.get(), now)) return
+        telemetryDao.pruneRawBefore(now - RAW_RETENTION_MS)
+    }
 
     /** Stored identity fields of a miner, for capability checks without a network call. */
     fun identityOf(entity: MinerEntity): MinerIdentity = MinerIdentity(
@@ -228,8 +243,6 @@ class MinerRepository @Inject constructor(
                             body = result.rawResponse,
                         )
                     )
-                    // Keep only ~1h of raw bodies; they exist for diagnostics, not history.
-                    telemetryDao.pruneRawBefore(now - 3_600_000)
                 }
                 minerDao.updateHostAndSeen(entity.id, entity.host, now)
                 minerDao.touchAddress(entity.id, entity.host, now)
@@ -296,10 +309,6 @@ class MinerRepository @Inject constructor(
         val now = System.currentTimeMillis()
         telemetryDao.pruneBefore(now - rawRetentionDays * 86_400_000L)
         hourly.pruneBefore(now - 730L * 86_400_000L)
-    }
-
-    suspend fun pruneTelemetryBefore(beforeEpochMs: Long) {
-        telemetryDao.pruneBefore(beforeEpochMs)
     }
 
     fun observeTelemetrySince(minerId: Long, sinceEpochMs: Long): Flow<List<MinerTelemetry>> =

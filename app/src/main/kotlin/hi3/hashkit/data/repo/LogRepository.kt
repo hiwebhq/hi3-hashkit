@@ -4,6 +4,8 @@ import hi3.hashkit.data.db.LogDao
 import hi3.hashkit.data.db.LogLineEntity
 import hi3.hashkit.domain.logs.LogAnalyzer
 import hi3.hashkit.domain.logs.LogClassifier
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,6 +45,10 @@ class LogRepository @Inject constructor(
     }
 
     suspend fun count(minerId: Long): Int = logDao.count(minerId)
+
+    /** Live view of the newest stored lines, oldest first (for the derived event log). */
+    fun observeRecentTexts(minerId: Long, limit: Int): Flow<List<String>> =
+        logDao.observeRecent(minerId, limit).map { rows -> rows.asReversed().map { it.text } }
 
     /** Analyze stored lines from the last [windowMs]; empty window analyzes cleanly. */
     suspend fun analyzeSince(minerId: Long, windowMs: Long): LogAnalyzer.Analysis {

@@ -94,6 +94,7 @@ class Hi3PoolClient @Inject constructor(
         token: String = "",
     ): PoolResult<PoolAccount> = when (poolType) {
         PoolType.HI3, PoolType.PUBLIC_POOL -> fetchAccount(baseUrl, identifier)
+        PoolType.HI3_PPLNS -> fetchPplnsAccount(baseUrl, identifier)
         PoolType.CKPOOL -> fetchCkpoolAccount(baseUrl, identifier)
         PoolType.OCEAN -> fetchOceanAccount(baseUrl, identifier)
         PoolType.F2POOL -> fetchF2poolAccount(baseUrl, identifier)
@@ -110,6 +111,36 @@ class Hi3PoolClient @Inject constructor(
     private fun safeIdentifier(id: String): String? {
         val t = id.trim()
         return if (t.isNotEmpty() && t.matches(Regex("^[A-Za-z0-9._-]{1,120}$"))) t else null
+    }
+
+    /**
+     * Hi3 PPLNS (Miningcore-style): GET /api/pools/hi3-btc-pplns/miners/{address}.
+     * Active workers appear under performance.workers as {name: {hashrate(H/s), ...}};
+     * an idle/unknown address returns zeros with no performance object.
+     */
+    private suspend fun fetchPplnsAccount(baseUrl: String, address: String): PoolResult<PoolAccount> {
+        val addr = safeIdentifier(address)
+            ?: return PoolResult.Error("Payout address has an unexpected format.")
+        return get(baseUrl, "/api/pools/hi3-btc-pplns/miners/$addr") { body ->
+            val obj = json.parseToJsonElement(body).jsonObject
+            val workersObj = obj["performance"]?.jsonObject?.get("workers") as? JsonObject
+            val workers = workersObj?.entries?.mapNotNull { (key, v) ->
+                val w = v as? JsonObject ?: return@mapNotNull null
+                PoolWorker(
+                    sessionId = null,
+                    name = key.ifBlank { "(default)" },
+                    bestDifficulty = null,
+                    hashRateGhs = w.num("hashrate")?.div(1e9),
+                    startTime = null,
+                    lastSeen = null,
+                )
+            }.orEmpty()
+            PoolAccount(
+                workersCount = workers.size,
+                workers = workers,
+                totalHashRateGhs = workers.sumOf { it.hashRateGhs ?: 0.0 },
+            )
+        }
     }
 
     /** F2Pool v1: GET /bitcoin/{account}; workers are [name, currentHashRate(H/s), ...]. */

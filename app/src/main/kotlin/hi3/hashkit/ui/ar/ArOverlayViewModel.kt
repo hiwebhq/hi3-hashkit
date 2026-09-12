@@ -94,7 +94,17 @@ class ArOverlayViewModel @Inject constructor(
      * toast confirmation — set for discrete NFC taps, off for the continuous camera QR stream.
      */
     fun onScanned(code: String, announce: Boolean = false) {
-        val tag = MinerTag.parse(code) ?: return
+        val tag = MinerTag.parse(code)
+        if (tag == null) {
+            // Discrete NFC taps deserve feedback even when the tag isn't ours.
+            if (announce) {
+                _scanToast.tryEmit(
+                    if (code.isBlank()) "Blank NFC tag — write it from a miner's Make tag"
+                    else "Not a Hi3 Hashkit tag",
+                )
+            }
+            return
+        }
         val dedupe = code.trim()
         if (dedupe.equals(lastScan, ignoreCase = true)) return
         lastScan = dedupe

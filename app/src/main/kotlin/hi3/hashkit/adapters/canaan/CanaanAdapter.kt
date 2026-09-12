@@ -100,6 +100,44 @@ class CanaanAdapter @Inject constructor(
             ),
         )
 
+    // ------------------------------------------------------------- derived events ----
+
+    /** Counter fields from `notify` worth surfacing as events when they increment. */
+    private val notifyCounters = mapOf(
+        "*Dev Over Heat" to "E events: overheat protection triggered (temp)",
+        "*Dev Thermal Cutoff" to "E events: thermal cutoff triggered (temp)",
+        "*Dev Comms Error" to "W events: device comms error (connection to hash board)",
+        "*Dev Throttle" to "W events: device throttled (thermal)",
+        "*Dev Sick Idle 60s" to "E events: device sick — idle 60s",
+        "*Dev Dead Idle 600s" to "E events: device dead — idle 600s",
+        "*Thread Zero Hash" to "W events: zero-hash thread (asic)",
+    )
+
+    /** Previous `notify` counter values per host, so only increments produce lines. */
+    private val prevNotify = java.util.concurrent.ConcurrentHashMap<String, Map<String, Long>>()
+
+    /** Precompiled per counter — this runs once per Avalon per poll cycle. */
+    private val notifyPatterns: Map<String, Regex> = notifyCounters.keys.associateWith { key ->
+        Regex("\"${Regex.escape(key)}\"\\s*:\\s*(\\d+)")
+    }
+
+    /**
+     * Diff the CGMiner `notify` health counters (verified live on Nano 3 fw 24071801) and
+     * report increments as event lines; the first read only sets the baseline.
+     */
+    override suspend fun healthEventLines(host: MinerHost): List<String> {
+        val body = api.query(host.host, apiPort(host), "notify").body ?: return emptyList()
+        val counters = notifyPatterns.mapValues { (_, regex) ->
+            regex.find(body)?.groupValues?.get(1)?.toLongOrNull() ?: 0L
+        }
+        val key = "${host.host}:${apiPort(host)}"
+        val prev = prevNotify.put(key, counters) ?: return emptyList()
+        return counters.mapNotNull { (name, count) ->
+            val delta = count - (prev[name] ?: 0L)
+            if (delta > 0) "${notifyCounters.getValue(name)} ×$delta" else null
+        }
+    }
+
     // ------------------------------------------------------------------ controls ----
 
     override suspend fun getTuneOptions(host: MinerHost): TuneOptions? = null

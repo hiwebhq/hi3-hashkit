@@ -97,12 +97,6 @@ class MqttPublisher @Inject constructor(
         )
     }
 
-    /** Re-announce discovery on the next publish (call when the config changes). */
-    fun resetDiscovery() {
-        announced.clear()
-        fleetAnnounced = false
-    }
-
     private fun fleetDiscovery(base: String): List<MqttClient.Message> {
         val device = buildJsonObject {
             putJsonArray("identifiers") { add("hi3hashkit_fleet") }

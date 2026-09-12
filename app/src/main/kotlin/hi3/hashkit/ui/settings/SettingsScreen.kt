@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.util.launchChooser
 import hi3.hashkit.ui.theme.ThemeColor
 
 // Section order: alphabetical, with DATA & EXPORTS second-to-last and DEMO last
@@ -641,15 +642,43 @@ fun SettingsScreen(
                     ActivityResultContracts.OpenDocument()
                 ) { uri -> uri?.let { viewModel.restoreFrom(it) } }
 
-                fun share(intent: android.content.Intent, title: String) {
-                    context.startActivity(android.content.Intent.createChooser(intent, title))
-                }
+                fun share(intent: android.content.Intent, title: String) =
+                    context.launchChooser(intent, title)
                 ActionRow("Export fleet telemetry CSV (last 7 days)") {
                     viewModel.exportFleetCsv { share(it, "Export CSV") }
                 }
                 ActionRow("Full backup (miners, farms, pools, rules, settings…)") { backupPassPrompt = true }
                 ActionRow("Restore from backup…") {
                     restorePicker.launch(arrayOf("application/json", "application/octet-stream", "text/plain", "*/*"))
+                }
+                val backupFolderPicker = rememberLauncherForActivityResult(
+                    ActivityResultContracts.OpenDocumentTree()
+                ) { uri ->
+                    if (uri != null) {
+                        context.contentResolver.takePersistableUriPermission(
+                            uri,
+                            android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                        )
+                        viewModel.setAutoBackupFolder(uri.toString())
+                    }
+                }
+                ActionRow(
+                    if (settings.autoBackupFolderUri.isBlank()) "Auto-backup weekly: off — choose folder…"
+                    else "Auto-backup weekly: on (tap to change folder)"
+                ) { backupFolderPicker.launch(null) }
+                if (settings.autoBackupFolderUri.isNotBlank()) {
+                    if (settings.autoBackupLastMs > 0) {
+                        Text(
+                            "Last auto-backup: " + java.text.DateFormat.getDateTimeInstance(
+                                java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT,
+                            ).format(java.util.Date(settings.autoBackupLastMs)) +
+                                " — keeps the newest 8, plaintext JSON.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
+                        )
+                    }
+                    ActionRow("Turn off auto-backup") { viewModel.setAutoBackupFolder("") }
                 }
                 ActionRow("Export diagnostics bundle (addresses redacted)") {
                     viewModel.exportDiagnostics(includeAddresses = false) { share(it, "Export diagnostics") }

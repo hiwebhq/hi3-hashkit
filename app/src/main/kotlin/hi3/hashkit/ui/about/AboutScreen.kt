@@ -31,6 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.util.launchChooser
+import hi3.hashkit.ui.util.openUrl
+import hi3.hashkit.ui.util.viewFile
 
 /** How-to steps shown on the About screen. */
 private data class HowToStep(val title: String, val body: String)
@@ -143,14 +146,7 @@ fun AboutScreen(onBack: () -> Unit) {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }.getOrNull() ?: "?"
     }
-    fun open(url: String) {
-        runCatching {
-            context.startActivity(
-                android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
-                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
-    }
+    fun open(url: String) = context.openUrl(url)
     // Open the bundled user guide: copy the asset into the FileProvider's cache dir, then hand it
     // to whatever PDF viewer the user has. The PDF ships in the app — no network needed.
     fun openGuide() {
@@ -160,18 +156,7 @@ fun AboutScreen(onBack: () -> Unit) {
             context.assets.open("USER_GUIDE.pdf").use { input ->
                 out.outputStream().use { input.copyTo(it) }
             }
-            val uri = androidx.core.content.FileProvider.getUriForFile(
-                context, "${context.packageName}.files", out,
-            )
-            context.startActivity(
-                android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
-                    setDataAndType(uri, "application/pdf")
-                    addFlags(
-                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            android.content.Intent.FLAG_ACTIVITY_NEW_TASK,
-                    )
-                },
-            )
+            context.viewFile(out, "application/pdf")
         }.onFailure {
             android.widget.Toast.makeText(
                 context, "Couldn't open the guide — no PDF viewer installed?",
@@ -189,12 +174,7 @@ fun AboutScreen(onBack: () -> Unit) {
                     "safely controlling Bitcoin miners: https://mmp.hi3.cc/hashkit",
             )
         }
-        runCatching {
-            context.startActivity(
-                android.content.Intent.createChooser(send, "Share ${HiBrand.appName}")
-                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
+        context.launchChooser(send, "Share ${HiBrand.appName}")
     }
 
     Scaffold(

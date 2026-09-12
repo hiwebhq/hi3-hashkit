@@ -238,4 +238,5 @@ private fun BigCard(label: String, value: String, sub: String, accent: Boolean =
     }
 }
 
-private fun money(value: Double, currency: String): String = "%,.2f %s".format(value, currency)
+private fun money(value: Double, currency: String): String =
+    hi3.hashkit.core.Units.formatMoney(value, currency)

@@ -1,0 +1,1428 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:Exporter.kt$Exporter$existingPools.any { it.url == p.url &amp;&amp; it.port == p.port &amp;&amp; it.worker == p.worker &amp;&amp; it.label == p.label }</ID>
+    <ID>ComplexCondition:Exporter.kt$Exporter$existingRules.any { it.label == r.label &amp;&amp; it.conditionType == r.conditionType &amp;&amp; it.actionType == r.actionType &amp;&amp; it.targetGroup == r.targetGroup }</ID>
+    <ID>ComplexCondition:PoolSpeedTester.kt$PoolSpeedTester$line.isNullOrBlank() || "\"id\"" !in line &amp;&amp; "\"method\"" !in line &amp;&amp; "\"result\"" !in line &amp;&amp; "\"error\"" !in line</ID>
+    <ID>ComplexCondition:ProfitMath.kt$ProfitMath$hashrateGhs == null || difficulty == null || hashrateGhs &lt;= 0 || difficulty &lt;= 0</ID>
+    <ID>ComplexCondition:ProfitMath.kt$ProfitMath$powerW == null || ratePerKwh == null || powerW &lt;= 0 || ratePerKwh &lt;= 0</ID>
+    <ID>ComplexCondition:RuleEngine.kt$RuleEngine$threshold != null &amp;&amp; acc != null &amp;&amp; rej != null &amp;&amp; acc + rej &gt; 100</ID>
+    <ID>ComplexCondition:SchedulesScreen.kt$h != null &amp;&amp; m != null &amp;&amp; h in 0..23 &amp;&amp; m in 0..59</ID>
+    <ID>CyclomaticComplexMethod:AcousticAnalyzer.kt$AcousticAnalyzer$fun analyze(samples: FloatArray, sampleRate: Int): Result?</ID>
+    <ID>CyclomaticComplexMethod:AcousticScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AcousticScreen(onBack: () -&gt; Unit)</ID>
+    <ID>CyclomaticComplexMethod:AlertEngine.kt$AlertEvaluator$fun evaluate( minerId: Long, minerName: String, telemetry: MinerTelemetry, expectedHashrateGhs: Double?, thresholds: AlertThresholds, previous: PreviousState, ): List&lt;AlertSignal&gt;</ID>
+    <ID>CyclomaticComplexMethod:AppUpdater.kt$AppUpdater$suspend fun download(url: String, onProgress: (Float) -&gt; Unit): File?</ID>
+    <ID>CyclomaticComplexMethod:ArOverlayScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun ArOverlayScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: ArOverlayViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:ArOverlayViewModel.kt$ArOverlayViewModel$fun onScanned(code: String, announce: Boolean = false)</ID>
+    <ID>CyclomaticComplexMethod:AutotuneViewModel.kt$AutotuneViewModel$fun start(settleSeconds: Int, maxChipTempC: Int, optimizeForHashrate: Boolean)</ID>
+    <ID>CyclomaticComplexMethod:CgMinerCommon.kt$CgMinerCommon$fun enrichWithStats(base: MinerTelemetry, statsBody: String?): MinerTelemetry</ID>
+    <ID>CyclomaticComplexMethod:ControlsCard.kt$@Composable fun ControlsCard( capabilities: MinerCapabilities, tuneOptions: TuneOptions?, currentPool: Triple&lt;String, Int, String&gt;?, currentFrequencyMhz: Int?, currentVoltageMv: Int?, fanAutoNow: Boolean?, fanPercentNow: Int?, hasTuneToRollback: Boolean, busyAction: String?, lastActionMessage: String?, onReboot: () -&gt; Unit, onSetPool: (url: String, port: Int, worker: String) -&gt; Unit, onSetFanAuto: () -&gt; Unit, onSetFanManual: (Int) -&gt; Unit, onApplyTune: (freq: Int, volt: Int) -&gt; Unit, onRollbackTune: () -&gt; Unit, onPause: () -&gt; Unit = {}, onResume: () -&gt; Unit = {}, )</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState)</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardUiState)</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary)</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun DashboardScreen( onMinerClick: (Long) -&gt; Unit, onAddMiner: () -&gt; Unit, onAlerts: () -&gt; Unit, onSettings: () -&gt; Unit, onFlow: () -&gt; Unit, onNetworkScan: () -&gt; Unit, onAbout: () -&gt; Unit, onPrivacy: () -&gt; Unit, onFleet: () -&gt; Unit, onLeaderboard: () -&gt; Unit, onWall: () -&gt; Unit, onTable: () -&gt; Unit, onAdvanced: () -&gt; Unit, onScan: () -&gt; Unit, onExit: () -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class) @Composable private fun MinerCard( miner: Miner, density: hi3.hashkit.data.prefs.CardDensity, selected: Boolean, selectionMode: Boolean, onClick: () -&gt; Unit, onLongClick: () -&gt; Unit, sparkline: List&lt;Double&gt;? = null, )</ID>
+    <ID>CyclomaticComplexMethod:Exporter.kt$Exporter$suspend fun restore(content: String, passphrase: String? = null): String</ID>
+    <ID>CyclomaticComplexMethod:Exporter.kt$Exporter$suspend fun telemetryCsv(minerId: Long?, sinceEpochMs: Long): File</ID>
+    <ID>CyclomaticComplexMethod:FlowScreen.kt$private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long)</ID>
+    <ID>CyclomaticComplexMethod:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$override suspend fun getTelemetry(host: MinerHost): TelemetryResult</ID>
+    <ID>CyclomaticComplexMethod:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$private fun identity( versionBody: String, statsBody: String?, family: CgMinerCommon.Family, ): MinerIdentity</ID>
+    <ID>CyclomaticComplexMethod:HashRentalScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun HashRentalScreen( onBack: () -&gt; Unit, viewModel: HashRentalViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:HealthScore.kt$HealthScoreCalculator$fun calculate( telemetry: MinerTelemetry?, expectedHashrateGhs: Double?, thresholds: HealthThresholds = HealthThresholds(), previousUptimeS: Long? = null, ): HealthScore</ID>
+    <ID>CyclomaticComplexMethod:Hi3PoolClient.kt$Hi3PoolClient$private suspend fun fetchOceanAccount(baseUrl: String, address: String): PoolResult&lt;PoolAccount&gt;</ID>
+    <ID>CyclomaticComplexMethod:LogsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LogsScreen( onBack: () -&gt; Unit, viewModel: LogsViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>CyclomaticComplexMethod:MetricsFormatter.kt$MetricsFormatter$fun render(miners: List&lt;Miner&gt;): String</ID>
+    <ID>CyclomaticComplexMethod:MinerDetailScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun MinerDetailScreen( onBack: () -&gt; Unit, onLogs: () -&gt; Unit = {}, onAutotune: () -&gt; Unit = {}, focusTelemetry: Boolean = false, viewModel: MinerDetailViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:MinerHostValidator.kt$MinerHostValidator$fun isAllowedIp(ip: String): Boolean</ID>
+    <ID>CyclomaticComplexMethod:MinerInsights.kt$@Composable fun PerChipHealthCard(perChain: List&lt;ChainReading&gt;, fahrenheit: Boolean)</ID>
+    <ID>CyclomaticComplexMethod:MinerVisual.kt$private fun DrawScope.drawMiner( timeMs: Long, status: MinerStatus, chipTempC: Double?, fanRpm: Int?, fanPercent: Int?, )</ID>
+    <ID>CyclomaticComplexMethod:MqttPublisher.kt$MqttPublisher$suspend fun publish(miners: List&lt;Miner&gt;)</ID>
+    <ID>CyclomaticComplexMethod:NfcProgramScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun NfcProgramScreen( onBack: () -&gt; Unit, viewModel: NfcProgramViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:PoolSpeedScreen.kt$@Composable private fun ResultCard(r: PoolSpeedResult, isBest: Boolean)</ID>
+    <ID>CyclomaticComplexMethod:PriceCurtailmentScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun PriceCurtailmentScreen( onBack: () -&gt; Unit, viewModel: PriceCurtailmentViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:RuleEngine.kt$RuleEngine$fun matches( type: ConditionType, threshold: Double?, telemetry: MinerTelemetry, status: MinerStatus, expectedHashrateGhs: Double?, ): Boolean</ID>
+    <ID>CyclomaticComplexMethod:RuleRunner.kt$RuleRunner$suspend fun runRules()</ID>
+    <ID>CyclomaticComplexMethod:ScheduleEngine.kt$ScheduleDueLogic$fun actionOf(schedule: ScheduleEntity): BulkAction?</ID>
+    <ID>CyclomaticComplexMethod:SchedulesScreen.kt$@Composable private fun ScheduleEditorDialog( onSave: (ScheduleEntity) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:SettingsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:SolarSurplusScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SolarSurplusScreen( onBack: () -&gt; Unit, viewModel: SolarSurplusViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:TableScreen.kt$@Composable private fun TableRow( miner: Miner, fahrenheit: Boolean, totalWidth: androidx.compose.ui.unit.Dp, highlighted: Boolean = false, onClick: () -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:TableScreen.kt$@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class) @Composable fun TableScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, onProgramNfc: (List&lt;Long&gt;) -&gt; Unit = {}, onScan: () -&gt; Unit = {}, viewModel: TableViewModel = hiltViewModel(), )</ID>
+    <ID>CyclomaticComplexMethod:TableScreen.kt$TableViewModel.Companion$fun sortMiners(miners: List&lt;Miner&gt;, sort: SortColumn, ascending: Boolean): List&lt;Miner&gt;</ID>
+    <ID>EmptyFunctionBlock:ArOverlayScreen.kt$&lt;no name provided&gt;${}</ID>
+    <ID>EmptyFunctionBlock:NsdDiscoverer.kt$NsdDiscoverer.&lt;no name provided&gt;${}</ID>
+    <ID>FunctionNaming:AboutScreen.kt$@Composable private fun HowToRow(step: HowToStep)</ID>
+    <ID>FunctionNaming:AboutScreen.kt$@Composable private fun LinkRow( title: String, subtitle: String, linkLabel: String, highlight: Boolean, onClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:AboutScreen.kt$@Composable private fun Section(title: String, content: @Composable () -&gt; Unit)</ID>
+    <ID>FunctionNaming:AboutScreen.kt$@Composable private fun SupportedMinerRow(m: SupportedMiner)</ID>
+    <ID>FunctionNaming:AboutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AboutScreen(onBack: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:AcousticScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AcousticScreen(onBack: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:AddMinerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AddMinerScreen( onDone: () -&gt; Unit, viewModel: AddMinerViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:AddressBookScreen.kt$@Composable private fun PoolEditorDialog(existing: SavedPoolEntity?, onSave: (SavedPoolEntity) -&gt; Unit, onDismiss: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:AddressBookScreen.kt$@Composable private fun PoolRow( pool: SavedPoolEntity, activeCount: Int, onApply: () -&gt; Unit, onEdit: () -&gt; Unit, onDelete: () -&gt; Unit, onToggleTest: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:AddressBookScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AddressBookScreen( onBack: () -&gt; Unit, viewModel: AddressBookViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:AdvancedScreen.kt$@Composable private fun AdvancedRow(item: AdvancedItem)</ID>
+    <ID>FunctionNaming:AdvancedScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AdvancedScreen( onBack: () -&gt; Unit, onSchedules: () -&gt; Unit, onFarms: () -&gt; Unit, onAddressBook: () -&gt; Unit, onRack: () -&gt; Unit, onPoolSpeed: () -&gt; Unit, onRules: () -&gt; Unit, onHeatReuse: () -&gt; Unit, onSolar: () -&gt; Unit, onPriceCurtailment: () -&gt; Unit, onAcoustic: () -&gt; Unit, onArOverlay: () -&gt; Unit, onNfcProgram: () -&gt; Unit, onHashRental: () -&gt; Unit, onEnergyCost: () -&gt; Unit, onLiveBitcoin: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:AlertsScreen.kt$@Composable private fun AlertRow(alert: AlertEventEntity, onAcknowledge: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:AlertsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AlertsScreen( onBack: () -&gt; Unit, viewModel: AlertsViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:ArOverlayScreen.kt$@Composable private fun CameraScanner(onScanned: (String) -&gt; Unit, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:ArOverlayScreen.kt$@Composable private fun MatchedCard(miner: Miner, tagLocation: String?, onOpen: () -&gt; Unit, onClear: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:ArOverlayScreen.kt$@Composable private fun NfcOnlyIndicator(nfcAvailable: Boolean, hasNfcHardware: Boolean)</ID>
+    <ID>FunctionNaming:ArOverlayScreen.kt$@Composable private fun OverlayHint(text: String)</ID>
+    <ID>FunctionNaming:ArOverlayScreen.kt$@Composable private fun Stat(label: String, value: String)</ID>
+    <ID>FunctionNaming:ArOverlayScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun ArOverlayScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: ArOverlayViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:AutotuneScreen.kt$@Composable private fun ResultRow(r: TuneResult, isBest: Boolean)</ID>
+    <ID>FunctionNaming:AutotuneScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AutotuneScreen( onBack: () -&gt; Unit, viewModel: AutotuneViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:BulkActionUi.kt$@Composable fun BulkParamsDialog( kind: BulkActionKind, onPlan: (BulkAction) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:BulkActionUi.kt$@Composable fun BulkPlanDialog( plan: BulkPlan, running: Boolean, onExecute: () -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:BulkActionUi.kt$@Composable fun BulkResultsDialog( outcomes: List&lt;BulkOutcome&gt;, skippedCount: Int, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:Components.kt$@Composable fun Metric( label: String, value: String, modifier: Modifier = Modifier, source: ValueSource? = null, valueColor: Color = MaterialTheme.colorScheme.onSurface, )</ID>
+    <ID>FunctionNaming:Components.kt$@Composable fun SourceTag(source: ValueSource)</ID>
+    <ID>FunctionNaming:Components.kt$@Composable fun StatusBadge(status: MinerStatus)</ID>
+    <ID>FunctionNaming:Components.kt$@Composable fun StatusDot(status: MinerStatus, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:ControlsCard.kt$@Composable fun ControlsCard( capabilities: MinerCapabilities, tuneOptions: TuneOptions?, currentPool: Triple&lt;String, Int, String&gt;?, currentFrequencyMhz: Int?, currentVoltageMv: Int?, fanAutoNow: Boolean?, fanPercentNow: Int?, hasTuneToRollback: Boolean, busyAction: String?, lastActionMessage: String?, onReboot: () -&gt; Unit, onSetPool: (url: String, port: Int, worker: String) -&gt; Unit, onSetFanAuto: () -&gt; Unit, onSetFanManual: (Int) -&gt; Unit, onApplyTune: (freq: Int, volt: Int) -&gt; Unit, onRollbackTune: () -&gt; Unit, onPause: () -&gt; Unit = {}, onResume: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:ControlsCard.kt$@Composable private fun ConfirmDialog( title: String, body: String, confirmLabel: String, onConfirm: () -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:ControlsCard.kt$@Composable private fun FanDialog( fanAutoNow: Boolean?, fanPercentNow: Int?, onAuto: () -&gt; Unit, onManual: (Int) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:ControlsCard.kt$@Composable private fun OptionChips( values: List&lt;Int&gt;, selected: Int, stock: Int?, onSelect: (Int) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:ControlsCard.kt$@Composable private fun PoolDialog( current: Triple&lt;String, Int, String&gt;?, onConfirm: (String, Int, String) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:ControlsCard.kt$@Composable private fun TuneDialog( options: TuneOptions?, currentFrequencyMhz: Int?, currentVoltageMv: Int?, hasTuneToRollback: Boolean, onApply: (Int, Int) -&gt; Unit, onRollback: () -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun BulkDialogs( state: DashboardUiState, bulkKind: BulkActionKind?, onDismissKind: () -&gt; Unit, viewModel: DashboardViewModel, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun Counter(count: Int, label: String, color: androidx.compose.ui.graphics.Color)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun DensitySelector( current: hi3.hashkit.data.prefs.CardDensity, onSelect: (hi3.hashkit.data.prefs.CardDensity) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun EmptyState(onAddMiner: () -&gt; Unit, onEnableDemo: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun FarmSelector(state: DashboardUiState, onSelect: (Long) -&gt; Unit)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun FirmwareUpdateBanner( outdated: Int, latest: hi3.hashkit.integrations.update.FirmwareUpdateChecker.Release, context: android.content.Context, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun FleetTrendChart( trend: List&lt;hi3.hashkit.data.repo.FleetTrendPoint&gt;, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun HalvingCountdownCard(epoch: hi3.hashkit.data.repo.DifficultyRepository.NetworkEpoch)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun MiniSparkline(points: List&lt;Double&gt;, modifier: Modifier, color: androidx.compose.ui.graphics.Color)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardUiState)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@Composable private fun SoloCard(solo: hi3.hashkit.ui.dashboard.SoloSummary)</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun DashboardScreen( onMinerClick: (Long) -&gt; Unit, onAddMiner: () -&gt; Unit, onAlerts: () -&gt; Unit, onSettings: () -&gt; Unit, onFlow: () -&gt; Unit, onNetworkScan: () -&gt; Unit, onAbout: () -&gt; Unit, onPrivacy: () -&gt; Unit, onFleet: () -&gt; Unit, onLeaderboard: () -&gt; Unit, onWall: () -&gt; Unit, onTable: () -&gt; Unit, onAdvanced: () -&gt; Unit, onScan: () -&gt; Unit, onExit: () -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun FleetDetailScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class) @Composable private fun MinerCard( miner: Miner, density: hi3.hashkit.data.prefs.CardDensity, selected: Boolean, selectionMode: Boolean, onClick: () -&gt; Unit, onLongClick: () -&gt; Unit, sparkline: List&lt;Double&gt;? = null, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class) @Composable private fun BulkBar( count: Int, onReboot: () -&gt; Unit, onPool: () -&gt; Unit, onFan: () -&gt; Unit, onPause: () -&gt; Unit, onResume: () -&gt; Unit, onClear: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DashboardScreen.kt$@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class) @Composable private fun FleetSummary( state: DashboardUiState, trend: List&lt;hi3.hashkit.data.repo.FleetTrendPoint&gt;, windowMs: Long, onWindow: (Long) -&gt; Unit, onClick: (() -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:EnergyCostScreen.kt$@Composable private fun EnergyRowCard(row: EnergyRow, currency: String, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:EnergyCostScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun EnergyCostScreen( onMinerClick: (Long) -&gt; Unit, onBack: () -&gt; Unit, viewModel: EnergyCostViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:FarmsScreen.kt$@Composable private fun AddFarmDialog( prefillSubnet: String, onDismiss: () -&gt; Unit, onCreate: (String, String) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:FarmsScreen.kt$@Composable private fun FarmCard( row: FarmRow, isActive: Boolean, onSetActive: () -&gt; Unit, onSetDefault: () -&gt; Unit, onScan: () -&gt; Unit, onDelete: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:FarmsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun FarmsScreen( onBack: () -&gt; Unit, viewModel: FarmsViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:FlowScreen.kt$@Composable private fun LiveIndicator(status: LiveStatus)</ID>
+    <ID>FunctionNaming:FlowScreen.kt$@Composable private fun StatCard(label: String, value: String, valueColor: Color)</ID>
+    <ID>FunctionNaming:FlowScreen.kt$@Composable private fun SummaryCards(state: FlowUiState)</ID>
+    <ID>FunctionNaming:FlowScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun FlowScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: FlowViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:HashRentalScreen.kt$@Composable private fun Line(label: String, value: String)</ID>
+    <ID>FunctionNaming:HashRentalScreen.kt$@Composable private fun RentUrlDialog(current: String, onDismiss: () -&gt; Unit, onSave: (String) -&gt; Unit)</ID>
+    <ID>FunctionNaming:HashRentalScreen.kt$@Composable private fun Spacer12()</ID>
+    <ID>FunctionNaming:HashRentalScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun HashRentalScreen( onBack: () -&gt; Unit, viewModel: HashRentalViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:HashrateChart.kt$@Composable fun HashrateChart( history: List&lt;MinerTelemetry&gt;, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HeatReuseScreen.kt$@Composable private fun BigCard(label: String, value: String, sub: String, accent: Boolean = false)</ID>
+    <ID>FunctionNaming:HeatReuseScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun HeatReuseScreen( onBack: () -&gt; Unit, viewModel: HeatReuseViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:HiLogo.kt$@Composable fun HiLogo( modifier: Modifier = Modifier, markSize: Dp = 26.dp, fontSize: androidx.compose.ui.unit.TextUnit = 20.sp, showMark: Boolean = true, )</ID>
+    <ID>FunctionNaming:HiLogo.kt$@Composable fun HiPulseMark(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:LeaderboardScreen.kt$@Composable private fun LeaderRow(rank: Int, m: Miner, rankBy: RankBy, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:LeaderboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LeaderboardScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:LogsScreen.kt$@Composable private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:LogsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LogsScreen( onBack: () -&gt; Unit, viewModel: LogsViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:MainActivity.kt$@Composable private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:MainActivity.kt$MainActivity$@Composable private fun LockLifecycle()</ID>
+    <ID>FunctionNaming:MainActivity.kt$MainActivity$@Composable private fun LockScreen(onUnlock: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:MainActivity.kt$MainActivity$@Composable private fun PollingLifecycle()</ID>
+    <ID>FunctionNaming:MinerDetailScreen.kt$@Composable private fun EditMinerDialog( miner: hi3.hashkit.domain.model.Miner, onSave: (String, String?, String?, String?, String, Double?, hi3.hashkit.domain.alerts.AlertOverrides) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MinerDetailScreen.kt$@Composable private fun InfoRow(label: String, value: String?)</ID>
+    <ID>FunctionNaming:MinerDetailScreen.kt$@Composable private fun NotePhoto(path: String)</ID>
+    <ID>FunctionNaming:MinerDetailScreen.kt$@Composable private fun SectionCard( title: String, modifier: Modifier = Modifier, onClick: (() -&gt; Unit)? = null, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MinerDetailScreen.kt$@Composable private fun SmartPlugCard( plug: hi3.hashkit.ui.detail.PlugConfig, onSave: (hi3.hashkit.integrations.plug.PlugType?, String, String, String, Double?) -&gt; Unit, onTest: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MinerDetailScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun MinerDetailScreen( onBack: () -&gt; Unit, onLogs: () -&gt; Unit = {}, onAutotune: () -&gt; Unit = {}, focusTelemetry: Boolean = false, viewModel: MinerDetailViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:MinerInsights.kt$@Composable fun EfficiencyChart( history: List&lt;MinerTelemetry&gt;, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MinerInsights.kt$@Composable fun PerChipHealthCard(perChain: List&lt;ChainReading&gt;, fahrenheit: Boolean)</ID>
+    <ID>FunctionNaming:MinerInsights.kt$@Composable private fun androidx.compose.foundation.layout.RowScope.Cell( text: String, weight: Float, color: androidx.compose.ui.graphics.Color, )</ID>
+    <ID>FunctionNaming:MinerInsights.kt$@Composable private fun androidx.compose.foundation.layout.RowScope.HeaderCell(text: String, weight: Float)</ID>
+    <ID>FunctionNaming:MinerVisual.kt$@Composable fun MinerVisual( status: MinerStatus, chipTempC: Double?, fanRpm: Int?, fanPercent: Int?, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:NetworkScanScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun NetworkScanScreen( onBack: () -&gt; Unit, viewModel: NetworkScanViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:NfcProgramScreen.kt$@Composable private fun NfcWriteMode(adapter: NfcAdapter?, enabled: Boolean, onTag: (Tag) -&gt; Unit)</ID>
+    <ID>FunctionNaming:NfcProgramScreen.kt$@Composable private fun PayloadLine(label: String, value: String?)</ID>
+    <ID>FunctionNaming:NfcProgramScreen.kt$@Composable private fun QrDialog(payload: String, title: String, onDismiss: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:NfcProgramScreen.kt$@Composable private fun Spacer8()</ID>
+    <ID>FunctionNaming:NfcProgramScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun NfcProgramScreen( onBack: () -&gt; Unit, viewModel: NfcProgramViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Composable fun OnboardingScreen(onDone: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Composable private fun Point(title: String, body: String)</ID>
+    <ID>FunctionNaming:PoolSpeedScreen.kt$@Composable private fun ResultCard(r: PoolSpeedResult, isBest: Boolean)</ID>
+    <ID>FunctionNaming:PoolSpeedScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun PoolSpeedScreen( onBack: () -&gt; Unit, viewModel: PoolSpeedViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:PriceCurtailmentScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun PriceCurtailmentScreen( onBack: () -&gt; Unit, viewModel: PriceCurtailmentViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:PrivacyPolicyScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun PrivacyPolicyScreen(onBack: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:RackScreen.kt$@Composable private fun MinerTile(miner: Miner, fahrenheit: Boolean, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:RackScreen.kt$@Composable private fun RackHeader(group: RackGroup)</ID>
+    <ID>FunctionNaming:RackScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun RackScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: RackViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:RulesScreen.kt$@Composable private fun RuleEditorDialog(onSave: (RuleEntity) -&gt; Unit, onDismiss: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:RulesScreen.kt$@Composable private fun RuleRow(rule: RuleEntity, onToggle: (Boolean) -&gt; Unit, onDelete: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:RulesScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun RulesScreen( onBack: () -&gt; Unit, viewModel: RulesViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:SchedulesScreen.kt$@Composable private fun ScheduleEditorDialog( onSave: (ScheduleEntity) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:SchedulesScreen.kt$@Composable private fun ScheduleRow( schedule: ScheduleEntity, onToggle: (Boolean) -&gt; Unit, onDelete: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:SchedulesScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SchedulesScreen( onBack: () -&gt; Unit, viewModel: SchedulesViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun ActionRow(label: String, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun IntervalRow(label: String, currentMs: Long, onSelect: (Long) -&gt; Unit)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun NumberRow(label: String, initial: String, onCommit: (String) -&gt; Unit)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun PayoutAddressRow(label: String, value: String, onChange: (String) -&gt; Unit)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun PoolTypeRow( current: hi3.hashkit.integrations.hi3.PoolType, onSelect: (hi3.hashkit.integrations.hi3.PoolType) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun Section(title: String, content: @Composable () -&gt; Unit)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun ThemeColorRow(selected: ThemeColor, onSelect: (ThemeColor) -&gt; Unit)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun ToggleRow( title: String, subtitle: String, checked: Boolean, onChange: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun WebhookTypeRow( current: hi3.hashkit.data.alerts.WebhookType, onSelect: (hi3.hashkit.data.alerts.WebhookType) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:SolarSurplusScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SolarSurplusScreen( onBack: () -&gt; Unit, viewModel: SolarSurplusViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:TableScreen.kt$@Composable private fun PrintSizeDialog( onDismiss: () -&gt; Unit, onPick: (hi3.hashkit.integrations.print.AssetTagPrinter.TagSize) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:TableScreen.kt$@Composable private fun TableRow( miner: Miner, fahrenheit: Boolean, totalWidth: androidx.compose.ui.unit.Dp, highlighted: Boolean = false, onClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:TableScreen.kt$@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class) @Composable fun TableScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, onProgramNfc: (List&lt;Long&gt;) -&gt; Unit = {}, onScan: () -&gt; Unit = {}, viewModel: TableViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun Hi3MinerWatchTheme( themeMode: ThemeMode = ThemeMode.SYSTEM, themeColor: ThemeColor = ThemeColor.BLUE, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:WallScreen.kt$@Composable fun WallScreen( onExit: () -&gt; Unit, viewModel: RackViewModel = hiltViewModel(), )</ID>
+    <ID>FunctionNaming:WallScreen.kt$@Composable private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims, tileWidth: Dp = dims.tileWidth)</ID>
+    <ID>LongMethod:AboutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AboutScreen(onBack: () -&gt; Unit)</ID>
+    <ID>LongMethod:AcousticScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AcousticScreen(onBack: () -&gt; Unit)</ID>
+    <ID>LongMethod:AddMinerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AddMinerScreen( onDone: () -&gt; Unit, viewModel: AddMinerViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:AddressBookScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AddressBookScreen( onBack: () -&gt; Unit, viewModel: AddressBookViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:AdvancedScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AdvancedScreen( onBack: () -&gt; Unit, onSchedules: () -&gt; Unit, onFarms: () -&gt; Unit, onAddressBook: () -&gt; Unit, onRack: () -&gt; Unit, onPoolSpeed: () -&gt; Unit, onRules: () -&gt; Unit, onHeatReuse: () -&gt; Unit, onSolar: () -&gt; Unit, onPriceCurtailment: () -&gt; Unit, onAcoustic: () -&gt; Unit, onArOverlay: () -&gt; Unit, onNfcProgram: () -&gt; Unit, onHashRental: () -&gt; Unit, onEnergyCost: () -&gt; Unit, onLiveBitcoin: () -&gt; Unit, )</ID>
+    <ID>LongMethod:AlertEngine.kt$AlertEvaluator$fun evaluate( minerId: Long, minerName: String, telemetry: MinerTelemetry, expectedHashrateGhs: Double?, thresholds: AlertThresholds, previous: PreviousState, ): List&lt;AlertSignal&gt;</ID>
+    <ID>LongMethod:AlertRepository.kt$AlertRepository$suspend fun processTelemetry( minerId: Long, minerName: String, telemetry: MinerTelemetry, expectedHashrateGhs: Double?, thresholds: AlertThresholds, )</ID>
+    <ID>LongMethod:ArOverlayScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun ArOverlayScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: ArOverlayViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:AutotuneScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AutotuneScreen( onBack: () -&gt; Unit, viewModel: AutotuneViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:AutotuneViewModel.kt$AutotuneViewModel$fun start(settleSeconds: Int, maxChipTempC: Int, optimizeForHashrate: Boolean)</ID>
+    <ID>LongMethod:BulkActionUi.kt$@Composable fun BulkParamsDialog( kind: BulkActionKind, onPlan: (BulkAction) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>LongMethod:ControlsCard.kt$@Composable fun ControlsCard( capabilities: MinerCapabilities, tuneOptions: TuneOptions?, currentPool: Triple&lt;String, Int, String&gt;?, currentFrequencyMhz: Int?, currentVoltageMv: Int?, fanAutoNow: Boolean?, fanPercentNow: Int?, hasTuneToRollback: Boolean, busyAction: String?, lastActionMessage: String?, onReboot: () -&gt; Unit, onSetPool: (url: String, port: Int, worker: String) -&gt; Unit, onSetFanAuto: () -&gt; Unit, onSetFanManual: (Int) -&gt; Unit, onApplyTune: (freq: Int, volt: Int) -&gt; Unit, onRollbackTune: () -&gt; Unit, onPause: () -&gt; Unit = {}, onResume: () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:DashboardScreen.kt$@Composable private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState)</ID>
+    <ID>LongMethod:DashboardScreen.kt$@Composable private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardUiState)</ID>
+    <ID>LongMethod:DashboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun DashboardScreen( onMinerClick: (Long) -&gt; Unit, onAddMiner: () -&gt; Unit, onAlerts: () -&gt; Unit, onSettings: () -&gt; Unit, onFlow: () -&gt; Unit, onNetworkScan: () -&gt; Unit, onAbout: () -&gt; Unit, onPrivacy: () -&gt; Unit, onFleet: () -&gt; Unit, onLeaderboard: () -&gt; Unit, onWall: () -&gt; Unit, onTable: () -&gt; Unit, onAdvanced: () -&gt; Unit, onScan: () -&gt; Unit, onExit: () -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:DashboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun FleetDetailScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:DashboardScreen.kt$@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class) @Composable private fun MinerCard( miner: Miner, density: hi3.hashkit.data.prefs.CardDensity, selected: Boolean, selectionMode: Boolean, onClick: () -&gt; Unit, onLongClick: () -&gt; Unit, sparkline: List&lt;Double&gt;? = null, )</ID>
+    <ID>LongMethod:DashboardScreen.kt$@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class) @Composable private fun FleetSummary( state: DashboardUiState, trend: List&lt;hi3.hashkit.data.repo.FleetTrendPoint&gt;, windowMs: Long, onWindow: (Long) -&gt; Unit, onClick: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongMethod:Exporter.kt$Exporter$suspend fun backupJson(passphrase: String? = null): File</ID>
+    <ID>LongMethod:Exporter.kt$Exporter$suspend fun restore(content: String, passphrase: String? = null): String</ID>
+    <ID>LongMethod:FarmsScreen.kt$@Composable private fun FarmCard( row: FarmRow, isActive: Boolean, onSetActive: () -&gt; Unit, onSetDefault: () -&gt; Unit, onScan: () -&gt; Unit, onDelete: () -&gt; Unit, )</ID>
+    <ID>LongMethod:FarmsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun FarmsScreen( onBack: () -&gt; Unit, viewModel: FarmsViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:FlowScreen.kt$private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long)</ID>
+    <ID>LongMethod:HashRentalScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun HashRentalScreen( onBack: () -&gt; Unit, viewModel: HashRentalViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:HealthScore.kt$HealthScoreCalculator$fun calculate( telemetry: MinerTelemetry?, expectedHashrateGhs: Double?, thresholds: HealthThresholds = HealthThresholds(), previousUptimeS: Long? = null, ): HealthScore</ID>
+    <ID>LongMethod:HeatReuseScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun HeatReuseScreen( onBack: () -&gt; Unit, viewModel: HeatReuseViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:HtmlDashboard.kt$HtmlDashboard$fun render(miners: List&lt;Miner&gt;, refreshSeconds: Int = 10): String</ID>
+    <ID>LongMethod:LeaderboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LeaderboardScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:LogsScreen.kt$@Composable private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modifier)</ID>
+    <ID>LongMethod:LogsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LogsScreen( onBack: () -&gt; Unit, viewModel: LogsViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:MainActivity.kt$@Composable private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -&gt; Unit)</ID>
+    <ID>LongMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:MinerDetailScreen.kt$@Composable private fun EditMinerDialog( miner: hi3.hashkit.domain.model.Miner, onSave: (String, String?, String?, String?, String, Double?, hi3.hashkit.domain.alerts.AlertOverrides) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>LongMethod:MinerDetailScreen.kt$@Composable private fun NotePhoto(path: String)</ID>
+    <ID>LongMethod:MinerDetailScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun MinerDetailScreen( onBack: () -&gt; Unit, onLogs: () -&gt; Unit = {}, onAutotune: () -&gt; Unit = {}, focusTelemetry: Boolean = false, viewModel: MinerDetailViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:MinerVisual.kt$private fun DrawScope.drawMiner( timeMs: Long, status: MinerStatus, chipTempC: Double?, fanRpm: Int?, fanPercent: Int?, )</ID>
+    <ID>LongMethod:NetworkScanScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun NetworkScanScreen( onBack: () -&gt; Unit, viewModel: NetworkScanViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:NfcProgramScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun NfcProgramScreen( onBack: () -&gt; Unit, viewModel: NfcProgramViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:PriceCurtailmentScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun PriceCurtailmentScreen( onBack: () -&gt; Unit, viewModel: PriceCurtailmentViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:RulesScreen.kt$@Composable private fun RuleEditorDialog(onSave: (RuleEntity) -&gt; Unit, onDismiss: () -&gt; Unit)</ID>
+    <ID>LongMethod:SchedulesScreen.kt$@Composable private fun ScheduleEditorDialog( onSave: (ScheduleEntity) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>LongMethod:SettingsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:SolarSurplusScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SolarSurplusScreen( onBack: () -&gt; Unit, viewModel: SolarSurplusViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:TableScreen.kt$@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class) @Composable fun TableScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, onProgramNfc: (List&lt;Long&gt;) -&gt; Unit = {}, onScan: () -&gt; Unit = {}, viewModel: TableViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:WallScreen.kt$@Composable fun WallScreen( onExit: () -&gt; Unit, viewModel: RackViewModel = hiltViewModel(), )</ID>
+    <ID>LongParameterList:AddressBookScreen.kt$( pool: SavedPoolEntity, activeCount: Int, onApply: () -&gt; Unit, onEdit: () -&gt; Unit, onDelete: () -&gt; Unit, onToggleTest: (Boolean) -&gt; Unit, )</ID>
+    <ID>LongParameterList:AdvancedScreen.kt$( onBack: () -&gt; Unit, onSchedules: () -&gt; Unit, onFarms: () -&gt; Unit, onAddressBook: () -&gt; Unit, onRack: () -&gt; Unit, onPoolSpeed: () -&gt; Unit, onRules: () -&gt; Unit, onHeatReuse: () -&gt; Unit, onSolar: () -&gt; Unit, onPriceCurtailment: () -&gt; Unit, onAcoustic: () -&gt; Unit, onArOverlay: () -&gt; Unit, onNfcProgram: () -&gt; Unit, onHashRental: () -&gt; Unit, onEnergyCost: () -&gt; Unit, onLiveBitcoin: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:AlertEngine.kt$AlertEvaluator$( minerId: Long, minerName: String, telemetry: MinerTelemetry, expectedHashrateGhs: Double?, thresholds: AlertThresholds, previous: PreviousState, )</ID>
+    <ID>LongParameterList:AlertEvaluatorTest.kt$AlertEvaluatorTest$( status: MinerStatus = MinerStatus.ONLINE, hashrate: Double? = 1000.0, expected: Double? = 1000.0, chipTemp: Double? = 55.0, uptime: Long? = 86_400, pool: String? = "pool.local", bestDiff: Double? = 1e6, fans: List&lt;FanReading&gt; = listOf(FanReading(0, rpm = 4000, percent = 70)), )</ID>
+    <ID>LongParameterList:BraiinsParser.kt$BraiinsParser$( summaryBody: String?, devsBody: String?, tempsBody: String?, fansBody: String?, devdetailsBody: String?, poolsBody: String?, )</ID>
+    <ID>LongParameterList:ControlsCard.kt$( capabilities: MinerCapabilities, tuneOptions: TuneOptions?, currentPool: Triple&lt;String, Int, String&gt;?, currentFrequencyMhz: Int?, currentVoltageMv: Int?, fanAutoNow: Boolean?, fanPercentNow: Int?, hasTuneToRollback: Boolean, busyAction: String?, lastActionMessage: String?, onReboot: () -&gt; Unit, onSetPool: (url: String, port: Int, worker: String) -&gt; Unit, onSetFanAuto: () -&gt; Unit, onSetFanManual: (Int) -&gt; Unit, onApplyTune: (freq: Int, volt: Int) -&gt; Unit, onRollbackTune: () -&gt; Unit, onPause: () -&gt; Unit = {}, onResume: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:ControlsCard.kt$( options: TuneOptions?, currentFrequencyMhz: Int?, currentVoltageMv: Int?, hasTuneToRollback: Boolean, onApply: (Int, Int) -&gt; Unit, onRollback: () -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:Daos.kt$MinerDao$(id: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?)</ID>
+    <ID>LongParameterList:DashboardScreen.kt$( count: Int, onReboot: () -&gt; Unit, onPool: () -&gt; Unit, onFan: () -&gt; Unit, onPause: () -&gt; Unit, onResume: () -&gt; Unit, onClear: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:DashboardScreen.kt$( miner: Miner, density: hi3.hashkit.data.prefs.CardDensity, selected: Boolean, selectionMode: Boolean, onClick: () -&gt; Unit, onLongClick: () -&gt; Unit, sparkline: List&lt;Double&gt;? = null, )</ID>
+    <ID>LongParameterList:DashboardScreen.kt$( onMinerClick: (Long) -&gt; Unit, onAddMiner: () -&gt; Unit, onAlerts: () -&gt; Unit, onSettings: () -&gt; Unit, onFlow: () -&gt; Unit, onNetworkScan: () -&gt; Unit, onAbout: () -&gt; Unit, onPrivacy: () -&gt; Unit, onFleet: () -&gt; Unit, onLeaderboard: () -&gt; Unit, onWall: () -&gt; Unit, onTable: () -&gt; Unit, onAdvanced: () -&gt; Unit, onScan: () -&gt; Unit, onExit: () -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
+    <ID>LongParameterList:DashboardViewModel.kt$DashboardViewModel$( private val repository: MinerRepository, private val pollingEngine: PollingEngine, private val settingsRepository: SettingsRepository, private val difficultyRepository: DifficultyRepository, private val fleetControl: hi3.hashkit.data.repo.FleetControl, private val hi3PoolRepository: hi3.hashkit.integrations.hi3.Hi3PoolRepository, private val mmpRepository: hi3.hashkit.integrations.hi3.MmpRepository, private val scanner: hi3.hashkit.discovery.MinerScanner, private val networkInspector: hi3.hashkit.discovery.NetworkInspector, private val farmRepository: hi3.hashkit.data.repo.FarmRepository, private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker, alertDao: AlertDao, )</ID>
+    <ID>LongParameterList:DownsamplerTest.kt$DownsamplerTest$( offsetMs: Long, hashrate: Double? = 1000.0, power: Double? = 15.0, chipTemp: Double? = 60.0, vrTemp: Double? = null, status: String = "ONLINE", )</ID>
+    <ID>LongParameterList:Exporter.kt$Exporter$( @ApplicationContext private val context: Context, private val minerDao: MinerDao, private val telemetryDao: TelemetryDao, private val scheduleDao: ScheduleDao, private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao, private val farmDao: hi3.hashkit.data.db.FarmDao, private val ruleDao: hi3.hashkit.data.db.RuleDao, private val savedPoolDao: hi3.hashkit.data.db.SavedPoolDao, private val settingsRepository: hi3.hashkit.data.prefs.SettingsRepository, private val pollingEngine: hi3.hashkit.data.poll.PollingEngine? = null, )</ID>
+    <ID>LongParameterList:FarmsScreen.kt$( row: FarmRow, isActive: Boolean, onSetActive: () -&gt; Unit, onSetDefault: () -&gt; Unit, onScan: () -&gt; Unit, onDelete: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:FlowScreen.kt$( from: Offset, to: Offset, color: Color, t: Double, density: Int, speed: Double, )</ID>
+    <ID>LongParameterList:HealthScoreCalculatorTest.kt$HealthScoreCalculatorTest$( hashrate: Double? = 1000.0, expected: Double? = 1000.0, chipTemp: Double? = 55.0, vrTemp: Double? = 60.0, fans: List&lt;FanReading&gt; = listOf(FanReading(0, rpm = 4000, percent = 70)), accepted: Long? = 10_000, rejected: Long? = 10, uptime: Long? = 86_400, power: Double? = 15.0, status: MinerStatus = MinerStatus.ONLINE, )</ID>
+    <ID>LongParameterList:MinerDetailViewModel.kt$MinerDetailViewModel$( name: String, group: String?, location: String?, notes: String?, tagsCsv: String, expectedHashrateGhs: Double?, alertOverrides: hi3.hashkit.domain.alerts.AlertOverrides, )</ID>
+    <ID>LongParameterList:MinerDetailViewModel.kt$MinerDetailViewModel$( savedStateHandle: SavedStateHandle, @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context, private val repository: MinerRepository, private val controlRepository: ControlRepository, private val registry: AdapterRegistry, private val pollingEngine: PollingEngine, private val exporter: hi3.hashkit.data.export.Exporter, private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient, private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao, alertDao: AlertDao, settingsRepository: SettingsRepository, )</ID>
+    <ID>LongParameterList:MinerRepository.kt$MinerRepository$( id: Long, name: String, group: String?, location: String?, notes: String?, tags: List&lt;String&gt;, expectedHashrateGhs: Double?, alertOverrides: hi3.hashkit.domain.alerts.AlertOverrides? = null, )</ID>
+    <ID>LongParameterList:MinerRepository.kt$MinerRepository$( minerId: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?, )</ID>
+    <ID>LongParameterList:MinerRepository.kt$MinerRepository$( private val minerDao: MinerDao, private val telemetryDao: TelemetryDao, private val registry: AdapterRegistry, private val hourlyDao: hi3.hashkit.data.db.HourlyDao? = null, private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient? = null, private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao? = null, @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context? = null, )</ID>
+    <ID>LongParameterList:MqttClient.kt$MqttClient$( host: String, port: Int, clientId: String, username: String?, password: String?, messages: List&lt;Message&gt;, connectTimeoutMs: Int = 4000, )</ID>
+    <ID>LongParameterList:PollingEngine.kt$PollingEngine$( @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context, private val repository: MinerRepository, private val alertRepository: AlertRepository, private val settingsRepository: SettingsRepository, private val scheduleEngine: hi3.hashkit.data.schedule.ScheduleEngine, private val farmRepository: hi3.hashkit.data.repo.FarmRepository, private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient, private val auditDao: hi3.hashkit.data.db.AuditDao, private val remediationEngine: hi3.hashkit.data.remediation.RemediationEngine, private val wearSyncManager: hi3.hashkit.data.wear.WearSyncManager, private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker, private val mqttPublisher: hi3.hashkit.integrations.mqtt.MqttPublisher, private val prometheusServer: hi3.hashkit.integrations.metrics.PrometheusServer, private val ruleRunner: hi3.hashkit.data.rules.RuleRunner, )</ID>
+    <ID>LongParameterList:PoolType.kt$PoolType$( val displayName: String, val defaultBaseUrl: String, /** True when the base URL is user-editable (self-hostable public-pool instances). */ val baseUrlEditable: Boolean, val identifierLabel: String, /** True when the required credential is the token/API-key field, not the address field. */ val usesToken: Boolean = false, /** Placeholder pools have no verified endpoint yet — the app contacts nothing. */ val comingSoon: Boolean = false, /** Documented public stratum host for the pool speed test; null = not benchmarkable. */ val stratumHost: String? = null, val stratumPort: Int = 3333, )</ID>
+    <ID>LongParameterList:ScheduleDueLogicTest.kt$ScheduleDueLogicTest$( enabled: Boolean = true, timeMinutes: Int = 3 * 60, // 03:00 days: String = "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY", lastRunAt: Long? = null, minInterval: Int = 60, actionType: String = "reboot", params: String = "{}", )</ID>
+    <ID>LoopWithTooManyJumpStatements:AutotuneViewModel.kt$AutotuneViewModel$for</ID>
+    <ID>LoopWithTooManyJumpStatements:CgMinerApi.kt$CgMinerApi$while</ID>
+    <ID>LoopWithTooManyJumpStatements:Exporter.kt$Exporter$for</ID>
+    <ID>LoopWithTooManyJumpStatements:FleetControl.kt$FleetControl$for</ID>
+    <ID>LoopWithTooManyJumpStatements:FleetSeries.kt$FleetSeries$for</ID>
+    <ID>LoopWithTooManyJumpStatements:MinerRepository.kt$MinerRepository$for</ID>
+    <ID>LoopWithTooManyJumpStatements:PrometheusServer.kt$PrometheusServer$while</ID>
+    <ID>LoopWithTooManyJumpStatements:RuleRunner.kt$RuleRunner$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ScaleBenchmarkTest.kt$ScaleBenchmarkTest.Companion$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ScheduleEngine.kt$ScheduleEngine$for</ID>
+    <ID>MagicNumber:AcousticAnalyzer.kt$AcousticAnalyzer$8</ID>
+    <ID>MagicNumber:AcousticScreen.kt$100</ID>
+    <ID>MagicNumber:AcousticScreen.kt$32768f</ID>
+    <ID>MagicNumber:AddMinerViewModel.kt$AddMinerViewModel$10_000</ID>
+    <ID>MagicNumber:AddressBookScreen.kt$65535</ID>
+    <ID>MagicNumber:AddressBookScreen.kt$AddressBookViewModel$3333</ID>
+    <ID>MagicNumber:AddressBookScreen.kt$AddressBookViewModel$5_000</ID>
+    <ID>MagicNumber:AlertEngine.kt$AlertEvaluator$100</ID>
+    <ID>MagicNumber:AlertEngine.kt$AlertEvaluator$100.0</ID>
+    <ID>MagicNumber:AlertEngine.kt$AlertEvaluator$60</ID>
+    <ID>MagicNumber:AlertEngine.kt$AlertThresholds$30</ID>
+    <ID>MagicNumber:AlertEngine.kt$AlertThresholds$60_000L</ID>
+    <ID>MagicNumber:AlertNotifier.kt$AlertNotifier$31</ID>
+    <ID>MagicNumber:AlertNotifier.kt$AlertNotifier$33</ID>
+    <ID>MagicNumber:AlertRepository.kt$AlertRepository$24</ID>
+    <ID>MagicNumber:AlertRepository.kt$AlertRepository$3_600_000L</ID>
+    <ID>MagicNumber:AlertRepository.kt$AlertRepository$6</ID>
+    <ID>MagicNumber:AlertRepository.kt$AlertRepository$60</ID>
+    <ID>MagicNumber:AlertsScreen.kt$AlertsViewModel$5_000</ID>
+    <ID>MagicNumber:AnomalyDetector.kt$AnomalyDetector$0.02</ID>
+    <ID>MagicNumber:AnomalyDetector.kt$AnomalyDetector$100</ID>
+    <ID>MagicNumber:AnomalyDetector.kt$AnomalyDetector$3</ID>
+    <ID>MagicNumber:AppModule.kt$AppModule$3</ID>
+    <ID>MagicNumber:AppModule.kt$AppModule$5</ID>
+    <ID>MagicNumber:AppModule.kt$AppModule$8</ID>
+    <ID>MagicNumber:AppUpdater.kt$AppUpdater$1024</ID>
+    <ID>MagicNumber:AppUpdater.kt$AppUpdater$64</ID>
+    <ID>MagicNumber:ArOverlayScreen.kt$1000</ID>
+    <ID>MagicNumber:ArOverlayScreen.kt$900</ID>
+    <ID>MagicNumber:ArOverlayViewModel.kt$ArOverlayViewModel$5_000</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$0.5f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$1.8f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$15f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$2.3f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$2.5f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$22f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$25f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$3</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$3.4f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$38f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$4</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$4f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter$5f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter.Sheet$0.04f</ID>
+    <ID>MagicNumber:AssetTagPrinter.kt$AssetTagPrinter.Sheet$1.3f</ID>
+    <ID>MagicNumber:AutotuneScreen.kt$120</ID>
+    <ID>MagicNumber:AutotuneScreen.kt$60</ID>
+    <ID>MagicNumber:AutotuneScreen.kt$65</ID>
+    <ID>MagicNumber:AutotuneScreen.kt$70</ID>
+    <ID>MagicNumber:AutotuneScreen.kt$75</ID>
+    <ID>MagicNumber:AutotuneScreen.kt$90</ID>
+    <ID>MagicNumber:AutotuneViewModel.kt$AutotuneViewModel$1000</ID>
+    <ID>MagicNumber:AutotuneViewModel.kt$AutotuneViewModel$5_000</ID>
+    <ID>MagicNumber:BackupCrypto.kt$BackupCrypto$12</ID>
+    <ID>MagicNumber:BackupCrypto.kt$BackupCrypto$128</ID>
+    <ID>MagicNumber:BackupCrypto.kt$BackupCrypto$16</ID>
+    <ID>MagicNumber:BackupCrypto.kt$BackupCrypto$3</ID>
+    <ID>MagicNumber:BackupCrypto.kt$BackupCrypto$4</ID>
+    <ID>MagicNumber:BitmainWebClient.kt$BitmainWebClient$3</ID>
+    <ID>MagicNumber:BitmainWebClient.kt$BitmainWebClient$401</ID>
+    <ID>MagicNumber:BitmainWebClient.kt$BitmainWebClient$8</ID>
+    <ID>MagicNumber:BraiinsAdapter.kt$BraiinsAdapter$80</ID>
+    <ID>MagicNumber:BraiinsParser.kt$BraiinsParser$1000.0</ID>
+    <ID>MagicNumber:BulkActionUi.kt$70f</ID>
+    <ID>MagicNumber:CanaanAdapter.kt$CanaanAdapter$80</ID>
+    <ID>MagicNumber:CanaanParser.kt$CanaanParser$1000.0</ID>
+    <ID>MagicNumber:CanaanParser.kt$CanaanParser$5</ID>
+    <ID>MagicNumber:CanaanParser.kt$CanaanParser$5000.0</ID>
+    <ID>MagicNumber:CgMinerApi.kt$CgMinerApi$8192</ID>
+    <ID>MagicNumber:CgMinerCommon.kt$CgMinerCommon$1000.0</ID>
+    <ID>MagicNumber:CgMinerCommon.kt$CgMinerCommon$16</ID>
+    <ID>MagicNumber:CgMinerCommon.kt$CgMinerCommon$64</ID>
+    <ID>MagicNumber:CgMinerCommon.kt$CgMinerCommon$8</ID>
+    <ID>MagicNumber:ConnectivityProbe.kt$ConnectivityProbe$1_000_000</ID>
+    <ID>MagicNumber:ConnectivityProbe.kt$ConnectivityProbe$65535</ID>
+    <ID>MagicNumber:ControlsCard.kt$65535</ID>
+    <ID>MagicNumber:ControlsCard.kt$70</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0.9</ID>
+    <ID>MagicNumber:DashboardScreen.kt$1.1</ID>
+    <ID>MagicNumber:DashboardScreen.kt$1000.0</ID>
+    <ID>MagicNumber:DashboardScreen.kt$120</ID>
+    <ID>MagicNumber:DashboardScreen.kt$1e-6</ID>
+    <ID>MagicNumber:DashboardScreen.kt$21_600_000L</ID>
+    <ID>MagicNumber:DashboardScreen.kt$2500</ID>
+    <ID>MagicNumber:DashboardScreen.kt$3</ID>
+    <ID>MagicNumber:DashboardScreen.kt$3_600_000L</ID>
+    <ID>MagicNumber:DashboardScreen.kt$5</ID>
+    <ID>MagicNumber:DashboardScreen.kt$60</ID>
+    <ID>MagicNumber:DashboardScreen.kt$7</ID>
+    <ID>MagicNumber:DashboardScreen.kt$86_400_000L</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$1000.0</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$24.0</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$3</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$30</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$365.25</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$3_600_000L</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$5_000</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$6</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$60_000</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$60_000L</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$7</ID>
+    <ID>MagicNumber:DashboardViewModel.kt$DashboardViewModel$86_400.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$0.06</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$0.4</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$0.94</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$1000.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$10_000</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$1100.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$1150.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$15.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$15.5</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$150</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$2.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$3.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$525.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$55.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$58.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$60.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$64.0</ID>
+    <ID>MagicNumber:DemoMinerAdapter.kt$DemoMinerAdapter$7</ID>
+    <ID>MagicNumber:Downsampler.kt$Downsampler$3_600_000.0</ID>
+    <ID>MagicNumber:EnergyCostScreen.kt$EnergyCostViewModel$5_000</ID>
+    <ID>MagicNumber:EspMinerAdapter.kt$EspMinerAdapter$100</ID>
+    <ID>MagicNumber:EspMinerAdapter.kt$EspMinerAdapter$35</ID>
+    <ID>MagicNumber:EspMinerAdapter.kt$EspMinerAdapter$65535</ID>
+    <ID>MagicNumber:EspMinerAdapter.kt$EspMinerAdapter$66</ID>
+    <ID>MagicNumber:EspMinerAdapter.kt$EspMinerAdapter$80</ID>
+    <ID>MagicNumber:EspMinerFirmware.kt$EspMinerFirmware$15</ID>
+    <ID>MagicNumber:EspMinerParser.kt$EspMinerParser$1e12</ID>
+    <ID>MagicNumber:EspMinerParser.kt$EspMinerParser$1e15</ID>
+    <ID>MagicNumber:EspMinerParser.kt$EspMinerParser$1e18</ID>
+    <ID>MagicNumber:EspMinerParser.kt$EspMinerParser$1e3</ID>
+    <ID>MagicNumber:EspMinerParser.kt$EspMinerParser$1e6</ID>
+    <ID>MagicNumber:EspMinerParser.kt$EspMinerParser$1e9</ID>
+    <ID>MagicNumber:Exporter.kt$Exporter$1024</ID>
+    <ID>MagicNumber:Exporter.kt$Exporter$3</ID>
+    <ID>MagicNumber:FarmRepository.kt$FarmRepository$5_000L</ID>
+    <ID>MagicNumber:FarmRepository.kt$FarmRepository$86_400_000L</ID>
+    <ID>MagicNumber:FarmsViewModel.kt$FarmsViewModel$5_000</ID>
+    <ID>MagicNumber:Fft.kt$Fft$0.5</ID>
+    <ID>MagicNumber:Fft.kt$Fft$2.0</ID>
+    <ID>MagicNumber:FirmwareUpdateChecker.kt$FirmwareUpdateChecker$3_600_000L</ID>
+    <ID>MagicNumber:FirmwareUpdateChecker.kt$FirmwareUpdateChecker$6</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.05f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.08f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.10f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.12f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.13f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.15f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.16f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.18f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.22f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.24f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.34f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.4</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.44f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.4f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.5f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.64f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.6f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.75f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.78f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.82f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.84f</ID>
+    <ID>MagicNumber:FlowScreen.kt$0.9f</ID>
+    <ID>MagicNumber:FlowScreen.kt$1.85f</ID>
+    <ID>MagicNumber:FlowScreen.kt$1000.0</ID>
+    <ID>MagicNumber:FlowScreen.kt$110f</ID>
+    <ID>MagicNumber:FlowScreen.kt$12f</ID>
+    <ID>MagicNumber:FlowScreen.kt$2</ID>
+    <ID>MagicNumber:FlowScreen.kt$22f</ID>
+    <ID>MagicNumber:FlowScreen.kt$26f</ID>
+    <ID>MagicNumber:FlowScreen.kt$28f</ID>
+    <ID>MagicNumber:FlowScreen.kt$3</ID>
+    <ID>MagicNumber:FlowScreen.kt$3.0</ID>
+    <ID>MagicNumber:FlowScreen.kt$34.0</ID>
+    <ID>MagicNumber:FlowScreen.kt$4</ID>
+    <ID>MagicNumber:FlowScreen.kt$40f</ID>
+    <ID>MagicNumber:FlowScreen.kt$44f</ID>
+    <ID>MagicNumber:FlowScreen.kt$46f</ID>
+    <ID>MagicNumber:FlowScreen.kt$48f</ID>
+    <ID>MagicNumber:FlowScreen.kt$50f</ID>
+    <ID>MagicNumber:FlowScreen.kt$52f</ID>
+    <ID>MagicNumber:FlowScreen.kt$56f</ID>
+    <ID>MagicNumber:FlowScreen.kt$6</ID>
+    <ID>MagicNumber:FlowScreen.kt$60f</ID>
+    <ID>MagicNumber:FlowScreen.kt$64f</ID>
+    <ID>MagicNumber:FlowScreen.kt$66f</ID>
+    <ID>MagicNumber:FlowScreen.kt$68f</ID>
+    <ID>MagicNumber:FlowScreen.kt$6f</ID>
+    <ID>MagicNumber:FlowScreen.kt$80f</ID>
+    <ID>MagicNumber:FlowScreen.kt$8f</ID>
+    <ID>MagicNumber:FlowScreen.kt$900</ID>
+    <ID>MagicNumber:FlowScreen.kt$9f</ID>
+    <ID>MagicNumber:FlowViewModel.kt$FlowViewModel$10_000</ID>
+    <ID>MagicNumber:FlowViewModel.kt$FlowViewModel$3333</ID>
+    <ID>MagicNumber:FlowViewModel.kt$FlowViewModel$5_000</ID>
+    <ID>MagicNumber:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$80</ID>
+    <ID>MagicNumber:HalvingMath.kt$HalvingMath$10</ID>
+    <ID>MagicNumber:HalvingMath.kt$HalvingMath$24</ID>
+    <ID>MagicNumber:HalvingMath.kt$HalvingMath$50.0</ID>
+    <ID>MagicNumber:HalvingMath.kt$HalvingMath$60</ID>
+    <ID>MagicNumber:HalvingMath.kt$HalvingMath$60_000</ID>
+    <ID>MagicNumber:HalvingMath.kt$HalvingMath$60_000L</ID>
+    <ID>MagicNumber:HashRentalScreen.kt$1000.0</ID>
+    <ID>MagicNumber:HashRentalScreen.kt$100_000_000_000.0</ID>
+    <ID>MagicNumber:HashRentalScreen.kt$HashRentalViewModel$6</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$10</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$11</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$12</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$13</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$14</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$15</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$16</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$17</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$3</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$4</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$5</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$6</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$7</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$8</ID>
+    <ID>MagicNumber:HashkitDatabase.kt$HashkitDatabase.Companion.&lt;no name provided&gt;$9</ID>
+    <ID>MagicNumber:HashkitWidget.kt$HashkitWidget$0xFF0B0F14</ID>
+    <ID>MagicNumber:HashkitWidget.kt$HashkitWidget$0xFF2BD97C</ID>
+    <ID>MagicNumber:HashkitWidget.kt$HashkitWidget$0xFF3987E5</ID>
+    <ID>MagicNumber:HashkitWidget.kt$HashkitWidget$0xFF93A3B4</ID>
+    <ID>MagicNumber:HashrateChart.kt$1.1</ID>
+    <ID>MagicNumber:HashrateChart.kt$3</ID>
+    <ID>MagicNumber:HashrateChart.kt$4f</ID>
+    <ID>MagicNumber:HashrateChart.kt$6f</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$10.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$100</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$100.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$12.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$15.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$20.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$25.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$3.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$30.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$5.0</ID>
+    <ID>MagicNumber:HealthScore.kt$HealthScoreCalculator$60</ID>
+    <ID>MagicNumber:HeatReuseMath.kt$HeatReuseMath$1000.0</ID>
+    <ID>MagicNumber:HeatReuseScreen.kt$HeatReuseState$1000.0</ID>
+    <ID>MagicNumber:HeatReuseScreen.kt$HeatReuseViewModel$5_000</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient$1e-3</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient$1e-6</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient$1e-9</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient$1e3</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient$1e6</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient$1e9</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient.Companion$1e12</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient.Companion$1e15</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient.Companion$1e18</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient.Companion$1e3</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient.Companion$1e6</ID>
+    <ID>MagicNumber:Hi3PoolClient.kt$Hi3PoolClient.Companion$1e9</ID>
+    <ID>MagicNumber:Hi3PoolRepository.kt$WorkerComparison$100.0</ID>
+    <ID>MagicNumber:HiLogo.kt$0.06f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.28f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.30f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.40f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.42f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.52f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.55f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.64f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.72f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.80f</ID>
+    <ID>MagicNumber:HiLogo.kt$0.94f</ID>
+    <ID>MagicNumber:HomeAssistantClient.kt$HomeAssistantClient$1000.0</ID>
+    <ID>MagicNumber:KeystoreCrypto.kt$KeystoreCrypto$12</ID>
+    <ID>MagicNumber:KeystoreCrypto.kt$KeystoreCrypto$128</ID>
+    <ID>MagicNumber:KeystoreCrypto.kt$KeystoreCrypto$256</ID>
+    <ID>MagicNumber:LeaderboardScreen.kt$100.0</ID>
+    <ID>MagicNumber:LeaderboardScreen.kt$3</ID>
+    <ID>MagicNumber:LicenseValidator.kt$LicenseValidator$14</ID>
+    <ID>MagicNumber:LicenseValidator.kt$LicenseValidator$8</ID>
+    <ID>MagicNumber:LogAnalyzer.kt$LogAnalyzer$3</ID>
+    <ID>MagicNumber:LogAnalyzer.kt$LogAnalyzer$5</ID>
+    <ID>MagicNumber:LogRepository.kt$LogRepository$30</ID>
+    <ID>MagicNumber:LogRepository.kt$LogRepository$60_000L</ID>
+    <ID>MagicNumber:LogsScreen.kt$3_600_000L</ID>
+    <ID>MagicNumber:LogsScreen.kt$604_800_000L</ID>
+    <ID>MagicNumber:LogsScreen.kt$86_400_000L</ID>
+    <ID>MagicNumber:LogsScreen.kt$LogsViewModel$2000</ID>
+    <ID>MagicNumber:LogsScreen.kt$LogsViewModel$5_000</ID>
+    <ID>MagicNumber:LogsScreen.kt$LogsViewModel$86_400_000L</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$31</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$100.0</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$1000</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$2048</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$3</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$30</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$300_000L</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$3333</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$3_600_000.0</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$3_600_000L</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$4</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$400</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$6</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$60</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$6f</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$7</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$86_400_000L</ID>
+    <ID>MagicNumber:MinerDetailScreen.kt$90</ID>
+    <ID>MagicNumber:MinerDetailViewModel.kt$MinerDetailViewModel$20</ID>
+    <ID>MagicNumber:MinerDetailViewModel.kt$MinerDetailViewModel$2_000</ID>
+    <ID>MagicNumber:MinerDetailViewModel.kt$MinerDetailViewModel$5_000</ID>
+    <ID>MagicNumber:MinerDetailViewModel.kt$MinerDetailViewModel$8_000</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$10</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$100</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$127</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$16</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$168</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$169</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$172</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$192</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$254</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$255</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$31</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$4</ID>
+    <ID>MagicNumber:MinerHostValidator.kt$MinerHostValidator$64</ID>
+    <ID>MagicNumber:MinerInsights.kt$0.15</ID>
+    <ID>MagicNumber:MinerInsights.kt$0.5</ID>
+    <ID>MagicNumber:MinerInsights.kt$0.85</ID>
+    <ID>MagicNumber:MinerInsights.kt$0.9f</ID>
+    <ID>MagicNumber:MinerInsights.kt$1.1f</ID>
+    <ID>MagicNumber:MinerInsights.kt$1.4f</ID>
+    <ID>MagicNumber:MinerInsights.kt$3</ID>
+    <ID>MagicNumber:MinerInsights.kt$4f</ID>
+    <ID>MagicNumber:MinerInsights.kt$6f</ID>
+    <ID>MagicNumber:MinerRepository.kt$MinerRepository$120_000</ID>
+    <ID>MagicNumber:MinerRepository.kt$MinerRepository$3_600_000</ID>
+    <ID>MagicNumber:MinerRepository.kt$MinerRepository$730L</ID>
+    <ID>MagicNumber:MinerRepository.kt$MinerRepository$86_400_000L</ID>
+    <ID>MagicNumber:MinerScanner.kt$MinerScanner$64</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$10.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$100_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$104_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$105_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$110_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$112_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$114_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$12.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$120_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$122_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$126_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$130_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$140.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$140_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$15.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$150_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$172_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$18.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$185_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$186_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$190_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$1_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$1_200.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$1_500.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$1_650.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$1_674.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$200.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$200_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$216_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$22.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$234_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$257_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$270_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$2_094.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$2_520.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$2_760.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$2_920.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$300_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$335_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$350.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_010.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_068.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_100.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_150.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_220.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_230.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_250.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_276.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_306.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_312.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_344.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_348.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_355.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_400.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_420.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_441.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_450.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_472.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_500.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_510.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_564.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_610.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_645.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_800.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$3_850.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$40.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$473_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$4_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$4_200.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$500.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$53_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$56_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$580_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$5_304.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$5_340.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$5_360.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$5_510.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$5_676.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$600_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$66.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$6_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$700.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$73_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$76_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$81_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$84_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$88_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$90_000.0</ID>
+    <ID>MagicNumber:MinerSpecs.kt$MinerSpecs$95_000.0</ID>
+    <ID>MagicNumber:MinerTelemetry.kt$MinerTelemetry$100.0</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.02f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.12f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.14f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.15f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.1f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.2f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.34f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.35f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.42f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.5f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0.8f</ID>
+    <ID>MagicNumber:MinerVisual.kt$0xFF0B0F14</ID>
+    <ID>MagicNumber:MinerVisual.kt$0xFF141922</ID>
+    <ID>MagicNumber:MinerVisual.kt$0xFF1A2029</ID>
+    <ID>MagicNumber:MinerVisual.kt$0xFF1A222D</ID>
+    <ID>MagicNumber:MinerVisual.kt$0xFF243040</ID>
+    <ID>MagicNumber:MinerVisual.kt$0xFFB6C94A</ID>
+    <ID>MagicNumber:MinerVisual.kt$1000.0</ID>
+    <ID>MagicNumber:MinerVisual.kt$3</ID>
+    <ID>MagicNumber:MinerVisual.kt$3.0</ID>
+    <ID>MagicNumber:MinerVisual.kt$360.0</ID>
+    <ID>MagicNumber:MinerVisual.kt$4</ID>
+    <ID>MagicNumber:MinerVisual.kt$45</ID>
+    <ID>MagicNumber:MinerVisual.kt$5</ID>
+    <ID>MagicNumber:MinerVisual.kt$60</ID>
+    <ID>MagicNumber:MinerVisual.kt$65</ID>
+    <ID>MagicNumber:MinerVisual.kt$80</ID>
+    <ID>MagicNumber:MinerVisual.kt$8000.0</ID>
+    <ID>MagicNumber:MmpClient.kt$MmpClient$401</ID>
+    <ID>MagicNumber:MmpClient.kt$MmpClient$403</ID>
+    <ID>MagicNumber:MonitorWorker.kt$MonitorWorker.Companion$15</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0x04</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0x20</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0x30</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0x3C</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0x40</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0x80</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$0xFF</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient$8</ID>
+    <ID>MagicNumber:MqttClient.kt$MqttClient.Companion$128</ID>
+    <ID>MagicNumber:MqttPublisher.kt$MqttPublisher$10.0</ID>
+    <ID>MagicNumber:MqttPublisher.kt$MqttPublisher$16</ID>
+    <ID>MagicNumber:NetworkScanScreen.kt$60</ID>
+    <ID>MagicNumber:NetworkScanViewModel.kt$NetworkScanViewModel$5_000</ID>
+    <ID>MagicNumber:NfcProgramScreen.kt$640</ID>
+    <ID>MagicNumber:NfcSupport.kt$0x3F</ID>
+    <ID>MagicNumber:NfcSupport.kt$0x80</ID>
+    <ID>MagicNumber:NsdDiscoverer.kt$NsdDiscoverer$2000</ID>
+    <ID>MagicNumber:OctopusAgileClient.kt$OctopusAgileClient.Companion$3</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$15</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$1_000_000</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$3</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$3_600_000</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$3_600_000L</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$5_000L</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$6</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$60_000L</ID>
+    <ID>MagicNumber:PollingEngine.kt$PollingEngine$86_400_000L</ID>
+    <ID>MagicNumber:PoolSpeedScreen.kt$PoolSpeedViewModel$3333</ID>
+    <ID>MagicNumber:PoolSpeedTester.kt$PoolSpeedTester$1_000_000</ID>
+    <ID>MagicNumber:PoolSpeedTester.kt$PoolSpeedTester$65535</ID>
+    <ID>MagicNumber:PoolSpeedTester.kt$PoolSpeedTester.Companion$65535</ID>
+    <ID>MagicNumber:PriceCurtailmentScreen.kt$15.0</ID>
+    <ID>MagicNumber:PriceCurtailmentScreen.kt$30.0</ID>
+    <ID>MagicNumber:PriceCurtailmentScreen.kt$PriceCurtailmentViewModel$12</ID>
+    <ID>MagicNumber:ProfitMath.kt$ProfitMath$1000.0</ID>
+    <ID>MagicNumber:ProfitMath.kt$ProfitMath$1e9</ID>
+    <ID>MagicNumber:ProfitMath.kt$ProfitMath$24.0</ID>
+    <ID>MagicNumber:ProfitMath.kt$ProfitMath$3.412</ID>
+    <ID>MagicNumber:PrometheusServer.kt$PrometheusServer$3000</ID>
+    <ID>MagicNumber:RackScreen.kt$RackViewModel$5_000</ID>
+    <ID>MagicNumber:RemediationEngine.kt$RemediationEngine$20_000</ID>
+    <ID>MagicNumber:RemediationEngine.kt$RemediationEngine$60_000L</ID>
+    <ID>MagicNumber:RuleEngine.kt$RuleEngine$100</ID>
+    <ID>MagicNumber:RuleEngine.kt$RuleEngine$100.0</ID>
+    <ID>MagicNumber:RuleRunner.kt$RuleRunner$300</ID>
+    <ID>MagicNumber:RuleRunner.kt$RuleRunner$60_000L</ID>
+    <ID>MagicNumber:RulesScreen.kt$RulesViewModel$5_000</ID>
+    <ID>MagicNumber:SafetyMonitorService.kt$SafetyMonitorService$26</ID>
+    <ID>MagicNumber:ScheduleEngine.kt$ScheduleDueLogic$60</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$23</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$3</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$59</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$60</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$65535</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$70f</ID>
+    <ID>MagicNumber:SchedulesScreen.kt$SchedulesViewModel$5_000</ID>
+    <ID>MagicNumber:SettingsRepository.kt$AppSettings$22</ID>
+    <ID>MagicNumber:SettingsRepository.kt$AppSettings$60</ID>
+    <ID>MagicNumber:SettingsRepository.kt$AppSettings$7</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$1024</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$1439</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$1440</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$23</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$3650</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$5_000</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$65535</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$8</ID>
+    <ID>MagicNumber:SettingsRepository.kt$SettingsRepository$86_400_000</ID>
+    <ID>MagicNumber:SettingsScreen.kt$100</ID>
+    <ID>MagicNumber:SettingsScreen.kt$1000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$10_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$120_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$15_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$1_000_000</ID>
+    <ID>MagicNumber:SettingsScreen.kt$1_800_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$21_600_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$23</ID>
+    <ID>MagicNumber:SettingsScreen.kt$300_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$30_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$33</ID>
+    <ID>MagicNumber:SettingsScreen.kt$3_600_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$43_200_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$59</ID>
+    <ID>MagicNumber:SettingsScreen.kt$5_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$60</ID>
+    <ID>MagicNumber:SettingsScreen.kt$60000</ID>
+    <ID>MagicNumber:SettingsScreen.kt$60_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$86_400_000L</ID>
+    <ID>MagicNumber:SettingsScreen.kt$900_000L</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$1000</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$300</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$5</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$5_000</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$5_000L</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$6</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$7</ID>
+    <ID>MagicNumber:SettingsViewModel.kt$SettingsViewModel$86_400_000L</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$0xFF</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$1000.0</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$16</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$171</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$24</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$3</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$3000</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$4</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$4096</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$8</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$8192</ID>
+    <ID>MagicNumber:SmartPlugClient.kt$SmartPlugClient$9999</ID>
+    <ID>MagicNumber:SolarSurplusScreen.kt$500.0</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$0.000001</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$0.0001</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$0.01</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$0.999</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$100</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$1_000</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$1_000_000</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$1e-9</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$1e3</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$1e6</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$1e9</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$3600</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$365.25</ID>
+    <ID>MagicNumber:SoloMiningMath.kt$SoloMiningMath$86400</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$0xFF</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$0xFFFFFFFFL</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$16</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$24</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$255</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$3</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$32</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$4</ID>
+    <ID>MagicNumber:SubnetUtils.kt$SubnetUtils$8</ID>
+    <ID>MagicNumber:TableScreen.kt$100</ID>
+    <ID>MagicNumber:TableScreen.kt$110</ID>
+    <ID>MagicNumber:TableScreen.kt$120</ID>
+    <ID>MagicNumber:TableScreen.kt$130</ID>
+    <ID>MagicNumber:TableScreen.kt$150</ID>
+    <ID>MagicNumber:TableScreen.kt$20</ID>
+    <ID>MagicNumber:TableScreen.kt$4000</ID>
+    <ID>MagicNumber:TableScreen.kt$74</ID>
+    <ID>MagicNumber:TableScreen.kt$78</ID>
+    <ID>MagicNumber:TableScreen.kt$92</ID>
+    <ID>MagicNumber:TableScreen.kt$TableViewModel$5_000</ID>
+    <ID>MagicNumber:TableScreen.kt$TableViewModel.Companion$256</ID>
+    <ID>MagicNumber:TableScreen.kt$TableViewModel.Companion$4</ID>
+    <ID>MagicNumber:Theme.kt$0.55f</ID>
+    <ID>MagicNumber:Theme.kt$0.5f</ID>
+    <ID>MagicNumber:Theme.kt$0.6f</ID>
+    <ID>MagicNumber:Theme.kt$0.75f</ID>
+    <ID>MagicNumber:Theme.kt$0xFF071219</ID>
+    <ID>MagicNumber:Theme.kt$0xFFF2F7FF</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF0B0F14</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF121820</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF1A222D</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF2A3542</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF2BD97C</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF6FB1FF</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF78909C</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFF93A3B4</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFFE8EEF4</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFFEF5350</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Dark$0xFFF0B429</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFF0B0F14</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFF1B9E57</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFF1C6FD0</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFF5A6B7B</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFF78909C</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFFC98A00</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFFCBD5E1</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFFD32F2F</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFFEAEEF3</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFFF4F6F9</ID>
+    <ID>MagicNumber:Theme.kt$HiBrand.Light$0xFFFFFFFF</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.BLUE$0xFF1C6FD0</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.BLUE$0xFF3987E5</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.BLUE$0xFF6FB1FF</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.GREEN$0xFF158A54</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.GREEN$0xFF2BB673</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.GREEN$0xFF5FD79B</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.ORANGE$0xFFD9720F</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.ORANGE$0xFFF08A24</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.ORANGE$0xFFFFB05A</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.PURPLE$0xFF6D3FD4</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.PURPLE$0xFF8B5CF6</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.PURPLE$0xFFB794FF</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.RED$0xFFC93338</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.RED$0xFFE5484D</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.RED$0xFFFF7B7F</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.YELLOW$0xFF9A7B00</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.YELLOW$0xFFE6B800</ID>
+    <ID>MagicNumber:Theme.kt$ThemeColor.YELLOW$0xFFF3D46A</ID>
+    <ID>MagicNumber:Units.kt$Units$100</ID>
+    <ID>MagicNumber:Units.kt$Units$1000</ID>
+    <ID>MagicNumber:Units.kt$Units$1000.0</ID>
+    <ID>MagicNumber:Units.kt$Units$1e9</ID>
+    <ID>MagicNumber:Units.kt$Units$32.0</ID>
+    <ID>MagicNumber:Units.kt$Units$3600</ID>
+    <ID>MagicNumber:Units.kt$Units$5.0</ID>
+    <ID>MagicNumber:Units.kt$Units$60</ID>
+    <ID>MagicNumber:Units.kt$Units$86400</ID>
+    <ID>MagicNumber:Units.kt$Units$9.0</ID>
+    <ID>MagicNumber:WallScreen.kt$8</ID>
+    <ID>MagicNumber:WhatsMinerAdapter.kt$WhatsMinerAdapter$80</ID>
+    <ID>MatchingDeclarationName:AddressBookScreen.kt$AddressBookViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:AlertsScreen.kt$AlertsViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:BulkActionUi.kt$BulkActionKind</ID>
+    <ID>MatchingDeclarationName:RulesScreen.kt$RulesViewModel : ViewModel</ID>
+    <ID>MatchingDeclarationName:SchedulesScreen.kt$SchedulesViewModel : ViewModel</ID>
+    <ID>MaxLineLength:AboutScreen.kt$"Hashrate, chip temps, fans, frequency, expected, ASIC count, shares, uptime, pool. No controls; power isn't in this API."</ID>
+    <ID>MaxLineLength:AboutScreen.kt$Text(m.family, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:AboutScreen.kt$Text(step.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:AcousticAnalyzer.kt$AcousticAnalyzer$findings += "Sound is broadband with no clear fan tone — check the mic is near the fan and the room is quiet."</ID>
+    <ID>MaxLineLength:AcousticScreen.kt$Text</ID>
+    <ID>MaxLineLength:AddMinerScreen.kt$Text("SCAN LOCAL NETWORK", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:AddressBookScreen.kt$OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)</ID>
+    <ID>MaxLineLength:AddressBookScreen.kt$OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text("Port") }, singleLine = true)</ID>
+    <ID>MaxLineLength:AddressBookScreen.kt$OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text("Stratum URL") }, singleLine = true)</ID>
+    <ID>MaxLineLength:AddressBookScreen.kt$OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text("Worker / payout address") }, singleLine = true)</ID>
+    <ID>MaxLineLength:AlertDaos.kt$AlertDao$"UPDATE alert_events SET resolvedAtEpochMs = :at WHERE minerId = :minerId AND type = :type AND resolvedAtEpochMs IS NULL"</ID>
+    <ID>MaxLineLength:AlertDaos.kt$AlertDao$@Query("SELECT COUNT(*) FROM alert_events WHERE resolvedAtEpochMs IS NULL AND acknowledged = 0 AND type != 'NEW_BEST_DIFFICULTY'")</ID>
+    <ID>MaxLineLength:AlertDaos.kt$AlertDao$@Query("UPDATE alert_events SET acknowledged = 1 WHERE minerId = :minerId AND type = :type AND resolvedAtEpochMs IS NULL")</ID>
+    <ID>MaxLineLength:AlertEngine.kt$AlertEvaluator$"$minerName rejected-share rate ${"%.1f".format(rate)}% exceeds ${"%.1f".format(thresholds.rejectRatePercent)}%."</ID>
+    <ID>MaxLineLength:ArOverlayScreen.kt$Text(miner.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:ArOverlayScreen.kt$Text(value, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:AssetTagPrinter.kt$AssetTagPrinter$canvas.drawBitmap(qr, null, android.graphics.RectF(qrLeft, y + s.qrTop, qrLeft + s.qr, y + s.qrTop + s.qr), null)</ID>
+    <ID>MaxLineLength:AutotuneScreen.kt$Button(onClick = { viewModel.applyBest() }) { Text("Apply best (${state.bestFrequencyMhz} MHz)") }</ID>
+    <ID>MaxLineLength:AutotuneScreen.kt$Row</ID>
+    <ID>MaxLineLength:AutotuneScreen.kt$Text("${p.frequencyMhz} MHz", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:AutotuneScreen.kt$Text("RESULTS (best first)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:AutotuneScreen.kt$item { Text("EFFICIENCY CURVE", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }</ID>
+    <ID>MaxLineLength:AutotuneViewModel.kt$AutotuneViewModel$?:</ID>
+    <ID>MaxLineLength:AutotuneViewModel.kt$AutotuneViewModel$_state.value = _state.value.copy(supported = false, message = "This miner does not expose tunable options.")</ID>
+    <ID>MaxLineLength:AutotuneViewModel.kt$AutotuneViewModel$optimizeForHashrate -&gt; "Best hashrate: ${best.frequencyMhz} MHz (${Units.formatHashrate(best.hashrateGhs)})."</ID>
+    <ID>MaxLineLength:BitmainWebClient.kt$BitmainWebClient$append("Digest username=\"$user\", realm=\"$realm\", nonce=\"$nonce\", uri=\"$uri\", response=\"$response\"")</ID>
+    <ID>MaxLineLength:BitmainWebClient.kt$BitmainWebClient$else</ID>
+    <ID>MaxLineLength:BulkActionUi.kt$OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text("Port") }, singleLine = true)</ID>
+    <ID>MaxLineLength:BulkActionUi.kt$OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text("Stratum URL") }, singleLine = true)</ID>
+    <ID>MaxLineLength:BulkActionUi.kt$OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text("Worker / address") }, singleLine = true)</ID>
+    <ID>MaxLineLength:CanaanAdapter.kt$CanaanAdapter$Capability.APPLY_APPROVED_TUNE to "Avalon frequency/voltage tuning is not exposed until verified per device."</ID>
+    <ID>MaxLineLength:CanaanAdapter.kt$CanaanAdapter$Capability.SET_OPERATING_MODE to "Work-mode (worklevel) value range is not yet verified on this firmware."</ID>
+    <ID>MaxLineLength:CanaanControlTest.kt$CanaanControlTest$@Volatile private var reply = """{"STATUS":[{"STATUS":"I","When":1,"Code":118,"Msg":"ASC 0 set OK","Description":"cgminer"}],"id":1}"""</ID>
+    <ID>MaxLineLength:CanaanControlTest.kt$CanaanControlTest$assertTrue(adapter.setFan(host(), hi3.hashkit.domain.adapter.FanControl.Automatic()) is ActionResult.Unsupported)</ID>
+    <ID>MaxLineLength:CanaanControlTest.kt$CanaanControlTest$reply = """{"STATUS":[{"STATUS":"E","When":1,"Code":120,"Msg":"ASC 0 set failed: nope","Description":"cgminer"}],"id":1}"""</ID>
+    <ID>MaxLineLength:CanaanControlTest.kt$CanaanControlTest$reply = """{"STATUS":[{"STATUS":"I","When":1,"Code":118,"Msg":"ASC 0 set info: Unknow reboot cmd : 0","Description":"cgminer"}],"id":1}"""</ID>
+    <ID>MaxLineLength:CgMinerCommon.kt$CgMinerCommon$for (i in 1..n.coerceAtMost(8)) stats.num("fan$i")?.toInt()?.takeIf { it &gt; 0 }?.let { add(FanReading(i - 1, it, null)) }</ID>
+    <ID>MaxLineLength:ControlsCard.kt$(options.defaultFrequencyMhz?.let { " · Stock: $it MHz / ${options.defaultVoltageMv} mV" } ?: "")</ID>
+    <ID>MaxLineLength:ControlsCard.kt$OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text("Port") }, singleLine = true)</ID>
+    <ID>MaxLineLength:ControlsCard.kt$OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text("Stratum URL") }, singleLine = true)</ID>
+    <ID>MaxLineLength:ControlsCard.kt$OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text("Worker / address") }, singleLine = true)</ID>
+    <ID>MaxLineLength:ControlsCard.kt$body = "Hashing stops for ~30–60 seconds while the miner reboots. Shares in flight may be lost. No settings are changed."</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(-100.0, running = true, resumeThreshold = 500.0, curtailThreshold = 0.0, favourRunWhenAbove = true)</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(10.0, running = false, resumeThreshold = 15.0, curtailThreshold = 30.0, favourRunWhenAbove = false)</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(20.0, running = true, resumeThreshold = 15.0, curtailThreshold = 30.0, favourRunWhenAbove = false)</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(200.0, running = false, resumeThreshold = 500.0, curtailThreshold = 0.0, favourRunWhenAbove = true)</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(200.0, running = true, resumeThreshold = 500.0, curtailThreshold = 0.0, favourRunWhenAbove = true)</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(35.0, running = true, resumeThreshold = 15.0, curtailThreshold = 30.0, favourRunWhenAbove = false)</ID>
+    <ID>MaxLineLength:CurtailmentEngineTest.kt$CurtailmentEngineTest$CurtailmentEngine.decide(600.0, running = false, resumeThreshold = 500.0, curtailThreshold = 0.0, favourRunWhenAbove = true)</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$"(excludes tx &amp; pool fees); revenue needs a BTC price and network difficulty set/fetched in Settings."</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$"Estimate: BTC/day assumes the ${"%.3f".format(hi3.hashkit.domain.solo.ProfitMath.BLOCK_SUBSIDY_BTC)}-BTC block subsidy "</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$Icon(Icons.Filled.Refresh, contentDescription = null, tint = HiBrand.accent, modifier = Modifier.size(18.dp))</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$Metric("Pool-side hashrate", Units.formatHashrate(pool.totalPoolHashrateGhs), valueColor = HiBrand.accentAlt)</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$Text(pool.poolType.displayName.uppercase(), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$density</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = "Farm", modifier = Modifier.size(18.dp)) }</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$mmp.lastUpdated?.let { "updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: ""</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$pool.lastUpdated?.let { "pool view · updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: ""</ID>
+    <ID>MaxLineLength:DashboardScreen.kt$viewModel.planPanic(hi3.hashkit.data.repo.BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.PAUSE))</ID>
+    <ID>MaxLineLength:EnergyCostScreen.kt$EnergyCostViewModel$combine</ID>
+    <ID>MaxLineLength:EnergyCostScreen.kt$EnergyCostViewModel$costPerMonth = ProfitMath.powerCostPerDay(power, rate.takeIf { it &gt; 0 })?.times(DAYS_PER_MONTH)</ID>
+    <ID>MaxLineLength:EnergyCostScreen.kt$Metric("Energy Est.", row.costPerDay?.let { money(it, currency) + "/day" } ?: "—", valueColor = HiBrand.accent)</ID>
+    <ID>MaxLineLength:EnergyCostScreen.kt$Metric("Fleet Energy Est.", state.totalCostDay?.let { money(it, state.currency) + "/day" } ?: "—", valueColor = HiBrand.accent)</ID>
+    <ID>MaxLineLength:EnergyCostScreen.kt$Metric("Power", row.powerW?.let { "%.0f W".format(it) } ?: "—", source = if (row.estimated) ValueSource.ESTIMATED else null)</ID>
+    <ID>MaxLineLength:EnergyCostScreen.kt$Row</ID>
+    <ID>MaxLineLength:Entities.kt$TelemetrySampleEntity$/** JSON list of per-chain health {index, hashrateGhs, chipsActive, chipsTotal, chipsDead, hwErrors, tempC}; null when unreported. */</ID>
+    <ID>MaxLineLength:EspMinerAdapter.kt$EspMinerAdapter$if</ID>
+    <ID>MaxLineLength:Exporter.kt$Exporter$if (existingPools.any { it.url == p.url &amp;&amp; it.port == p.port &amp;&amp; it.worker == p.worker &amp;&amp; it.label == p.label }) continue</ID>
+    <ID>MaxLineLength:FleetControlPlanTest.kt$FailingMinerDao$override suspend fun insertAddress(address: hi3.hashkit.data.db.MinerAddressEntity)</ID>
+    <ID>MaxLineLength:FleetControlPlanTest.kt$FailingMinerDao$override suspend fun updatePlug(id: Long, type: String?, host: String?, onUrl: String?, offUrl: String?, cutoffC: Double?)</ID>
+    <ID>MaxLineLength:FleetControlPlanTest.kt$FailingTelemetryDao$override suspend fun insert(sample: hi3.hashkit.data.db.TelemetrySampleEntity)</ID>
+    <ID>MaxLineLength:FleetControlPlanTest.kt$FailingTelemetryDao$override suspend fun samplesBetween(minerId: Long, fromEpochMs: Long, toEpochMs: Long)</ID>
+    <ID>MaxLineLength:FlowScreen.kt$Text(value, style = MaterialTheme.typography.headlineMedium, color = valueColor, fontWeight = FontWeight.Bold)</ID>
+    <ID>MaxLineLength:FlowScreen.kt$drawLine(color.copy(alpha = 0.28f * bright), Offset(cx - blockW / 2f + 9f, y), Offset(cx + blockW / 2f - 9f, y), strokeWidth = 1.5f)</ID>
+    <ID>MaxLineLength:FlowScreen.kt$drawRoundRect(color.copy(alpha = 0.35f + 0.5f * bright), topLeft = tl, size = sz, cornerRadius = corner, style = Stroke(width = 2.5f))</ID>
+    <ID>MaxLineLength:FlowViewModel.kt$FlowViewModel$s.copy(latencyMs = lat, reachable = probe.latencyByStratum.containsKey(stratumKey(s.host, s.port)).not() || lat != null)</ID>
+    <ID>MaxLineLength:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$Capability.APPLY_APPROVED_TUNE to "VNish tuning goes through its autotune presets, not yet verified."</ID>
+    <ID>MaxLineLength:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$Capability.SET_POOLS to "Bitmain pool changes need the set_miner_conf.cgi config round-trip, not yet verified."</ID>
+    <ID>MaxLineLength:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$Capability.SET_POOLS to "VNish pool changes require its settings-object round-trip, not yet verified."</ID>
+    <ID>MaxLineLength:HashRentalScreen.kt$Row</ID>
+    <ID>MaxLineLength:HashRentalScreen.kt$Text("%,.0f PH/s avail".format(ask.availablePh), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:HashRentalScreen.kt$Text("Best ask (cheapest hashrate to rent)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:HashRentalScreen.kt$Text("SPOT MARKET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:HashRentalScreen.kt$Text(price(ask.priceSat), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:HashRentalScreen.kt$item { Text("CHEAPEST OFFERS", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }</ID>
+    <ID>MaxLineLength:HealthScore.kt$HealthScoreCalculator$"Rejected-share rate ${"%.1f".format(rejectRate)}% exceeds ${"%.1f".format(thresholds.rejectRateWarnPercent)}%."</ID>
+    <ID>MaxLineLength:HealthScore.kt$HealthScoreCalculator$deduct(10.0, "Chip temperature ${t.roundToInt()}°C is above the warning level (${thresholds.chipTempWarnC.roundToInt()}°C).")</ID>
+    <ID>MaxLineLength:HealthScore.kt$HealthScoreCalculator$deduct(10.0, "Voltage-regulator temperature ${t.roundToInt()}°C is above the warning level (${thresholds.vrTempWarnC.roundToInt()}°C).")</ID>
+    <ID>MaxLineLength:HealthScore.kt$HealthScoreCalculator$deduct(25.0, "Chip temperature ${t.roundToInt()}°C exceeds the critical limit (${thresholds.chipTempCritC.roundToInt()}°C).")</ID>
+    <ID>MaxLineLength:HealthScore.kt$HealthScoreCalculator$deduct(25.0, "Voltage-regulator temperature ${t.roundToInt()}°C exceeds the critical limit (${thresholds.vrTempCritC.roundToInt()}°C).")</ID>
+    <ID>MaxLineLength:Hi3PoolRepository.kt$Hi3PoolRepository$is Hi3PoolClient.PoolResult.Error -&gt; _state.value.copy(enabled = true, poolType = poolType, error = account.message)</ID>
+    <ID>MaxLineLength:LeaderboardScreen.kt$)</ID>
+    <ID>MaxLineLength:LeaderboardScreen.kt$RankBy</ID>
+    <ID>MaxLineLength:LeaderboardScreen.kt$Text(m.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:LeaderboardScreen.kt$Text(primary, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = HiBrand.accent)</ID>
+    <ID>MaxLineLength:LeaderboardScreen.kt$val medal = when (rank) { 1 -&gt; HiBrand.accent; 2 -&gt; HiBrand.accentAlt; 3 -&gt; HiBrand.statusDegraded; else -&gt; HiBrand.surface }</ID>
+    <ID>MaxLineLength:LogAnalyzer.kt$LogAnalyzer$"Persistent ASIC errors can indicate a failing chip/board — compare per-chip health and consider a reflash."</ID>
+    <ID>MaxLineLength:LogAnalyzer.kt$LogAnalyzer$classified.count { it.category == Category.SYSTEM &amp;&amp; it.text.lowercase().let { t -&gt; "reset" in t || "boot" in t } }</ID>
+    <ID>MaxLineLength:LogAnalyzer.kt$LogAnalyzer$if (errors == 0) "No problems detected in the recent log." else "$errors error line(s), but no known problem pattern."</ID>
+    <ID>MaxLineLength:LogClassifier.kt$LogClassifier$hasAny(l, "restart", "reboot", "boot", "watchdog", "brownout", "power", "reset", "heap", "self-test", "selftest") -&gt; Category.SYSTEM</ID>
+    <ID>MaxLineLength:LogClassifier.kt$LogClassifier$hasAny(l, "wifi", "wi-fi", "dhcp", "socket", "dns", "connect", "disconnect", "reconnect", "ip ") -&gt; Category.NETWORK</ID>
+    <ID>MaxLineLength:LogsScreen.kt$Text(f.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = color)</ID>
+    <ID>MaxLineLength:MainActivity.kt$MainActivity$hi3.hashkit.data.db.SavedPoolEntity(label = "Hi3 PPLNS", url = "10.0.0.42", port = 3344, worker = "test")</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$"min %.1f · now %.1f · max %.1f J/TH (lower is better)".format(e.first, e.second, e.third)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$InfoRow("Firmware", listOfNotNull(miner.identity.firmwareFamily, miner.identity.firmwareVersion).joinToString(" "))</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$Metric("Efficiency", Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.Button(onClick = { onSave(type, host, onUrl, offUrl, cutoff.toDoubleOrNull()) }) { Text("Save") }</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.Button(onClick = { viewModel.setCredential(pw); pw = "" }) { Text("Save") }</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.DropdownMenuItem(text = { Text("Disabled") }, onClick = { menu = false; type = null })</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.DropdownMenuItem(text = { Text(t.label) }, onClick = { menu = false; type = t })</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedButton(onClick = { viewModel.setCredential("") }) { Text("Clear") }</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = cutoff, onValueChange = { cutoff = it }, label = { Text("Cut power at chip temp (°C)") }, singleLine = true, modifier = Modifier.fillMaxWidth())</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Group") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location (room/rack/shelf)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("Notes") })</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = offUrl, onValueChange = { offUrl = it }, label = { Text("OFF URL") }, singleLine = true, modifier = Modifier.fillMaxWidth())</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = onUrl, onValueChange = { onUrl = it }, label = { Text("ON URL") }, singleLine = true, modifier = Modifier.fillMaxWidth())</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = ovChip, onValueChange = { ovChip = it }, label = { Text("Chip temp alert (°C)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = ovHash, onValueChange = { ovHash = it }, label = { Text("Hashrate alert below (%)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = ovReject, onValueChange = { ovReject = it }, label = { Text("Reject-rate alert (%)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = ovVr, onValueChange = { ovVr = it }, label = { Text("VR temp alert (°C)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$androidx.compose.material3.OutlinedTextField(value = tags, onValueChange = { tags = it }, label = { Text("Tags (comma-separated)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:MinerDetailScreen.kt$else -&gt; androidx.compose.material3.OutlinedTextField(value = host, onValueChange = { host = it }, label = { Text("Plug IP / host") }, singleLine = true, modifier = Modifier.fillMaxWidth())</ID>
+    <ID>MaxLineLength:MinerDetailViewModel.kt$MinerDetailViewModel$fun</ID>
+    <ID>MaxLineLength:MinerRepository.kt$MinerRepository$minerDao.insertAddress(MinerAddressEntity(minerId = existing.id, host = host, firstSeenEpochMs = now, lastSeenEpochMs = now))</ID>
+    <ID>MaxLineLength:MinerRepository.kt$MinerRepository$minerDao.insertAddress(MinerAddressEntity(minerId = id, host = host, firstSeenEpochMs = now, lastSeenEpochMs = now))</ID>
+    <ID>MaxLineLength:MinerRepository.kt$MinerRepository$minerDao.updateCredential(minerId, if (trimmed.isEmpty()) null else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed))</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$Icon(Icons.Filled.CheckCircle, contentDescription = "written", tint = HiBrand.statusOnline)</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$Icon(Icons.Filled.CheckCircle, contentDescription = "written", tint = HiBrand.statusOnline, modifier = Modifier.size(18.dp))</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$OutlinedButton(onClick = viewModel::next, enabled = state.index &lt; state.total - 1) { Text("Next") }</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$OutlinedButton(onClick = viewModel::skip, enabled = state.index &lt; state.total - 1) { Text("Skip") }</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$Row</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$Text(t.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$containerColor = if (t.id in state.written) HiBrand.statusOnline.copy(alpha = 0.14f) else HiBrand.surface</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$if (!nfcReady) " · ${if (nfcAdapter == null) "no NFC on this device" else "turn on NFC to write"}" else ""</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$if (ndef.maxSize &lt; size) return@runCatching WriteOutcome.Err("tag too small ($size B &gt; ${ndef.maxSize} B)")</ID>
+    <ID>MaxLineLength:NfcProgramScreen.kt$modifier = Modifier.size(240.dp).background(androidx.compose.ui.graphics.Color.White).padding(8.dp)</ID>
+    <ID>MaxLineLength:OnboardingScreen.kt$Point("Live &amp; honest", "Real hashrate, temps, power and health — clearly marked when a value is estimated or unavailable.")</ID>
+    <ID>MaxLineLength:OnboardingScreen.kt$Point("Local-first", "Talks only to the miners on your network — or over your Tailscale VPN. No account, no cloud.")</ID>
+    <ID>MaxLineLength:OnboardingScreen.kt$Point("Private", "Your data stays on this device. Hi3 Pool and MMP views are optional, read-only, and off by default.")</ID>
+    <ID>MaxLineLength:OnboardingScreen.kt$Point("Safe controls", "Reboot, pool, fan and firmware-bounded tuning with confirmations and rollback, only where verified.")</ID>
+    <ID>MaxLineLength:OnboardingScreen.kt$Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:PollingEngine.kt$PollingEngine$"${entity.name}: firmware $latest is available (running ${entity.firmwareVersion ?: "unknown"})."</ID>
+    <ID>MaxLineLength:PollingEngine.kt$PollingEngine$private suspend</ID>
+    <ID>MaxLineLength:PollingEngine.kt$PollingEngine$val plug = hi3.hashkit.integrations.plug.SmartPlugClient.Plug(type, entity.plugHost, entity.plugOnUrl, entity.plugOffUrl)</ID>
+    <ID>MaxLineLength:PoolSpeedScreen.kt$PoolSpeedViewModel$_state.value = _state.value.copy(candidates = candidates.size, running = true, results = emptyList(), message = null)</ID>
+    <ID>MaxLineLength:PoolSpeedScreen.kt$PoolSpeedViewModel$_state.value = _state.value.copy(message = "No pools found. Configure a pool on a miner or in the address book.")</ID>
+    <ID>MaxLineLength:PoolSpeedScreen.kt$Row</ID>
+    <ID>MaxLineLength:PoolSpeedScreen.kt$Text("${state.candidates} pool(s)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MaxLineLength:PoolSpeedScreen.kt$item { Text("RANKED (fastest first)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }</ID>
+    <ID>MaxLineLength:PoolSpeedTester.kt$PoolSpeedTester$if</ID>
+    <ID>MaxLineLength:PoolType.kt$PoolType$NICEHASH : PoolType</ID>
+    <ID>MaxLineLength:PoolType.kt$PoolType.BRAIINS$BRAIINS</ID>
+    <ID>MaxLineLength:PoolType.kt$PoolType.LUXOR$LUXOR</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$"Next 6h: low ${"%.1f".format(state.cheapestPence)} · high ${"%.1f".format(state.priciestPence)} p/kWh"</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$OutlinedButton</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$PriceCurtailmentViewModel$_state.value = _state.value.copy(region = region.uppercase(), resumePence = resume, curtailPence = curtail, message = "Saved.")</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$PriceCurtailmentViewModel$is OctopusAgileClient.Result.Error -&gt; _state.value = _state.value.copy(loading = false, message = r.message)</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$PriceCurtailmentViewModel$message</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$Row</ID>
+    <ID>MaxLineLength:PriceCurtailmentScreen.kt$keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal)</ID>
+    <ID>MaxLineLength:PrivacyPolicyScreen.kt$Text(policy.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:RuleEngineTest.kt$RuleEngineTest$assertFalse(RuleEngine.matches(RuleEngine.ConditionType.HASHRATE_BELOW_PCT, 60.0, t, MinerStatus.ONLINE, 1000.0))</ID>
+    <ID>MaxLineLength:RuleRunner.kt$RuleRunner$if</ID>
+    <ID>MaxLineLength:RulesScreen.kt$OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:RulesScreen.kt$OutlinedTextField(value = interval, onValueChange = { interval = it }, label = { Text("Min interval between fires (min)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:RulesScreen.kt$OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all miners)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = poolPort, onValueChange = { poolPort = it }, label = { Text("Port") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = poolUrl, onValueChange = { poolUrl = it }, label = { Text("Stratum URL") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = poolWorker, onValueChange = { poolWorker = it }, label = { Text("Worker") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text("Time (HH:MM, device timezone)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = tuneFreq, onValueChange = { tuneFreq = it }, label = { Text("Frequency (MHz)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SchedulesScreen.kt$OutlinedTextField(value = tuneVolt, onValueChange = { tuneVolt = it }, label = { Text("Core voltage (mV)") }, singleLine = true)</ID>
+    <ID>MaxLineLength:SettingsRepository.kt$SettingsRepository$suspend fun setMqttBaseTopic(value: String)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$NumberRow</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$NumberRow("ntfy topic URL (https://ntfy.sh/your-topic)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$Text("You're on the latest version.", style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOnline)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$Text(if (s is SettingsViewModel.UpdateStatus.Checking) "Checking…" else "Check for updates")</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$Text(s.message, style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOffline)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$androidx.compose.material3.TextButton(onClick = { backupPassPrompt = false }) { Text("Cancel") }</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$androidx.compose.material3.TextButton(onClick = { viewModel.pendingEncryptedRestore.value = null }) { Text("Cancel") }</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$if</ID>
+    <ID>MaxLineLength:SettingsScreen.kt$visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation()</ID>
+    <ID>MaxLineLength:SettingsViewModel.kt$SettingsViewModel$fun setInventoryTagType(v: hi3.hashkit.data.prefs.InventoryTagType)</ID>
+    <ID>MaxLineLength:SolarSurplusScreen.kt$OutlinedButton</ID>
+    <ID>MaxLineLength:SolarSurplusScreen.kt$Row</ID>
+    <ID>MaxLineLength:SolarSurplusScreen.kt$SolarSurplusViewModel$message</ID>
+    <ID>MaxLineLength:SolarSurplusScreen.kt$keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number)</ID>
+    <ID>MaxLineLength:SolarSurplusScreen.kt$label = { Text(if (state.tokenConfigured) "Long-lived token (saved — leave blank to keep)" else "Long-lived token") }</ID>
+    <ID>MaxLineLength:TableScreen.kt$TableRow(m, state.fahrenheit, totalWidth, highlighted = m.id == highlightId) { onMinerClick(m.id) }</ID>
+    <ID>MaxLineLength:VnishWebClient.kt$VnishWebClient$return@withContext ActionResult.Unsupported("Set the VNish web password in the miner's settings to use controls.")</ID>
+    <ID>MaxLineLength:WallScreen.kt$Icon(Icons.Filled.Add, contentDescription = "More columns", tint = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:WallScreen.kt$Icon(Icons.Filled.Remove, contentDescription = "Fewer columns", tint = HiBrand.textPrimary)</ID>
+    <ID>MaxLineLength:WallScreen.kt$IconButton</ID>
+    <ID>MaxLineLength:WallScreen.kt$Row</ID>
+    <ID>MaxLineLength:WallScreen.kt$Text("CARD SIZE", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)</ID>
+    <ID>MayBeConst:Theme.kt$HiBrand$val appName = "Hi3 Hashkit"</ID>
+    <ID>NestedBlockDepth:NfcSupport.kt$fun payloadFromMessages(messages: List&lt;NdefMessage&gt;): String?</ID>
+    <ID>PackageNaming:AboutScreen.kt$package hi3.hashkit.ui.about</ID>
+    <ID>PackageNaming:AcousticAnalyzer.kt$package hi3.hashkit.domain.acoustic</ID>
+    <ID>PackageNaming:AcousticAnalyzerTest.kt$package hi3.hashkit.domain.acoustic</ID>
+    <ID>PackageNaming:AcousticScreen.kt$package hi3.hashkit.ui.acoustic</ID>
+    <ID>PackageNaming:AdapterRegistry.kt$package hi3.hashkit.domain.adapter</ID>
+    <ID>PackageNaming:AddMinerScreen.kt$package hi3.hashkit.ui.discovery</ID>
+    <ID>PackageNaming:AddMinerViewModel.kt$package hi3.hashkit.ui.discovery</ID>
+    <ID>PackageNaming:AddressBookScreen.kt$package hi3.hashkit.ui.addressbook</ID>
+    <ID>PackageNaming:AdvancedScreen.kt$package hi3.hashkit.ui.advanced</ID>
+    <ID>PackageNaming:AlertActionReceiver.kt$package hi3.hashkit.data.alerts</ID>
+    <ID>PackageNaming:AlertDaos.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:AlertEngine.kt$package hi3.hashkit.domain.alerts</ID>
+    <ID>PackageNaming:AlertEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:AlertEvaluatorTest.kt$package hi3.hashkit.domain.alerts</ID>
+    <ID>PackageNaming:AlertNotifier.kt$package hi3.hashkit.data.alerts</ID>
+    <ID>PackageNaming:AlertOverridesTest.kt$package hi3.hashkit.domain.alerts</ID>
+    <ID>PackageNaming:AlertRepository.kt$package hi3.hashkit.data.alerts</ID>
+    <ID>PackageNaming:AlertsScreen.kt$package hi3.hashkit.ui.alerts</ID>
+    <ID>PackageNaming:AnomalyDetector.kt$package hi3.hashkit.domain.analysis</ID>
+    <ID>PackageNaming:AnomalyDetectorTest.kt$package hi3.hashkit.domain.analysis</ID>
+    <ID>PackageNaming:AppLockManager.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:AppLockManagerTest.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:AppModule.kt$package hi3.hashkit.di</ID>
+    <ID>PackageNaming:AppUpdater.kt$package hi3.hashkit.integrations.update</ID>
+    <ID>PackageNaming:ArOverlayScreen.kt$package hi3.hashkit.ui.ar</ID>
+    <ID>PackageNaming:ArOverlayViewModel.kt$package hi3.hashkit.ui.ar</ID>
+    <ID>PackageNaming:AssetTagPrinter.kt$package hi3.hashkit.integrations.print</ID>
+    <ID>PackageNaming:AutoScanManager.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:AutotuneScreen.kt$package hi3.hashkit.ui.autotune</ID>
+    <ID>PackageNaming:AutotuneViewModel.kt$package hi3.hashkit.ui.autotune</ID>
+    <ID>PackageNaming:AutotuneVoltageSnapTest.kt$package hi3.hashkit.ui.autotune</ID>
+    <ID>PackageNaming:BackupCrypto.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:BackupCryptoTest.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:BitmainWebClient.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>PackageNaming:BraiinsAdapter.kt$package hi3.hashkit.adapters.braiins</ID>
+    <ID>PackageNaming:BraiinsHashpowerClient.kt$package hi3.hashkit.integrations.hashpower</ID>
+    <ID>PackageNaming:BraiinsHashpowerClientTest.kt$package hi3.hashkit.integrations.hashpower</ID>
+    <ID>PackageNaming:BraiinsParser.kt$package hi3.hashkit.adapters.braiins</ID>
+    <ID>PackageNaming:BraiinsParserTest.kt$package hi3.hashkit.adapters.braiins</ID>
+    <ID>PackageNaming:BulkActionUi.kt$package hi3.hashkit.ui.dashboard</ID>
+    <ID>PackageNaming:CanaanAdapter.kt$package hi3.hashkit.adapters.canaan</ID>
+    <ID>PackageNaming:CanaanControlTest.kt$package hi3.hashkit.adapters.canaan</ID>
+    <ID>PackageNaming:CanaanParser.kt$package hi3.hashkit.adapters.canaan</ID>
+    <ID>PackageNaming:CanaanParserTest.kt$package hi3.hashkit.adapters.canaan</ID>
+    <ID>PackageNaming:CgMinerApi.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>PackageNaming:CgMinerCommon.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>PackageNaming:CgMinerCommonTest.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>PackageNaming:Components.kt$package hi3.hashkit.ui.components</ID>
+    <ID>PackageNaming:ConnectivityProbe.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:ControlRepository.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:ControlsCard.kt$package hi3.hashkit.ui.detail</ID>
+    <ID>PackageNaming:CurtailmentEngine.kt$package hi3.hashkit.domain.curtail</ID>
+    <ID>PackageNaming:CurtailmentEngineTest.kt$package hi3.hashkit.domain.curtail</ID>
+    <ID>PackageNaming:Daos.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:DashboardScreen.kt$package hi3.hashkit.ui.dashboard</ID>
+    <ID>PackageNaming:DashboardViewModel.kt$package hi3.hashkit.ui.dashboard</ID>
+    <ID>PackageNaming:DemoMinerAdapter.kt$package hi3.hashkit.adapters.demo</ID>
+    <ID>PackageNaming:DifficultyRepository.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:DiscoveryBoundsTest.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:Downsampler.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:DownsamplerTest.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:EnergyCostScreen.kt$package hi3.hashkit.ui.energy</ID>
+    <ID>PackageNaming:Entities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:EspMinerAdapter.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:EspMinerControlTest.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:EspMinerFirmware.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:EspMinerFirmwareTest.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:EspMinerLogStream.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:EspMinerParser.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:EspMinerParserTest.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:Exporter.kt$package hi3.hashkit.data.export</ID>
+    <ID>PackageNaming:FarmDaoTest.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:FarmRepository.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:FarmsScreen.kt$package hi3.hashkit.ui.farms</ID>
+    <ID>PackageNaming:FarmsViewModel.kt$package hi3.hashkit.ui.farms</ID>
+    <ID>PackageNaming:Fft.kt$package hi3.hashkit.domain.acoustic</ID>
+    <ID>PackageNaming:FirmwareUpdateChecker.kt$package hi3.hashkit.integrations.update</ID>
+    <ID>PackageNaming:FleetControl.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:FleetControlPlanTest.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:FleetSeries.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:FleetSeriesTest.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:FlowScreen.kt$package hi3.hashkit.ui.flow</ID>
+    <ID>PackageNaming:FlowViewModel.kt$package hi3.hashkit.ui.flow</ID>
+    <ID>PackageNaming:GenericCgMinerAdapter.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>PackageNaming:HalvingMath.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:HalvingMathTest.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:HashRentalScreen.kt$package hi3.hashkit.ui.hashrental</ID>
+    <ID>PackageNaming:HashkitApplication.kt$package hi3.hashkit</ID>
+    <ID>PackageNaming:HashkitDatabase.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:HashkitWidget.kt$package hi3.hashkit.widget</ID>
+    <ID>PackageNaming:HashrateChart.kt$package hi3.hashkit.ui.detail</ID>
+    <ID>PackageNaming:HealthScore.kt$package hi3.hashkit.domain.health</ID>
+    <ID>PackageNaming:HealthScoreCalculatorTest.kt$package hi3.hashkit.domain.health</ID>
+    <ID>PackageNaming:HeatReuseMath.kt$package hi3.hashkit.domain.heat</ID>
+    <ID>PackageNaming:HeatReuseMathTest.kt$package hi3.hashkit.domain.heat</ID>
+    <ID>PackageNaming:HeatReuseScreen.kt$package hi3.hashkit.ui.heat</ID>
+    <ID>PackageNaming:Hi3PoolClient.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:Hi3PoolClientTest.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:Hi3PoolRepository.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:Hi3Providers.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:HiLogo.kt$package hi3.hashkit.ui.theme</ID>
+    <ID>PackageNaming:HomeAssistantClient.kt$package hi3.hashkit.integrations.homeassistant</ID>
+    <ID>PackageNaming:HourlyEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:HtmlDashboard.kt$package hi3.hashkit.integrations.metrics</ID>
+    <ID>PackageNaming:HtmlDashboardTest.kt$package hi3.hashkit.integrations.metrics</ID>
+    <ID>PackageNaming:KeystoreCrypto.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:LeaderboardScreen.kt$package hi3.hashkit.ui.leaderboard</ID>
+    <ID>PackageNaming:LicenseValidator.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:LicenseValidatorTest.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:LogAnalyzer.kt$package hi3.hashkit.domain.logs</ID>
+    <ID>PackageNaming:LogAnalyzerTest.kt$package hi3.hashkit.domain.logs</ID>
+    <ID>PackageNaming:LogClassifier.kt$package hi3.hashkit.domain.logs</ID>
+    <ID>PackageNaming:LogEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:LogRedactorTest.kt$package hi3.hashkit.adapters.espminer</ID>
+    <ID>PackageNaming:LogRepository.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:LogsScreen.kt$package hi3.hashkit.ui.logs</ID>
+    <ID>PackageNaming:MainActivity.kt$package hi3.hashkit.ui</ID>
+    <ID>PackageNaming:MaintenanceEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:Mappers.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:MdnsDiscovery.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:MetricsFormatter.kt$package hi3.hashkit.integrations.metrics</ID>
+    <ID>PackageNaming:MetricsFormatterTest.kt$package hi3.hashkit.integrations.metrics</ID>
+    <ID>PackageNaming:Miner.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerAdapter.kt$package hi3.hashkit.domain.adapter</ID>
+    <ID>PackageNaming:MinerCapabilities.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerDetailScreen.kt$package hi3.hashkit.ui.detail</ID>
+    <ID>PackageNaming:MinerDetailViewModel.kt$package hi3.hashkit.ui.detail</ID>
+    <ID>PackageNaming:MinerHostValidator.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:MinerIdentity.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerInsights.kt$package hi3.hashkit.ui.detail</ID>
+    <ID>PackageNaming:MinerRepository.kt$package hi3.hashkit.data.repo</ID>
+    <ID>PackageNaming:MinerScanner.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:MinerSpecs.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerSpecsTest.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerStatus.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerTag.kt$package hi3.hashkit.domain.tag</ID>
+    <ID>PackageNaming:MinerTagMatcher.kt$package hi3.hashkit.domain.tag</ID>
+    <ID>PackageNaming:MinerTagMatcherTest.kt$package hi3.hashkit.domain.tag</ID>
+    <ID>PackageNaming:MinerTagTest.kt$package hi3.hashkit.domain.tag</ID>
+    <ID>PackageNaming:MinerTelemetry.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:MinerVisual.kt$package hi3.hashkit.ui.detail</ID>
+    <ID>PackageNaming:MmpClient.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:MmpClientTest.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:MmpRepository.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:MonitorWorker.kt$package hi3.hashkit.data.poll</ID>
+    <ID>PackageNaming:MqttClient.kt$package hi3.hashkit.integrations.mqtt</ID>
+    <ID>PackageNaming:MqttClientTest.kt$package hi3.hashkit.integrations.mqtt</ID>
+    <ID>PackageNaming:MqttPublisher.kt$package hi3.hashkit.integrations.mqtt</ID>
+    <ID>PackageNaming:NetworkInspector.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:NetworkScanScreen.kt$package hi3.hashkit.ui.network</ID>
+    <ID>PackageNaming:NetworkScanViewModel.kt$package hi3.hashkit.ui.network</ID>
+    <ID>PackageNaming:NfcProgramScreen.kt$package hi3.hashkit.ui.nfcprog</ID>
+    <ID>PackageNaming:NfcProgramViewModel.kt$package hi3.hashkit.ui.nfcprog</ID>
+    <ID>PackageNaming:NfcRouter.kt$package hi3.hashkit.data.nfc</ID>
+    <ID>PackageNaming:NfcSupport.kt$package hi3.hashkit.ui.nfc</ID>
+    <ID>PackageNaming:NfcTagResolver.kt$package hi3.hashkit.data.nfc</ID>
+    <ID>PackageNaming:NotificationWindow.kt$package hi3.hashkit.domain.alerts</ID>
+    <ID>PackageNaming:NotificationWindowTest.kt$package hi3.hashkit.domain.alerts</ID>
+    <ID>PackageNaming:NsdDiscoverer.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:OctopusAgileClient.kt$package hi3.hashkit.integrations.energy</ID>
+    <ID>PackageNaming:OctopusAgileClientTest.kt$package hi3.hashkit.integrations.energy</ID>
+    <ID>PackageNaming:OnboardingScreen.kt$package hi3.hashkit.ui.onboarding</ID>
+    <ID>PackageNaming:OnboardingScreenTest.kt$package hi3.hashkit.ui</ID>
+    <ID>PackageNaming:PollingEngine.kt$package hi3.hashkit.data.poll</ID>
+    <ID>PackageNaming:PoolHashrateTest.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:PoolSpeedScreen.kt$package hi3.hashkit.ui.poolspeed</ID>
+    <ID>PackageNaming:PoolSpeedTester.kt$package hi3.hashkit.integrations.poolspeed</ID>
+    <ID>PackageNaming:PoolSpeedTesterTest.kt$package hi3.hashkit.integrations.poolspeed</ID>
+    <ID>PackageNaming:PoolType.kt$package hi3.hashkit.integrations.hi3</ID>
+    <ID>PackageNaming:PriceCurtailmentScreen.kt$package hi3.hashkit.ui.price</ID>
+    <ID>PackageNaming:PrivacyPolicyScreen.kt$package hi3.hashkit.ui.privacy</ID>
+    <ID>PackageNaming:ProfitMath.kt$package hi3.hashkit.domain.solo</ID>
+    <ID>PackageNaming:ProfitMathTest.kt$package hi3.hashkit.domain.solo</ID>
+    <ID>PackageNaming:PrometheusServer.kt$package hi3.hashkit.integrations.metrics</ID>
+    <ID>PackageNaming:QrCode.kt$package hi3.hashkit.integrations.print</ID>
+    <ID>PackageNaming:RackScreen.kt$package hi3.hashkit.ui.rack</ID>
+    <ID>PackageNaming:RackViewModelTest.kt$package hi3.hashkit.ui.rack</ID>
+    <ID>PackageNaming:RemediationEngine.kt$package hi3.hashkit.data.remediation</ID>
+    <ID>PackageNaming:RuleEngine.kt$package hi3.hashkit.domain.rules</ID>
+    <ID>PackageNaming:RuleEngineTest.kt$package hi3.hashkit.domain.rules</ID>
+    <ID>PackageNaming:RuleEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:RuleRunner.kt$package hi3.hashkit.data.rules</ID>
+    <ID>PackageNaming:RulesScreen.kt$package hi3.hashkit.ui.rules</ID>
+    <ID>PackageNaming:SafetyBootReceiver.kt$package hi3.hashkit.data.poll</ID>
+    <ID>PackageNaming:SafetyMonitorService.kt$package hi3.hashkit.data.poll</ID>
+    <ID>PackageNaming:SavedPoolEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:ScaleBenchmarkTest.kt$package hi3.hashkit.scale</ID>
+    <ID>PackageNaming:ScheduleDueLogicTest.kt$package hi3.hashkit.data.schedule</ID>
+    <ID>PackageNaming:ScheduleEngine.kt$package hi3.hashkit.data.schedule</ID>
+    <ID>PackageNaming:ScheduleEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:SchedulesScreen.kt$package hi3.hashkit.ui.schedules</ID>
+    <ID>PackageNaming:SettingsRepository.kt$package hi3.hashkit.data.prefs</ID>
+    <ID>PackageNaming:SettingsScreen.kt$package hi3.hashkit.ui.settings</ID>
+    <ID>PackageNaming:SettingsViewModel.kt$package hi3.hashkit.ui.settings</ID>
+    <ID>PackageNaming:SmartPlugClient.kt$package hi3.hashkit.integrations.plug</ID>
+    <ID>PackageNaming:SolarSurplusScreen.kt$package hi3.hashkit.ui.solar</ID>
+    <ID>PackageNaming:SoloMiningMath.kt$package hi3.hashkit.domain.solo</ID>
+    <ID>PackageNaming:SoloMiningMathTest.kt$package hi3.hashkit.domain.solo</ID>
+    <ID>PackageNaming:SubnetUtils.kt$package hi3.hashkit.discovery</ID>
+    <ID>PackageNaming:TableScreen.kt$package hi3.hashkit.ui.table</ID>
+    <ID>PackageNaming:TableViewModelTest.kt$package hi3.hashkit.ui.table</ID>
+    <ID>PackageNaming:Theme.kt$package hi3.hashkit.ui.theme</ID>
+    <ID>PackageNaming:ThemeColorTest.kt$package hi3.hashkit.ui.theme</ID>
+    <ID>PackageNaming:TuneEntities.kt$package hi3.hashkit.data.db</ID>
+    <ID>PackageNaming:TuneOptimizer.kt$package hi3.hashkit.domain.tune</ID>
+    <ID>PackageNaming:TuneOptimizerTest.kt$package hi3.hashkit.domain.tune</ID>
+    <ID>PackageNaming:Units.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:UnitsTest.kt$package hi3.hashkit.core</ID>
+    <ID>PackageNaming:UpdateResultReceiver.kt$package hi3.hashkit.integrations.update</ID>
+    <ID>PackageNaming:ValueSource.kt$package hi3.hashkit.domain.model</ID>
+    <ID>PackageNaming:VnishWebClient.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>PackageNaming:WallScreen.kt$package hi3.hashkit.ui.wall</ID>
+    <ID>PackageNaming:WearContract.kt$package hi3.hashkit.data.wear</ID>
+    <ID>PackageNaming:WearSyncManager.kt$package hi3.hashkit.data.wear</ID>
+    <ID>PackageNaming:WebhookNotifier.kt$package hi3.hashkit.data.alerts</ID>
+    <ID>PackageNaming:WhatsMinerAdapter.kt$package hi3.hashkit.adapters.cgminer</ID>
+    <ID>ReturnCount:AcousticAnalyzer.kt$AcousticAnalyzer$fun analyze(samples: FloatArray, sampleRate: Int): Result?</ID>
+    <ID>ReturnCount:AddMinerViewModel.kt$AddMinerViewModel$fun startScan()</ID>
+    <ID>ReturnCount:AlertRepository.kt$AlertRepository$suspend fun maybeSendDigest()</ID>
+    <ID>ReturnCount:AnomalyDetector.kt$AnomalyDetector$fun analyze( history: List&lt;MinerTelemetry&gt;, driftThreshold: Double = 0.10, rejectDeltaThreshold: Double = 0.01, minSamplesPerSide: Int = 4, ): List&lt;Finding&gt;</ID>
+    <ID>ReturnCount:AnomalyDetector.kt$AnomalyDetector$private fun windowedRejectRatio(window: List&lt;MinerTelemetry&gt;): Double?</ID>
+    <ID>ReturnCount:AppUpdater.kt$AppUpdater$suspend fun download(url: String, onProgress: (Float) -&gt; Unit): File?</ID>
+    <ID>ReturnCount:AutoScanManager.kt$AutoScanManager$fun start(cidrOverride: String? = null, assignFarmId: Long? = null, farmName: String? = null)</ID>
+    <ID>ReturnCount:BitmainWebClient.kt$BitmainWebClient$private fun digestHeader(challenge: String, method: String, uri: String, user: String, pass: String): String?</ID>
+    <ID>ReturnCount:BraiinsAdapter.kt$BraiinsAdapter$override suspend fun getTelemetry(host: MinerHost): TelemetryResult</ID>
+    <ID>ReturnCount:BraiinsAdapter.kt$BraiinsAdapter$override suspend fun probe(host: MinerHost): ProbeResult</ID>
+    <ID>ReturnCount:CanaanAdapter.kt$CanaanAdapter$override suspend fun getTelemetry(host: MinerHost): TelemetryResult</ID>
+    <ID>ReturnCount:CanaanAdapter.kt$CanaanAdapter$override suspend fun probe(host: MinerHost): ProbeResult</ID>
+    <ID>ReturnCount:CanaanParser.kt$CanaanParser$fun mmFieldsOf(estatsBody: String?): Map&lt;String, String&gt;</ID>
+    <ID>ReturnCount:CanaanParser.kt$CanaanParser$fun parseVersion(body: String): VersionInfo?</ID>
+    <ID>ReturnCount:CgMinerCommon.kt$CgMinerCommon$private fun summaryHashrateGhs(s: JsonObject?): Double?</ID>
+    <ID>ReturnCount:ConnectivityProbe.kt$ConnectivityProbe$fun internetValidated(): Boolean</ID>
+    <ID>ReturnCount:ControlRepository.kt$ControlRepository$suspend fun rollbackTune(entity: MinerEntity): ActionResult</ID>
+    <ID>ReturnCount:DashboardScreen.kt$@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class) @Composable private fun MinerCard( miner: Miner, density: hi3.hashkit.data.prefs.CardDensity, selected: Boolean, selectionMode: Boolean, onClick: () -&gt; Unit, onLongClick: () -&gt; Unit, sparkline: List&lt;Double&gt;? = null, )</ID>
+    <ID>ReturnCount:DashboardViewModel.kt$DashboardViewModel$private fun soloOf(miners: List&lt;Miner&gt;, settings: AppSettings): SoloSummary?</ID>
+    <ID>ReturnCount:EspMinerAdapter.kt$EspMinerAdapter$private fun send(host: MinerHost, method: String, path: String, body: String?): Fetched</ID>
+    <ID>ReturnCount:EspMinerFirmware.kt$EspMinerFirmware$fun flavorOf(identity: MinerIdentity?): EspMinerFlavor</ID>
+    <ID>ReturnCount:EspMinerParser.kt$EspMinerParser$fun parseSystemInfo(body: String): ParsedSystemInfo?</ID>
+    <ID>ReturnCount:EspMinerParser.kt$EspMinerParser$private fun JsonObject.difficulty(key: String): Double?</ID>
+    <ID>ReturnCount:FirmwareUpdateChecker.kt$FirmwareUpdateChecker$suspend fun refreshIfEnabled()</ID>
+    <ID>ReturnCount:FirmwareUpdateChecker.kt$FirmwareUpdateChecker.Companion$fun isNewer(latestTag: String?, current: String?): Boolean</ID>
+    <ID>ReturnCount:FirmwareUpdateChecker.kt$FirmwareUpdateChecker.Companion$private fun parse(v: String?): IntArray?</ID>
+    <ID>ReturnCount:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$override suspend fun getTelemetry(host: MinerHost): TelemetryResult</ID>
+    <ID>ReturnCount:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$override suspend fun probe(host: MinerHost): ProbeResult</ID>
+    <ID>ReturnCount:GenericCgMinerAdapter.kt$GenericCgMinerAdapter$private suspend fun luxosCurtail(host: MinerHost, pause: Boolean): ActionResult</ID>
+    <ID>ReturnCount:HeatReuseMath.kt$HeatReuseMath$fun heatingValuePerDay(powerW: Double?, ratePerKwh: Double?): Double?</ID>
+    <ID>ReturnCount:Hi3PoolClient.kt$Hi3PoolClient$fun validateBaseUrl(baseUrl: String): String?</ID>
+    <ID>ReturnCount:Hi3PoolClient.kt$Hi3PoolClient$suspend fun fetchAccount(baseUrl: String, payoutAddress: String): PoolResult&lt;PoolAccount&gt;</ID>
+    <ID>ReturnCount:Hi3PoolClient.kt$Hi3PoolClient.Companion$fun parseCkHashToGhs(raw: String?): Double?</ID>
+    <ID>ReturnCount:Hi3PoolRepository.kt$Hi3PoolRepository$suspend fun refresh(localMiners: List&lt;Miner&gt;)</ID>
+    <ID>ReturnCount:LeaderboardScreen.kt$private fun attainment(m: Miner): Double?</ID>
+    <ID>ReturnCount:LicenseValidator.kt$LicenseValidator$fun isValid(code: String?): Boolean</ID>
+    <ID>ReturnCount:LogClassifier.kt$LogClassifier$fun severity(line: String): Severity</ID>
+    <ID>ReturnCount:MinerHostValidator.kt$MinerHostValidator$fun isAllowedIp(ip: String): Boolean</ID>
+    <ID>ReturnCount:MinerRepository.kt$MinerRepository$private suspend fun augmentWithPlugPower(entity: MinerEntity, telemetry: MinerTelemetry): MinerTelemetry</ID>
+    <ID>ReturnCount:MinerTag.kt$MinerTag.Companion$fun parse(raw: String?): MinerTag?</ID>
+    <ID>ReturnCount:MinerTagMatcher.kt$MinerTagMatcher$fun match(tag: MinerTag, candidates: List&lt;Candidate&gt;): Candidate?</ID>
+    <ID>ReturnCount:MmpClient.kt$MmpClient$fun validateBaseUrl(baseUrl: String): String?</ID>
+    <ID>ReturnCount:MonitorWorker.kt$MonitorWorker$override suspend fun doWork(): Result</ID>
+    <ID>ReturnCount:NfcProgramScreen.kt$private fun writeTag(tag: Tag, payload: String): WriteOutcome</ID>
+    <ID>ReturnCount:NfcSupport.kt$private fun decodeRecord(record: NdefRecord): String?</ID>
+    <ID>ReturnCount:PollingEngine.kt$PollingEngine$private suspend fun maybeCutPower(entity: hi3.hashkit.data.db.MinerEntity, telemetry: hi3.hashkit.domain.model.MinerTelemetry)</ID>
+    <ID>ReturnCount:PoolSpeedTester.kt$PoolSpeedTester.Companion$fun parseStratum(url: String, defaultPort: Int = 3333): Pair&lt;String, Int&gt;?</ID>
+    <ID>ReturnCount:ScheduleEngine.kt$ScheduleDueLogic$fun actionOf(schedule: ScheduleEntity): BulkAction?</ID>
+    <ID>ReturnCount:ScheduleEngine.kt$ScheduleDueLogic$fun isDue(schedule: ScheduleEntity, now: LocalDateTime, zone: ZoneId): Boolean</ID>
+    <ID>ReturnCount:SettingsScreen.kt$private fun hhMmToMinutes(text: String): Int?</ID>
+    <ID>ReturnCount:SoloMiningMath.kt$SoloMiningMath$fun secondsToReachProbability(hashrateGhs: Double, networkDifficulty: Double, p: Double): Double?</ID>
+    <ID>ReturnCount:SubnetUtils.kt$SubnetUtils$fun expand(cidr: Cidr, maxPrefix: Int = DEFAULT_MAX_PREFIX): List&lt;String&gt;?</ID>
+    <ID>ReturnCount:SubnetUtils.kt$SubnetUtils$fun parseCidr(input: String): Cidr?</ID>
+    <ID>ReturnCount:WhatsMinerAdapter.kt$WhatsMinerAdapter$override suspend fun getTelemetry(host: MinerHost): TelemetryResult</ID>
+    <ID>ReturnCount:WhatsMinerAdapter.kt$WhatsMinerAdapter$override suspend fun probe(host: MinerHost): ProbeResult</ID>
+    <ID>TooManyFunctions:AlertDaos.kt$AlertDao</ID>
+    <ID>TooManyFunctions:AppModule.kt$AppModule</ID>
+    <ID>TooManyFunctions:BraiinsAdapter.kt$BraiinsAdapter : MinerControlAdapter</ID>
+    <ID>TooManyFunctions:CanaanAdapter.kt$CanaanAdapter : MinerControlAdapter</ID>
+    <ID>TooManyFunctions:CgMinerCommon.kt$CgMinerCommon</ID>
+    <ID>TooManyFunctions:ControlRepository.kt$ControlRepository</ID>
+    <ID>TooManyFunctions:Daos.kt$MinerDao</ID>
+    <ID>TooManyFunctions:DashboardScreen.kt$hi3.hashkit.ui.dashboard.DashboardScreen.kt</ID>
+    <ID>TooManyFunctions:DashboardViewModel.kt$DashboardViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:EspMinerAdapter.kt$EspMinerAdapter : MinerControlAdapter</ID>
+    <ID>TooManyFunctions:FarmRepository.kt$FarmRepository</ID>
+    <ID>TooManyFunctions:FlowScreen.kt$hi3.hashkit.ui.flow.FlowScreen.kt</ID>
+    <ID>TooManyFunctions:GenericCgMinerAdapter.kt$GenericCgMinerAdapter : MinerControlAdapter</ID>
+    <ID>TooManyFunctions:HashkitDatabase.kt$HashkitDatabase : RoomDatabase</ID>
+    <ID>TooManyFunctions:Hi3PoolClient.kt$Hi3PoolClient</ID>
+    <ID>TooManyFunctions:MinerDetailViewModel.kt$MinerDetailViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:MinerRepository.kt$MinerRepository</ID>
+    <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository</ID>
+    <ID>TooManyFunctions:SettingsScreen.kt$hi3.hashkit.ui.settings.SettingsScreen.kt</ID>
+    <ID>TooManyFunctions:SettingsViewModel.kt$SettingsViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:SmartPlugClient.kt$SmartPlugClient</ID>
+    <ID>UnusedParameter:CurtailmentEngine.kt$CurtailmentEngine$curtailThreshold: Double</ID>
+    <ID>UnusedParameter:DashboardScreen.kt$selectionMode: Boolean</ID>
+    <ID>UnusedParameter:Hi3PoolRepository.kt$Hi3PoolRepository$account: Hi3PoolClient.PoolAccount</ID>
+  </CurrentIssues>
+</SmellBaseline>

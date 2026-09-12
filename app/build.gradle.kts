@@ -7,6 +7,17 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.detekt)
+}
+
+// Static analysis: existing findings are frozen in detekt-baseline.xml; only NEW issues
+// fail the build (CI runs `detekt`). Refresh the baseline with `./gradlew detektBaseline`.
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("detekt.yml"))
+    baseline = file("detekt-baseline.xml")
+    // Main sources only — tests may exceed style thresholds (fixtures, param-heavy helpers).
+    source.setFrom(files("src/main/kotlin"))
 }
 
 // Release signing: reads keystore.properties at the repo root when present (both the

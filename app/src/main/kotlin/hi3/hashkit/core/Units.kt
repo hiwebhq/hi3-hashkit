@@ -55,6 +55,10 @@ object Units {
         return String.format(Locale.US, if (v >= 100 || i == 0) "%.0f%s" else "%.2f%s", v, units[i])
     }
 
+    /** "1,234.56 USD" in the user's currency; "—" when the value is unknown. */
+    fun formatMoney(value: Double?, currency: String): String =
+        value?.let { "%,.2f %s".format(it, currency) } ?: "—"
+
     fun formatUptime(seconds: Long?): String {
         if (seconds == null) return "—"
         val d = seconds / 86400

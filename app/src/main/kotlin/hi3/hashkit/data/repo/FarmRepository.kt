@@ -44,8 +44,6 @@ class FarmRepository @Inject constructor(
         return id
     }
 
-    suspend fun updateFarm(farm: FarmEntity) = farmDao.update(farm)
-
     /** Set a farm's foreground refresh cadence, clamped to 5s..1d. */
     suspend fun setRefreshInterval(farmId: Long, intervalMs: Long) {
         val farm = farmDao.byId(farmId) ?: return

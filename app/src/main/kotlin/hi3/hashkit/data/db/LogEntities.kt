@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 /**
  * A captured miner log line (ESP-Miner / AxeOS), classified at capture time. Kept as a
@@ -32,6 +33,9 @@ interface LogDao {
 
     @Query("SELECT * FROM log_lines WHERE minerId = :minerId ORDER BY atEpochMs DESC LIMIT :limit")
     suspend fun recent(minerId: Long, limit: Int): List<LogLineEntity>
+
+    @Query("SELECT * FROM log_lines WHERE minerId = :minerId ORDER BY atEpochMs DESC LIMIT :limit")
+    fun observeRecent(minerId: Long, limit: Int): Flow<List<LogLineEntity>>
 
     @Query("SELECT COUNT(*) FROM log_lines WHERE minerId = :minerId")
     suspend fun count(minerId: Long): Int

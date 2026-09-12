@@ -1,0 +1,15 @@
+# Project overrides on top of detekt's defaults (buildUponDefaultConfig = true).
+naming:
+  PackageNaming:
+    # Default pattern forbids digits in the first segment; this app lives under `hi3.*`.
+    packagePattern: '[a-z][a-z0-9]*(\.[a-z][A-Za-z0-9]*)*'
+
+complexity:
+  LongParameterList:
+    # Hilt constructor injection routinely needs more than 7 dependencies.
+    ignoreAnnotated: ['Inject', 'HiltViewModel']
+
+style:
+  ReturnCount:
+    # Early returns are house style (guard clauses over nesting).
+    max: 4

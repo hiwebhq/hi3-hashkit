@@ -31,6 +31,27 @@ class WearSyncManager @Inject constructor(
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private companion object {
+        const val NODE_RECHECK_MS = 5L * 60_000L
+    }
+
+    /** Cached "is any watch paired" answer, so an unpaired phone doesn't pay a Play
+     *  Services round trip every poll cycle. Rechecked every 5 minutes. */
+    @Volatile private var hasNodes: Boolean = false
+
+    @Volatile private var lastNodeCheckMs: Long = 0
+
+    private fun anyWatchConnected(): Boolean {
+        val now = System.currentTimeMillis()
+        if (now - lastNodeCheckMs > NODE_RECHECK_MS) {
+            lastNodeCheckMs = now
+            hasNodes = runCatching {
+                Tasks.await(Wearable.getNodeClient(context).connectedNodes).isNotEmpty()
+            }.getOrDefault(false)
+        }
+        return hasNodes
+    }
+
     /** Compute the summary from the current fleet and push it to the Data Layer. */
     fun publishFleetSummary(miners: List<Miner>) {
         val real = miners.filter { !it.isDemo }
@@ -45,6 +66,7 @@ class WearSyncManager @Inject constructor(
             .maxOrNull()
 
         scope.launch {
+            if (!anyWatchConnected()) return@launch
             // Accent color from the app's selected UI theme (dark variant for the watch).
             val accentArgb = runCatching {
                 settingsRepository.current().themeColor.darkAccent.toArgb()

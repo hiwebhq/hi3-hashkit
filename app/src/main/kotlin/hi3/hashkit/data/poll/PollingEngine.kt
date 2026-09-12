@@ -40,6 +40,9 @@ class PollingEngine @Inject constructor(
     private val mqttPublisher: hi3.hashkit.integrations.mqtt.MqttPublisher,
     private val prometheusServer: hi3.hashkit.integrations.metrics.PrometheusServer,
     private val ruleRunner: hi3.hashkit.data.rules.RuleRunner,
+    private val derivedLogRecorder: hi3.hashkit.data.logs.DerivedLogRecorder,
+    private val ipMoveRecovery: hi3.hashkit.data.recovery.IpMoveRecovery,
+    private val autoBackupManager: hi3.hashkit.data.export.AutoBackupManager,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
@@ -126,30 +129,26 @@ class PollingEngine @Inject constructor(
         val startedAt = System.nanoTime()
         val settings = settingsRepository.current()
         val miners = repository.observeMinerEntities().first()
+        // Telemetry fetched this cycle, reused below instead of re-querying it per miner.
+        val fetched = java.util.concurrent.ConcurrentHashMap<Long, hi3.hashkit.domain.model.MinerTelemetry>()
         supervisorScope {
             miners.map { entity ->
                 launch {
                     runCatching {
                         val telemetry = repository.pollMiner(entity)
+                        fetched[entity.id] = telemetry
                         if (settings.alertsEnabled && !entity.isDemo && !entity.alertsMuted) {
-                            alertRepository.processTelemetry(
-                                minerId = entity.id,
-                                minerName = entity.name,
-                                telemetry = telemetry,
-                                expectedHashrateGhs = entity.expectedHashrateGhs,
-                                thresholds = settings.alertThresholds.withOverrides(
-                                    hi3.hashkit.domain.alerts.AlertOverrides(
-                                        hashrateBelowPercent = entity.alertHashBelowPct,
-                                        chipTempC = entity.alertChipTempC,
-                                        vrTempC = entity.alertVrTempC,
-                                        rejectRatePercent = entity.alertRejectPct,
-                                    )
-                                ),
-                            )
+                            processAlerts(entity, telemetry, settings)
                         }
                         if (!entity.isDemo) {
                             maybeCutPower(entity, telemetry)
                             remediationEngine.onPolled(entity, telemetry.status)
+                            // Derived event log for miners without a firmware log stream.
+                            derivedLogRecorder.onPolled(
+                                entity, telemetry,
+                                chipTempLimitC = entity.alertChipTempC
+                                    ?: settings.alertThresholds.chipTempC,
+                            )
                         }
                     }
                 }
@@ -161,10 +160,15 @@ class PollingEngine @Inject constructor(
         pollCount += 1
         runCatching { hi3.hashkit.widget.HashkitWidget().updateAll(appContext) }
         runCatching {
-            val domain = miners.map { repository.toDomain(it, Instant.now()) }
+            val at = Instant.now()
+            val domain = miners.map { entity ->
+                fetched[entity.id]?.let { repository.toDomain(entity, it, at) }
+                    ?: repository.toDomain(entity, at) // poll threw — fall back to stored telemetry
+            }
             wearSyncManager.publishFleetSummary(domain)
             if (settings.mqttEnabled) mqttPublisher.publish(domain)
         }
+        runCatching { repository.pruneRawIfDue() }
         // Prometheus /metrics endpoint (Advanced feature): start/stop to match settings.
         runCatching {
             prometheusServer.apply(
@@ -172,6 +176,8 @@ class PollingEngine @Inject constructor(
                 port = settings.prometheusPort,
             )
         }
+        runCatching { ipMoveRecovery.maybeRecover() }
+        runCatching { autoBackupManager.maybeRun() }
         runCatching { scheduleEngine.runDueSchedules() }
         runCatching { ruleRunner.runRules() }
         if (settings.alertsEnabled) {
@@ -179,6 +185,27 @@ class PollingEngine @Inject constructor(
             runCatching { alertRepository.maybeSendDigest() }
         }
         pruneIfDue(settings.retentionDays)
+    }
+
+    private suspend fun processAlerts(
+        entity: hi3.hashkit.data.db.MinerEntity,
+        telemetry: hi3.hashkit.domain.model.MinerTelemetry,
+        settings: hi3.hashkit.data.prefs.AppSettings,
+    ) {
+        alertRepository.processTelemetry(
+            minerId = entity.id,
+            minerName = entity.name,
+            telemetry = telemetry,
+            expectedHashrateGhs = entity.expectedHashrateGhs,
+            thresholds = settings.alertThresholds.withOverrides(
+                hi3.hashkit.domain.alerts.AlertOverrides(
+                    hashrateBelowPercent = entity.alertHashBelowPct,
+                    chipTempC = entity.alertChipTempC,
+                    vrTempC = entity.alertVrTempC,
+                    rejectRatePercent = entity.alertRejectPct,
+                )
+            ),
+        )
     }
 
     /**

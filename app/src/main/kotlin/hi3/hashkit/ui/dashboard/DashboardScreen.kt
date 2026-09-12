@@ -81,6 +81,7 @@ import hi3.hashkit.ui.components.Metric
 import hi3.hashkit.ui.components.StatusBadge
 import hi3.hashkit.ui.components.color
 import hi3.hashkit.ui.theme.HiBrand
+import hi3.hashkit.ui.util.openUrl
 import java.time.Duration
 import java.time.Instant
 
@@ -153,14 +154,7 @@ fun DashboardScreen(
                             logoTaps++
                             if (hi3.hashkit.BuildConfig.EASTER_EGG && logoTaps >= 7) {
                                 logoTaps = 0
-                                runCatching {
-                                    context.startActivity(
-                                        android.content.Intent(
-                                            android.content.Intent.ACTION_VIEW,
-                                            android.net.Uri.parse("https://www.hi3.cc/bh/pay-bitcoin"),
-                                        ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    )
-                                }
+                                context.openUrl("https://www.hi3.cc/bh/pay-bitcoin")
                             }
                         }
                     )
@@ -246,14 +240,7 @@ fun DashboardScreen(
                                 leadingIcon = { Icon(Icons.Filled.Store, contentDescription = null) },
                                 onClick = {
                                     menuOpen = false
-                                    runCatching {
-                                        context.startActivity(
-                                            android.content.Intent(
-                                                android.content.Intent.ACTION_VIEW,
-                                                android.net.Uri.parse("https://hi3btc.printify.me/"),
-                                            ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        )
-                                    }
+                                    context.openUrl("https://hi3btc.printify.me/")
                                 },
                             )
                             DropdownMenuItem(
@@ -636,14 +623,7 @@ private fun FirmwareUpdateBanner(
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth().clickable {
-            runCatching {
-                context.startActivity(
-                    android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(latest.url))
-                        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
-            }
-        },
+        modifier = Modifier.fillMaxWidth().clickable { context.openUrl(latest.url) },
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Filled.Refresh, contentDescription = null, tint = HiBrand.accent, modifier = Modifier.size(18.dp))
@@ -808,7 +788,7 @@ private fun FleetSummary(
                 Metric("Efficiency", Units.formatEfficiency(totals?.fleetEfficiencyJTh))
                 Metric("Hottest", Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
                 totals?.dailyCost?.let { cost ->
-                    Metric("Energy Est.", "%.2f USD".format(cost))
+                    Metric("Energy Est.", Units.formatMoney(cost, state.settings.currencyCode))
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -1056,7 +1036,7 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
 
 @Composable
 private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary) {
-    fun money(v: Double?): String = v?.let { "%,.2f %s".format(it, p.currencyCode) } ?: "—"
+    fun money(v: Double?): String = Units.formatMoney(v, p.currencyCode)
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(16.dp),
