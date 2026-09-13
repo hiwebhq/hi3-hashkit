@@ -315,7 +315,6 @@ private fun DrawScope.drawUnitBox(
             }
         }
     drawEndFaces(corners, unit, flir, timeMs)
-    drawSideLabels(corners, unit, flir)
 }
 
 /** A face is toward the viewer when its average depth is nearer than the box center. */
@@ -367,9 +366,10 @@ private fun DrawScope.drawEndFace(
     // Face-local "up" on screen: bottom-edge midpoint -> top-edge midpoint.
     val upX = (corners[top[0]].x + corners[top[1]].x) / 2f - (corners[bottom[0]].x + corners[bottom[1]].x) / 2f
     val upY = (corners[top[0]].y + corners[top[1]].y) / 2f - (corners[bottom[0]].y + corners[bottom[1]].y) / 2f
-    // Fan sits in the upper part of the face, leaving the lower part for telemetry.
-    val center = Offset(fx + upX * 0.17f, fy + upY * 0.17f)
-    val r = edge * 0.26f
+    // Fan sits high on the face; name/IP flank its top corners and the big
+    // hashrate/temp readout fills the lower half.
+    val center = Offset(fx + upX * 0.26f, fy + upY * 0.26f)
+    val r = edge * 0.18f
     // Recessed housing + rim.
     drawCircle(Color.Black.copy(alpha = if (flir) 0.5f else 0.38f), r, center)
     drawCircle(
@@ -398,98 +398,56 @@ private fun DrawScope.drawEndFace(
         )
     }
     drawCircle(bladeColor, (r * 0.16f).coerceAtLeast(1.5f), center)
-    drawEndTelemetry(corners, unit, flir, bottom, edge, fx, fy)
-}
-
-/** Hashrate + chip temp painted under the fan, aligned to the face's bottom edge. */
-@Suppress("LongParameterList") // positioned inside an already-projected face
-private fun DrawScope.drawEndTelemetry(
-    corners: List<Fleet3D.Projected>,
-    unit: Unit3DUi,
-    flir: Boolean,
-    bottom: IntArray,
-    edge: Float,
-    fx: Float,
-    fy: Float,
-) {
-    if (edge < LABEL_MIN_EDGE_PX) return
-    val a = corners[bottom[0]]
-    val b = corners[bottom[1]]
-    var deg = Math.toDegrees(atan2((b.y - a.y).toDouble(), (b.x - a.x).toDouble())).toFloat()
+    // Face-local right vector (bottom-left -> bottom-right) and baseline angle.
+    val rightX = corners[bottom[1]].x - corners[bottom[0]].x
+    val rightY = corners[bottom[1]].y - corners[bottom[0]].y
+    var deg = Math.toDegrees(atan2(rightY.toDouble(), rightX.toDouble())).toFloat()
     if (deg > 90f) deg -= 180f
     if (deg < -90f) deg += 180f
+    drawEndLabels(unit, flir, fx, fy, upX, upY, rightX, rightY, edge, deg)
+}
+
+/**
+ * End-face labels: name in the upper-left corner, IP in the upper-right, and a large
+ * hashrate + chip-temp readout filling the lower half — all oriented along the face's
+ * bottom edge. Skipped on far/tiny boxes where text would be unreadable anyway. `u` runs
+ * bottom(-0.5)→top(+0.5) of the face; `rt` runs left(-0.5)→right(+0.5).
+ */
+@Suppress("LongParameterList") // positioned inside an already-projected face
+private fun DrawScope.drawEndLabels(
+    unit: Unit3DUi,
+    flir: Boolean,
+    fx: Float,
+    fy: Float,
+    upX: Float,
+    upY: Float,
+    rightX: Float,
+    rightY: Float,
+    edge: Float,
+    deg: Float,
+) {
+    if (edge < LABEL_MIN_EDGE_PX) return
     val paint = android.graphics.Paint().apply {
         color = if (flir) android.graphics.Color.WHITE
         else android.graphics.Color.argb(235, 255, 255, 255)
-        textSize = (edge / 6.4f).coerceIn(8f, 20f)
         textAlign = android.graphics.Paint.Align.CENTER
         isAntiAlias = true
     }
-    val lines = listOf(
-        Units.formatHashrate(unit.hashrateGhs),
-        unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—",
-    )
-    val lh = paint.textSize * 1.12f
     val native = drawContext.canvas.nativeCanvas
-    native.save()
-    native.translate(fx, fy)
-    native.rotate(deg)
-    // Local +y is "down" the face after rotation: start below the fan, near the bottom edge.
-    lines.forEachIndexed { i, line ->
-        native.drawText(line, 0f, edge * 0.14f + i * lh + paint.textSize * 0.35f, paint)
-    }
-    native.restore()
-}
-
-/** Identity (name / IP) on the flanks; live telemetry lives under the end-face fans. */
-private fun DrawScope.drawSideLabels(
-    corners: List<Fleet3D.Projected>,
-    unit: Unit3DUi,
-    flir: Boolean,
-) {
-    for (f in intArrayOf(4, 5)) { // left, right
-        drawOneSideLabel(corners, unit, flir, FACES[f])
-    }
-}
-
-private fun DrawScope.drawOneSideLabel(
-    corners: List<Fleet3D.Projected>,
-    unit: Unit3DUi,
-    flir: Boolean,
-    quad: IntArray,
-) {
-    if (!faceForward(corners, quad)) return
-    run {
-        val a = corners[quad[0]]
-        val b = corners[quad[3]] // the along-depth edge: text baseline direction
-        val len = hypot(b.x - a.x, b.y - a.y)
-        if (len < LABEL_MIN_EDGE_PX) return
-        val fx = quad.map { corners[it].x }.average().toFloat()
-        val fy = quad.map { corners[it].y }.average().toFloat()
-        var deg = Math.toDegrees(atan2((b.y - a.y).toDouble(), (b.x - a.x).toDouble())).toFloat()
-        if (deg > 90f) deg -= 180f
-        if (deg < -90f) deg += 180f
-        val paint = android.graphics.Paint().apply {
-            color = if (flir) android.graphics.Color.WHITE
-            else android.graphics.Color.argb(235, 255, 255, 255)
-            textSize = (len / 7.2f).coerceIn(9f, 24f)
-            textAlign = android.graphics.Paint.Align.CENTER
-            isAntiAlias = true
-        }
-        val lines = listOf(
-            unit.name.take(14),
-            unit.host,
-        )
-        val lh = paint.textSize * 1.12f
-        val native = drawContext.canvas.nativeCanvas
+    fun drawAt(u: Float, rt: Float, text: String, sizePx: Float) {
+        paint.textSize = sizePx
         native.save()
-        native.translate(fx, fy)
+        native.translate(fx + upX * u + rightX * rt, fy + upY * u + rightY * rt)
         native.rotate(deg)
-        lines.forEachIndexed { i, line ->
-            native.drawText(line, 0f, (i - (lines.size - 1) / 2f) * lh + paint.textSize * 0.35f, paint)
-        }
+        native.drawText(text, 0f, sizePx * 0.35f, paint)
         native.restore()
     }
+    val idSize = (edge / 8f).coerceIn(9f, 24f)
+    val metricSize = (edge / 4f).coerceIn(14f, 46f) // much larger — the primary readout
+    drawAt(0.42f, -0.27f, unit.name.take(10), idSize)              // upper-left
+    drawAt(0.42f, 0.27f, unit.host, idSize)                        // upper-right
+    drawAt(-0.08f, 0f, Units.formatHashrate(unit.hashrateGhs), metricSize)
+    drawAt(-0.34f, 0f, unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—", metricSize)
 }
 
 private fun DrawScope.drawFrames(
