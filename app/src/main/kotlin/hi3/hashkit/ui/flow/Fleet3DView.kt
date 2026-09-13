@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -186,13 +188,25 @@ private fun Fleet3DControls(
             )
         }
         FilterChip(selected = tour, onClick = { onTour(!tour) }, label = { Text("Tour") })
-        // Virtual rack size: pick any 2×2 … 8×8 directly.
-        for (n in Fleet3D.RACK_SIZE_MIN..Fleet3D.RACK_SIZE_MAX) {
+        // Virtual rack size: one button showing the current size; tap for the 2×2 … 8×8 menu.
+        var sizeMenu by remember { mutableStateOf(false) }
+        Box {
             FilterChip(
-                selected = rackSize == n,
-                onClick = { onRackSize(n) },
-                label = { Text("$n×$n") },
+                selected = sizeMenu,
+                onClick = { sizeMenu = true },
+                label = { Text("Rack $rackSize×$rackSize ▾") },
             )
+            DropdownMenu(expanded = sizeMenu, onDismissRequest = { sizeMenu = false }) {
+                for (n in Fleet3D.RACK_SIZE_MIN..Fleet3D.RACK_SIZE_MAX) {
+                    DropdownMenuItem(
+                        text = { Text(if (n == rackSize) "$n×$n ✓" else "$n×$n") },
+                        onClick = {
+                            sizeMenu = false
+                            onRackSize(n)
+                        },
+                    )
+                }
+            }
         }
     }
 }
