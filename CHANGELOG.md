@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.78.2
+
+- 3D fleet view: the hashrate and chip-temp readout under each fan is now much larger and
+  easier to read, and each machine's name and IP sit in the upper corners of the fan ends.
+- 3D fleet view: rack size is chosen from a single "Rack N×N" button with a 2×2–8×8 menu.
+
 ## 0.78.1
 
 - 3D fleet view: fans now spin on **both ends** of every machine, each with live hashrate
