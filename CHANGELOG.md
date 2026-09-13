@@ -10,6 +10,15 @@
 - Notifications, home-screen widgets, watchdog rules, and the watch tile are localized
   too (widgets and notifications follow the system language on Android 8–12).
 - Miner detail: tapping the IP address on the Identity card now opens the miner's web UI.
+- **Hashkit WiFi kit (Settings → Hashkit WiFi).** Support for the pocket field AP: save
+  the kit passphrase, add the network to your phone, print a Wi-Fi join QR, and verify
+  you're on the miner subnet — with a clear warning + static-IP fix if the site LAN gives
+  no DHCP lease.
+- 3D fleet view now shows name/IP/hashrate/temp on each machine's sides, animated fans,
+  and a "Tour" mode that flies around the fleet like a drone. Flow summary stats moved to
+  the top bar so the view fills the screen.
+- Wall / TV and Rack & site now group farm-assigned miners under their farm name instead
+  of "Unassigned".
 - Wall/Rack views: miners assigned to a farm are grouped under the farm's name instead
   of "Unassigned".
 
