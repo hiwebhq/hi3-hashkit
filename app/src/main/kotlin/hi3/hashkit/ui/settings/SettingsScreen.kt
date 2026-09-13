@@ -196,6 +196,42 @@ fun SettingsScreen(
                     settings.showSoloCard,
                 ) { viewModel.setShowSoloCard(it) }
                 Spacer(Modifier.height(4.dp))
+                Text("Dashboard card order", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Arrange the dashboard's blocks — e.g. move Pool and MMP below the miner " +
+                        "list. Cards still only appear when their feature is on.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                val cardOrder = hi3.hashkit.ui.dashboard.DashboardCard.orderFrom(settings.dashboardCardOrder)
+                cardOrder.forEachIndexed { i, card ->
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            "${i + 1}.  ${card.label}",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.weight(1f),
+                        )
+                        androidx.compose.material3.TextButton(
+                            enabled = i > 0,
+                            onClick = {
+                                val next = cardOrder.toMutableList().apply { add(i - 1, removeAt(i)) }
+                                viewModel.setDashboardCardOrder(
+                                    hi3.hashkit.ui.dashboard.DashboardCard.toCsv(next)
+                                )
+                            },
+                        ) { Text("↑") }
+                        androidx.compose.material3.TextButton(
+                            enabled = i < cardOrder.size - 1,
+                            onClick = {
+                                val next = cardOrder.toMutableList().apply { add(i + 1, removeAt(i)) }
+                                viewModel.setDashboardCardOrder(
+                                    hi3.hashkit.ui.dashboard.DashboardCard.toCsv(next)
+                                )
+                            },
+                        ) { Text("↓") }
+                    }
+                }
+                Spacer(Modifier.height(4.dp))
                 Text("Inventory tag", style = MaterialTheme.typography.bodyMedium)
                 Text(
                     "Which make-tag button the Fleet table shows for labelling miners.",

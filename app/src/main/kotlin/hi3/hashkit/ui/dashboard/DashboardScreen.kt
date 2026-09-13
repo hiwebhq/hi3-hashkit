@@ -303,26 +303,31 @@ fun DashboardScreen(
             firmwareLatest?.takeIf { firmwareOutdated > 0 }?.let { latest ->
                 item { FirmwareUpdateBanner(firmwareOutdated, latest, context) }
             }
-            item {
+            // User-arranged blocks (Settings → Display → Dashboard card order). Each block
+            // still renders only when its feature is enabled/applicable.
+            DashboardCard.orderFrom(state.settings.dashboardCardOrder).forEach { dashCard ->
+            when (dashCard) {
+            DashboardCard.FLEET -> item {
                 FleetSummary(state, fleetTrend, fleetWindow, viewModel::setFleetWindow, onClick = onFleet)
             }
-            if (state.settings.showProfitCard) {
+            DashboardCard.PROFIT -> if (state.settings.showProfitCard) {
                 state.profit?.let { profit ->
                     if (profit.revenuePerDay != null || profit.energyKwhPerDay != null) {
                         item { ProfitCard(profit) }
                     }
                 }
             }
-            if (state.settings.showSoloCard) {
+            DashboardCard.SOLO -> if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
             }
-            networkEpoch?.let { epoch -> item { HalvingCountdownCard(epoch) } }
-            if (poolState.enabled) {
+            DashboardCard.HALVING -> networkEpoch?.let { epoch -> item { HalvingCountdownCard(epoch) } }
+            DashboardCard.POOL -> if (poolState.enabled) {
                 item { Hi3PoolCard(poolState) }
             }
-            if (mmpState.enabled) {
+            DashboardCard.MMP -> if (mmpState.enabled) {
                 item { MmpCard(mmpState, state) }
             }
+            DashboardCard.MINERS -> {
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -442,6 +447,9 @@ fun DashboardScreen(
                     }
                 }
             }
+            } // MINERS block
+            } // when (dashCard)
+            } // forEach card in order
         }
         }
         }
