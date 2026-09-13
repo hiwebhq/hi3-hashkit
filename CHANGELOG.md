@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.78.1
+
+- 3D fleet view: fans now spin on **both ends** of every machine, each with live hashrate
+  and chip temperature painted below it; the machine's sides show name + IP. Rack size is
+  now a direct 2×2–8×8 picker instead of a tap-to-cycle chip.
+
 ## 0.78.0
 
 - **Hashkit speaks 7 languages.** Full translations for Spanish, Chinese (Simplified),
