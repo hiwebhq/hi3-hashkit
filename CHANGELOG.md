@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.77.6
+
+- **Two new home-screen widgets.** "Hashrate sources" compares your fleet's rate as local
+  polls, the pool, and MMP each see it (with delta %); the mini fleet table shows per-miner
+  status, rate and temp at a glance, worst news first.
+- **Rules watchdog.** Automation rules can now require a condition to hold for N minutes
+  before firing, so blips don't trigger actions; watchdog alerts get their own channel.
+- **Energy screen: profit per miner.** Revenue and net/day columns alongside cost.
+- **Site Map heatmap.** See your racks as a temperature heat grid.
+- Farms moved to Settings with a default-farm pin (hides the dashboard selector);
+  Bitmain locate light ("Blink LED") from the miner page and fleet-table selection.
+
 ## 0.77.5
 
 - **Reorder the dashboard.** Settings → Display → "Dashboard card order" arranges the
