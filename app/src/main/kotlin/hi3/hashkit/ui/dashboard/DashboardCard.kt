@@ -1,18 +1,21 @@
 package hi3.hashkit.ui.dashboard
 
+import androidx.annotation.StringRes
+import hi3.hashkit.R
+
 /**
  * The dashboard's reorderable blocks, in default order. The user arranges them in
  * Settings → Display; the farm selector and firmware banner stay pinned on top
  * (contextual system rows). A card still only renders when its feature is enabled.
  */
-enum class DashboardCard(val label: String) {
-    FLEET("Fleet summary"),
-    PROFIT("Profitability"),
-    SOLO("Solo odds"),
-    HALVING("Halving countdown"),
-    POOL("Hi3 Pool stats"),
-    MMP("MMP fleet"),
-    MINERS("Miner list");
+enum class DashboardCard(val label: String, @StringRes val labelRes: Int) {
+    FLEET("Fleet summary", R.string.dash_card_fleet),
+    PROFIT("Profitability", R.string.dash_card_profit),
+    SOLO("Solo odds", R.string.dash_card_solo),
+    HALVING("Halving countdown", R.string.dash_card_halving),
+    POOL("Hi3 Pool stats", R.string.dash_card_pool),
+    MMP("MMP fleet", R.string.dash_card_mmp),
+    MINERS("Miner list", R.string.dash_card_miners);
 
     companion object {
         /**

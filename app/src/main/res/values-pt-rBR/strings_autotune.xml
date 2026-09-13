@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-tuner screen (ui/autotune). -->
+<resources>
+    <string name="tune_title">Auto-tuner</string>
+    <string name="tune_description">Varre as frequências aprovadas pelo firmware na sua tensão atual, deixa cada uma estabilizar, mede J/TH e temperatura dos chips, depois restaura seu ponto original e recomenda o melhor ponto abaixo do seu teto de temperatura. Para de subir quando o teto é atingido. Aplicar é um toque à parte — mantenha o app aberto durante a varredura.</string>
+    <string name="tune_not_supported">Não suportado neste minerador.</string>
+    <string name="tune_settle_per_step">Estabilização por passo</string>
+    <string name="tune_temp_ceiling">Teto de temperatura</string>
+    <string name="tune_optimize_for">Otimizar para</string>
+    <string name="tune_efficiency">Eficiência</string>
+    <string name="tune_hashrate">Hashrate</string>
+    <string name="tune_step_progress">Passo %1$d/%2$d — %3$s</string>
+    <string name="tune_start_sweep">Iniciar varredura</string>
+    <string name="tune_apply_best">Aplicar melhor (%1$d MHz)</string>
+    <string name="tune_results_header">RESULTADOS (melhor primeiro)</string>
+    <string name="tune_over_ceiling">"  ⚠ acima do teto"</string>
+    <string name="tune_optimizer_header">OTIMIZADOR — %1$d ponto(s) salvo(s)</string>
+    <string name="tune_clear">Limpar</string>
+    <string name="tune_most_efficient">Mais eficiente: %1$d MHz @ %2$d mV — %3$s J/TH</string>
+    <string name="tune_most_hashrate">Maior hashrate: %1$d MHz @ %2$d mV — %3$s</string>
+    <string name="tune_optimizer_hint">Construído com todas as varreduras deste minerador — rode mais varreduras para refinar a curva.</string>
+    <string name="tune_efficiency_curve">CURVA DE EFICIÊNCIA</string>
+    <string name="tune_observed_points">PONTOS DE OPERAÇÃO OBSERVADOS (7 DIAS)</string>
+    <string name="tune_mark_best_efficiency">" ⚡melhor J/TH"</string>
+    <string name="tune_mark_best_rate">" ▲melhor taxa"</string>
+    <string name="tune_observed_point">%1$.0f MHz / %2$.0f mV — %3$.2f TH/s · %4$s J/TH · máx %5$s · ≈%6$.1f h%7$s</string>
+    <string name="tune_peer_gap">vs pares do mesmo modelo (%1$d): %2$s hashrate (média 24h)</string>
+</resources>

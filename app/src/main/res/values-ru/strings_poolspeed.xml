@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран теста скорости пулов (ui/poolspeed). -->
+<resources>
+    <string name="ps_title">Тест скорости пулов</string>
+    <string name="ps_description">Измеряет задержку Stratum — TCP-рукопожатие и реальный запрос mining.subscribe туда и обратно, без перехвата пакетов. Тестируются пулы, которые реально использует ваш парк (читаются из конфигурации пулов каждого майнера, поэтому ПРИВАТНЫЙ/LAN Stratum работает — телефон находится в одной сети с парком), плюс пулы, включённые в адресной книге пулов. Измеряется из сети ЭТОГО телефона.</string>
+    <string name="ps_run">Запустить тест скорости</string>
+    <string name="ps_testing">Тестирование…</string>
+    <string name="ps_pool_count">Пулов: %1$d</string>
+    <string name="ps_ranked">РЕЙТИНГ (сначала самые быстрые)</string>
+    <string name="ps_unreachable">недоступен</string>
+    <string name="ps_connect">подключение %1$s ms</string>
+    <string name="ps_jitter">джиттер ±%1$d ms</string>
+    <string name="ps_stratum">stratum %1$s</string>
+    <string name="ps_no_response">нет ответа</string>
+</resources>

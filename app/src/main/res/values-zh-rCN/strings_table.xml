@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fleet table screen (ui/table). -->
+<resources>
+    <string name="table_title">机队表格</string>
+    <string name="table_filter_label">筛选（名称、IP、型号、矿池）</string>
+    <string name="table_print_qr">打印 QR 码</string>
+    <string name="table_program_nfc">写入 NFC 标签</string>
+    <string name="table_scan_tag_qr">扫描标签 / QR</string>
+    <string name="table_scan_nfc">扫描 NFC</string>
+    <string name="table_tag_hint">%1$d 个标签 · 可在 AR 机架叠加中扫描 · 长按行可选择</string>
+
+    <!-- Column headers -->
+    <string name="table_col_name">名称</string>
+    <string name="table_col_ip">IP</string>
+    <string name="table_col_model">型号</string>
+    <string name="table_col_hashrate">算力</string>
+    <string name="table_col_temp">温度</string>
+    <string name="table_col_fan">风扇</string>
+    <string name="table_col_pool">矿池</string>
+    <string name="table_col_uptime">运行时间</string>
+
+    <string name="table_cell_offline">离线</string>
+
+    <!-- Print dialog -->
+    <string name="table_qr_sticker_size">QR 贴纸尺寸</string>
+    <string name="table_qr_size_hint">每张打印贴纸要多大？越小则每页可容纳越多。</string>
+
+    <!-- Selection bar + dialogs -->
+    <string name="table_selected_count">已选 %1$d 台</string>
+    <string name="table_assign_to_farm">分配到矿场</string>
+    <string name="table_blink_led">闪烁 LED</string>
+    <string name="table_stop_blink">停止闪烁</string>
+    <string name="table_select_all">全选 %1$d 台</string>
+    <string name="table_clear">清除</string>
+    <string name="table_assign_title">将 %1$d 台矿机分配到…</string>
+    <string name="table_no_farms">还没有矿场——请先在高级 → 矿场中创建。</string>
+    <string name="table_no_farm_unassign">无矿场（取消分配）</string>
+    <string name="table_delete_title">删除 %1$d 台矿机？</string>
+    <string name="table_delete_body">从应用中移除它们及其遥测历史。不会影响实体矿机。</string>
+</resources>

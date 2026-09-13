@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vocabulary shared across screens (FR). Screen-specific strings live in strings_<area>.xml. -->
+<resources>
+    <!-- Language picker -->
+    <string name="language_title">Langue</string>
+    <string name="language_system">Par défaut du système</string>
+    <string name="language_settings_hint">S\'applique immédiatement. \"Par défaut du système\" suit la langue de votre téléphone.</string>
+
+    <!-- Common actions -->
+    <string name="common_back">Retour</string>
+    <string name="common_cancel">Annuler</string>
+    <string name="common_save">Enregistrer</string>
+    <string name="common_ok">OK</string>
+    <string name="common_delete">Supprimer</string>
+    <string name="common_close">Fermer</string>
+    <string name="common_apply">Appliquer</string>
+    <string name="common_add">Ajouter</string>
+    <string name="common_edit">Modifier</string>
+    <string name="common_retry">Réessayer</string>
+    <string name="common_done">Terminé</string>
+    <string name="common_start">Démarrer</string>
+    <string name="common_stop">Arrêter</string>
+    <string name="common_export">Exporter</string>
+    <string name="common_share">Partager</string>
+    <string name="common_refresh">Actualiser</string>
+    <string name="common_search">Rechercher</string>
+    <string name="common_settings">Paramètres</string>
+    <string name="common_enabled">Activé</string>
+    <string name="common_disabled">Désactivé</string>
+    <string name="common_on">Activé</string>
+    <string name="common_off">Désactivé</string>
+    <string name="common_yes">Oui</string>
+    <string name="common_no">Non</string>
+    <string name="common_none">Aucun</string>
+    <string name="common_all">Tous</string>
+    <string name="common_unknown">Inconnu</string>
+    <string name="common_loading">Chargement…</string>
+    <string name="common_reboot">Redémarrer</string>
+    <string name="common_confirm">Confirmer</string>
+
+    <!-- Value-provenance tags (short abbreviations) -->
+    <string name="source_calc">calc</string>
+    <string name="source_est">est</string>
+
+    <!-- App lock -->
+    <string name="lock_unlock">Déverrouiller</string>
+    <string name="lock_prompt_title">Déverrouiller Hi3 Hashkit</string>
+
+    <!-- Miner status vocabulary -->
+    <string name="status_online">En ligne</string>
+    <string name="status_offline">Hors ligne</string>
+    <string name="status_degraded">Dégradé</string>
+    <string name="status_stale">Figé</string>
+</resources>

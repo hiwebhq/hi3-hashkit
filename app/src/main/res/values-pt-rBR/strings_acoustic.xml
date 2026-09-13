@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Acoustic fan check screen (AcousticScreen). -->
+<resources>
+    <string name="ac_title">Teste acústico das ventoinhas</string>
+    <string name="ac_intro">Segure o microfone do celular a poucos cm das ventoinhas do minerador, mantenha o ambiente silencioso e grave um clipe de %1$d segundos. O áudio é analisado no aparelho (FFT) e nunca é salvo ou enviado. É um teste indicativo, de melhor esforço — não um diagnóstico calibrado.</string>
+    <string name="ac_record">Gravar %1$d s</string>
+    <string name="ac_listening">Ouvindo…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">Não foi possível capturar o áudio. Verifique a permissão do microfone e tente de novo.</string>
+    <string name="ac_clip_too_short">Clipe curto demais para analisar.</string>
+    <string name="ac_mic_permission">A permissão do microfone é necessária para ouvir as ventoinhas.</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">Nenhuma falha evidente</string>
+    <string name="ac_check_fans">Verifique as ventoinhas</string>
+    <string name="ac_measured">MEDIDO</string>
+    <string name="ac_dominant_tone">Tom dominante: %1$d Hz (≈ %2$d RPM se for a fundamental)</string>
+    <string name="ac_tonality">Tonalidade: %1$s× · energia de alta freq.: %2$s%%</string>
+</resources>

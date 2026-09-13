@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leaderboard screen (ui/leaderboard) — French. -->
+<resources>
+    <string name="lead_title">Classement</string>
+    <string name="lead_rank_efficiency">Efficacité</string>
+    <string name="lead_rank_attainment">Atteinte</string>
+    <string name="lead_rank_hashrate">Hashrate</string>
+    <string name="lead_desc_efficiency">Classé par efficacité énergétique (J/TH) — plus bas = mieux. Nécessite des données de puissance.</string>
+    <string name="lead_desc_attainment">Classé par hashrate réel vs attendu. Nécessite un hashrate attendu.</string>
+    <string name="lead_desc_hashrate">Classé par hashrate actuel.</string>
+    <string name="lead_empty">Aucun mineur en ligne avec cette métrique pour l\'instant.</string>
+</resources>

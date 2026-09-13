@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings surfaced from ViewModels / shared domain classes (no Composable Context at the
+     point of composition). vm_ = ViewModel messages, logan_ = LogAnalyzer/LogClassifier,
+     acou_ = AcousticAnalyzer, bulk_ = FleetControl BulkAction labels. -->
+<resources>
+
+    <!-- AutotuneViewModel -->
+    <string name="vm_tune_miner_not_found">Minerador não encontrado.</string>
+    <string name="vm_tune_not_tunable">Este minerador não expõe opções de ajuste.</string>
+    <string name="vm_tune_no_voltage">Nenhuma tensão de core para manter constante.</string>
+    <string name="vm_tune_sweeping">Varrendo %1$d frequências a %2$d mV, teto de %3$d°C…</string>
+    <string name="vm_tune_step_label">%1$d MHz @ %2$d mV — aplicando e estabilizando %3$ds</string>
+    <string name="vm_tune_stopped_early">"Parou antes: atingiu o teto de %1$d°C. "</string>
+    <string name="vm_tune_no_safe_point">Nenhum ponto seguro produziu uma leitura válida.</string>
+    <string name="vm_tune_best_hashrate">Melhor hashrate: %1$d MHz (%2$s).</string>
+    <string name="vm_tune_best_efficiency">Melhor eficiência: %1$d MHz a %2$s J/TH.</string>
+    <string name="vm_tune_restored">" Seu ponto original foi restaurado."</string>
+    <string name="vm_tune_applied">Aplicado %1$d MHz @ %2$d mV.</string>
+    <string name="vm_tune_apply_failed">Falha ao aplicar: %1$s</string>
+    <string name="vm_tune_cancelled">Varredura cancelada — ponto original restaurado.</string>
+
+    <!-- PoolSpeedViewModel -->
+    <string name="vm_ps_no_pools">Nenhuma pool encontrada. Configure uma pool em um minerador ou na agenda de pools.</string>
+    <string name="vm_ps_tested">%1$d pool(s) testada(s).</string>
+
+    <!-- AddressBookViewModel -->
+    <string name="vm_ab_applied">Aplicado \"%1$s\": %2$d ok, %3$d falharam, %4$d sem suporte.</string>
+
+    <!-- Shared by PriceCurtailmentViewModel + SolarSurplusViewModel -->
+    <string name="vm_saved">Salvo.</string>
+    <string name="vm_curtailed">Cortados</string>
+    <string name="vm_resumed">Retomados</string>
+    <string name="vm_curtail_result">%1$s %2$d/%3$d minerador(es).</string>
+    <string name="vm_curtail_result_skipped">%1$s %2$d/%3$d minerador(es), %4$d pulados.</string>
+
+    <!-- PriceCurtailmentViewModel -->
+    <string name="vm_price_no_rate">Nenhuma tarifa cobre a meia hora atual ainda.</string>
+
+    <!-- SolarSurplusViewModel -->
+    <string name="vm_solar_read">Lido %1$s do Home Assistant.</string>
+
+    <!-- SettingsScreen refresh-interval presets -->
+    <string name="vm_interval_5s">5 s</string>
+    <string name="vm_interval_10s">10 s</string>
+    <string name="vm_interval_15s">15 s</string>
+    <string name="vm_interval_30s">30 s</string>
+    <string name="vm_interval_1m">1 min</string>
+    <string name="vm_interval_2m">2 min</string>
+    <string name="vm_interval_5m">5 min</string>
+    <string name="vm_interval_15m">15 min</string>
+    <string name="vm_interval_30m">30 min</string>
+    <string name="vm_interval_1h">1 hora</string>
+    <string name="vm_interval_6h">6 horas</string>
+    <string name="vm_interval_12h">12 horas</string>
+    <string name="vm_interval_1d">1 dia</string>
+    <string name="vm_interval_days">%1$d dia</string>
+    <string name="vm_interval_hours">%1$d hora</string>
+    <string name="vm_interval_mins">%1$d min</string>
+    <string name="vm_interval_secs">%1$d s</string>
+
+    <!-- ArOverlayViewModel -->
+    <string name="vm_ar_blank_tag">Tag NFC vazia — grave-a pelo Criar etiqueta de um minerador</string>
+    <string name="vm_ar_not_hashkit_tag">Não é uma tag do Hi3 Hashkit</string>
+    <string name="vm_ar_scanned">Escaneado ✓ %1$s</string>
+    <string name="vm_ar_miner_fallback">minerador</string>
+    <string name="vm_ar_not_added_yet">Tag escaneada — %1$s ainda não adicionado</string>
+    <string name="vm_ar_no_match">Tag escaneada — nenhum minerador correspondente</string>
+    <string name="vm_ar_adding">Adicionando %1$s…</string>
+    <string name="vm_ar_added">%1$s adicionado.</string>
+    <string name="vm_ar_unreachable">Não foi possível alcançar %1$s: %2$s</string>
+
+    <!-- AddMinerViewModel -->
+    <string name="vm_add_private_only">Só são permitidos endereços de LAN privada ou Tailscale (100.x).</string>
+    <string name="vm_add_added">Adicionado — buscando a primeira telemetria…</string>
+    <string name="vm_add_already_tracked">Já monitorado; endereço atualizado.</string>
+    <string name="vm_add_unreachable">Inacessível: %1$s</string>
+    <string name="vm_add_cidr_hint">Digite um CIDR privado como 192.168.1.0/24.</string>
+    <string name="vm_add_range_too_large">Intervalo maior que /%1$d — reduza antes de varrer.</string>
+    <string name="vm_add_scan_done">%1$d hosts varridos, %2$d minerador(es) encontrado(s).</string>
+    <string name="vm_add_scan_cancelled">Varredura cancelada.</string>
+    <string name="vm_add_mdns_searching">Buscando via mDNS…</string>
+    <string name="vm_add_mdns_done">Busca mDNS concluída: %1$d minerador(es).</string>
+
+    <!-- NfcProgramViewModel -->
+    <string name="vm_nfc_wrote">%1$s gravada.</string>
+    <string name="vm_nfc_tag_fallback">tag</string>
+    <string name="vm_nfc_all_done">" Todas as %1$d concluídas."</string>
+    <string name="vm_nfc_none">Nenhum minerador para programar.</string>
+
+    <!-- LogClassifier categories -->
+    <string name="logan_cat_pool">Pool</string>
+    <string name="logan_cat_shares">Shares</string>
+    <string name="logan_cat_asic">ASIC</string>
+    <string name="logan_cat_thermal">Térmico</string>
+    <string name="logan_cat_network">Rede</string>
+    <string name="logan_cat_system">Sistema</string>
+    <string name="logan_cat_other">Outros</string>
+
+    <!-- LogAnalyzer findings -->
+    <string name="logan_disconnects_title">%1$d desconexões de pool/rede no log recente</string>
+    <string name="logan_disconnects_suggestion">Verifique a URL/porta da pool e o sinal do Wi-Fi; um link instável causa shares perdidas.</string>
+    <string name="logan_restarts_title">Sinais de %1$d reinício(s) / resets</string>
+    <string name="logan_restarts_suggestion">Reinícios repetidos costumam indicar problema de energia (fonte/USB) ou térmico — verifique a alimentação e a refrigeração.</string>
+    <string name="logan_thermal_title">%1$d aviso(s)/erro(s) térmico(s)</string>
+    <string name="logan_thermal_suggestion">Melhore o fluxo de ar ou reduza o ajuste; calor sustentado limita o hashrate e encurta a vida do hardware.</string>
+    <string name="logan_asic_title">%1$d erro(s) de ASIC</string>
+    <string name="logan_asic_suggestion">Erros persistentes de ASIC podem indicar chip/placa com defeito — compare a saúde por chip e considere regravar o firmware.</string>
+    <string name="logan_rejects_title">%1$d mensagem(ns) de share rejeitada</string>
+    <string name="logan_rejects_suggestion">Rejeições altas geralmente indicam trabalho obsoleto (latência de rede) ou um ajuste agressivo demais.</string>
+    <string name="logan_clean_title">Nenhum problema detectado no log recente.</string>
+    <string name="logan_errors_no_pattern_title">%1$d linha(s) de erro, mas nenhum padrão de problema conhecido.</string>
+    <string name="logan_none_suggestion">Nada acionável se destacou. Mantenha o stream aberto para pegar problemas intermitentes.</string>
+
+    <!-- AcousticAnalyzer findings -->
+    <string name="acou_bearing">Ruído de alta frequência elevado — possível desgaste de rolamento ou rolamento seco.</string>
+    <string name="acou_imbalance">Tom grave forte em %1$d Hz — possível desbalanceamento ou detrito.</string>
+    <string name="acou_broadband">O som é de banda larga, sem tom claro de ventoinha — confira se o microfone está perto da ventoinha e se o ambiente está silencioso.</string>
+    <string name="acou_no_fault">Nenhuma falha evidente de ventoinha neste clipe (apenas indicativo).</string>
+
+    <!-- FleetControl BulkAction labels (dialog titles) -->
+    <string name="bulk_restart">Reiniciar</string>
+    <string name="bulk_set_pool">Trocar pool primária para %1$s:%2$d</string>
+    <string name="bulk_fan_auto">Colocar ventoinha em automático</string>
+    <string name="bulk_fan_manual">Ajustar ventoinha para %1$d%%</string>
+    <string name="bulk_pause">Pausar hashing</string>
+    <string name="bulk_resume">Retomar hashing</string>
+    <string name="bulk_tune">Ajustar para %1$d MHz @ %2$d mV</string>
+
+</resources>

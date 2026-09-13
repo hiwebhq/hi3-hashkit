@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Site Map: setup -->
+    <string name="site_title">Карта площадки</string>
+    <string name="site_setup_intro">Задайте площадку, затем обойдите стойки, нажимая кнопку IP Report на каждом майнере. Захват всегда начинается со здания 1, стойки 1, яруса 1, позиции 1 (левый край), заполняет каждый ярус слева направо, затем ярус выше, затем следующую стойку.</string>
+    <string name="site_name_label">Название площадки (для сохранения в ферму)</string>
+    <string name="site_buildings">Здания</string>
+    <string name="site_racks_per_building">Стоек на здание</string>
+    <string name="site_tiers_per_rack">Ярусов на стойку (полки)</string>
+    <string name="site_positions_per_tier">Позиций на ярус (майнеров в ряду)</string>
+    <string name="site_setup_summary">Всего слотов: %1$d — %2$d на стойку, %3$d на здание.</string>
+    <string name="site_supported_models">Поддерживаемые модели</string>
+    <string name="site_supported_models_body">Захват слушает широковещательный сигнал кнопки IP Report (UDP 14235): Bitmain Antminer (эпохи S9–S21) на стоковой прошивке, Braiins OS и LuxOS. Приложение отправляет подтверждение, и майнер мигает зелёным, когда нажатие записано. WhatsMiner, Canaan и Bitaxe/ESP-Miner такой сигнал не шлют — заполняйте их слоты вручную. Телефон должен быть в Wi-Fi той же LAN, что и майнеры (широковещание не проходит через роутеры и Tailscale).</string>
+    <string name="site_start_capture">Начать захват</string>
+
+    <!-- Site Map: capture -->
+    <string name="site_capture_finished">Захват завершён</string>
+    <string name="site_listening">Слушаем UDP 14235 — нажмите кнопку IP Report на:</string>
+    <string name="site_paused">Пауза — нажатия игнорируются</string>
+    <string name="site_slot_label">Здание %1$d · Стойка %2$d · Ярус %3$d · Позиция %4$d</string>
+    <string name="site_captured_count">Захвачено %1$d из %2$d</string>
+    <string name="site_skipped_suffix">" · пропущено: %1$d"</string>
+    <string name="site_last_event">Последнее: %1$s</string>
+    <string name="site_pause">Пауза</string>
+    <string name="site_resume">Продолжить</string>
+    <string name="site_undo">Отменить</string>
+    <string name="site_skip_slot">Пропустить слот</string>
+    <string name="site_manual">Вручную</string>
+    <string name="site_prev_rack">Предыдущая стойка</string>
+    <string name="site_next_rack">Следующая стойка</string>
+    <string name="site_building_rack">Здание %1$d · Стойка %2$d</string>
+    <string name="site_tier_hint">Ярус 1 — нижний ряд; позиции идут слева направо.</string>
+
+    <!-- Site Map: results -->
+    <string name="site_results">Результаты (%1$d)</string>
+    <string name="site_export_csv">Экспорт CSV</string>
+    <string name="site_share_csv_title">CSV карты площадки</string>
+    <string name="site_new_session">Новая сессия</string>
+    <string name="site_scanning_progress">Сканирование… %1$d/%2$d</string>
+    <string name="site_scan_miners">Сканировать майнеры (API): MAC · серийный номер · пул · воркер · хешрейт</string>
+    <string name="site_farm_name">Название фермы</string>
+    <string name="site_existing_farms">Существующие: %1$s</string>
+    <string name="site_saving">Сохранение…</string>
+    <string name="site_save_to_farm">Сохранить в ферму</string>
+    <string name="site_col_location">Место</string>
+    <string name="site_col_ip">IP</string>
+    <string name="site_col_mac">MAC</string>
+    <string name="site_col_source">Источник</string>
+    <string name="site_source_manual">вручную</string>
+    <string name="site_source_button">кнопка</string>
+    <string name="site_scan_failed">сбой сканирования: %1$s</string>
+    <string name="site_sn_prefix">SN %1$s</string>
+    <string name="site_no_details">данные не получены</string>
+    <string name="site_manual_fill_title">Ручное заполнение</string>
+    <string name="site_manual_fill_body">Введите IP майнера в текущем слоте — для оборудования без кнопки IP Report (WhatsMiner, Canaan, Bitaxe).</string>
+    <string name="site_ipv4_label">Адрес IPv4</string>
+    <string name="site_fill_slot">Заполнить слот</string>
+
+    <!-- Site Map: ViewModel messages -->
+    <string name="site_error_enter_numbers">Сначала укажите число зданий, стоек, ярусов и позиций.</string>
+    <string name="site_error_invalid_ipv4">«%1$s» — недопустимый адрес IPv4.</string>
+    <string name="site_listener_failed">Сбой прослушивания: %1$s</string>
+    <string name="site_undid">Отменено: %1$s (%2$s)</string>
+    <string name="site_saved_result">Сохранено в «%1$s»: добавлено %2$d, уже известно %3$d</string>
+    <string name="site_saved_failed_suffix">", ошибок: %1$d"</string>
+
+    <!-- Heatmap -->
+    <string name="site_heatmap_title">Тепловая карта</string>
+    <string name="site_heatmap_empty">Ни у одного майнера ещё нет расположения в стойке. Запустите Карту площадки (или задайте расположение вида B1-R1-T1-P1 в диалоге изменения майнера) — стойки появятся здесь, окрашенные по текущей температуре чипов.</string>
+    <string name="site_heatmap_tier_hint">Ярус 1 — нижний ряд; позиции идут слева направо. Нажмите на ячейку, чтобы открыть майнер.</string>
+    <string name="site_unplaced">Не показаны майнеры без расположения B/R/T/P: %1$d.</string>
+    <string name="site_cell_off">ВЫКЛ</string>
+    <string name="site_empty_slot">Пустой слот</string>
+    <string name="site_legend_offline">офлайн / нет данных</string>
+</resources>

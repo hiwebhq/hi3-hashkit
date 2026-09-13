@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">网络扫描</string>
+    <string name="net_refresh_network_info">刷新网络信息</string>
+    <string name="net_intro">在本地子网上按已知端口（HTTP 80、CGMiner 4028）扫描矿机。只探测私有局域网和 Tailscale 地址。启动时自动运行，因此在打开“添加矿机”前设备就会出现。</string>
+    <string name="net_this_device">本设备</string>
+    <string name="net_not_on_network">未连接 Wi-Fi / 局域网</string>
+    <string name="net_scan_range_label">扫描范围（CIDR）</string>
+    <string name="net_scanning_progress">正在扫描 %1$d / %2$d——已发现 %3$d 台</string>
+    <string name="net_last_scan">上次扫描：%1$s。</string>
+    <string name="net_restart">重新扫描</string>
+    <string name="net_start_scan">开始扫描</string>
+    <string name="net_discovering">正在发现…</string>
+    <string name="net_mdns_discover">mDNS 发现</string>
+    <string name="net_auto_scan_title">启动时自动扫描</string>
+    <string name="net_auto_scan_subtitle">应用打开时自动发起子网扫描。</string>
+    <string name="net_just_now">刚刚</string>
+    <string name="net_minutes_ago">%1$d 分钟前</string>
+    <string name="net_hours_ago">%1$d 小时前</string>
+</resources>

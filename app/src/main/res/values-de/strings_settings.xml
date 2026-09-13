@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings screen strings. Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Section headers -->
+    <string name="set_section_advanced">ERWEITERTE FUNKTIONEN</string>
+    <string name="set_section_alerts">ALARME</string>
+    <string name="set_section_discovery">ERKENNUNG</string>
+    <string name="set_section_display">ANZEIGE</string>
+    <string name="set_section_farms">FARMEN</string>
+    <string name="set_section_mmp">HI3 MMP</string>
+    <string name="set_section_web_server">LOKALER WEBSERVER (ERWEITERT)</string>
+    <string name="set_section_monitoring">ÜBERWACHUNG</string>
+    <string name="set_section_mqtt">MQTT / HOME ASSISTANT</string>
+    <string name="set_section_pool">POOL</string>
+    <string name="set_section_push">PUSH (WEBHOOK)</string>
+    <string name="set_section_quiet">RUHEZEITEN &amp; TAGESÜBERSICHT</string>
+    <string name="set_section_security">SICHERHEIT</string>
+    <string name="set_section_solo">SOLO-MINING</string>
+    <string name="set_section_units">EINHEITEN &amp; KOSTEN</string>
+    <string name="set_section_update">HASHKIT AKTUALISIEREN</string>
+    <string name="set_section_data">DATEN &amp; EXPORTE</string>
+    <string name="set_section_demo">DEMO</string>
+
+    <!-- Advanced features -->
+    <string name="set_advanced_unlocked_desc">Erweiterte Funktionen sind freigeschaltet. Das zeigt den \"Live Bitcoin\"-Link im Dashboard-Menü; künftige Versionen können hier mehr sammeln (sichere Seiten, Power-Tools).</string>
+    <string name="set_advanced_locked_desc">Gib deinen Freischaltcode ein, um erweiterte Funktionen zu zeigen (aktuell der \"Live Bitcoin\"-Link im Dashboard-Menü).</string>
+    <string name="set_advanced_unlock_code_optional">Freischaltcode (optional)</string>
+    <string name="set_advanced_unlock_code">Freischaltcode</string>
+    <string name="set_advanced_apply_code">Code anwenden</string>
+
+    <!-- Alerts -->
+    <string name="set_alerts_title">Alarme &amp; Benachrichtigungen</string>
+    <string name="set_alerts_subtitle">Offline-, Temperatur-, Lüfter-, Ablehnungsraten- und Neustart-Alarme mit Entwarnungen.</string>
+    <string name="set_alert_hashrate_below" formatted="false">Hashrate-Alarm unter (% vom Soll)</string>
+    <string name="set_alert_chip_temp">Chip-Temp-Alarm (°C)</string>
+    <string name="set_alert_vr_temp">VR-Temp-Alarm (°C)</string>
+    <string name="set_alert_reject_rate" formatted="false">Ablehnungsraten-Alarm (%)</string>
+    <string name="set_alert_cooldown">Erneut-Melden-Abklingzeit (min)</string>
+
+    <!-- Discovery -->
+    <string name="set_discovery_extra_subnets">Zusätzliche Scan-Subnetze (CSV aus CIDRs)</string>
+    <string name="set_discovery_subnets_hint">Ergänze entfernte LANs, die über deinen Tailscale-Subnetz-Router erreichbar sind, z. B. 192.168.50.0/24. Sie erscheinen als Schnellauswahl im Hinzufügen-Bildschirm.</string>
+
+    <!-- Display -->
+    <string name="set_theme">Design</string>
+    <string name="set_theme_system">System</string>
+    <string name="set_theme_dark">Dunkel</string>
+    <string name="set_theme_light">Hell</string>
+    <string name="set_ui_theme">UI-Farbschema</string>
+    <string name="set_ui_theme_hint">Akzentfarbe in der ganzen App. Statusfarben (online/offline) ändern sich nicht.</string>
+    <string name="set_profit_card_title">Rentabilitäts- &amp; Energiekarte</string>
+    <string name="set_profit_card_subtitle">Geschätzten Ertrag, Stromkosten und Energieverbrauch auf dem Dashboard zeigen.</string>
+    <string name="set_solo_card_title">Solo-Chancen-Karte</string>
+    <string name="set_solo_card_subtitle">Blockfund-Wahrscheinlichkeit auf dem Dashboard zeigen.</string>
+    <string name="set_card_order_title">Dashboard-Kartenreihenfolge</string>
+    <string name="set_card_order_hint">Ordne die Dashboard-Blöcke — z. B. Pool und MMP unter die Miner-Liste. Karten erscheinen weiterhin nur, wenn ihre Funktion aktiv ist.</string>
+    <string name="set_inventory_tag_title">Inventar-Tag</string>
+    <string name="set_inventory_tag_hint">Welchen Tag-Erstellen-Button die Flottentabelle zum Beschriften von Minern zeigt.</string>
+    <string name="set_tag_qr">QR</string>
+    <string name="set_tag_nfc">NFC</string>
+    <string name="set_tag_both">Beide</string>
+    <string name="set_pause_on_exit_title">Beim Beenden nachfragen</string>
+    <string name="set_pause_on_exit_subtitle">Beim Tippen auf den Beenden-Button die Abfrage \"Hi3 Hashkit beenden?\" zeigen.</string>
+
+    <!-- Farms -->
+    <string name="set_manage_farms">Farmen verwalten…</string>
+    <string name="set_default_farm">Standard-Farm</string>
+    <string name="set_default_farm_hint">Heftet das Dashboard an eine Farm: Die Farm-Auswahlzeile verschwindet und nur die Miner dieser Farm werden gezeigt — kompakteres Layout bei nur einem Standort.</string>
+    <string name="set_all_farms">Alle Farmen</string>
+
+    <!-- Hi3 MMP -->
+    <string name="set_mmp_title">Hi3-MMP-Flottenansicht</string>
+    <string name="set_mmp_subtitle">Schreibgeschützte Flottenübersicht und Standort-Zusammenfassungen aus deiner Mining Management Platform.</string>
+    <string name="set_mmp_url">MMP-URL</string>
+    <string name="set_mmp_key_saved">API-Schlüssel (gespeichert — eingeben zum Ersetzen, leer zum Löschen)</string>
+    <string name="set_mmp_key_hint">API-Schlüssel (im MMP-Admin-UI erstellen)</string>
+    <string name="set_mmp_replace_key">Schlüssel ersetzen</string>
+    <string name="set_mmp_save_key">Schlüssel speichern</string>
+    <string name="set_mmp_disclosure">Was bei Aktivierung übertragen wird: dein MMP-API-Schlüssel im Request-Header, per HTTPS an die MMP-URL oben, etwa einmal pro Minute bei geöffneter App — schreibgeschützte Flottenabfragen, nichts wird hochgeladen. Der Schlüssel liegt verschlüsselt im Android Keystore. Standardmäßig aus.</string>
+
+    <!-- Local web server -->
+    <string name="set_web_server_title">Web-Dashboard + /metrics bereitstellen</string>
+    <string name="set_web_server_subtitle">Startet einen lokalen, schreibgeschützten Webserver: ein HTML-Flotten-Dashboard für jeden Browser oder TV im LAN, plus einen Prometheus-/metrics-Endpunkt für Grafana. Ohne Auth — nur für privates LAN/Tailnet.</string>
+    <string name="set_web_server_port">Port</string>
+    <string name="set_web_server_hint">Bei geöffneter App: Dashboard unter http://&lt;geräte-ip>:%1$d/ und Metriken unter /metrics. Schreibgeschützt (nur GET); zeigt Gesamtwerte + Daten pro Miner, keine Steuerung.</string>
+
+    <!-- Monitoring -->
+    <string name="set_bg_monitoring_title">Hintergrundüberwachung</string>
+    <string name="set_bg_monitoring_subtitle">Pollt etwa alle 15 min bei geschlossener App (Android kann das verzögern; keine durchgehende Echtzeitüberwachung).</string>
+    <string name="set_refresh_interval">Aktualisierungsintervall</string>
+    <string name="set_default_refresh_interval">Standard-Aktualisierungsintervall</string>
+    <string name="set_farm_refresh_hint">Jede Farm aktualisiert in ihrem eigenen Intervall, während du sie ansiehst; der Standard gilt, wenn keine Farm aktiv ist.</string>
+    <string name="set_keep_history">Verlauf behalten (Tage)</string>
+    <string name="set_fw_check_title">Auf Firmware-Updates prüfen</string>
+    <string name="set_fw_check_subtitle">Opt-in: Prüft AxeOS-(Bitaxe-)Releases auf GitHub und markiert Miner mit Rückstand. Kein Flashen aus der App; ausgeschaltet wird nichts kontaktiert.</string>
+    <string name="set_auto_recover_title">Offline-Miner automatisch wiederherstellen</string>
+    <string name="set_auto_recover_subtitle">Bleibt ein Miner über die Schwelle hinaus offline, wird seine Smart-Steckdose (falls eingerichtet) aus- und wieder eingeschaltet oder er wird neu gestartet — einmalig, mit Abklingzeit. Jeder Versuch wird protokolliert.</string>
+    <string name="set_auto_recover_after">Wiederherstellen nach offline (min)</string>
+    <string name="set_safety_title">Dauerhafter Sicherheitsmonitor</string>
+    <string name="set_safety_subtitle">Führt die Übertemperatur-Abschaltung per Smart-Steckdose im Hintergrund aus (mit dauerhafter Benachrichtigung), auch bei geschlossener App, und aktiviert sich nach einem Neustart neu. Nur sinnvoll, wenn du bei einem Miner eine Steckdosen-Abschaltung eingerichtet hast.</string>
+
+    <!-- MQTT / Home Assistant -->
+    <string name="set_mqtt_title">An MQTT publizieren</string>
+    <string name="set_mqtt_subtitle">Sendet Flotten- + Miner-Telemetrie an einen lokalen MQTT-Broker (z. B. das Mosquitto-Add-on in Home Assistant). Opt-in; nur Gesamtwerte und Hashrate/Leistung/Temp pro Miner — keine Adressen oder Zugangsdaten.</string>
+    <string name="set_mqtt_host">Broker-Host</string>
+    <string name="set_mqtt_port">Broker-Port</string>
+    <string name="set_mqtt_topic">Basis-Topic</string>
+    <string name="set_mqtt_username">Benutzername (optional)</string>
+    <string name="set_mqtt_password_saved">Passwort (gespeichert — eingeben zum Ersetzen, leer zum Löschen)</string>
+    <string name="set_mqtt_password_optional">Passwort (optional)</string>
+    <string name="set_mqtt_replace_password">Passwort ersetzen</string>
+    <string name="set_mqtt_save_password">Passwort speichern</string>
+    <string name="set_mqtt_ha_title">Home-Assistant-Discovery</string>
+    <string name="set_mqtt_ha_subtitle">Publiziert MQTT-Discovery-Konfiguration, damit Miner automatisch als HA-Geräte/-Entitäten erscheinen.</string>
+    <string name="set_mqtt_disclosure">Publiziert bei geöffneter App, bei jedem Poll. Das Passwort liegt verschlüsselt im Android Keystore. Richte Prometheus/HA auf diesen Broker.</string>
+
+    <!-- Pool -->
+    <string name="set_pool_stats_title">Pool-Statistiken</string>
+    <string name="set_pool_stats_subtitle">Schreibgeschützte Pool-Sicht auf deine Worker, auf dem Dashboard mit lokalen Miner-Werten korreliert.</string>
+    <string name="set_pool_coming_soon">%1$s-Unterstützung ist unterwegs. Die API muss erst verifiziert werden, bevor wir etwas senden — dieser Pool kontaktiert also noch nichts; wähle einen anderen Pool für Live-Statistiken.</string>
+    <string name="set_pool_url">Pool-URL</string>
+    <string name="set_pool_access_token">Zugriffstoken</string>
+    <string name="set_pool_api_token">API-Schlüssel / Watcher-Token (optional)</string>
+    <string name="set_pool_disclosure">Was bei Aktivierung übertragen wird: dein %1$s (und Token, falls gesetzt), in einer HTTPS-Anfrage an %2$s, etwa einmal pro Minute bei geöffneter App. Sonst nichts — keine Miner-Telemetrie, keine lokalen IPs, keine Worker-Passwörter. Standardmäßig aus; beim Ausschalten stoppen alle Pool-Anfragen sofort.</string>
+    <string name="set_pool_label">Pool</string>
+
+    <!-- Push (webhook) -->
+    <string name="set_push_intro">Spiegle Alarme an deinen eigenen Push-Dienst, damit sie dich bei geschlossener App erreichen — kein Cloud-Konto von uns. Feuert nur bei aktiven Alarmen.</string>
+    <string name="set_push_service">Push-Dienst</string>
+    <string name="set_push_ntfy_url">ntfy-Topic-URL (https://ntfy.sh/dein-topic)</string>
+    <string name="set_push_gotify_url">Gotify-Server-URL</string>
+    <string name="set_push_gotify_token">Gotify-App-Token</string>
+    <string name="set_push_telegram_token">Telegram-Bot-Token</string>
+    <string name="set_push_telegram_chat">Telegram-Chat-ID</string>
+    <string name="set_push_generic_url">POST-URL (JSON-Body)</string>
+
+    <!-- Quiet hours & digest -->
+    <string name="set_quiet_hours_title">Ruhezeiten</string>
+    <string name="set_quiet_hours_subtitle">Unterdrückt Alarm-Benachrichtigungen in einem nächtlichen Fenster. Alarme werden weiter aufgezeichnet und erscheinen in der Tagesübersicht.</string>
+    <string name="set_quiet_from">Ruhe ab (HH:MM)</string>
+    <string name="set_quiet_until">Ruhe bis (HH:MM)</string>
+    <string name="set_digest_title">Tagesübersicht</string>
+    <string name="set_digest_subtitle">Eine Zusammenfassungs-Benachrichtigung pro Tag über die Alarme der letzten 24 h.</string>
+    <string name="set_digest_time">Übersichtszeit (Stunde, 0–23)</string>
+
+    <!-- Security -->
+    <string name="set_app_lock_title">App-Sperre</string>
+    <string name="set_app_lock_subtitle_available">Fingerabdruck/Gesicht oder Geräte-PIN zum Öffnen der App verlangen (sperrt nach 1 Minute im Hintergrund erneut).</string>
+    <string name="set_app_lock_subtitle_unavailable">Nicht verfügbar: Richte zuerst eine Displaysperre (PIN/Biometrie) auf diesem Gerät ein.</string>
+    <string name="set_app_lock_note">Schützt die App-Oberfläche. Hinweis: Exportierte Backups und die Datenbank auf dem Gerät schützt Androids normale App-Sandbox, nicht diese Sperre.</string>
+
+    <!-- Solo mining -->
+    <string name="set_network_difficulty">Netzwerk-Difficulty</string>
+    <string name="set_fetch_difficulty_title">Difficulty von mempool.space abrufen</string>
+    <string name="set_fetch_difficulty_subtitle">Die einzige externe Anfrage der App; ein einzelnes HTTPS-GET ohne Miner-Daten. Standardmäßig aus — siehe docs/SECURITY.md.</string>
+
+    <!-- Units & cost -->
+    <string name="set_fahrenheit_title">Fahrenheit</string>
+    <string name="set_fahrenheit_subtitle">Temperaturen in °F anzeigen.</string>
+    <string name="set_electricity_rate">Strompreis (pro kWh)</string>
+    <string name="set_currency_code">Währungscode</string>
+    <string name="set_btc_price">BTC-Preis (pro Coin, %1$s)</string>
+    <string name="set_fetch_btc_title">BTC-Preis von mempool.space abrufen</string>
+    <string name="set_fetch_btc_subtitle">Opt-in: ein einzelnes HTTPS-GET (ohne Miner-Daten), damit das Dashboard Ertrag und Gewinn schätzen kann. Standardmäßig aus; gib den Preis sonst manuell ein.</string>
+
+    <!-- Update Hashkit -->
+    <string name="set_update_installed">Installiert: v%1$s</string>
+    <string name="set_update_desc">Prüft das offizielle GitHub-Release und installiert das signierte Update darüber — deine Miner, dein Telemetrie-Verlauf, Logs und Einstellungen bleiben alle erhalten. Android fragt evtl., ob diese App Updates installieren darf.</string>
+    <string name="set_update_downloading">Lade %1$d%% herunter…</string>
+    <string name="set_update_confirm_hint">Warte auf Androids Bestätigung — tippe im Systemdialog auf Aktualisieren.</string>
+    <string name="set_update_installing">Installiere… die App startet danach neu.</string>
+    <string name="set_update_needs_permission">Erlaube \"Unbekannte Apps installieren\" für Hashkit im gerade geöffneten Einstellungsbildschirm, komm dann zurück und tippe erneut.</string>
+    <string name="set_update_download_install">v%1$s herunterladen &amp; installieren</string>
+    <string name="set_update_available">Update verfügbar: v%1$s</string>
+    <string name="set_update_checking">Prüfe…</string>
+    <string name="set_update_check">Auf Updates prüfen</string>
+    <string name="set_update_up_to_date">Du bist auf der neuesten Version.</string>
+    <string name="set_update_error_unreachable">Update-Server nicht erreichbar.</string>
+    <string name="set_update_download_failed">Download fehlgeschlagen.</string>
+
+    <!-- Data & exports -->
+    <string name="set_share_fleet_report">Flottenbericht</string>
+    <string name="set_share_export_csv">CSV exportieren</string>
+    <string name="set_share_export_diagnostics">Diagnose exportieren</string>
+    <string name="set_share_export_backup">Backup exportieren</string>
+    <string name="set_export_report_7d">Flottenbericht — letzte 7 Tage (HTML)</string>
+    <string name="set_export_report_30d">Flottenbericht — letzte 30 Tage (HTML)</string>
+    <string name="set_export_csv_7d">Flotten-Telemetrie-CSV exportieren (letzte 7 Tage)</string>
+    <string name="set_export_full_backup">Voll-Backup (Miner, Farmen, Pools, Regeln, Einstellungen…)</string>
+    <string name="set_restore_backup">Aus Backup wiederherstellen…</string>
+    <string name="set_auto_backup_off">Wöchentliches Auto-Backup: aus — Ordner wählen…</string>
+    <string name="set_auto_backup_on">Wöchentliches Auto-Backup: an (tippen zum Ordnerwechsel)</string>
+    <string name="set_last_auto_backup">Letztes Auto-Backup: %1$s — behält die neuesten 8, Klartext-JSON.</string>
+    <string name="set_auto_backup_turn_off">Auto-Backup ausschalten</string>
+    <string name="set_export_diagnostics">Diagnosepaket exportieren (Adressen geschwärzt)</string>
+    <string name="set_backup_note">Backups enthalten Miner-Adressen und Worker-Namen. Verschlüssele mit Passphrase (AES-256), um sicher zu teilen oder zu lagern; ein Klartext-Backup ist nur für dein eigenes Gerät. CSV und Diagnose schwärzen Wallets; die Diagnose schwärzt zusätzlich IP-Adressen.</string>
+    <string name="set_backup_pass_title">Backup-Passphrase</string>
+    <string name="set_backup_pass_body">Gib eine Passphrase ein, um das Backup zu verschlüsseln (AES-256), oder lass sie leer für ein Klartext-JSON-Backup.</string>
+    <string name="set_passphrase_optional">Passphrase (optional)</string>
+    <string name="set_encrypted_backup_title">Verschlüsseltes Backup</string>
+    <string name="set_passphrase">Passphrase</string>
+    <string name="set_restore">Wiederherstellen</string>
+    <string name="set_restore_read_error">Die gewählte Datei ließ sich nicht lesen.</string>
+
+    <!-- Demo -->
+    <string name="set_demo_title">Demo-Modus</string>
+    <string name="set_demo_subtitle">Fügt klar gekennzeichnete synthetische Miner hinzu; ausgeschaltet mischen sie sich nie in echte Gesamtwerte.</string>
+
+    <!-- Payout address / QR scanning -->
+    <string name="set_qr_not_bare_address">Dieser QR ist keine reine Auszahlungsadresse (sieht nach einer bitcoin:-URI aus). Scanne die bloße Adresse.</string>
+    <string name="set_scan_prompt">Scanne den QR deiner Auszahlungsadresse</string>
+    <string name="set_scan_qr_cd">QR-Code scannen</string>
+</resources>

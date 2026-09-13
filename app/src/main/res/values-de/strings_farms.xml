@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">Farmen</string>
+    <string name="farms_add_farm">Farm hinzufügen</string>
+    <string name="farms_intro">Gruppiere Miner in Farmen/Standorte, jede mit eigenem Scan-Subnetz. Die Standard-Farm öffnet beim Start; die aktive Farm zeigt das Dashboard. Beim Löschen einer Farm bleiben ihre Miner erhalten (sie werden nicht zugeordnet).</string>
+    <string name="farms_empty">Noch keine Farmen. Leg eine an, um Miner nach Standort zu organisieren — praktisch für ASIC-Erkennung und spätere Log-Audits pro Standort.</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">Standard</string>
+    <string name="farms_no_subnet">kein Subnetz</string>
+    <string name="farms_miner_count">" · %1$d Miner"</string>
+    <string name="farms_viewing">Angezeigt</string>
+    <string name="farms_view">Anzeigen</string>
+    <string name="farms_set_default">Als Standard</string>
+    <string name="farms_scan">Scannen</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">Neue Farm scannen?</string>
+    <string name="farms_scan_new_body">%1$s jetzt nach Minern scannen und sie dieser Farm hinzufügen?</string>
+    <string name="farms_scan_now">Jetzt scannen</string>
+    <string name="farms_later">Später</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">%1$s löschen?</string>
+    <string name="farms_delete_body_also">Ihre %1$d Miner und deren Verlauf werden mitgelöscht.</string>
+    <string name="farms_delete_body_keep">Ihre %1$d Miner bleiben erfasst, sind aber nicht mehr zugeordnet. Der Verlauf bleibt erhalten.</string>
+    <string name="farms_delete_also_checkbox">Auch ihre %1$d Miner löschen</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">Name</string>
+    <string name="farms_name_placeholder">Heimlabor</string>
+    <string name="farms_subnet_label">Scan-Subnetz (CIDR)</string>
+    <string name="farms_create">Erstellen</string>
+</resources>

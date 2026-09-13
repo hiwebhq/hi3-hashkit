@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -53,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
+import hi3.hashkit.R
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.ui.theme.HiBrand
 
@@ -105,10 +107,15 @@ fun ArOverlayScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (cameraEnabled) "Scan tag / QR" else "Scan NFC", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        if (cameraEnabled) stringResource(R.string.ar_title_qr) else stringResource(R.string.ar_title_nfc),
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -131,15 +138,15 @@ fun ArOverlayScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            "Camera access is needed to read the miner QR stickers." +
-                                if (nfcAvailable) " NFC tags still work — just tap one." else "",
+                            stringResource(R.string.ar_camera_needed) +
+                                if (nfcAvailable) stringResource(R.string.ar_nfc_still_works) else "",
                             style = MaterialTheme.typography.bodyMedium,
                             color = HiBrand.textSecondary,
                         )
                         Button(
                             onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
                             modifier = Modifier.padding(top = 12.dp),
-                        ) { Text("Grant camera") }
+                        ) { Text(stringResource(R.string.ar_grant_camera)) }
                     }
                 }
 
@@ -156,16 +163,19 @@ fun ArOverlayScreen(
                             onClear = viewModel::clear,
                         )
                         unmatched != null -> OverlayHint(
-                            "No miner matches \"$unmatched\". Program the tag/QR with the miner's name, " +
-                                "IP, MAC or id."
+                            stringResource(R.string.ar_no_match, unmatched.orEmpty())
                         )
                         else -> OverlayHint(
-                            buildString {
-                                append("Point at a miner's QR sticker")
-                                if (nfcAvailable) append(" or tap its NFC tag")
-                                append(" — name, IP, MAC or id. Live stats appear here.")
-                                if (nfcAdapter != null && !nfcAvailable) append("  (Turn on NFC to tap tags.)")
-                            }
+                            stringResource(R.string.ar_point_qr) +
+                                (if (nfcAvailable) stringResource(R.string.ar_or_tap_nfc) else "") +
+                                stringResource(R.string.ar_guidance_suffix) +
+                                (
+                                    if (nfcAdapter != null && !nfcAvailable) {
+                                        stringResource(R.string.ar_turn_on_nfc_suffix)
+                                    } else {
+                                        ""
+                                    }
+                                    )
                         )
                     }
                 }
@@ -177,16 +187,20 @@ fun ArOverlayScreen(
     pendingAdd?.let { tag ->
         AlertDialog(
             onDismissRequest = viewModel::dismissAdd,
-            title = { Text("Add this miner?") },
+            title = { Text(stringResource(R.string.ar_add_dialog_title)) },
             text = {
                 Text(
-                    "The tag points to ${tag.name ?: "a miner"} at ${tag.ip}, which isn't in the app " +
-                        "yet." + (tag.location?.let { "\nLocation: $it" } ?: "") +
-                        "\n\nAdd it now by probing that address?"
+                    stringResource(
+                        R.string.ar_add_body,
+                        tag.name ?: stringResource(R.string.ar_a_miner),
+                        tag.ip.orEmpty(),
+                    ) +
+                        (tag.location?.let { stringResource(R.string.ar_add_location_line, it) } ?: "") +
+                        stringResource(R.string.ar_add_confirm_line)
                 )
             },
-            confirmButton = { TextButton(onClick = viewModel::addFromTag) { Text("Add") } },
-            dismissButton = { TextButton(onClick = viewModel::dismissAdd) { Text("Cancel") } },
+            confirmButton = { TextButton(onClick = viewModel::addFromTag) { Text(stringResource(R.string.common_add)) } },
+            dismissButton = { TextButton(onClick = viewModel::dismissAdd) { Text(stringResource(R.string.common_cancel)) } },
         )
     }
 }
@@ -220,9 +234,9 @@ private fun NfcOnlyIndicator(nfcAvailable: Boolean, hasNfcHardware: Boolean) {
         Spacer(Modifier.height(24.dp))
         Text(
             when {
-                !hasNfcHardware -> "This device has no NFC."
-                !nfcAvailable -> "Turn on NFC to scan tags."
-                else -> "Hold a miner's NFC tag to the back of your phone."
+                !hasNfcHardware -> stringResource(R.string.ar_no_nfc_hw)
+                !nfcAvailable -> stringResource(R.string.ar_turn_on_nfc)
+                else -> stringResource(R.string.ar_hold_tag)
             },
             style = MaterialTheme.typography.titleMedium,
             color = HiBrand.textPrimary,
@@ -230,7 +244,7 @@ private fun NfcOnlyIndicator(nfcAvailable: Boolean, hasNfcHardware: Boolean) {
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "It opens that miner's live telemetry straight away — no camera needed.",
+            stringResource(R.string.ar_nfc_body),
             style = MaterialTheme.typography.bodyMedium,
             color = HiBrand.textSecondary,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -282,12 +296,12 @@ private fun MatchedCard(miner: Miner, tagLocation: String?, onOpen: () -> Unit, 
             style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
         )
         Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-            Stat("HASH", hashLabel(t?.hashrateGhs?.value))
-            Stat("POWER", t?.powerW?.value?.let { "%.0f W".format(it) } ?: "—")
-            Stat("TEMP", t?.chipTempC?.value?.let { "%.0f °C".format(it) } ?: "—")
+            Stat(stringResource(R.string.ar_stat_hash), hashLabel(t?.hashrateGhs?.value))
+            Stat(stringResource(R.string.ar_stat_power), t?.powerW?.value?.let { "%.0f W".format(it) } ?: "—")
+            Stat(stringResource(R.string.ar_stat_temp), t?.chipTempC?.value?.let { "%.0f °C".format(it) } ?: "—")
         }
         Text(
-            "Tap to open · scan another marker to switch",
+            stringResource(R.string.ar_tap_to_open),
             style = MaterialTheme.typography.labelSmall,
             color = HiBrand.textSecondary,
             modifier = Modifier.padding(top = 8.dp).clickable(onClick = onClear),

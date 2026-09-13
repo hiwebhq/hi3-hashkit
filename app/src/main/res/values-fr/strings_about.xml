@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About screen -->
+    <string name="about_title">À propos</string>
+    <string name="about_section_about">À PROPOS</string>
+    <string name="about_section_supported">MINEURS PRIS EN CHARGE</string>
+    <string name="about_section_howto">MODE D\'EMPLOI</string>
+
+    <string name="about_app_version">"%1$s  ·  v%2$s"</string>
+    <string name="about_app_desc">Hi3 Hashkit est un tableau de bord Android local-first pour mineurs Bitcoin : il découvre, surveille et contrôle en toute sécurité votre flotte sur votre propre réseau — pas de compte, pas de cloud, vos données restent sur votre appareil.</string>
+
+    <string name="about_link_guide_title">Guide utilisateur</string>
+    <string name="about_link_guide_subtitle">Comment utiliser Hi3 Hashkit (PDF, hors ligne)</string>
+    <string name="about_link_guide_label">Ouvrir le PDF</string>
+    <string name="about_link_hi3_subtitle">La plateforme de minage Hi3</string>
+    <string name="about_link_pool_title">Services de pool Bitcoin</string>
+    <string name="about_link_pool_subtitle">Paiements Solo, PPLNS et TIDES sur Hi3 Pool</string>
+    <string name="about_link_support_title">Aide et assistance</string>
+    <string name="about_link_support_subtitle">Assistance pour cette appli et la gestion de flotte</string>
+    <string name="about_link_share_title">Partager l\'appli</string>
+    <string name="about_link_share_subtitle">Envoyer le lien de téléchargement à un ami</string>
+    <string name="about_link_feedback_title">Demande de fonctionnalité</string>
+    <string name="about_link_feedback_subtitle">Suggérer une amélioration ou signaler un problème</string>
+
+    <string name="about_guide_error">Impossible d\'ouvrir le guide — aucun lecteur PDF installé ?</string>
+    <string name="about_share_subject">%1$s — tableau de bord local-first pour mineurs Bitcoin</string>
+    <string name="about_share_text">Découvrez %1$s, une appli Android local-first pour surveiller et contrôler en toute sécurité des mineurs Bitcoin : https://mmp.hi3.cc/hashkit</string>
+    <string name="about_share_chooser">Partager %1$s</string>
+
+    <string name="about_supported_intro">La prise en charge se fait par famille de firmware/API : tous les modèles d\'une famille fonctionnent — inutile de les lister un par un. « Vérifié » = confirmé sur du matériel réel ; « compat. sous réserve » = même API firmware, en attente de confirmation sur ce modèle (la télémétrie de base est sûre). Les contrôles non vérifiés ne sont jamais devinés.</string>
+
+    <!-- Supported miner families -->
+    <string name="about_miner_bitaxe_family">Bitaxe / ESP-Miner (AxeOS)</string>
+    <string name="about_miner_bitaxe_models">Max (202), Ultra (204), Supra (400), Gamma (600), Gamma Turbo, Supra Hex</string>
+    <string name="about_miner_bitaxe_support">Surveillance complète + contrôles sûrs : redémarrage, pool, ventilateur, réglage borné par le firmware + autotune.</string>
+    <string name="about_miner_nerdqaxe_family">NerdQAxe (fork ESP-Miner)</string>
+    <string name="about_miner_nerdqaxe_models">NerdQAxe++, NerdQAxe+, NerdQAxe+ Hydro, forks type Lucky-Miner</string>
+    <string name="about_miner_nerdqaxe_support">Surveillance complète ; les contrôles restent désactivés tant que ce firmware n\'est pas vérifié.</string>
+    <string name="about_miner_bmminer_family">Antminer — Bitmain d\'origine (BMMiner)</string>
+    <string name="about_miner_bmminer_models">S21 Pro (vérifié) ; S21+, S21+ Hyd, S21 Hyd, S21 XP, série S19, série S17 (compat. sous réserve)</string>
+    <string name="about_miner_bmminer_support">Hashrate, températures des puces, ventilateurs, fréquence, attendu, nombre d\'ASIC, shares, temps de fonctionnement, pool. Pas de contrôles ; la puissance n\'est pas dans cette API.</string>
+    <string name="about_miner_vnish_family">Antminer — firmware VNish</string>
+    <string name="about_miner_vnish_models">S21 Pro (vérifié) et autres Antminer flashés en VNish</string>
+    <string name="about_miner_vnish_support">Surveillance complète, y compris puissance à la prise et efficacité (J/TH). Pas de contrôles.</string>
+    <string name="about_miner_luxos_family">Antminer — firmware LuxOS</string>
+    <string name="about_miner_luxos_models">Antminer flashés en LuxOS</string>
+    <string name="about_miner_luxos_support">Surveillance de base : hashrate, shares, temps de fonctionnement, pool.</string>
+    <string name="about_miner_avalon_family">Canaan Avalon</string>
+    <string name="about_miner_avalon_models">Nano 3 (vérifié) ; Nano 3S, Avalon Q, Avalon Mini 3 (compat. sous réserve)</string>
+    <string name="about_miner_avalon_support">Nano 3 : surveillance + Pause/Reprise/Redémarrage. Autres : surveillance via l\'API CGMiner.</string>
+    <string name="about_miner_braiins_family">Braiins OS (BOSer)</string>
+    <string name="about_miner_braiins_models">Braiins Mini Miner BMM 100 (vérifié)</string>
+    <string name="about_miner_braiins_support">Surveillance complète via l\'API CGMiner. Pas de capteur de puissance sur l\'unité → puissance indisponible.</string>
+    <string name="about_miner_whatsminer_family">WhatsMiner (MicroBT)</string>
+    <string name="about_miner_whatsminer_models">Familles M2X / M3X / M5X / M6X (compat. sous réserve)</string>
+    <string name="about_miner_whatsminer_support">Hashrate, shares, temps de fonctionnement, pool, température des puces, ventilateurs et puissance quand elle est rapportée. Pas de contrôles.</string>
+    <string name="about_miner_demo_family">Démo</string>
+    <string name="about_miner_demo_models">Mineurs synthétiques</string>
+    <string name="about_miner_demo_support">Mode démo uniquement — jamais mélangé aux mineurs réels.</string>
+
+    <!-- How-to steps -->
+    <string name="about_howto_1_title">1 · Rejoignez le même réseau</string>
+    <string name="about_howto_1_body">Connectez ce téléphone au Wi-Fi/LAN de vos mineurs — ou lancez Tailscale et annoncez la route du sous-réseau du site pour les atteindre à distance.</string>
+    <string name="about_howto_2_title">2 · Laissez-le découvrir vos mineurs</string>
+    <string name="about_howto_2_body">Hi3 Hashkit analyse automatiquement votre sous-réseau local au lancement : les mineurs apparaissent en général d\'eux-mêmes. Ouvrez le menu ⋮ → Analyse réseau pour voir votre IP, changer la plage ou démarrer/arrêter une analyse. Seuls les appareils qui répondent à une API de mineur connue sont ajoutés.</string>
+    <string name="about_howto_3_title">3 · Ou ajoutez-en un à la main</string>
+    <string name="about_howto_3_body">Touchez + sur le tableau de bord pour ajouter un mineur par IP/nom d\'hôte, ou lancez une analyse d\'un CIDR. Seules les adresses LAN privées et Tailscale sont autorisées.</string>
+    <string name="about_howto_4_title">4 · Organisez en fermes</string>
+    <string name="about_howto_4_body">Utilisez ⋮ → Fermes pour regrouper les mineurs par site, chacun avec son propre sous-réseau d\'analyse. Marquez-en une par défaut (elle s\'ouvre au lancement) et passez d\'une ferme à l\'autre sur le tableau de bord avec la puce en haut. L\'ajout d\'une ferme propose une analyse immédiate de son sous-réseau.</string>
+    <string name="about_howto_5_title">5 · Lisez le tableau de bord en toute confiance</string>
+    <string name="about_howto_5_body">Chaque valeur est étiquetée par source — mesurée, rapportée, calculée, estimée ou indisponible — une estimation n\'est donc jamais présentée comme un fait. Touchez un mineur pour la télémétrie en direct, l\'historique et la réponse brute.</string>
+    <string name="about_howto_6_title">6 · Contrôlez en sécurité (si vérifié)</string>
+    <string name="about_howto_6_body">Sur les firmwares pris en charge, vous pouvez redémarrer, changer de pool, ajuster les ventilateurs et appliquer un réglage borné par le firmware — chacun avec confirmation et retour arrière. Un appui long sur les cartes en sélectionne plusieurs pour des actions groupées ; un aperçu indique quels appareils prennent en charge chacune.</string>
+    <string name="about_howto_7_title">7 · Activez les alertes quand vous êtes prêt</string>
+    <string name="about_howto_7_body">Les alertes sont désactivées par défaut. Activez-les dans Configuration → Alertes pour recevoir des notifications hors ligne, température, ventilateur et taux de rejet avec avis de rétablissement, et définissez des exceptions par mineur.</string>
+    <string name="about_howto_8_title">8 · Restez privé</string>
+    <string name="about_howto_8_body">Tout reste sur cet appareil. Les vues Hi3 Pool et MMP sont optionnelles, en lecture seule et désactivées par défaut.</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alerts_title">Alertas</string>
+    <string name="alerts_ack_all">Confirmar todas</string>
+    <string name="alerts_empty">No hay alertas registradas. Las alertas se disparan con la app abierta, y cada 15+ minutos si activas la supervisión en segundo plano en Ajustes.</string>
+    <string name="alerts_active">Activas</string>
+    <string name="alerts_resolved">Resueltas</string>
+    <string name="alerts_acknowledge">Confirmar</string>
+</resources>

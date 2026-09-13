@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">Fermes</string>
+    <string name="farms_add_farm">Ajouter une ferme</string>
+    <string name="farms_intro">Regroupez les mineurs en fermes/sites, chacun avec son propre sous-réseau de scan. La ferme par défaut s\'ouvre au lancement ; la ferme active est celle affichée par le tableau de bord. Supprimer une ferme conserve ses mineurs (ils deviennent non assignés).</string>
+    <string name="farms_empty">Aucune ferme pour l\'instant. Ajoutez-en une pour organiser les mineurs par site — pratique pour la découverte d\'ASIC et les audits de journaux par site plus tard.</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">Par défaut</string>
+    <string name="farms_no_subnet">aucun sous-réseau</string>
+    <string name="farms_miner_count">" · %1$d mineur(s)"</string>
+    <string name="farms_viewing">Affichée</string>
+    <string name="farms_view">Afficher</string>
+    <string name="farms_set_default">Définir par défaut</string>
+    <string name="farms_scan">Scanner</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">Scanner la nouvelle ferme ?</string>
+    <string name="farms_scan_new_body">Scanner %1$s maintenant pour trouver des mineurs et les ajouter à cette ferme ?</string>
+    <string name="farms_scan_now">Scanner maintenant</string>
+    <string name="farms_later">Plus tard</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">Supprimer %1$s ?</string>
+    <string name="farms_delete_body_also">Ses %1$d mineur(s) et leur historique seront supprimés avec elle.</string>
+    <string name="farms_delete_body_keep">Ses %1$d mineur(s) restent suivis mais deviennent non assignés. L\'historique est conservé.</string>
+    <string name="farms_delete_also_checkbox">Supprimer aussi ses %1$d mineur(s)</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">Nom</string>
+    <string name="farms_name_placeholder">Labo maison</string>
+    <string name="farms_subnet_label">Sous-réseau de scan (CIDR)</string>
+    <string name="farms_create">Créer</string>
+</resources>

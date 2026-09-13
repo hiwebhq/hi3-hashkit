@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -41,6 +42,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.FleetControl
 import hi3.hashkit.data.repo.MinerRepository
@@ -73,6 +75,7 @@ data class SolarState(
 
 @HiltViewModel
 class SolarSurplusViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val settingsRepository: SettingsRepository,
     private val homeAssistant: HomeAssistantClient,
     private val repository: MinerRepository,
@@ -105,7 +108,7 @@ class SolarSurplusViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 baseUrl = baseUrl, entityId = entityId, resumeWatts = resumeW, curtailWatts = curtailW,
                 tokenConfigured = _state.value.tokenConfigured || token.isNotBlank(),
-                message = "Saved.",
+                message = appContext.getString(R.string.vm_saved),
             )
         }
     }
@@ -129,7 +132,7 @@ class SolarSurplusViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         surplusW = result.watts, fleetDrawW = draw.first, onlineMiners = draw.second,
                         decision = decision, checking = false,
-                        message = "Read ${result.rawState}${result.unit?.let { " $it" } ?: ""} from Home Assistant.",
+                        message = appContext.getString(R.string.vm_solar_read, "${result.rawState}${result.unit?.let { " $it" } ?: ""}"),
                     )
                 }
                 is HomeAssistantClient.Result.Error -> _state.value = _state.value.copy(
@@ -160,10 +163,12 @@ class SolarSurplusViewModel @Inject constructor(
             val plan = fleetControl.plan(hi3.hashkit.data.repo.BulkAction.Power(action), targets)
             val outcomes = fleetControl.execute(plan)
             val ok = outcomes.count { it.result is hi3.hashkit.domain.adapter.ActionResult.Success }
+            val verb = appContext.getString(if (action == PowerAction.PAUSE) R.string.vm_curtailed else R.string.vm_resumed)
             _state.value = _state.value.copy(
                 applying = false,
-                message = "${if (action == PowerAction.PAUSE) "Curtailed" else "Resumed"} $ok/${plan.supported.size} miner(s)" +
-                    (if (plan.skipped.isNotEmpty()) ", ${plan.skipped.size} skipped." else "."),
+                message = if (plan.skipped.isNotEmpty())
+                    appContext.getString(R.string.vm_curtail_result_skipped, verb, ok, plan.supported.size, plan.skipped.size)
+                else appContext.getString(R.string.vm_curtail_result, verb, ok, plan.supported.size),
             )
         }
     }
@@ -186,10 +191,10 @@ fun SolarSurplusScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Solar-surplus mining", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.solar_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -204,9 +209,7 @@ fun SolarSurplusScreen(
         ) {
             item {
                 Text(
-                    "Curtail the fleet to your solar export. Reads a grid-export/surplus sensor " +
-                        "(in watts) from your local Home Assistant over its REST API — the token is " +
-                        "stored encrypted and only sent to your own HA host on your network.",
+                    stringResource(R.string.solar_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -226,7 +229,7 @@ fun SolarSurplusScreen(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(Modifier.padding(16.dp)) {
-                        Text("SOLAR EXPORT", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                        Text(stringResource(R.string.solar_export_label), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                         Text(
                             state.surplusW?.let { "%,.0f W".format(it) } ?: "—",
                             style = MaterialTheme.typography.headlineMedium,
@@ -234,16 +237,16 @@ fun SolarSurplusScreen(
                             color = HiBrand.textPrimary,
                         )
                         Text(
-                            "Fleet draw ${"%,.0f".format(state.fleetDrawW)} W · ${state.onlineMiners} online",
+                            stringResource(R.string.solar_fleet_draw, "%,.0f".format(state.fleetDrawW), state.onlineMiners),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.textSecondary,
                         )
                         state.decision?.let { d ->
                             Text(
                                 when (d) {
-                                    CurtailmentEngine.Action.RUN -> "Recommendation: surplus available — resume mining"
-                                    CurtailmentEngine.Action.CURTAIL -> "Recommendation: no surplus — curtail mining"
-                                    CurtailmentEngine.Action.HOLD -> "Recommendation: hold (within the deadband)"
+                                    CurtailmentEngine.Action.RUN -> stringResource(R.string.solar_reco_run)
+                                    CurtailmentEngine.Action.CURTAIL -> stringResource(R.string.solar_reco_curtail)
+                                    CurtailmentEngine.Action.HOLD -> stringResource(R.string.solar_reco_hold)
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
@@ -258,7 +261,7 @@ fun SolarSurplusScreen(
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(onClick = viewModel::check, enabled = !state.checking) {
-                        Text(if (state.checking) "Checking…" else "Check now")
+                        Text(if (state.checking) stringResource(R.string.solar_checking) else stringResource(R.string.solar_check_now))
                     }
                     if (state.checking) CircularProgressIndicator(modifier = Modifier.padding(2.dp))
                 }
@@ -266,10 +269,10 @@ fun SolarSurplusScreen(
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                     OutlinedButton(onClick = viewModel::applyResume, enabled = !state.applying, modifier = Modifier.weight(1f)) {
-                        Text("Resume fleet")
+                        Text(stringResource(R.string.solar_resume_fleet))
                     }
                     OutlinedButton(onClick = viewModel::applyPause, enabled = !state.applying, modifier = Modifier.weight(1f)) {
-                        Text("Curtail fleet")
+                        Text(stringResource(R.string.solar_curtail_fleet))
                     }
                 }
             }
@@ -278,7 +281,7 @@ fun SolarSurplusScreen(
             item {
                 OutlinedTextField(
                     value = baseUrl, onValueChange = { baseUrl = it },
-                    label = { Text("HA base URL (private/Tailscale)") },
+                    label = { Text(stringResource(R.string.solar_base_url_label)) },
                     placeholder = { Text("http://homeassistant.local:8123") },
                     singleLine = true, modifier = Modifier.fillMaxWidth(),
                 )
@@ -286,7 +289,7 @@ fun SolarSurplusScreen(
             item {
                 OutlinedTextField(
                     value = entityId, onValueChange = { entityId = it },
-                    label = { Text("Sensor entity_id (watts)") },
+                    label = { Text(stringResource(R.string.solar_entity_label)) },
                     placeholder = { Text("sensor.solar_surplus_power") },
                     singleLine = true, modifier = Modifier.fillMaxWidth(),
                 )
@@ -294,7 +297,12 @@ fun SolarSurplusScreen(
             item {
                 OutlinedTextField(
                     value = token, onValueChange = { token = it },
-                    label = { Text(if (state.tokenConfigured) "Long-lived token (saved — leave blank to keep)" else "Long-lived token") },
+                    label = {
+                        Text(
+                            if (state.tokenConfigured) stringResource(R.string.solar_token_saved_label)
+                            else stringResource(R.string.solar_token_label),
+                        )
+                    },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -304,13 +312,13 @@ fun SolarSurplusScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
                         value = resumeW, onValueChange = { resumeW = it.filter(Char::isDigit) },
-                        label = { Text("Resume ≥ W") },
+                        label = { Text(stringResource(R.string.solar_resume_label)) },
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true, modifier = Modifier.weight(1f),
                     )
                     OutlinedTextField(
                         value = curtailW, onValueChange = { curtailW = it.filter { c -> c.isDigit() || c == '-' } },
-                        label = { Text("Curtail ≤ W") },
+                        label = { Text(stringResource(R.string.solar_curtail_label)) },
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true, modifier = Modifier.weight(1f),
                     )
@@ -326,7 +334,7 @@ fun SolarSurplusScreen(
                         token = ""
                     },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Save configuration") }
+                ) { Text(stringResource(R.string.solar_save_config)) }
             }
 
             state.message?.let { msg ->

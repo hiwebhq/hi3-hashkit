@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ar_title_qr">Escanear etiqueta / QR</string>
+    <string name="ar_title_nfc">Escanear NFC</string>
+    <string name="ar_camera_needed">Se necesita acceso a la cámara para leer las pegatinas QR de los mineros.</string>
+    <string name="ar_nfc_still_works">" Las etiquetas NFC siguen funcionando — solo acerca una."</string>
+    <string name="ar_grant_camera">Conceder cámara</string>
+    <string name="ar_no_match">Ningún minero coincide con \"%1$s\". Programa la etiqueta/QR con el nombre, IP, MAC o id del minero.</string>
+    <string name="ar_point_qr">Apunta a la pegatina QR de un minero</string>
+    <string name="ar_or_tap_nfc">" o acerca su etiqueta NFC"</string>
+    <string name="ar_guidance_suffix">" — nombre, IP, MAC o id. Las estadísticas en vivo aparecen aquí."</string>
+    <string name="ar_turn_on_nfc_suffix">"  (Activa NFC para leer etiquetas.)"</string>
+    <string name="ar_add_dialog_title">¿Añadir este minero?</string>
+    <string name="ar_a_miner">un minero</string>
+    <string name="ar_add_body">La etiqueta apunta a %1$s en %2$s, que aún no está en la app.</string>
+    <string name="ar_add_location_line">\nUbicación: %1$s</string>
+    <string name="ar_add_confirm_line">\n\n¿Añadirlo ahora sondeando esa dirección?</string>
+    <string name="ar_no_nfc_hw">Este dispositivo no tiene NFC.</string>
+    <string name="ar_turn_on_nfc">Activa NFC para escanear etiquetas.</string>
+    <string name="ar_hold_tag">Acerca la etiqueta NFC de un minero a la parte trasera del teléfono.</string>
+    <string name="ar_nfc_body">Abre la telemetría en vivo de ese minero al instante — sin cámara.</string>
+    <string name="ar_stat_hash">HASH</string>
+    <string name="ar_stat_power">CONSUMO</string>
+    <string name="ar_stat_temp">TEMP</string>
+    <string name="ar_tap_to_open">Toca para abrir · escanea otro marcador para cambiar</string>
+</resources>

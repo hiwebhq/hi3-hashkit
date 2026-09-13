@@ -1,5 +1,7 @@
 package hi3.hashkit.data.repo
 
+import androidx.annotation.StringRes
+import hi3.hashkit.R
 import hi3.hashkit.data.db.MinerEntity
 import hi3.hashkit.domain.adapter.ActionResult
 import hi3.hashkit.domain.adapter.FanControl
@@ -11,38 +13,47 @@ import javax.inject.Singleton
 /** One planned bulk action against a set of miners. */
 sealed interface BulkAction {
     val capability: Capability
-    val label: String
+
+    /** Display label, resolved at render time via stringResource([labelRes], *[labelArgs]). */
+    @get:StringRes val labelRes: Int
+    val labelArgs: List<Any> get() = emptyList()
 
     data object Reboot : BulkAction {
         override val capability = Capability.REBOOT
-        override val label = "Restart"
+        override val labelRes = R.string.bulk_restart
     }
 
     data class SetPool(val url: String, val port: Int, val worker: String) : BulkAction {
         override val capability = Capability.SET_POOLS
-        override val label = "Change primary pool to $url:$port"
+        override val labelRes = R.string.bulk_set_pool
+        override val labelArgs: List<Any> get() = listOf(url, port)
     }
 
     data class SetFan(val config: FanControl) : BulkAction {
         override val capability = Capability.SET_FAN
-        override val label = when (config) {
-            is FanControl.Automatic -> "Set fan to automatic"
-            is FanControl.Manual -> "Set fan to ${config.percent}%"
+        override val labelRes = when (config) {
+            is FanControl.Automatic -> R.string.bulk_fan_auto
+            is FanControl.Manual -> R.string.bulk_fan_manual
+        }
+        override val labelArgs: List<Any> get() = when (config) {
+            is FanControl.Automatic -> emptyList()
+            is FanControl.Manual -> listOf(config.percent)
         }
     }
 
     data class Power(val action: hi3.hashkit.domain.adapter.PowerAction) : BulkAction {
         override val capability = Capability.POWER_CONTROL
-        override val label = when (action) {
-            hi3.hashkit.domain.adapter.PowerAction.PAUSE -> "Pause hashing"
-            hi3.hashkit.domain.adapter.PowerAction.RESUME -> "Resume hashing"
+        override val labelRes = when (action) {
+            hi3.hashkit.domain.adapter.PowerAction.PAUSE -> R.string.bulk_pause
+            hi3.hashkit.domain.adapter.PowerAction.RESUME -> R.string.bulk_resume
         }
     }
 
     /** Apply a specific (firmware-approved) frequency/voltage — e.g. a low-power TOU preset. */
     data class SetTune(val frequencyMhz: Int, val coreVoltageMv: Int) : BulkAction {
         override val capability = Capability.APPLY_APPROVED_TUNE
-        override val label = "Tune to ${frequencyMhz} MHz @ ${coreVoltageMv} mV"
+        override val labelRes = R.string.bulk_tune
+        override val labelArgs: List<Any> get() = listOf(frequencyMhz, coreVoltageMv)
     }
 }
 

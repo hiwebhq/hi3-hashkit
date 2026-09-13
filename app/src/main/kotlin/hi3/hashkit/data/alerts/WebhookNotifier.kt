@@ -13,12 +13,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /** Where alert notifications are mirrored so they reach you when the app is closed. */
-enum class WebhookType(val label: String) {
-    NONE("Off"),
-    NTFY("ntfy"),
-    GOTIFY("Gotify"),
-    TELEGRAM("Telegram"),
-    GENERIC("Generic (JSON POST)");
+enum class WebhookType(@androidx.annotation.StringRes val labelRes: Int) {
+    NONE(hi3.hashkit.R.string.enum_webhook_none),
+    NTFY(hi3.hashkit.R.string.enum_webhook_ntfy),
+    GOTIFY(hi3.hashkit.R.string.enum_webhook_gotify),
+    TELEGRAM(hi3.hashkit.R.string.enum_webhook_telegram),
+    GENERIC(hi3.hashkit.R.string.enum_webhook_generic);
 
     companion object {
         fun fromName(name: String?): WebhookType = entries.firstOrNull { it.name == name } ?: NONE

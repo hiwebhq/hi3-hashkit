@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +40,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
@@ -74,6 +76,7 @@ class RackViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val pollingEngine: PollingEngine,
     private val settingsRepository: SettingsRepository,
+    farmRepository: hi3.hashkit.data.repo.FarmRepository,
 ) : ViewModel() {
 
     val useFahrenheit: StateFlow<Boolean> =
@@ -106,21 +109,33 @@ class RackViewModel @Inject constructor(
             repository.observeMinerEntities(),
             pollingEngine.lastRefresh,
             settingsRepository.settings,
-        ) { entities, _, settings ->
+            farmRepository.observeFarms(),
+        ) { entities, _, settings, farms ->
             val now = Instant.now()
-            val miners = entities
-                .filter { settings.demoModeEnabled || !it.isDemo }
-                .map { repository.toDomain(it, now) }
-            groupByLocation(miners)
+            val visible = entities.filter { settings.demoModeEnabled || !it.isDemo }
+            // Farm names key the group when a miner has no physical Location string.
+            val farmNameById = farms.associate { it.id to it.name }
+            val farmNameByMiner = visible
+                .mapNotNull { e -> e.farmId?.let { fid -> farmNameById[fid]?.let { e.id to it } } }
+                .toMap()
+            groupByLocation(visible.map { repository.toDomain(it, now) }, farmNameByMiner)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     companion object {
         private const val UNASSIGNED = "Unassigned"
 
-        /** Group by location (blank → Unassigned), locations alphabetical, Unassigned last. */
-        fun groupByLocation(miners: List<Miner>): List<RackGroup> =
+        /** Group by location; a miner with no Location falls back to its FARM name, and
+         *  only farm-less, location-less miners land in Unassigned (which sorts last). */
+        fun groupByLocation(
+            miners: List<Miner>,
+            farmNameByMiner: Map<Long, String> = emptyMap(),
+        ): List<RackGroup> =
             miners
-                .groupBy { it.location?.trim()?.takeIf { l -> l.isNotEmpty() } ?: UNASSIGNED }
+                .groupBy {
+                    it.location?.trim()?.takeIf { l -> l.isNotEmpty() }
+                        ?: farmNameByMiner[it.id]
+                        ?: UNASSIGNED
+                }
                 .map { (loc, list) -> RackGroup(loc, list.sortedBy { it.name.lowercase() }) }
                 .sortedWith(
                     compareBy({ it.location == UNASSIGNED }, { it.location.lowercase() }),
@@ -141,10 +156,13 @@ fun RackScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Rack & site layout", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.rack_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -155,8 +173,7 @@ fun RackScreen(
         if (groups.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text(
-                    "No miners yet. Add miners and set each one's Location " +
-                        "(room / rack / shelf) to see them arranged here.",
+                    stringResource(R.string.rack_empty),
                     style = MaterialTheme.typography.bodyMedium,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.padding(32.dp),
@@ -203,7 +220,12 @@ private fun RackHeader(group: RackGroup) {
             color = HiBrand.textPrimary,
         )
         Text(
-            "${group.online}/${group.total} up · ${Units.formatHashrate(group.hashrateGhs)}",
+            stringResource(
+                R.string.rack_group_stats,
+                group.online,
+                group.total,
+                Units.formatHashrate(group.hashrateGhs),
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = HiBrand.textSecondary,
         )
@@ -237,7 +259,7 @@ private fun MinerTile(miner: Miner, fahrenheit: Boolean, onClick: () -> Unit) {
         }
         val hr = miner.lastTelemetry?.hashrateGhs?.value
         Text(
-            if (miner.status == MinerStatus.OFFLINE) "Offline" else Units.formatHashrate(hr),
+            if (miner.status == MinerStatus.OFFLINE) stringResource(R.string.status_offline) else Units.formatHashrate(hr),
             style = MaterialTheme.typography.bodyMedium,
             color = if (miner.status == MinerStatus.OFFLINE) HiBrand.statusOffline else HiBrand.textPrimary,
         )

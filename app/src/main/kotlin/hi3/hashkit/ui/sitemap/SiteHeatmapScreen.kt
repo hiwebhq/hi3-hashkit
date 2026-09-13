@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +49,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.MinerRepository
@@ -125,10 +127,10 @@ fun SiteHeatmapScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Heatmap", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.site_heatmap_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -143,9 +145,7 @@ fun SiteHeatmapScreen(
             val cfg = state.config
             if (cfg == null) {
                 Text(
-                    "No miners have a rack location yet. Run Site Map (or set a Location like " +
-                        "B1-R1-T1-P1 on a miner's Edit dialog) and the racks appear here, " +
-                        "colored by live chip temperature.",
+                    stringResource(R.string.site_heatmap_empty),
                     style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary,
                 )
             } else {
@@ -153,7 +153,7 @@ fun SiteHeatmapScreen(
                 Legend(state.useFahrenheit)
                 if (state.unplaced > 0) {
                     Text(
-                        "${state.unplaced} miner(s) without a B/R/T/P location are not shown.",
+                        stringResource(R.string.site_unplaced, state.unplaced),
                         style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
                     )
                 }
@@ -172,20 +172,20 @@ private fun HeatRackPager(state: SiteHeatState, cfg: SiteMapConfig, onMinerClick
         Column(Modifier.fillMaxWidth().padding(10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 IconButton(onClick = { if (viewed > 0) viewed-- }, enabled = viewed > 0) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous rack")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.site_prev_rack))
                 }
                 Text(
-                    "Building $building · Rack $rack",
+                    stringResource(R.string.site_building_rack, building, rack),
                     style = MaterialTheme.typography.titleSmall, color = HiBrand.textPrimary,
                     modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
                 )
                 IconButton(onClick = { if (viewed < totalRacks - 1) viewed++ }, enabled = viewed < totalRacks - 1) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next rack")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.site_next_rack))
                 }
             }
             HeatRackGrid(state, cfg, building, rack, onMinerClick)
             Text(
-                "Tier 1 is the bottom row; positions run left → right. Tap a cell to open the miner.",
+                stringResource(R.string.site_heatmap_tier_hint),
                 style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
             )
         }
@@ -237,12 +237,12 @@ private fun HeatCellBox(cell: HeatCell?, fahrenheit: Boolean, onMinerClick: (Lon
     val label = when {
         live -> formatCellTemp(cell?.chipTempC, fahrenheit)
         cell == null -> "·"
-        cell.status == MinerStatus.OFFLINE -> "OFF"
+        cell.status == MinerStatus.OFFLINE -> stringResource(R.string.site_cell_off)
         else -> "—" // stale/unknown telemetry: never pretend a temperature
     }
     val desc = cell?.let {
         "${it.name}: ${if (live) formatCellTemp(it.chipTempC, fahrenheit) else it.status.name.lowercase()}"
-    } ?: "Empty slot"
+    } ?: stringResource(R.string.site_empty_slot)
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -275,7 +275,7 @@ private fun Legend(fahrenheit: Boolean) {
         LegendSwatch(TempColors.warm, "${band(TempColors.WARM_C, fahrenheit)}+")
         LegendSwatch(HiBrand.statusDegraded, "${band(TempColors.HOT_C, fahrenheit)}+")
         LegendSwatch(HiBrand.statusOffline, "${band(TempColors.CRITICAL_C, fahrenheit)}+")
-        LegendSwatch(HiBrand.surface, "offline / no data")
+        LegendSwatch(HiBrand.surface, stringResource(R.string.site_legend_offline))
     }
 }
 

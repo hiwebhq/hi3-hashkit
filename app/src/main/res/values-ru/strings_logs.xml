@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner logs screen chrome (ui/logs). Log CONTENT from miners is never localized. -->
+<resources>
+    <string name="logs_title">Логи %1$s</string>
+    <string name="logs_status_redacted">"%1$s  ·  кошельки скрыты"</string>
+    <string name="logs_status_connecting">Подключение…</string>
+    <string name="logs_status_live">Live</string>
+    <string name="logs_status_disconnected">Отключено: %1$s</string>
+    <string name="logs_status_event_log">Журнал событий — по данным опросов (нет потока логов прошивки)</string>
+    <string name="logs_show_raw">Показать сырой лог</string>
+    <string name="logs_analyze">Анализ лога</string>
+    <string name="logs_resume">Продолжить</string>
+    <string name="logs_pause">Пауза</string>
+    <string name="logs_clear">Очистить</string>
+    <string name="logs_reconnect">Переподключить</string>
+    <string name="logs_window_live">Live</string>
+    <string name="logs_analysis_summary">"АНАЛИЗ ЛОГА  ·  строк: %1$d  ·  ошибок: %2$d  ·  предупреждений: %3$d"</string>
+    <string name="logs_findings">НАХОДКИ</string>
+    <string name="logs_export">Экспорт захваченных логов</string>
+    <string name="logs_export_chooser">Экспорт логов</string>
+    <string name="logs_analysis_footer">Эвристический анализ на устройстве — без облака. Live анализирует текущий поток; 1ч/24ч/7д — сохранённую историю (хранится по каждому майнеру, ~7 дней). Кошельки скрыты.</string>
+</resources>

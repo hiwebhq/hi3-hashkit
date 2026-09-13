@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nfcp_title">Запись NFC-меток</string>
+    <string name="nfcp_no_miners">Нет майнеров для записи.</string>
+    <string name="nfcp_written_progress">Записано %1$d из %2$d</string>
+    <string name="nfcp_no_nfc_device">на этом устройстве нет NFC</string>
+    <string name="nfcp_turn_on_nfc">включите NFC для записи</string>
+    <string name="nfcp_programming">Запись %1$d из %2$d</string>
+    <string name="nfcp_written">записано</string>
+    <string name="nfcp_label_mac">MAC</string>
+    <string name="nfcp_label_ip">IP</string>
+    <string name="nfcp_label_location">Расположение</string>
+    <string name="nfcp_hold_tag">Приложите пустую NFC-метку к задней панели телефона для записи.</string>
+    <string name="nfcp_enable_nfc">Включите NFC для записи или нажмите «Показать QR», чтобы напечатать наклейку.</string>
+    <string name="nfcp_prev">Назад</string>
+    <string name="nfcp_skip">Пропустить</string>
+    <string name="nfcp_next">Далее</string>
+    <string name="nfcp_show_qr">Показать QR</string>
+    <string name="nfcp_qr_for">QR для %1$s</string>
+    <string name="nfcp_qr_hint">Сделайте скриншот и напечатайте как наклейку — сканируется в AR-оверлее стойки.</string>
+    <string name="nfcp_write_failed">Ошибка записи: %1$s</string>
+</resources>

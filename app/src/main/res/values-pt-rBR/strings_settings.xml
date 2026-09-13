@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings screen strings. Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Section headers -->
+    <string name="set_section_advanced">RECURSOS AVANÇADOS</string>
+    <string name="set_section_alerts">ALERTAS</string>
+    <string name="set_section_discovery">DESCOBERTA</string>
+    <string name="set_section_display">EXIBIÇÃO</string>
+    <string name="set_section_farms">FAZENDAS</string>
+    <string name="set_section_mmp">HI3 MMP</string>
+    <string name="set_section_web_server">SERVIDOR WEB LOCAL (AVANÇADO)</string>
+    <string name="set_section_monitoring">MONITORAMENTO</string>
+    <string name="set_section_mqtt">MQTT / HOME ASSISTANT</string>
+    <string name="set_section_pool">POOL</string>
+    <string name="set_section_push">PUSH (WEBHOOK)</string>
+    <string name="set_section_quiet">HORAS DE SILÊNCIO E RESUMO</string>
+    <string name="set_section_security">SEGURANÇA</string>
+    <string name="set_section_solo">MINERAÇÃO SOLO</string>
+    <string name="set_section_units">UNIDADES E CUSTO</string>
+    <string name="set_section_update">ATUALIZAR O HASHKIT</string>
+    <string name="set_section_data">DADOS E EXPORTAÇÕES</string>
+    <string name="set_section_demo">DEMO</string>
+
+    <!-- Advanced features -->
+    <string name="set_advanced_unlocked_desc">Os recursos avançados estão desbloqueados. Isso revela o link \"Bitcoin ao vivo\" no menu do painel; outros podem vir para cá em versões futuras (páginas seguras, ferramentas avançadas).</string>
+    <string name="set_advanced_locked_desc">Digite seu código de desbloqueio para revelar recursos avançados (atualmente o link \"Bitcoin ao vivo\" do menu do painel).</string>
+    <string name="set_advanced_unlock_code_optional">Código de desbloqueio (opcional)</string>
+    <string name="set_advanced_unlock_code">Código de desbloqueio</string>
+    <string name="set_advanced_apply_code">Aplicar código</string>
+
+    <!-- Alerts -->
+    <string name="set_alerts_title">Alertas e notificações</string>
+    <string name="set_alerts_subtitle">Alertas de offline, temperatura, ventoinha, taxa de rejeição e reinício, com avisos de recuperação.</string>
+    <string name="set_alert_hashrate_below" formatted="false">Alerta de hashrate abaixo de (% do esperado)</string>
+    <string name="set_alert_chip_temp">Alerta de temp. do chip (°C)</string>
+    <string name="set_alert_vr_temp">Alerta de temp. do VR (°C)</string>
+    <string name="set_alert_reject_rate" formatted="false">Alerta de taxa de rejeição (%)</string>
+    <string name="set_alert_cooldown">Intervalo para renotificar (min)</string>
+
+    <!-- Discovery -->
+    <string name="set_discovery_extra_subnets">Sub-redes extras de varredura (CSV de CIDRs)</string>
+    <string name="set_discovery_subnets_hint">Adicione LANs remotas alcançáveis pelo seu roteador de sub-rede Tailscale, ex.: 192.168.50.0/24. Elas aparecem como opções de preenchimento rápido na tela Adicionar.</string>
+
+    <!-- Display -->
+    <string name="set_theme">Tema</string>
+    <string name="set_theme_system">Sistema</string>
+    <string name="set_theme_dark">Escuro</string>
+    <string name="set_theme_light">Claro</string>
+    <string name="set_ui_theme">Tema da interface</string>
+    <string name="set_ui_theme_hint">Cor de destaque usada no app todo. As cores de status (online/offline) não mudam.</string>
+    <string name="set_profit_card_title">Card de lucratividade e energia</string>
+    <string name="set_profit_card_subtitle">Mostrar receita estimada, custo de energia e consumo no painel.</string>
+    <string name="set_solo_card_title">Card de chances solo</string>
+    <string name="set_solo_card_subtitle">Mostrar a probabilidade de achar um bloco no painel.</string>
+    <string name="set_card_order_title">Ordem dos cards do painel</string>
+    <string name="set_card_order_hint">Organize os blocos do painel — ex.: mova Pool e MMP para baixo da lista de mineradores. Os cards só aparecem quando o recurso está ativo.</string>
+    <string name="set_inventory_tag_title">Etiqueta de inventário</string>
+    <string name="set_inventory_tag_hint">Qual botão de criar etiqueta a tabela da Fazenda mostra para rotular mineradores.</string>
+    <string name="set_tag_qr">QR</string>
+    <string name="set_tag_nfc">NFC</string>
+    <string name="set_tag_both">Ambos</string>
+    <string name="set_pause_on_exit_title">Confirmar ao sair</string>
+    <string name="set_pause_on_exit_subtitle">Mostrar a confirmação \"Sair do Hi3 Hashkit?\" ao tocar no botão de sair.</string>
+
+    <!-- Farms -->
+    <string name="set_manage_farms">Gerenciar fazendas…</string>
+    <string name="set_default_farm">Fazenda padrão</string>
+    <string name="set_default_farm_hint">Fixe o painel em uma fazenda: a linha do seletor de fazenda some e só os mineradores dela aparecem — layout mais enxuto quando você opera um único site.</string>
+    <string name="set_all_farms">Todas as fazendas</string>
+
+    <!-- Hi3 MMP -->
+    <string name="set_mmp_title">Visão de fazenda Hi3 MMP</string>
+    <string name="set_mmp_subtitle">Resumo da fazenda somente leitura e consolidações por site da sua Mining Management Platform.</string>
+    <string name="set_mmp_url">URL do MMP</string>
+    <string name="set_mmp_key_saved">Chave de API (salva — digite para substituir, vazio para limpar)</string>
+    <string name="set_mmp_key_hint">Chave de API (gere uma na interface de admin do MMP)</string>
+    <string name="set_mmp_replace_key">Substituir chave</string>
+    <string name="set_mmp_save_key">Salvar chave</string>
+    <string name="set_mmp_disclosure">O que é transmitido enquanto ativado: sua chave de API do MMP no cabeçalho da solicitação, por HTTPS para a URL do MMP acima, cerca de uma vez por minuto com o app aberto — consultas de fazenda somente leitura, nada é enviado. A chave é armazenada criptografada com o Android Keystore. Desativado por padrão.</string>
+
+    <!-- Local web server -->
+    <string name="set_web_server_title">Expor painel web + /metrics</string>
+    <string name="set_web_server_subtitle">Rode um servidor web local somente leitura: um painel HTML da fazenda que qualquer navegador ou TV na LAN pode abrir, mais um endpoint Prometheus /metrics para o Grafana. Sem autenticação — só para LAN/tailnet privada.</string>
+    <string name="set_web_server_port">Porta</string>
+    <string name="set_web_server_hint">Com o app aberto: painel em http://&lt;ip-deste-aparelho>:%1$d/ e métricas em /metrics. Somente leitura (apenas GET); expõe totais + dados por minerador, sem controles.</string>
+
+    <!-- Monitoring -->
+    <string name="set_bg_monitoring_title">Monitoramento em segundo plano</string>
+    <string name="set_bg_monitoring_subtitle">Consulta a cada ~15 min com o app fechado (o Android pode atrasar isso; não é monitoramento contínuo em tempo real).</string>
+    <string name="set_refresh_interval">Intervalo de atualização</string>
+    <string name="set_default_refresh_interval">Intervalo de atualização padrão</string>
+    <string name="set_farm_refresh_hint">Cada fazenda atualiza no seu próprio intervalo enquanto você a visualiza; o padrão vale quando nenhuma fazenda está ativa.</string>
+    <string name="set_keep_history">Manter histórico (dias)</string>
+    <string name="set_fw_check_title">Verificar atualizações de firmware</string>
+    <string name="set_fw_check_subtitle">Opcional: verifica as versões do AxeOS (Bitaxe) no GitHub e sinaliza mineradores desatualizados. Sem gravação de firmware pelo app; nada é contatado enquanto desativado.</string>
+    <string name="set_auto_recover_title">Recuperar mineradores offline automaticamente</string>
+    <string name="set_auto_recover_subtitle">Quando um minerador fica offline além do limite, religa a tomada inteligente dele (se configurada) ou o reinicia — uma vez, com intervalo de espera. Toda tentativa é auditada.</string>
+    <string name="set_auto_recover_after">Recuperar após offline (min)</string>
+    <string name="set_safety_title">Monitor de segurança sempre ativo</string>
+    <string name="set_safety_subtitle">Executa o corte por sobretemperatura da tomada inteligente em segundo plano (com notificação persistente) mesmo com o app fechado, e rearma após reiniciar o celular. Só é útil se você configurou um corte de tomada em algum minerador.</string>
+
+    <!-- MQTT / Home Assistant -->
+    <string name="set_mqtt_title">Publicar no MQTT</string>
+    <string name="set_mqtt_subtitle">Envia telemetria da fazenda + por minerador a um broker MQTT local (ex.: o add-on Mosquitto no Home Assistant). Opcional; apenas totais e hashrate/potência/temperatura por minerador — sem endereços ou credenciais.</string>
+    <string name="set_mqtt_host">Host do broker</string>
+    <string name="set_mqtt_port">Porta do broker</string>
+    <string name="set_mqtt_topic">Tópico base</string>
+    <string name="set_mqtt_username">Usuário (opcional)</string>
+    <string name="set_mqtt_password_saved">Senha (salva — digite para substituir, vazio para limpar)</string>
+    <string name="set_mqtt_password_optional">Senha (opcional)</string>
+    <string name="set_mqtt_replace_password">Substituir senha</string>
+    <string name="set_mqtt_save_password">Salvar senha</string>
+    <string name="set_mqtt_ha_title">Descoberta do Home Assistant</string>
+    <string name="set_mqtt_ha_subtitle">Publica a configuração de descoberta MQTT para os mineradores aparecerem automaticamente como dispositivos/entidades do HA.</string>
+    <string name="set_mqtt_disclosure">Publicado com o app aberto, a cada consulta. A senha é armazenada criptografada no Android Keystore. Aponte o Prometheus/HA para este broker.</string>
+
+    <!-- Pool -->
+    <string name="set_pool_stats_title">Estatísticas da pool</string>
+    <string name="set_pool_stats_subtitle">Visão somente leitura, do lado da pool, dos seus workers, correlacionada com as leituras locais no painel.</string>
+    <string name="set_pool_coming_soon">O suporte a %1$s está a caminho. A API precisa ser verificada antes de enviarmos qualquer coisa, então esta pool ainda não contata nada — escolha outra pool para carregar estatísticas ao vivo.</string>
+    <string name="set_pool_url">URL da pool</string>
+    <string name="set_pool_access_token">Token de acesso</string>
+    <string name="set_pool_api_token">Chave de API / token de observador (opcional)</string>
+    <string name="set_pool_disclosure">O que é transmitido enquanto ativado: seu %1$s (e o token, se definido), dentro de uma solicitação HTTPS para %2$s, cerca de uma vez por minuto com o app aberto. Nada mais — sem telemetria dos mineradores, sem IPs locais, sem senhas de worker. Desativado por padrão; ao desativar, todas as solicitações à pool param imediatamente.</string>
+    <string name="set_pool_label">Pool</string>
+
+    <!-- Push (webhook) -->
+    <string name="set_push_intro">Espelhe os alertas no seu próprio serviço de push para recebê-los com o app fechado — sem conta na nuvem nossa. Dispara apenas para alertas ativos.</string>
+    <string name="set_push_service">Serviço de push</string>
+    <string name="set_push_ntfy_url">URL do tópico ntfy (https://ntfy.sh/seu-topico)</string>
+    <string name="set_push_gotify_url">URL do servidor Gotify</string>
+    <string name="set_push_gotify_token">Token de app do Gotify</string>
+    <string name="set_push_telegram_token">Token do bot do Telegram</string>
+    <string name="set_push_telegram_chat">ID do chat do Telegram</string>
+    <string name="set_push_generic_url">URL de POST (corpo JSON)</string>
+
+    <!-- Quiet hours & digest -->
+    <string name="set_quiet_hours_title">Horas de silêncio</string>
+    <string name="set_quiet_hours_subtitle">Suprime as notificações de alerta durante uma janela noturna. Os alertas ainda são registrados e aparecem no resumo diário.</string>
+    <string name="set_quiet_from">Silêncio de (HH:MM)</string>
+    <string name="set_quiet_until">Silêncio até (HH:MM)</string>
+    <string name="set_digest_title">Resumo diário</string>
+    <string name="set_digest_subtitle">Uma notificação-resumo por dia com as últimas 24h de alertas.</string>
+    <string name="set_digest_time">Hora do resumo (hora, 0–23)</string>
+
+    <!-- Security -->
+    <string name="set_app_lock_title">Bloqueio do app</string>
+    <string name="set_app_lock_subtitle_available">Exige digital/rosto ou o PIN do aparelho para abrir o app (rebloqueia após 1 minuto em segundo plano).</string>
+    <string name="set_app_lock_subtitle_unavailable">Indisponível: configure primeiro um bloqueio de tela (PIN/biometria) neste aparelho.</string>
+    <string name="set_app_lock_note">Protege a interface do app. Nota: backups exportados e o banco de dados em disco são protegidos pelo sandbox padrão de apps do Android, não por este bloqueio.</string>
+
+    <!-- Solo mining -->
+    <string name="set_network_difficulty">Dificuldade da rede</string>
+    <string name="set_fetch_difficulty_title">Buscar dificuldade do mempool.space</string>
+    <string name="set_fetch_difficulty_subtitle">A única solicitação externa do app; um único GET HTTPS sem nenhum dado de minerador. Desativado por padrão — veja docs/SECURITY.md.</string>
+
+    <!-- Units & cost -->
+    <string name="set_fahrenheit_title">Fahrenheit</string>
+    <string name="set_fahrenheit_subtitle">Mostrar temperaturas em °F.</string>
+    <string name="set_electricity_rate">Tarifa de energia (por kWh)</string>
+    <string name="set_currency_code">Código da moeda</string>
+    <string name="set_btc_price">Preço do BTC (por moeda, %1$s)</string>
+    <string name="set_fetch_btc_title">Buscar preço do BTC do mempool.space</string>
+    <string name="set_fetch_btc_subtitle">Opcional: um único GET HTTPS (sem dados de minerador) para o painel estimar receita e lucro. Desativado por padrão; se preferir, digite um preço manualmente.</string>
+
+    <!-- Update Hashkit -->
+    <string name="set_update_installed">Instalado: v%1$s</string>
+    <string name="set_update_desc">Verifica a versão oficial no GitHub e instala a atualização assinada por cima — seus mineradores, histórico de telemetria, logs e configurações são mantidos. O Android pode pedir permissão para instalar atualizações deste app.</string>
+    <string name="set_update_downloading">Baixando %1$d%%…</string>
+    <string name="set_update_confirm_hint">Aguardando a confirmação do Android — toque em Atualizar no diálogo do sistema.</string>
+    <string name="set_update_installing">Instalando… o app reinicia ao concluir.</string>
+    <string name="set_update_needs_permission">Permita \"Instalar apps desconhecidos\" para o Hashkit na tela de configurações que acabou de abrir e volte para tocar de novo.</string>
+    <string name="set_update_download_install">Baixar e instalar v%1$s</string>
+    <string name="set_update_available">Atualização disponível: v%1$s</string>
+    <string name="set_update_checking">Verificando…</string>
+    <string name="set_update_check">Verificar atualizações</string>
+    <string name="set_update_up_to_date">Você está na versão mais recente.</string>
+    <string name="set_update_error_unreachable">Não foi possível acessar o servidor de atualização.</string>
+    <string name="set_update_download_failed">Falha no download.</string>
+
+    <!-- Data & exports -->
+    <string name="set_share_fleet_report">Relatório da fazenda</string>
+    <string name="set_share_export_csv">Exportar CSV</string>
+    <string name="set_share_export_diagnostics">Exportar diagnóstico</string>
+    <string name="set_share_export_backup">Exportar backup</string>
+    <string name="set_export_report_7d">Relatório da fazenda — últimos 7 dias (HTML)</string>
+    <string name="set_export_report_30d">Relatório da fazenda — últimos 30 dias (HTML)</string>
+    <string name="set_export_csv_7d">Exportar CSV de telemetria da fazenda (últimos 7 dias)</string>
+    <string name="set_export_full_backup">Backup completo (mineradores, fazendas, pools, regras, configurações…)</string>
+    <string name="set_restore_backup">Restaurar de backup…</string>
+    <string name="set_auto_backup_off">Backup automático semanal: desativado — escolher pasta…</string>
+    <string name="set_auto_backup_on">Backup automático semanal: ativado (toque para mudar a pasta)</string>
+    <string name="set_last_auto_backup">Último backup automático: %1$s — mantém os 8 mais recentes, JSON sem criptografia.</string>
+    <string name="set_auto_backup_turn_off">Desativar backup automático</string>
+    <string name="set_export_diagnostics">Exportar pacote de diagnóstico (endereços ocultados)</string>
+    <string name="set_backup_note">Backups contêm endereços de mineradores e nomes de workers. Criptografe com uma frase-senha (AES-256) para compartilhar ou guardar com segurança; um backup sem criptografia é só para o seu próprio aparelho. CSV e diagnóstico ocultam carteiras; o diagnóstico também oculta endereços IP.</string>
+    <string name="set_backup_pass_title">Frase-senha do backup</string>
+    <string name="set_backup_pass_body">Digite uma frase-senha para criptografar o backup (AES-256), ou deixe vazio para um backup JSON sem criptografia.</string>
+    <string name="set_passphrase_optional">Frase-senha (opcional)</string>
+    <string name="set_encrypted_backup_title">Backup criptografado</string>
+    <string name="set_passphrase">Frase-senha</string>
+    <string name="set_restore">Restaurar</string>
+    <string name="set_restore_read_error">Não foi possível ler o arquivo selecionado.</string>
+
+    <!-- Demo -->
+    <string name="set_demo_title">Modo demo</string>
+    <string name="set_demo_subtitle">Adiciona mineradores sintéticos claramente rotulados; eles nunca se misturam aos totais reais quando desativado.</string>
+
+    <!-- Payout address / QR scanning -->
+    <string name="set_qr_not_bare_address">Esse QR não é um endereço de pagamento puro (parece uma URI bitcoin:). Escaneie o endereço simples.</string>
+    <string name="set_scan_prompt">Escaneie o QR do seu endereço de pagamento</string>
+    <string name="set_scan_qr_cd">Escanear código QR</string>
+</resources>

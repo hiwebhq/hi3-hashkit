@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Дашборд-киоск для стены / ТВ (ui/wall). -->
+<resources>
+    <string name="wall_size_small">Малый</string>
+    <string name="wall_size_medium">Средний</string>
+    <string name="wall_size_large">Крупный</string>
+    <string name="wall_counts">%1$d онлайн · %2$d офлайн · %3$d майнеров</string>
+    <string name="wall_display_options">Параметры отображения</string>
+    <string name="wall_card_size">РАЗМЕР КАРТОЧКИ</string>
+    <string name="wall_grid_columns">КОЛОНКИ СЕТКИ</string>
+    <string name="wall_fewer_columns">Меньше колонок</string>
+    <string name="wall_more_columns">Больше колонок</string>
+    <string name="wall_columns_auto">Авто</string>
+    <string name="wall_exit">Выйти из режима стены</string>
+    <string name="wall_no_miners">Нет майнеров для отображения.</string>
+</resources>

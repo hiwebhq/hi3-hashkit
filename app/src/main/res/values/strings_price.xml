@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Price curtailment screen (PriceCurtailmentScreen). -->
+<resources>
+    <string name="price_title">Price curtailment</string>
+    <string name="price_intro">Pause on price spikes and mine when power is cheap, using the free Octopus Agile half-hourly feed (UK). No account or key needed — only the public price for your region is fetched.</string>
+
+    <!-- Live price card -->
+    <string name="price_now_label">PRICE NOW</string>
+    <string name="price_next6h">Next 6h: low %1$s · high %2$s p/kWh</string>
+    <string name="price_reco_run">Recommendation: cheap — resume mining</string>
+    <string name="price_reco_curtail">Recommendation: expensive — curtail mining</string>
+    <string name="price_reco_hold">Recommendation: hold (within the deadband)</string>
+
+    <!-- Actions -->
+    <string name="price_refresh">Refresh prices</string>
+    <string name="price_resume_fleet">Resume fleet</string>
+    <string name="price_curtail_fleet">Curtail fleet</string>
+
+    <!-- Sections & configuration -->
+    <string name="price_next_slots">NEXT SLOTS</string>
+    <string name="price_configuration">CONFIGURATION</string>
+    <string name="price_region_label">Region letter (A–P)</string>
+    <string name="price_region_placeholder">C for London</string>
+    <string name="price_resume_label">Resume ≤ p/kWh</string>
+    <string name="price_curtail_label">Curtail ≥ p/kWh</string>
+    <string name="price_save_config">Save configuration</string>
+</resources>

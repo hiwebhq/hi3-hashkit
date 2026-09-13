@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hash rental screen (HashRentalScreen). -->
+<resources>
+    <string name="rental_title">Hash rental</string>
+    <string name="rental_edit_link">Edit rent link</string>
+    <string name="rental_intro">Rent Bitcoin hashrate on the Braiins Hashpower spot market. This shows the live public market — renting happens on Braiins, not in this app.</string>
+    <string name="rental_show_in">Show in</string>
+    <string name="rental_set_btc_price">Set or fetch the BTC price in Settings to see %1$s values.</string>
+
+    <!-- Error banner -->
+    <string name="rental_unavailable">Braiins Hashpower is temporarily unavailable.</string>
+    <string name="rental_showing_from">Showing prices from %1$s.</string>
+    <string name="rental_details">Details</string>
+    <string name="rental_hide_details">Hide details</string>
+
+    <!-- Market card -->
+    <string name="rental_spot_market">SPOT MARKET</string>
+    <string name="rental_best_ask_caption">Best ask (cheapest hashrate to rent)</string>
+    <string name="rental_last_avg_price">Last avg price</string>
+    <string name="rental_best_bid">Best bid</string>
+    <string name="rental_hashrate_available">Hashrate available</string>
+    <string name="rental_hashrate_matched">Hashrate matched</string>
+    <string name="rental_cheapest_offers">CHEAPEST OFFERS</string>
+    <string name="rental_ph_avail">%1$s PH/s avail</string>
+
+    <!-- Rent button & footer -->
+    <string name="rental_rent_button">Rent on Braiins Hashpower ↗</string>
+    <string name="rental_footer">Prices are live from Braiins Hashpower\'s public market API. Renting is completed on hashpower.braiins.com with your own account.</string>
+
+    <!-- Rent-link dialog -->
+    <string name="rental_dialog_title">Rent link</string>
+    <string name="rental_dialog_body">The URL the \"Rent\" button opens. Paste your Braiins Hashpower referral link here if you have one — leave blank to reset to the default.</string>
+    <string name="rental_url_label">URL</string>
+</resources>

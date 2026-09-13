@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dashboard, fleet detail and bulk-action strings (FR). Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Top bar / overflow menu -->
+    <string name="dash_cd_notifications">Notifications</string>
+    <string name="dash_cd_scan_tag">Scanner le tag d\'un mineur</string>
+    <string name="dash_cd_setup">Configuration</string>
+    <string name="dash_cd_exit_app">Quitter l\'appli</string>
+    <string name="dash_cd_more">Plus</string>
+    <string name="dash_menu_flow_view">Vue Flow</string>
+    <string name="dash_menu_network_scan">Scan réseau</string>
+    <string name="dash_menu_leaderboard">Classement</string>
+    <string name="dash_menu_fleet_table">Tableau de la flotte</string>
+    <string name="dash_menu_wall_tv">Mode mur / TV</string>
+    <string name="dash_menu_advanced">Avancé</string>
+    <string name="dash_menu_store">Boutique</string>
+    <string name="dash_menu_about">À propos</string>
+    <string name="dash_menu_privacy_policy">Politique de confidentialité</string>
+    <string name="dash_cd_add_miner">Ajouter un mineur</string>
+
+    <!-- Exit confirmation -->
+    <string name="dash_exit_title">Quitter Hi3 Hashkit ?</string>
+    <string name="dash_exit_body">Ferme l\'application et arrête l\'interrogation au premier plan. La surveillance en arrière-plan, si activée, continue.</string>
+    <string name="dash_exit_dont_ask">Ne plus demander — quitter directement la prochaine fois</string>
+    <string name="dash_exit_confirm">Quitter</string>
+
+    <!-- Panic (whole fleet) -->
+    <string name="dash_panic_title">Panique — toute la flotte</string>
+    <string name="dash_panic_body">Applique une action à tous les mineurs à la fois. Vous verrez lesquels sont compatibles et aurez une confirmation finale avant tout envoi.\n\n• Tout mettre en pause — arrête le minage sur chaque mineur compatible (réversible).\n• Tout redémarrer — redémarre chaque mineur qui prend en charge le redémarrage.</string>
+    <string name="dash_pause_all">Tout mettre en pause</string>
+    <string name="dash_reboot_all">Tout redémarrer</string>
+
+    <!-- Firmware banner / farm selector -->
+    <string name="dash_firmware_banner">AxeOS %1$s disponible — %2$d mineur(s) peuvent se mettre à jour. Touchez pour les notes de version.</string>
+    <string name="dash_all_farms">Toutes les fermes</string>
+    <string name="dash_cd_farm">Ferme</string>
+
+    <!-- Miner list -->
+    <string name="dash_cd_rescan">Analyser à nouveau le réseau à la recherche de nouveaux mineurs</string>
+    <string name="dash_group_ungrouped">Sans groupe</string>
+    <string name="dash_demo_banner">Le mode démo affiche des mineurs synthétiques</string>
+    <string name="dash_demo_badge">DÉMO</string>
+    <string name="dash_up_prefix">actif %1$s</string>
+    <string name="dash_no_telemetry">pas de télémétrie</string>
+    <string name="dash_pct_of_expected">%1$d%% de l\'attendu</string>
+    <string name="dash_cd_card_style">Style de carte : %1$s. Touchez pour changer.</string>
+    <string name="dash_cd_sparkline">Tendance récente du hashrate</string>
+
+    <!-- Empty state -->
+    <string name="dash_empty_title">Aucun mineur pour l\'instant</string>
+    <string name="dash_empty_body">Hi3 Miner Watch est local d\'abord : il ne parle qu\'aux mineurs de votre réseau (ou via votre VPN Tailscale existant) et ne demande aucun compte.</string>
+    <string name="dash_empty_scan_add">Scanner ou ajouter un mineur</string>
+    <string name="dash_empty_try_demo">Essayer le mode démo</string>
+
+    <!-- Fleet summary card -->
+    <string name="dash_fleet_header">FLOTTE</string>
+    <string name="dash_fleet_title">Flotte</string>
+    <string name="dash_no_refresh_yet">pas encore actualisé</string>
+    <string name="dash_just_now">à l\'instant</string>
+    <string name="dash_ago_seconds">il y a %1$ds</string>
+    <string name="dash_ago_minutes_stale">il y a %1$dmin — figé</string>
+    <string name="dash_counter_on">actifs</string>
+    <string name="dash_counter_deg">dégr.</string>
+    <string name="dash_counter_off">HS</string>
+    <string name="dash_counter_stale">figés</string>
+    <string name="dash_metric_power">Puissance</string>
+    <string name="dash_metric_efficiency">Efficacité</string>
+    <string name="dash_metric_hottest">Plus chaud</string>
+    <string name="dash_metric_energy_est">Énergie est.</string>
+    <string name="dash_fleet_hashrate">Hashrate de la flotte</string>
+    <string name="dash_collecting_data">Collecte des données…</string>
+    <string name="dash_cd_fleet_trend_chart">Graphique de tendance du hashrate de la flotte</string>
+
+    <!-- Miner card metrics -->
+    <string name="dash_metric_hashrate">Hashrate</string>
+    <string name="dash_metric_chip">Puce</string>
+    <string name="dash_metric_eff">Eff.</string>
+    <string name="dash_metric_uptime">Uptime</string>
+
+    <!-- MMP card -->
+    <string name="dash_mmp_header">FLOTTE HI3 MMP</string>
+    <string name="dash_updated_ago">mis à jour il y a %1$ds</string>
+    <string name="dash_metric_mmp_hashrate">Hashrate MMP</string>
+    <string name="dash_metric_realization">Réalisation</string>
+    <string name="dash_metric_attention">Attention</string>
+    <string name="dash_metric_zero_hash">Hash nul</string>
+    <string name="dash_mmp_local_vs">Local = %1$s vs flotte MMP entière = %2$s</string>
+
+    <!-- Pool card -->
+    <string name="dash_pool_updated_ago">vue pool · mis à jour il y a %1$ds</string>
+    <string name="dash_metric_pool_hashrate">Hashrate côté pool</string>
+    <string name="dash_metric_workers">Workers</string>
+    <string name="dash_metric_height">Hauteur</string>
+    <string name="dash_pool_proxy_note">Les mineurs joignent le pool via votre proxy Stratum, le pool les compte donc comme %1$d worker(s) agrégé(s). Comparaison du total flotte vs total pool ci-dessous.</string>
+    <string name="dash_pool_fleet_vs_pool">FLOTTE vs POOL</string>
+    <string name="dash_pool_miner_vs_pool">MINEUR vs POOL (les moyennes du pool sont en retard sur les lectures en direct)</string>
+    <string name="dash_pool_no_local_match">%1$s (aucune correspondance locale)</string>
+    <string name="dash_pool_not_seen">Non vus par ce pool : %1$s</string>
+
+    <!-- Profitability card -->
+    <string name="dash_profit_header">RENTABILITÉ &amp; ÉNERGIE</string>
+    <string name="dash_metric_revenue_day">Revenu/jour</string>
+    <string name="dash_metric_power_cost_day">Coût élec./jour</string>
+    <string name="dash_metric_net_day">Net/jour</string>
+    <string name="dash_metric_btc_day">BTC/jour</string>
+    <string name="dash_metric_energy_day">Énergie/jour</string>
+    <string name="dash_metric_heat">Chaleur</string>
+    <string name="dash_profit_estimate_note">Estimation : BTC/jour suppose la subvention de bloc de %1$s BTC (hors frais de tx &amp; de pool) ; le revenu nécessite un prix BTC et une difficulté réseau définis/récupérés dans les Paramètres.</string>
+
+    <!-- Solo odds card -->
+    <string name="dash_solo_header">CHANCES EN SOLO</string>
+    <string name="dash_metric_day">Jour</string>
+    <string name="dash_metric_week">Semaine</string>
+    <string name="dash_metric_month">Mois</string>
+    <string name="dash_metric_year">Année</string>
+    <string name="dash_solo_expected_time">Temps attendu jusqu\'à un bloc : %1$s</string>
+    <string name="dash_solo_best_diff_suffix">"  ·  Meilleure diff. de la flotte : %1$s"</string>
+    <string name="dash_solo_disclaimer">Espérance statistique, pas une prédiction — chaque share est un ticket de loterie indépendant.</string>
+
+    <!-- Bitcoin network / halving card -->
+    <string name="dash_network_header">RÉSEAU BITCOIN</string>
+    <string name="dash_metric_block">Bloc</string>
+    <string name="dash_metric_subsidy">Subvention</string>
+    <string name="dash_next_adjustment">Prochain ajustement de difficulté : %1$s blocs (~%2$s), est. %3$s%4$s%%</string>
+    <string name="dash_next_halving">Prochain halving : bloc %1$s — %2$s blocs (~%3$s)</string>
+    <string name="dash_halving_note">Estimations via mempool.space (opt-in). Blocs de ~10 min ; le moment réel varie.</string>
+
+    <!-- Bulk selection bar -->
+    <string name="dash_bulk_selected">%1$d sélectionné(s) — les actions groupées ne s\'exécutent que sur les appareils compatibles</string>
+    <string name="dash_bulk_restart">Redémarrer</string>
+    <string name="dash_bulk_pool">Pool</string>
+    <string name="dash_bulk_fan">Ventil.</string>
+    <string name="dash_bulk_pause">Pause</string>
+    <string name="dash_bulk_resume">Reprendre</string>
+    <string name="dash_bulk_clear">Effacer</string>
+
+    <!-- Bulk dialogs -->
+    <string name="dash_bulk_pool_title">Changement de pool groupé</string>
+    <string name="dash_field_stratum_url">URL Stratum</string>
+    <string name="dash_field_port">Port</string>
+    <string name="dash_field_worker">Worker / adresse</string>
+    <string name="dash_bulk_pool_note">Appliqué au pool PRINCIPAL de chaque mineur sélectionné. Les mots de passe de pool enregistrés sont conservés. Un aperçu par appareil suivra.</string>
+    <string name="dash_preview">Aperçu</string>
+    <string name="dash_bulk_fan_title">Changement de ventilateur groupé</string>
+    <string name="dash_fan_automatic">Automatique (géré par le firmware)</string>
+    <string name="dash_fan_manual_speed">Vitesse manuelle : %1$d%%</string>
+    <string name="dash_plan_will_run">S\'exécutera sur %1$d mineur(s) :</string>
+    <string name="dash_plan_skipped">%1$d ignoré(s) (non pris en charge) :</string>
+    <string name="dash_plan_reboot_warning">Chaque mineur cesse de hasher pendant ~30–60 s le temps du redémarrage.</string>
+    <string name="dash_plan_executing">Exécution séquentielle…</string>
+    <string name="dash_plan_run_on">Exécuter sur %1$d mineur(s)</string>
+    <string name="dash_results_done">Terminé : %1$d réussite(s)</string>
+    <string name="dash_results_partial">Partiel : %1$d réussite(s), %2$d échec(s)</string>
+    <string name="dash_result_ok">ok</string>
+    <string name="dash_results_skipped">%1$d mineur(s) non pris en charge ont été ignorés.</string>
+
+    <!-- Dashboard card labels (DashboardCard enum) -->
+    <string name="dash_card_fleet">Résumé de la flotte</string>
+    <string name="dash_card_profit">Rentabilité</string>
+    <string name="dash_card_solo">Chances en solo</string>
+    <string name="dash_card_halving">Compte à rebours du halving</string>
+    <string name="dash_card_pool">Stats Hi3 Pool</string>
+    <string name="dash_card_mmp">Flotte MMP</string>
+    <string name="dash_card_miners">Liste des mineurs</string>
+    <string name="dash_rescan_no_network">Aucun réseau local détecté à analyser.</string>
+    <string name="dash_rescan_too_large">Plage locale trop grande pour l\'analyse auto ; utilisez Ajouter → Scanner.</string>
+    <string name="dash_rescan_scanning">Analyse de %1$d hôtes…</string>
+    <string name="dash_rescan_done">Nouvelle analyse terminée — %1$d mineur(s) trouvé(s).</string>
+</resources>

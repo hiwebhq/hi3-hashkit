@@ -12,25 +12,32 @@ object RuleEngine {
 
     private const val MS_PER_MINUTE = 60_000L
 
-    enum class ConditionType(val label: String, val needsThreshold: Boolean, val unit: String) {
-        CHIP_TEMP_ABOVE("Chip temp above", true, "°C"),
-        VR_TEMP_ABOVE("VR temp above", true, "°C"),
-        HASHRATE_BELOW_PCT("Hashrate below % of expected", true, "%"),
-        REJECT_RATE_ABOVE("Reject rate above", true, "%"),
-        OFFLINE("Miner offline", false, "");
+    // label stays for persisted/logged text; labelRes is the localized UI display.
+    enum class ConditionType(
+        val label: String,
+        @androidx.annotation.StringRes val labelRes: Int,
+        val needsThreshold: Boolean,
+        val unit: String,
+    ) {
+        CHIP_TEMP_ABOVE("Chip temp above", hi3.hashkit.R.string.enum_cond_chip_temp_above, true, "°C"),
+        VR_TEMP_ABOVE("VR temp above", hi3.hashkit.R.string.enum_cond_vr_temp_above, true, "°C"),
+        HASHRATE_BELOW_PCT("Hashrate below % of expected", hi3.hashkit.R.string.enum_cond_hashrate_below_pct, true, "%"),
+        REJECT_RATE_ABOVE("Reject rate above", hi3.hashkit.R.string.enum_cond_reject_rate_above, true, "%"),
+        OFFLINE("Miner offline", hi3.hashkit.R.string.enum_cond_offline, false, "");
 
         companion object {
             fun fromName(n: String?): ConditionType? = entries.firstOrNull { it.name == n }
         }
     }
 
-    enum class ActionType(val label: String) {
-        PAUSE("Pause hashing"),
-        RESUME("Resume hashing"),
-        REBOOT("Reboot"),
-        PLUG_OFF("Smart plug OFF"),
-        PLUG_ON("Smart plug ON"),
-        NOTIFY("Notify only");
+    // label stays for the persisted watchdog alert text (RuleRunner); labelRes is the UI display.
+    enum class ActionType(val label: String, @androidx.annotation.StringRes val labelRes: Int) {
+        PAUSE("Pause hashing", hi3.hashkit.R.string.enum_action_pause),
+        RESUME("Resume hashing", hi3.hashkit.R.string.enum_action_resume),
+        REBOOT("Reboot", hi3.hashkit.R.string.enum_action_reboot),
+        PLUG_OFF("Smart plug OFF", hi3.hashkit.R.string.enum_action_plug_off),
+        PLUG_ON("Smart plug ON", hi3.hashkit.R.string.enum_action_plug_on),
+        NOTIFY("Notify only", hi3.hashkit.R.string.enum_action_notify);
 
         companion object {
             fun fromName(n: String?): ActionType? = entries.firstOrNull { it.name == n }

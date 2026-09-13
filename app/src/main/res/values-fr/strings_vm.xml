@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- French translations for strings surfaced from ViewModels / shared domain classes. -->
+<resources>
+
+    <!-- AutotuneViewModel -->
+    <string name="vm_tune_miner_not_found">Mineur introuvable.</string>
+    <string name="vm_tune_not_tunable">Ce mineur n\'expose pas d\'options de réglage.</string>
+    <string name="vm_tune_no_voltage">Aucune tension de cœur à maintenir constante.</string>
+    <string name="vm_tune_sweeping">Balayage de %1$d fréquences à %2$d mV, plafond %3$d°C…</string>
+    <string name="vm_tune_step_label">%1$d MHz @ %2$d mV — application &amp; stabilisation %3$ds</string>
+    <string name="vm_tune_stopped_early">"Arrêt anticipé : plafond de %1$d°C atteint. "</string>
+    <string name="vm_tune_no_safe_point">Aucun point sûr n\'a produit une mesure valide.</string>
+    <string name="vm_tune_best_hashrate">Meilleur hashrate : %1$d MHz (%2$s).</string>
+    <string name="vm_tune_best_efficiency">Meilleure efficacité : %1$d MHz à %2$s J/TH.</string>
+    <string name="vm_tune_restored">" Point de consigne d\'origine restauré."</string>
+    <string name="vm_tune_applied">%1$d MHz @ %2$d mV appliqués.</string>
+    <string name="vm_tune_apply_failed">Échec de l\'application : %1$s</string>
+    <string name="vm_tune_cancelled">Balayage annulé — point de consigne d\'origine restauré.</string>
+
+    <!-- PoolSpeedViewModel -->
+    <string name="vm_ps_no_pools">Aucun pool trouvé. Configurez un pool sur un mineur ou dans le carnet d\'adresses.</string>
+    <string name="vm_ps_tested">%1$d pool(s) testé(s).</string>
+
+    <!-- AddressBookViewModel -->
+    <string name="vm_ab_applied">\"%1$s\" appliqué : %2$d ok, %3$d en échec, %4$d non pris en charge.</string>
+
+    <!-- Shared by PriceCurtailmentViewModel + SolarSurplusViewModel -->
+    <string name="vm_saved">Enregistré.</string>
+    <string name="vm_curtailed">Réduit</string>
+    <string name="vm_resumed">Repris</string>
+    <string name="vm_curtail_result">%1$s %2$d/%3$d mineur(s).</string>
+    <string name="vm_curtail_result_skipped">%1$s %2$d/%3$d mineur(s), %4$d ignoré(s).</string>
+
+    <!-- PriceCurtailmentViewModel -->
+    <string name="vm_price_no_rate">Aucun tarif ne couvre encore la demi-heure en cours.</string>
+
+    <!-- SolarSurplusViewModel -->
+    <string name="vm_solar_read">%1$s lu depuis Home Assistant.</string>
+
+    <!-- SettingsScreen refresh-interval presets -->
+    <string name="vm_interval_5s">5 s</string>
+    <string name="vm_interval_10s">10 s</string>
+    <string name="vm_interval_15s">15 s</string>
+    <string name="vm_interval_30s">30 s</string>
+    <string name="vm_interval_1m">1 min</string>
+    <string name="vm_interval_2m">2 min</string>
+    <string name="vm_interval_5m">5 min</string>
+    <string name="vm_interval_15m">15 min</string>
+    <string name="vm_interval_30m">30 min</string>
+    <string name="vm_interval_1h">1 heure</string>
+    <string name="vm_interval_6h">6 heures</string>
+    <string name="vm_interval_12h">12 heures</string>
+    <string name="vm_interval_1d">1 jour</string>
+    <string name="vm_interval_days">%1$d j</string>
+    <string name="vm_interval_hours">%1$d h</string>
+    <string name="vm_interval_mins">%1$d min</string>
+    <string name="vm_interval_secs">%1$d s</string>
+
+    <!-- ArOverlayViewModel -->
+    <string name="vm_ar_blank_tag">Tag NFC vierge — écrivez-le via « Créer un tag » sur un mineur</string>
+    <string name="vm_ar_not_hashkit_tag">Pas un tag Hi3 Hashkit</string>
+    <string name="vm_ar_scanned">Scanné ✓ %1$s</string>
+    <string name="vm_ar_miner_fallback">mineur</string>
+    <string name="vm_ar_not_added_yet">Tag scanné — %1$s pas encore ajouté</string>
+    <string name="vm_ar_no_match">Tag scanné — aucun mineur correspondant</string>
+    <string name="vm_ar_adding">Ajout de %1$s…</string>
+    <string name="vm_ar_added">%1$s ajouté.</string>
+    <string name="vm_ar_unreachable">Impossible de joindre %1$s : %2$s</string>
+
+    <!-- AddMinerViewModel -->
+    <string name="vm_add_private_only">Seules les adresses LAN privées ou Tailscale (100.x) sont autorisées.</string>
+    <string name="vm_add_added">Ajouté — récupération de la première télémétrie…</string>
+    <string name="vm_add_already_tracked">Déjà suivi ; adresse mise à jour.</string>
+    <string name="vm_add_unreachable">Injoignable : %1$s</string>
+    <string name="vm_add_cidr_hint">Saisissez un CIDR privé comme 192.168.1.0/24.</string>
+    <string name="vm_add_range_too_large">Plage plus grande que /%1$d — réduisez-la avant de scanner.</string>
+    <string name="vm_add_scan_done">%1$d hôtes scannés, %2$d mineur(s) trouvé(s).</string>
+    <string name="vm_add_scan_cancelled">Scan annulé.</string>
+    <string name="vm_add_mdns_searching">Recherche via mDNS…</string>
+    <string name="vm_add_mdns_done">Recherche mDNS terminée : %1$d mineur(s).</string>
+
+    <!-- NfcProgramViewModel -->
+    <string name="vm_nfc_wrote">%1$s écrit.</string>
+    <string name="vm_nfc_tag_fallback">tag</string>
+    <string name="vm_nfc_all_done">" Tous les %1$d terminés."</string>
+    <string name="vm_nfc_none">Aucun mineur à programmer.</string>
+
+    <!-- LogClassifier categories -->
+    <string name="logan_cat_pool">Pool</string>
+    <string name="logan_cat_shares">Shares</string>
+    <string name="logan_cat_asic">ASIC</string>
+    <string name="logan_cat_thermal">Thermique</string>
+    <string name="logan_cat_network">Réseau</string>
+    <string name="logan_cat_system">Système</string>
+    <string name="logan_cat_other">Autre</string>
+
+    <!-- LogAnalyzer findings -->
+    <string name="logan_disconnects_title">%1$d déconnexions pool/réseau dans le journal récent</string>
+    <string name="logan_disconnects_suggestion">Vérifiez l\'URL/le port du pool et votre signal Wi-Fi ; une liaison instable cause des shares perdues.</string>
+    <string name="logan_restarts_title">Signes de %1$d redémarrage(s) / réinitialisations</string>
+    <string name="logan_restarts_suggestion">Des redémarrages répétés indiquent en général un problème d\'alimentation (PSU/USB) ou thermique — vérifiez l\'alimentation et le refroidissement.</string>
+    <string name="logan_thermal_title">%1$d avertissement(s)/erreur(s) thermique(s)</string>
+    <string name="logan_thermal_suggestion">Améliorez le flux d\'air ou baissez le réglage ; une chaleur soutenue bride le hashrate et raccourcit la vie du matériel.</string>
+    <string name="logan_asic_title">%1$d erreur(s) ASIC</string>
+    <string name="logan_asic_suggestion">Des erreurs ASIC persistantes peuvent indiquer une puce/carte défaillante — comparez la santé par puce et envisagez un reflash.</string>
+    <string name="logan_rejects_title">%1$d message(s) de shares rejetées</string>
+    <string name="logan_rejects_suggestion">Beaucoup de rejets signifient souvent du travail périmé (latence réseau) ou un réglage trop agressif.</string>
+    <string name="logan_clean_title">Aucun problème détecté dans le journal récent.</string>
+    <string name="logan_errors_no_pattern_title">%1$d ligne(s) d\'erreur, mais aucun motif de problème connu.</string>
+    <string name="logan_none_suggestion">Rien d\'exploitable ne ressort. Gardez le flux ouvert pour attraper les problèmes intermittents.</string>
+
+    <!-- AcousticAnalyzer findings -->
+    <string name="acou_bearing">Bruit haute fréquence élevé — usure possible d\'un roulement ou roulement sec.</string>
+    <string name="acou_imbalance">Forte tonalité grave à %1$d Hz — déséquilibre ou débris possibles.</string>
+    <string name="acou_broadband">Son large bande sans tonalité de ventilateur nette — vérifiez que le micro est près du ventilateur et que la pièce est calme.</string>
+    <string name="acou_no_fault">Aucun défaut évident du ventilateur dans cet extrait (indicatif seulement).</string>
+
+    <!-- FleetControl BulkAction labels (dialog titles) -->
+    <string name="bulk_restart">Redémarrer</string>
+    <string name="bulk_set_pool">Changer le pool principal en %1$s:%2$d</string>
+    <string name="bulk_fan_auto">Ventilateur en automatique</string>
+    <string name="bulk_fan_manual">Ventilateur à %1$d%%</string>
+    <string name="bulk_pause">Suspendre le minage</string>
+    <string name="bulk_resume">Reprendre le minage</string>
+    <string name="bulk_tune">Régler à %1$d MHz @ %2$d mV</string>
+
+</resources>

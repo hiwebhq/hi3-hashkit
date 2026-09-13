@@ -1,5 +1,8 @@
 package hi3.hashkit.domain.acoustic
 
+import androidx.annotation.StringRes
+import hi3.hashkit.R
+
 /**
  * Best-effort, INDICATIVE analysis of a miner-fan recording. It is not a calibrated diagnostic:
  * phone mics, room reflections and background noise all colour the result. It looks for the
@@ -12,6 +15,9 @@ package hi3.hashkit.domain.acoustic
  */
 object AcousticAnalyzer {
 
+    /** One finding, resolved to text at render time (args are positional format args). */
+    data class Finding(@StringRes val messageRes: Int, val args: List<Any> = emptyList())
+
     data class Result(
         val dominantHz: Double,
         val rpmEstimate: Int,
@@ -19,7 +25,7 @@ object AcousticAnalyzer {
         val tonalRatio: Double,
         /** Fraction of energy above [HIGH_FREQ_CUTOFF_HZ]. */
         val highFreqRatio: Double,
-        val findings: List<String>,
+        val findings: List<Finding>,
         val healthy: Boolean,
     )
 
@@ -60,19 +66,19 @@ object AcousticAnalyzer {
         }
         val highFreqRatio = if (totalEnergy > 0) highEnergy / totalEnergy else 0.0
 
-        val findings = mutableListOf<String>()
+        val findings = mutableListOf<Finding>()
         if (highFreqRatio > HIGH_FREQ_RATIO_WARN) {
-            findings += "Elevated high-frequency noise — possible bearing wear or a dry bearing."
+            findings += Finding(R.string.acou_bearing)
         }
         if (dominantHz <= IMBALANCE_MAX_HZ && tonalRatio > IMBALANCE_TONAL_WARN) {
-            findings += "Strong low tone at ${dominantHz.toInt()} Hz — possible imbalance or debris."
+            findings += Finding(R.string.acou_imbalance, listOf(dominantHz.toInt()))
         }
         if (tonalRatio < LOW_TONAL_WARN && highFreqRatio <= HIGH_FREQ_RATIO_WARN) {
-            findings += "Sound is broadband with no clear fan tone — check the mic is near the fan and the room is quiet."
+            findings += Finding(R.string.acou_broadband)
         }
 
         val healthy = findings.isEmpty()
-        if (healthy) findings += "No obvious fan fault in this clip (indicative only)."
+        if (healthy) findings += Finding(R.string.acou_no_fault)
 
         return Result(
             dominantHz = dominantHz,

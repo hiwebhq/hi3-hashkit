@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Heat reuse screen (HeatReuseScreen). -->
+<resources>
+    <string name="heat_title">Heat reuse</string>
+    <string name="heat_intro">An ASIC turns essentially all the electricity it draws into heat. In heating season, that heat offsets what you\'d otherwise spend to warm the space — so the power isn\'t a pure mining cost. Figures are estimates from live fleet power.</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">Heat output now</string>
+    <string name="heat_output_sub">%1$s kW thermal · %2$d miner(s) online</string>
+    <string name="heat_thermal_per_day">Thermal energy per day</string>
+    <string name="heat_thermal_sub">At the current draw, sustained for 24 h</string>
+    <string name="heat_rate_hint">Set your electricity rate in Settings to see the heat\'s cash value.</string>
+    <string name="heat_value_today">Heating value today</string>
+    <string name="heat_value_today_sub">vs. resistive electric heat (1:1) at %1$s/kWh</string>
+    <string name="heat_value_month">Heating value this month</string>
+    <string name="heat_value_month_sub">≈ %1$s days at the current rate of draw</string>
+    <string name="heat_pump_title">If you heat with a heat pump instead</string>
+    <string name="heat_pump_body">A heat pump (COP ≈ 3) makes the same heat for about a third of the electricity, so the miner offsets roughly %1$s/month against one.</string>
+    <string name="heat_off_season">Off heating season the heat has no value and adds cooling load — pair this with Schedules to wind down in summer.</string>
+</resources>

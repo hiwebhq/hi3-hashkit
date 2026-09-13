@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран аренды хешрейта (HashRentalScreen). -->
+<resources>
+    <string name="rental_title">Аренда хешрейта</string>
+    <string name="rental_edit_link">Изменить ссылку аренды</string>
+    <string name="rental_intro">Арендуйте хешрейт Bitcoin на спотовом рынке Braiins Hashpower. Здесь показан публичный рынок в реальном времени — аренда выполняется на Braiins, а не в этом приложении.</string>
+    <string name="rental_show_in">Показывать в</string>
+    <string name="rental_set_btc_price">Укажите или загрузите цену BTC в настройках, чтобы видеть значения в %1$s.</string>
+
+    <!-- Баннер ошибки -->
+    <string name="rental_unavailable">Braiins Hashpower временно недоступен.</string>
+    <string name="rental_showing_from">Показаны цены от %1$s.</string>
+    <string name="rental_details">Подробности</string>
+    <string name="rental_hide_details">Скрыть подробности</string>
+
+    <!-- Карточка рынка -->
+    <string name="rental_spot_market">СПОТОВЫЙ РЫНОК</string>
+    <string name="rental_best_ask_caption">Лучший аск (самый дешёвый хешрейт для аренды)</string>
+    <string name="rental_last_avg_price">Последняя средняя цена</string>
+    <string name="rental_best_bid">Лучший бид</string>
+    <string name="rental_hashrate_available">Доступный хешрейт</string>
+    <string name="rental_hashrate_matched">Задействованный хешрейт</string>
+    <string name="rental_cheapest_offers">САМЫЕ ДЕШЁВЫЕ ПРЕДЛОЖЕНИЯ</string>
+    <string name="rental_ph_avail">%1$s PH/s доступно</string>
+
+    <!-- Кнопка аренды и подвал -->
+    <string name="rental_rent_button">Арендовать на Braiins Hashpower ↗</string>
+    <string name="rental_footer">Цены поступают в реальном времени из публичного API рынка Braiins Hashpower. Аренда оформляется на hashpower.braiins.com под вашим собственным аккаунтом.</string>
+
+    <!-- Диалог ссылки аренды -->
+    <string name="rental_dialog_title">Ссылка аренды</string>
+    <string name="rental_dialog_body">URL, который открывает кнопка «Арендовать». Вставьте сюда свою реферальную ссылку Braiins Hashpower, если она у вас есть — оставьте поле пустым, чтобы вернуть значение по умолчанию.</string>
+    <string name="rental_url_label">URL</string>
+</resources>

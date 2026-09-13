@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home-screen widget strings (Glance widgets). -->
+<resources>
+    <!-- Hashkit widget -->
+    <string name="widget_online_count">%1$d/%2$d 在线</string>
+
+    <!-- Compare widget -->
+    <string name="widget_hashrate_sources">算力来源</string>
+    <string name="widget_source_local">本地</string>
+    <string name="widget_source_pool">矿池</string>
+    <string name="widget_source_off">关</string>
+
+    <!-- Fleet table widget -->
+    <string name="widget_fleet">机队</string>
+    <string name="widget_no_miners_yet">还没有矿机</string>
+    <string name="widget_more_count">还有 %1$d 台</string>
+    <string name="widget_offline">离线</string>
+</resources>

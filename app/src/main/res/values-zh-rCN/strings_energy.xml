@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Energy & profit screen (EnergyCostScreen). -->
+<resources>
+    <string name="energy_title">能耗与收益</string>
+    <string name="energy_filter_hint">筛选（名称、IP、型号）</string>
+
+    <!-- Sort chips (EnergySort) -->
+    <string name="energy_sort_cost">电费</string>
+    <string name="energy_sort_efficiency">J/TH</string>
+    <string name="energy_sort_net">日净收益</string>
+
+    <!-- Hints -->
+    <string name="energy_rate_hint">在设置中填写电价即可查看电费估算（能耗数据始终显示）。</string>
+    <string name="energy_revenue_hint">计算收入和净收益需要全网难度和 BTC 价格——请在设置中启用自动获取或手动填写。估算不含矿池费和交易费。</string>
+
+    <!-- Fleet total metrics -->
+    <string name="energy_fleet_energy_est">机队能耗估算</string>
+    <string name="energy_revenue_est">收入估算</string>
+    <string name="energy_net_est">净收益估算</string>
+    <string name="energy_this_month">本月</string>
+    <string name="energy_energy">能耗</string>
+    <string name="energy_machines">矿机数</string>
+
+    <!-- "$1.23/day" suffix around a pre-formatted money value -->
+    <string name="energy_per_day_fmt">%1$s/天</string>
+
+    <!-- Row card -->
+    <string name="energy_offline">离线</string>
+    <string name="energy_power">功耗</string>
+    <string name="energy_efficiency">能效</string>
+    <string name="energy_cost">电费</string>
+    <string name="energy_revenue">收入</string>
+    <string name="energy_net">净收益</string>
+    <string name="energy_est_month">本月估算</string>
+</resources>

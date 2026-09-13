@@ -1,5 +1,6 @@
 package hi3.hashkit.ui.table
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +49,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
@@ -199,20 +202,25 @@ class TableViewModel @Inject constructor(
     }
 }
 
-private data class Col(val title: String, val sort: SortColumn, val width: Int)
+private data class Col(
+    @StringRes val titleRes: Int,
+    val sort: SortColumn,
+    val width: Int,
+    val sortable: Boolean = true,
+)
 
 private val COLUMNS = listOf(
-    Col("Name", SortColumn.NAME, 130),
-    Col("IP", SortColumn.IP, 110),
-    Col("Model", SortColumn.MODEL, 120),
-    Col("Hashrate", SortColumn.HASHRATE, 100),
-    Col("Temp", SortColumn.TEMP, 74),
-    Col("Fan", SortColumn.NAME, 74),
-    Col("Pool", SortColumn.POOL, 150),
-    Col("Uptime", SortColumn.UPTIME, 92),
-    Col("J/TH", SortColumn.EFFICIENCY, 78),
-    Col("MHz", SortColumn.FREQUENCY, 74),
-    Col("mV", SortColumn.VOLTAGE, 74),
+    Col(R.string.table_col_name, SortColumn.NAME, 130),
+    Col(R.string.table_col_ip, SortColumn.IP, 110),
+    Col(R.string.table_col_model, SortColumn.MODEL, 120),
+    Col(R.string.table_col_hashrate, SortColumn.HASHRATE, 100),
+    Col(R.string.table_col_temp, SortColumn.TEMP, 74),
+    Col(R.string.table_col_fan, SortColumn.NAME, 74, sortable = false),
+    Col(R.string.table_col_pool, SortColumn.POOL, 150),
+    Col(R.string.table_col_uptime, SortColumn.UPTIME, 92),
+    Col(R.string.table_col_jth, SortColumn.EFFICIENCY, 78),
+    Col(R.string.table_col_mhz, SortColumn.FREQUENCY, 74),
+    Col(R.string.table_col_mv, SortColumn.VOLTAGE, 74),
 )
 
 @OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
@@ -259,10 +267,13 @@ fun TableScreen(
         topBar = {
             if (!landscape) {
                 TopAppBar(
-                    title = { Text("Fleet table", fontWeight = FontWeight.Bold) },
+                    title = { Text(stringResource(R.string.table_title), fontWeight = FontWeight.Bold) },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.common_back),
+                            )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -277,7 +288,7 @@ fun TableScreen(
                 OutlinedTextField(
                     value = state.query,
                     onValueChange = viewModel::setQuery,
-                    label = { Text("Filter (name, IP, model, pool)") },
+                    label = { Text(stringResource(R.string.table_filter_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
                 )
@@ -289,22 +300,29 @@ fun TableScreen(
                         androidx.compose.material3.OutlinedButton(
                             onClick = { showPrintSize = true },
                             enabled = state.miners.isNotEmpty(),
-                        ) { Text("Print QR codes") }
+                        ) { Text(stringResource(R.string.table_print_qr)) }
                     }
                     if (state.advancedUnlocked) {
                         if (state.inventoryTagType.showNfc) {
                             androidx.compose.material3.OutlinedButton(
                                 onClick = { onProgramNfc(state.miners.map { it.id }) },
                                 enabled = state.miners.isNotEmpty(),
-                            ) { Text("Program NFC tags") }
+                            ) { Text(stringResource(R.string.table_program_nfc)) }
                         }
                         androidx.compose.material3.OutlinedButton(
                             onClick = onScan,
-                        ) { Text(if (state.inventoryTagType.showQr) "Scan tag / QR" else "Scan NFC") }
+                        ) {
+                            Text(
+                                stringResource(
+                                    if (state.inventoryTagType.showQr) R.string.table_scan_tag_qr
+                                    else R.string.table_scan_nfc,
+                                ),
+                            )
+                        }
                     }
                 }
                 Text(
-                    "${state.miners.size} tag(s) · scannable in the AR rack overlay · long-press a row to select",
+                    stringResource(R.string.table_tag_hint, state.miners.size),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -329,13 +347,13 @@ fun TableScreen(
                         .padding(vertical = 10.dp, horizontal = 4.dp),
                 ) {
                     COLUMNS.forEach { col ->
-                        val active = state.sort == col.sort && col.title != "Fan"
+                        val active = state.sort == col.sort && col.sortable
                         val arrow = if (active) (if (state.ascending) " ▲" else " ▼") else ""
                         Text(
-                            col.title + arrow,
+                            stringResource(col.titleRes) + arrow,
                             modifier = Modifier
                                 .width(col.width.dp)
-                                .clickable(enabled = col.title != "Fan") { viewModel.toggleSort(col.sort) }
+                                .clickable(enabled = col.sortable) { viewModel.toggleSort(col.sort) }
                                 .padding(horizontal = 4.dp),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
@@ -404,27 +422,31 @@ private fun PrintSizeDialog(
 ) {
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("QR sticker size") },
+        title = { Text(stringResource(R.string.table_qr_sticker_size)) },
         text = {
             Column {
                 Text(
-                    "How big should each printed sticker be? Smaller fits more per page.",
+                    stringResource(R.string.table_qr_size_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
                 hi3.hashkit.integrations.print.AssetTagPrinter.TagSize.entries.forEach { size ->
-                    androidx.compose.material3.TextButton(onClick = { onPick(size) }) { Text(size.label) }
+                    androidx.compose.material3.TextButton(onClick = { onPick(size) }) {
+                        Text(androidx.compose.ui.res.stringResource(size.labelRes))
+                    }
                 }
             }
         },
         confirmButton = {},
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) { Text("Cancel") }
+            androidx.compose.material3.TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.common_cancel))
+            }
         },
     )
 }
 
-@Suppress("CyclomaticComplexMethod") // flat per-column formatting: one small branch per cell
+@Suppress("CyclomaticComplexMethod", "LongMethod") // flat per-column formatting: one small branch per cell; stringResource extraction added lines, not logic
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun TableRow(
@@ -448,7 +470,11 @@ private fun TableRow(
         miner.name,
         miner.host,
         miner.identity.model ?: "—",
-        if (miner.status == MinerStatus.OFFLINE) "offline" else Units.formatHashrate(t?.hashrateGhs?.value),
+        if (miner.status == MinerStatus.OFFLINE) {
+            stringResource(R.string.table_cell_offline)
+        } else {
+            Units.formatHashrate(t?.hashrateGhs?.value)
+        },
         Units.formatTemp(t?.chipTempC?.value, fahrenheit),
         fan,
         t?.poolUrl?.substringAfter("//")?.ifBlank { "—" } ?: "—",

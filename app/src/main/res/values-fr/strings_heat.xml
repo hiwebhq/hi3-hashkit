@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Heat reuse screen (HeatReuseScreen). -->
+<resources>
+    <string name="heat_title">Réutilisation de la chaleur</string>
+    <string name="heat_intro">Un ASIC convertit pratiquement toute l\'électricité qu\'il consomme en chaleur. En saison de chauffage, cette chaleur compense ce que vous dépenseriez autrement pour chauffer l\'espace — la puissance n\'est donc pas un pur coût de minage. Les chiffres sont des estimations basées sur la puissance en direct de la flotte.</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">Chaleur produite actuellement</string>
+    <string name="heat_output_sub">%1$s kW thermiques · %2$d mineur(s) en ligne</string>
+    <string name="heat_thermal_per_day">Énergie thermique par jour</string>
+    <string name="heat_thermal_sub">À la consommation actuelle, soutenue pendant 24 h</string>
+    <string name="heat_rate_hint">Définissez votre tarif d\'électricité dans les Paramètres pour voir la valeur monétaire de la chaleur.</string>
+    <string name="heat_value_today">Valeur de chauffage aujourd\'hui</string>
+    <string name="heat_value_today_sub">vs chauffage électrique résistif (1:1) à %1$s/kWh</string>
+    <string name="heat_value_month">Valeur de chauffage ce mois-ci</string>
+    <string name="heat_value_month_sub">≈ %1$s jours au rythme de consommation actuel</string>
+    <string name="heat_pump_title">Si vous chauffez plutôt avec une pompe à chaleur</string>
+    <string name="heat_pump_body">Une pompe à chaleur (COP ≈ 3) produit la même chaleur pour environ un tiers de l\'électricité ; le mineur ne compense donc qu\'environ %1$s/mois face à elle.</string>
+    <string name="heat_off_season">Hors saison de chauffage, la chaleur n\'a aucune valeur et ajoute une charge de climatisation — combinez ceci avec les Programmations pour ralentir en été.</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner logs screen chrome (ui/logs). Log CONTENT from miners is never localized. -->
+<resources>
+    <string name="logs_title">Journaux de %1$s</string>
+    <string name="logs_status_redacted">"%1$s  ·  portefeuilles masqués"</string>
+    <string name="logs_status_connecting">Connexion…</string>
+    <string name="logs_status_live">En direct</string>
+    <string name="logs_status_disconnected">Déconnecté : %1$s</string>
+    <string name="logs_status_event_log">Journal d\'événements — dérivé des sondages (pas de flux de journaux firmware)</string>
+    <string name="logs_show_raw">Afficher le journal brut</string>
+    <string name="logs_analyze">Analyser le journal</string>
+    <string name="logs_resume">Reprendre</string>
+    <string name="logs_pause">Pause</string>
+    <string name="logs_clear">Effacer</string>
+    <string name="logs_reconnect">Reconnecter</string>
+    <string name="logs_window_live">En direct</string>
+    <string name="logs_analysis_summary">"ANALYSE DU JOURNAL  ·  %1$d lignes  ·  %2$d erreurs  ·  %3$d avertissements"</string>
+    <string name="logs_findings">CONSTATS</string>
+    <string name="logs_export">Exporter les journaux capturés</string>
+    <string name="logs_export_chooser">Exporter les journaux</string>
+    <string name="logs_analysis_footer">Analyse heuristique sur l\'appareil — aucun cloud. « En direct » analyse le flux actuel ; 1h/24h/7j analysent l\'historique capturé (conservé par mineur, ~7 jours). Portefeuilles masqués.</string>
+</resources>

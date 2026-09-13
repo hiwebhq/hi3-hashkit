@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ar_title_qr">Escanear tag / QR</string>
+    <string name="ar_title_nfc">Escanear NFC</string>
+    <string name="ar_camera_needed">O acesso à câmera é necessário para ler os adesivos QR dos mineradores.</string>
+    <string name="ar_nfc_still_works">" Tags NFC continuam funcionando — basta encostar em uma."</string>
+    <string name="ar_grant_camera">Permitir câmera</string>
+    <string name="ar_no_match">Nenhum minerador corresponde a \"%1$s\". Programe a tag/QR com o nome, IP, MAC ou id do minerador.</string>
+    <string name="ar_point_qr">Aponte para o adesivo QR de um minerador</string>
+    <string name="ar_or_tap_nfc">" ou encoste na tag NFC dele"</string>
+    <string name="ar_guidance_suffix">" — nome, IP, MAC ou id. As estatísticas ao vivo aparecem aqui."</string>
+    <string name="ar_turn_on_nfc_suffix">"  (Ative o NFC para encostar em tags.)"</string>
+    <string name="ar_add_dialog_title">Adicionar este minerador?</string>
+    <string name="ar_a_miner">um minerador</string>
+    <string name="ar_add_body">A tag aponta para %1$s em %2$s, que ainda não está no app.</string>
+    <string name="ar_add_location_line">\nLocalização: %1$s</string>
+    <string name="ar_add_confirm_line">\n\nAdicionar agora sondando esse endereço?</string>
+    <string name="ar_no_nfc_hw">Este aparelho não tem NFC.</string>
+    <string name="ar_turn_on_nfc">Ative o NFC para escanear tags.</string>
+    <string name="ar_hold_tag">Encoste a tag NFC de um minerador na parte de trás do celular.</string>
+    <string name="ar_nfc_body">Abre a telemetria ao vivo daquele minerador na hora — sem precisar de câmera.</string>
+    <string name="ar_stat_hash">HASH</string>
+    <string name="ar_stat_power">POTÊNCIA</string>
+    <string name="ar_stat_temp">TEMP</string>
+    <string name="ar_tap_to_open">Toque para abrir · escaneie outro marcador para trocar</string>
+</resources>

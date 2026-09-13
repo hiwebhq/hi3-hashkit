@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Display labels for shared enums (theme colors, webhook types, watchdog rules). -->
+<resources>
+    <string name="enum_theme_blue">Blau</string>
+    <string name="enum_theme_green">Grün</string>
+    <string name="enum_theme_orange">Orange</string>
+    <string name="enum_theme_yellow">Gelb</string>
+    <string name="enum_theme_red">Rot</string>
+    <string name="enum_theme_purple">Lila</string>
+
+    <string name="enum_webhook_none">Aus</string>
+    <string name="enum_webhook_ntfy">ntfy</string>
+    <string name="enum_webhook_gotify">Gotify</string>
+    <string name="enum_webhook_telegram">Telegram</string>
+    <string name="enum_webhook_generic">Generisch (JSON-POST)</string>
+
+    <string name="enum_plug_tasmota">Tasmota</string>
+    <string name="enum_plug_shelly">Shelly</string>
+    <string name="enum_plug_kasa">Kasa / TP-Link</string>
+    <string name="enum_plug_webhook">Generischer Webhook</string>
+
+    <string name="enum_tag_standard">Standard — 38 mm</string>
+    <string name="enum_tag_small">Klein — 25 mm</string>
+
+    <string name="enum_cond_chip_temp_above">Chip-Temp über</string>
+    <string name="enum_cond_vr_temp_above">VR-Temp über</string>
+    <string name="enum_cond_hashrate_below_pct" formatted="false">Hashrate unter % vom Soll</string>
+    <string name="enum_cond_reject_rate_above">Ablehnungsrate über</string>
+    <string name="enum_cond_offline">Miner offline</string>
+
+    <string name="enum_action_pause">Hashing pausieren</string>
+    <string name="enum_action_resume">Hashing fortsetzen</string>
+    <string name="enum_action_reboot">Neustart</string>
+    <string name="enum_action_plug_off">Smart-Steckdose AUS</string>
+    <string name="enum_action_plug_on">Smart-Steckdose AN</string>
+    <string name="enum_action_notify">Nur benachrichtigen</string>
+</resources>

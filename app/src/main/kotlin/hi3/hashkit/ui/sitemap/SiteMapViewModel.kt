@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import hi3.hashkit.R
 import hi3.hashkit.adapters.cgminer.GenericCgMinerAdapter
 import hi3.hashkit.data.db.FarmEntity
 import hi3.hashkit.data.repo.AddMinerResult
@@ -117,7 +118,7 @@ class SiteMapViewModel @Inject constructor(
     /** Begin a fresh capture session at B1-R1-T1-P1 and open the UDP listener. */
     fun start() {
         val cfg = parsedConfig() ?: run {
-            _state.update { it.copy(error = "Enter a number of buildings, racks, tiers and positions first.") }
+            _state.update { it.copy(error = context.getString(R.string.site_error_enter_numbers)) }
             return
         }
         seenMacs.clear()
@@ -163,7 +164,7 @@ class SiteMapViewModel @Inject constructor(
                 phase = SitePhase.CAPTURE, cursor = last, captured = s.captured - last,
                 // Undoing out of DONE (or while stopped) leaves the session paused, not live.
                 paused = !s.running,
-                lastEvent = removed?.let { "Undid ${it.slot.code} (${it.ip})" },
+                lastEvent = removed?.let { context.getString(R.string.site_undid, it.slot.code, it.ip) },
             )
         }
     }
@@ -181,7 +182,7 @@ class SiteMapViewModel @Inject constructor(
     fun manualFill(ipText: String) {
         val ip = ipText.trim()
         if (parseIpReport("$ip,00:00:00:00:00:00") == null) {
-            _state.update { it.copy(error = "\"$ip\" is not a valid IPv4 address.") }
+            _state.update { it.copy(error = context.getString(R.string.site_error_invalid_ipv4, ip)) }
             return
         }
         record(ip = ip, mac = null, manual = true)
@@ -194,7 +195,7 @@ class SiteMapViewModel @Inject constructor(
                 .catch { e ->
                     val cause = e.message ?: e.javaClass.simpleName
                     _state.update {
-                        it.copy(running = false, paused = true, error = "Listener failed: $cause")
+                        it.copy(running = false, paused = true, error = context.getString(R.string.site_listener_failed, cause))
                     }
                 }
                 .collect { report ->
@@ -276,8 +277,8 @@ class SiteMapViewModel @Inject constructor(
                 }
             }
             val summary = buildString {
-                append("Saved to \"$name\": $added added, $known already known")
-                if (failed > 0) append(", $failed failed")
+                append(context.getString(R.string.site_saved_result, name, added, known))
+                if (failed > 0) append(context.getString(R.string.site_saved_failed_suffix, failed))
             }
             _state.update { it.copy(saving = false, saveResult = summary) }
         }

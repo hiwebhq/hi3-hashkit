@@ -35,10 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.ui.theme.HiBrand
 
@@ -58,10 +60,13 @@ fun AutotuneScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Auto-tuner", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.tune_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -76,45 +81,46 @@ fun AutotuneScreen(
         ) {
             item {
                 Text(
-                    "Sweeps the firmware-approved frequencies at your current voltage, lets each " +
-                        "settle, measures J/TH and chip temp, then restores your original setpoint " +
-                        "and recommends the best point under your temperature ceiling. It stops " +
-                        "climbing once the ceiling is hit. Applying is a separate tap — keep the app " +
-                        "open during the sweep.",
+                    stringResource(R.string.tune_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
             }
             if (!state.supported) {
-                item { Text(state.message ?: "Not supported on this miner.", color = HiBrand.statusDegraded) }
+                item {
+                    Text(
+                        state.message ?: stringResource(R.string.tune_not_supported),
+                        color = HiBrand.statusDegraded,
+                    )
+                }
                 return@LazyColumn
             }
             insights?.let { ins -> item { TuneInsightsCard(ins) } }
             item {
-                IntChipRow("Settle per step", listOf(60, 90, 120), settle, !state.running, "s") {
+                IntChipRow(stringResource(R.string.tune_settle_per_step), listOf(60, 90, 120), settle, !state.running, "s") {
                     settle = it
                 }
             }
             item {
-                IntChipRow("Temp ceiling", listOf(65, 70, 75), maxTemp, !state.running, "°C") {
+                IntChipRow(stringResource(R.string.tune_temp_ceiling), listOf(65, 70, 75), maxTemp, !state.running, "°C") {
                     maxTemp = it
                 }
             }
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text("Optimize for", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.tune_optimize_for), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                     FilterChip(
                         selected = !optimizeHashrate,
                         onClick = { optimizeHashrate = false },
                         enabled = !state.running,
-                        label = { Text("Efficiency") },
+                        label = { Text(stringResource(R.string.tune_efficiency)) },
                         modifier = Modifier.padding(start = 6.dp),
                     )
                     FilterChip(
                         selected = optimizeHashrate,
                         onClick = { optimizeHashrate = true },
                         enabled = !state.running,
-                        label = { Text("Hashrate") },
+                        label = { Text(stringResource(R.string.tune_hashrate)) },
                         modifier = Modifier.padding(start = 6.dp),
                     )
                 }
@@ -124,15 +130,22 @@ fun AutotuneScreen(
                     val frac = if (state.stepTotal > 0) state.stepIndex.toFloat() / state.stepTotal else 0f
                     LinearProgressIndicator(progress = { frac }, modifier = Modifier.fillMaxWidth())
                     Spacer(Modifier.height(6.dp))
-                    Text("Step ${state.stepIndex}/${state.stepTotal} — ${state.currentLabel}",
-                        style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary)
+                    Text(
+                        stringResource(R.string.tune_step_progress, state.stepIndex, state.stepTotal, state.currentLabel),
+                        style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary,
+                    )
                     Spacer(Modifier.height(8.dp))
-                    OutlinedButton(onClick = { viewModel.cancel() }) { Text("Cancel") }
+                    OutlinedButton(onClick = { viewModel.cancel() }) { Text(stringResource(R.string.common_cancel)) }
                 } else {
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Button(onClick = { viewModel.start(settle, maxTemp, optimizeHashrate) }) { Text("Start sweep") }
-                        if (state.bestFrequencyMhz != null) {
-                            Button(onClick = { viewModel.applyBest() }) { Text("Apply best (${state.bestFrequencyMhz} MHz)") }
+                        Button(onClick = { viewModel.start(settle, maxTemp, optimizeHashrate) }) {
+                            Text(stringResource(R.string.tune_start_sweep))
+                        }
+                        val best = state.bestFrequencyMhz
+                        if (best != null) {
+                            Button(onClick = { viewModel.applyBest() }) {
+                                Text(stringResource(R.string.tune_apply_best, best))
+                            }
                         }
                     }
                 }
@@ -142,7 +155,7 @@ fun AutotuneScreen(
             }
             if (state.results.isNotEmpty()) {
                 item {
-                    Text("RESULTS (best first)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    Text(stringResource(R.string.tune_results_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 }
                 items(state.results, key = { it.frequencyMhz }) { r ->
                     ResultRow(r, isBest = r.frequencyMhz == state.bestFrequencyMhz)
@@ -154,12 +167,12 @@ fun AutotuneScreen(
                 item {
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "OPTIMIZER — ${optimizer.sampleCount} saved point(s)",
+                            stringResource(R.string.tune_optimizer_header, optimizer.sampleCount),
                             style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
                             modifier = Modifier.weight(1f),
                         )
                         OutlinedButton(onClick = { viewModel.clearHistory() }, enabled = !state.running) {
-                            Text("Clear")
+                            Text(stringResource(R.string.tune_clear))
                         }
                     }
                 }
@@ -171,21 +184,25 @@ fun AutotuneScreen(
                         Column(Modifier.padding(14.dp)) {
                             optimizer.bestEfficiency?.let {
                                 Text(
-                                    "Most efficient: ${it.frequencyMhz} MHz @ ${it.voltageMv} mV — " +
-                                        "%.1f J/TH".format(it.efficiencyJTh),
+                                    stringResource(
+                                        R.string.tune_most_efficient,
+                                        it.frequencyMhz, it.voltageMv, "%.1f".format(it.efficiencyJTh),
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary,
                                 )
                             }
                             optimizer.bestHashrate?.let {
                                 Text(
-                                    "Most hashrate: ${it.frequencyMhz} MHz @ ${it.voltageMv} mV — " +
-                                        Units.formatHashrate(it.hashrateGhs),
+                                    stringResource(
+                                        R.string.tune_most_hashrate,
+                                        it.frequencyMhz, it.voltageMv, Units.formatHashrate(it.hashrateGhs),
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary,
                                     modifier = Modifier.padding(top = 2.dp),
                                 )
                             }
                             Text(
-                                "Built from all sweeps on this miner — run more sweeps to sharpen the curve.",
+                                stringResource(R.string.tune_optimizer_hint),
                                 style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
                                 modifier = Modifier.padding(top = 6.dp),
                             )
@@ -193,7 +210,7 @@ fun AutotuneScreen(
                     }
                 }
                 if (optimizer.efficiencyCurve.isNotEmpty()) {
-                    item { Text("EFFICIENCY CURVE", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
+                    item { Text(stringResource(R.string.tune_efficiency_curve), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
                     items(optimizer.efficiencyCurve, key = { "curve-${it.frequencyMhz}" }) { p ->
                         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text("${p.frequencyMhz} MHz", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
@@ -219,7 +236,7 @@ private fun ResultRow(r: TuneResult, isBest: Boolean) {
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("${r.frequencyMhz} MHz @ ${r.voltageMv} mV" + if (r.overTemp) "  ⚠ over ceiling" else "",
+                Text("${r.frequencyMhz} MHz @ ${r.voltageMv} mV" + if (r.overTemp) stringResource(R.string.tune_over_ceiling) else "",
                     style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
                     color = if (r.overTemp) HiBrand.statusOffline else HiBrand.textPrimary)
                 Text(
@@ -275,17 +292,18 @@ private fun TuneInsightsCard(ins: AutotuneViewModel.TuneInsightsUi) {
     ) {
         Column(Modifier.padding(14.dp)) {
             Text(
-                "OBSERVED OPERATING POINTS (7 DAYS)",
+                stringResource(R.string.tune_observed_points),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
             ins.periods.forEach { p ->
                 val marks = buildString {
-                    if (p === ins.bestEfficiency) append(" ⚡best J/TH")
-                    if (p === ins.bestHashrate) append(" ▲best rate")
+                    if (p === ins.bestEfficiency) append(stringResource(R.string.tune_mark_best_efficiency))
+                    if (p === ins.bestHashrate) append(stringResource(R.string.tune_mark_best_rate))
                 }
                 Text(
-                    "%.0f MHz / %.0f mV — %.2f TH/s · %s J/TH · max %s · ≈%.1f h%s".format(
+                    stringResource(
+                        R.string.tune_observed_point,
                         p.frequencyMhz, p.coreVoltageMv,
                         (p.avgHashrateGhs ?: 0.0) / GHS_PER_THS,
                         p.avgEfficiencyJTh?.let { "%.1f".format(it) } ?: "—",
@@ -300,8 +318,11 @@ private fun TuneInsightsCard(ins: AutotuneViewModel.TuneInsightsUi) {
             }
             ins.peerGapPercent?.let { gap ->
                 Text(
-                    "vs same-model peers (${ins.peerCount}): " +
-                        (if (gap >= 0) "+" else "") + "%.1f%% hashrate (24h avg)".format(gap),
+                    stringResource(
+                        R.string.tune_peer_gap,
+                        ins.peerCount,
+                        (if (gap >= 0) "+" else "") + "%.1f%%".format(gap),
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = if (gap < PEER_LAG_WARN_PCT) HiBrand.statusDegraded else HiBrand.textSecondary,
                     modifier = Modifier.padding(top = 8.dp),

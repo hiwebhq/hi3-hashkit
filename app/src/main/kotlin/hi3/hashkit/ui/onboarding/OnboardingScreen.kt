@@ -11,15 +11,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.annotation.StringRes
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hi3.hashkit.R
+import hi3.hashkit.ui.language.LanguagePicker
 import hi3.hashkit.ui.theme.HiBrand
 import hi3.hashkit.ui.theme.HiLogo
 
@@ -38,24 +42,29 @@ fun OnboardingScreen(onDone: () -> Unit) {
         HiLogo(markSize = 56.dp, fontSize = 32.sp)
         Spacer(Modifier.height(16.dp))
         Text(
-            "Your mining fleet, in your pocket.",
+            stringResource(R.string.onboarding_tagline),
             style = MaterialTheme.typography.titleMedium,
             color = HiBrand.textPrimary,
         )
-        Spacer(Modifier.height(28.dp))
+        Spacer(Modifier.height(20.dp))
 
-        Point("Local-first", "Talks only to the miners on your network — or over your Tailscale VPN. No account, no cloud.")
-        Point("Live & honest", "Real hashrate, temps, power and health — clearly marked when a value is estimated or unavailable.")
-        Point("Safe controls", "Reboot, pool, fan and firmware-bounded tuning with confirmations and rollback, only where verified.")
-        Point("Private", "Your data stays on this device. Hi3 Pool and MMP views are optional, read-only, and off by default.")
+        // Let non-English speakers switch before reading anything else; picking a chip
+        // recreates the activity and re-renders this screen translated.
+        LanguagePicker(showSystemChoice = false)
+        Spacer(Modifier.height(20.dp))
+
+        Point(R.string.onboarding_local_title, R.string.onboarding_local_body)
+        Point(R.string.onboarding_live_title, R.string.onboarding_live_body)
+        Point(R.string.onboarding_safe_title, R.string.onboarding_safe_body)
+        Point(R.string.onboarding_private_title, R.string.onboarding_private_body)
 
         Spacer(Modifier.height(32.dp))
         Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-            Text("Get started")
+            Text(stringResource(R.string.onboarding_get_started))
         }
         Spacer(Modifier.height(8.dp))
         Text(
-            "Next you can scan your network, add a miner by IP, or try demo mode.",
+            stringResource(R.string.onboarding_next_hint),
             style = MaterialTheme.typography.labelSmall,
             color = HiBrand.textSecondary,
         )
@@ -63,15 +72,20 @@ fun OnboardingScreen(onDone: () -> Unit) {
 }
 
 @Composable
-private fun Point(title: String, body: String) {
+private fun Point(@StringRes title: Int, @StringRes body: Int) {
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
         androidx.compose.foundation.Canvas(Modifier.size(8.dp).padding(top = 6.dp)) {
             drawCircle(HiBrand.accent)
         }
         Spacer(Modifier.size(12.dp))
         Column {
-            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
-            Text(body, style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary)
+            Text(
+                stringResource(title),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = HiBrand.textPrimary,
+            )
+            Text(stringResource(body), style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary)
         }
     }
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">计划任务</string>
+    <string name="sched_add_schedule">添加计划</string>
+    <string name="sched_intro">计划在应用轮询时（前台）或后台监控周期（约 15 分钟粒度）执行——并非精确到时刻。错过的当天会被跳过，绝不补跑。</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s，%2$s，%3$s · 目标：%4$s</string>
+    <string name="sched_row_group">分组“%1$s”</string>
+    <string name="sched_row_all_miners">所有矿机</string>
+    <string name="sched_last_run">上次执行 %1$s：%2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">新建计划</string>
+    <string name="sched_name">名称</string>
+    <string name="sched_action_restart">重启</string>
+    <string name="sched_action_pool">矿池</string>
+    <string name="sched_action_fan">风扇</string>
+    <string name="sched_action_pause">暂停</string>
+    <string name="sched_action_resume">恢复</string>
+    <string name="sched_action_plug_off">插座断电</string>
+    <string name="sched_action_plug_on">插座通电</string>
+    <string name="sched_action_tune_preset">调优预设</string>
+    <string name="sched_stratum_url">Stratum URL</string>
+    <string name="sched_port">端口</string>
+    <string name="sched_worker">矿工</string>
+    <string name="sched_automatic">自动</string>
+    <string name="sched_manual_percent">手动：%1$d%%</string>
+    <string name="sched_frequency_mhz">频率（MHz）</string>
+    <string name="sched_core_voltage_mv">核心电压（mV）</string>
+    <string name="sched_time_label">时间（HH:MM，设备时区）</string>
+    <string name="sched_target_group">目标分组（留空 = 所有矿机）</string>
+    <string name="sched_hint_plug">插座通/断电会通过局域网切换每台目标矿机已配置的智能插座。未配置插座的矿机会被跳过。可搭配夜间断电、早晨通电实现分时用电控制；每次执行都有记录。</string>
+    <string name="sched_hint_tune">分时功耗目标：应用固定的频率/电压预设。峰值电价开始时使用低功耗预设，结束时恢复常规预设。仅接受这些参数的固件（如 Bitaxe/AxeOS）会执行；其余会被跳过。请使用矿机调优器接受的数值。</string>
+    <string name="sched_hint_default">分时用电：在峰值电价开始时安排“暂停”、结束时安排“恢复”（暂停需设备支持）。不支持的设备会跳过并说明原因；每次执行都会记入审计日志。</string>
+</resources>

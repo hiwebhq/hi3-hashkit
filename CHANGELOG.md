@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.78.0
+
+- **Hashkit speaks 7 languages.** Full translations for Spanish, Chinese (Simplified),
+  Russian, German, French, and Brazilian Portuguese. Pick your language in
+  Settings → Display, or right on the welcome screen before first use — it applies
+  instantly and persists. On Android 13+ Hashkit also appears under System
+  Settings → App languages.
+- Notifications, home-screen widgets, watchdog rules, and the watch tile are localized
+  too (widgets and notifications follow the system language on Android 8–12).
+- Miner detail: tapping the IP address on the Identity card now opens the miner's web UI.
+- Wall/Rack views: miners assigned to a farm are grouped under the farm's name instead
+  of "Unassigned".
+
 ## 0.77.7
 
 - **3D fleet view (Flow → 3D).** Orbit your whole fleet in 3D — drag to rotate, pinch to

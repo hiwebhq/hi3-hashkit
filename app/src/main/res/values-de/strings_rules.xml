@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">Automatisierungsregeln</string>
+    <string name="rules_add_rule">Regel hinzufügen</string>
+    <string name="rules_intro">Regeln werden bei jedem Poll-Zyklus geprüft. Eine Bedingung muss über das Haltefenster der Regel bestehen, bevor die Aktion läuft, und jede Regel feuert höchstens einmal pro Intervall pro Miner. Stummgeschaltete Miner werden übersprungen, nicht unterstützte Steueraktionen werden mit Begründung übersprungen, und jedes Auslösen erzeugt eine Watchdog-Benachrichtigung.</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"WENN %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" für ≥%1$dm"</string>
+    <string name="rules_row_group">"  ·  Gruppe \"%1$s\""</string>
+    <string name="rules_row_all_miners">"  ·  alle Miner"</string>
+    <string name="rules_row_interval">"  ·  alle %1$dm pro Miner"</string>
+    <string name="rules_last_fired">Zuletzt ausgelöst %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">Neue Regel</string>
+    <string name="rules_name">Name</string>
+    <string name="rules_when">Wenn</string>
+    <string name="rules_then">Dann</string>
+    <string name="rules_threshold">Schwellwert (%1$s)</string>
+    <string name="rules_target_group">Zielgruppe (leer = alle)</string>
+    <string name="rules_sustained_label">Anhalten für (min, 0 = erster Treffer)</string>
+    <string name="rules_min_interval_label">Mindestintervall zwischen Auslösungen pro Miner (min)</string>
+    <string name="rules_editor_hint">Steueraktionen (Pause/Fortsetzen/Neustart) nutzen den verifizierten Steuerpfad des Miners und werden übersprungen, wo nicht unterstützt. Steckdosen-Aktionen brauchen eine eingerichtete Smart-Steckdose. Teste zuerst mit hohem Intervall.</string>
+</resources>

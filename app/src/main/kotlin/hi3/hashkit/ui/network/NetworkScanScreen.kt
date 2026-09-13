@@ -37,10 +37,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 import java.time.Duration
 import java.time.Instant
@@ -57,15 +59,15 @@ fun NetworkScanScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Network scan", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.net_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.refreshNetwork() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh network info")
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.net_refresh_network_info))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -82,9 +84,7 @@ fun NetworkScanScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(
-                "Scans your local subnet for miners on their known ports (HTTP 80, CGMiner " +
-                    "4028). Only private LAN and Tailscale addresses are probed. Runs " +
-                    "automatically at launch so devices appear before you open Add Miner.",
+                stringResource(R.string.net_intro),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textSecondary,
             )
@@ -95,9 +95,13 @@ fun NetworkScanScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("This device", style = MaterialTheme.typography.labelMedium, color = HiBrand.textSecondary)
                     Text(
-                        state.localIp ?: "Not on a Wi-Fi / LAN network",
+                        stringResource(R.string.net_this_device),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = HiBrand.textSecondary,
+                    )
+                    Text(
+                        state.localIp ?: stringResource(R.string.net_not_on_network),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = if (state.localIp != null) HiBrand.textPrimary else HiBrand.statusDegraded,
@@ -109,7 +113,7 @@ fun NetworkScanScreen(
             OutlinedTextField(
                 value = state.cidr,
                 onValueChange = viewModel::onCidrChange,
-                label = { Text("Scan range (CIDR)") },
+                label = { Text(stringResource(R.string.net_scan_range_label)) },
                 placeholder = { Text("192.168.1.0/24") },
                 singleLine = true,
                 enabled = !state.running,
@@ -124,7 +128,7 @@ fun NetworkScanScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    "Scanning ${state.scanned} / ${state.total} — ${state.found} found",
+                    stringResource(R.string.net_scanning_progress, state.scanned, state.total, state.found),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -134,7 +138,7 @@ fun NetworkScanScreen(
                 }
                 state.lastFinishedAtMs?.let { ts ->
                     Text(
-                        "Last scan ${ago(ts)}.",
+                        stringResource(R.string.net_last_scan, ago(ts)),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -151,18 +155,18 @@ fun NetworkScanScreen(
                     ) {
                         Icon(Icons.Filled.Stop, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.size(6.dp))
-                        Text("Stop")
+                        Text(stringResource(R.string.common_stop))
                     }
                     OutlinedButton(onClick = { viewModel.restart() }, modifier = Modifier.weight(1f)) {
                         Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.size(6.dp))
-                        Text("Restart")
+                        Text(stringResource(R.string.net_restart))
                     }
                 } else {
                     Button(onClick = { viewModel.start() }, modifier = Modifier.weight(1f)) {
                         Icon(Icons.Filled.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.size(6.dp))
-                        Text("Start scan")
+                        Text(stringResource(R.string.net_start_scan))
                     }
                     val mdnsRunning by viewModel.mdnsRunning.collectAsStateWithLifecycle()
                     OutlinedButton(
@@ -170,7 +174,10 @@ fun NetworkScanScreen(
                         enabled = !mdnsRunning,
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text(if (mdnsRunning) "Discovering…" else "mDNS discover")
+                        Text(
+                            if (mdnsRunning) stringResource(R.string.net_discovering)
+                            else stringResource(R.string.net_mdns_discover)
+                        )
                     }
                 }
             }
@@ -181,9 +188,9 @@ fun NetworkScanScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("Scan automatically at launch", color = HiBrand.textPrimary)
+                    Text(stringResource(R.string.net_auto_scan_title), color = HiBrand.textPrimary)
                     Text(
-                        "Kick off a subnet scan when the app opens.",
+                        stringResource(R.string.net_auto_scan_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = HiBrand.textSecondary,
                     )
@@ -197,12 +204,13 @@ fun NetworkScanScreen(
     }
 }
 
+@Composable
 private fun ago(epochMs: Long): String {
     val d = Duration.between(Instant.ofEpochMilli(epochMs), Instant.now())
     val mins = d.toMinutes()
     return when {
-        mins < 1 -> "just now"
-        mins < 60 -> "${mins}m ago"
-        else -> "${d.toHours()}h ago"
+        mins < 1 -> stringResource(R.string.net_just_now)
+        mins < 60 -> stringResource(R.string.net_minutes_ago, mins)
+        else -> stringResource(R.string.net_hours_ago, d.toHours())
     }
 }

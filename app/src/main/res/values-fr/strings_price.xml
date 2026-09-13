@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Price curtailment screen (PriceCurtailmentScreen). -->
+<resources>
+    <string name="price_title">Réduction selon le prix</string>
+    <string name="price_intro">Mettez en pause lors des pics de prix et minez quand l\'électricité est bon marché, grâce au flux gratuit demi-horaire Octopus Agile (Royaume-Uni). Aucun compte ni clé requis — seul le prix public de votre région est récupéré.</string>
+
+    <!-- Live price card -->
+    <string name="price_now_label">PRIX ACTUEL</string>
+    <string name="price_next6h">6 prochaines h : min %1$s · max %2$s p/kWh</string>
+    <string name="price_reco_run">Recommandation : bon marché — reprendre le minage</string>
+    <string name="price_reco_curtail">Recommandation : cher — réduire le minage</string>
+    <string name="price_reco_hold">Recommandation : maintenir (dans la zone morte)</string>
+
+    <!-- Actions -->
+    <string name="price_refresh">Actualiser les prix</string>
+    <string name="price_resume_fleet">Reprendre la flotte</string>
+    <string name="price_curtail_fleet">Réduire la flotte</string>
+
+    <!-- Sections & configuration -->
+    <string name="price_next_slots">PROCHAINS CRÉNEAUX</string>
+    <string name="price_configuration">CONFIGURATION</string>
+    <string name="price_region_label">Lettre de région (A–P)</string>
+    <string name="price_region_placeholder">C pour Londres</string>
+    <string name="price_resume_label">Reprendre ≤ p/kWh</string>
+    <string name="price_curtail_label">Réduire ≥ p/kWh</string>
+    <string name="price_save_config">Enregistrer la configuration</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Energy & profit screen (EnergyCostScreen). -->
+<resources>
+    <string name="energy_title">Energy &amp; profit</string>
+    <string name="energy_filter_hint">Filter (name, IP, model)</string>
+
+    <!-- Sort chips (EnergySort) -->
+    <string name="energy_sort_cost">Cost</string>
+    <string name="energy_sort_efficiency">J/TH</string>
+    <string name="energy_sort_net">Net/day</string>
+
+    <!-- Hints -->
+    <string name="energy_rate_hint">Set your electricity rate in Settings to see cost estimates (energy use shows regardless).</string>
+    <string name="energy_revenue_hint">Revenue and net need network difficulty and a BTC price — enable auto-fetch or set them in Settings. Estimates exclude pool and transaction fees.</string>
+
+    <!-- Fleet total metrics -->
+    <string name="energy_fleet_energy_est">Fleet Energy Est.</string>
+    <string name="energy_revenue_est">Revenue Est.</string>
+    <string name="energy_net_est">Net Est.</string>
+    <string name="energy_this_month">This month</string>
+    <string name="energy_energy">Energy</string>
+    <string name="energy_machines">Machines</string>
+
+    <!-- "$1.23/day" suffix around a pre-formatted money value -->
+    <string name="energy_per_day_fmt">%1$s/day</string>
+
+    <!-- Row card -->
+    <string name="energy_offline">offline</string>
+    <string name="energy_power">Power</string>
+    <string name="energy_efficiency">Efficiency</string>
+    <string name="energy_cost">Cost</string>
+    <string name="energy_revenue">Revenue</string>
+    <string name="energy_net">Net</string>
+    <string name="energy_est_month">Est. month</string>
+</resources>

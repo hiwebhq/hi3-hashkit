@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран деталей майнера (ui/detail). -->
+<resources>
+    <!-- Top bar / scaffold -->
+    <string name="det_title_miner">Майнер</string>
+    <string name="det_cd_edit_miner">Изменить майнер</string>
+    <string name="det_cd_remove_miner">Удалить майнер</string>
+    <string name="det_miner_not_found">Майнер не найден</string>
+    <string name="det_percent_of_expected">%1$s от ожидаемого</string>
+
+    <!-- Section titles -->
+    <string name="det_section_live_view">ЖИВОЙ ВИД</string>
+    <string name="det_section_hashrate_history">ИСТОРИЯ ХЕШРЕЙТА</string>
+    <string name="det_section_efficiency">ЭФФЕКТИВНОСТЬ (J/TH)</string>
+    <string name="det_section_per_chip">СОСТОЯНИЕ ЧИПОВ</string>
+    <string name="det_section_live_telemetry">ЖИВАЯ ТЕЛЕМЕТРИЯ</string>
+    <string name="det_section_shares_pool">ШАРЫ И ПУЛ</string>
+    <string name="det_section_live_logs">ЖИВЫЕ ЛОГИ</string>
+    <string name="det_section_event_log">ЖУРНАЛ СОБЫТИЙ</string>
+    <string name="det_section_maintenance">ЖУРНАЛ ОБСЛУЖИВАНИЯ</string>
+    <string name="det_section_identity">ИДЕНТИФИКАЦИЯ</string>
+    <string name="det_section_health">ОЦЕНКА ЗДОРОВЬЯ</string>
+    <string name="det_section_login">ЛОГИН МАЙНЕРА (ДЛЯ УПРАВЛЕНИЯ)</string>
+    <string name="det_section_controls">УПРАВЛЕНИЕ</string>
+    <string name="det_section_plug">АВАРИЙНОЕ ОТКЛЮЧЕНИЕ (УМНАЯ РОЗЕТКА)</string>
+    <string name="det_section_alerts">НЕДАВНИЕ ОПОВЕЩЕНИЯ</string>
+    <string name="det_section_raw">СЫРОЙ ОТВЕТ API</string>
+    <string name="det_tap_to_show">"  (нажмите, чтобы показать)"</string>
+
+    <!-- Live view -->
+    <string name="det_live_view_hint">Стилизованный живой рендер: вентилятор вращается по сообщённым RPM, чипы светятся по температуре, LED показывает статус.</string>
+
+    <!-- Hashrate history -->
+    <string name="det_no_reading_yet">Успешных показаний пока нет</string>
+    <string name="det_last_reading_seconds">Последнее показание %1$d с назад</string>
+    <string name="det_last_reading_minutes">Последнее показание %1$d мин назад — устарело</string>
+    <string name="det_uptime_energy">"  ·  аптайм %1$d%%  ·  ~%2$s энергии"</string>
+    <string name="det_export_csv">Экспорт CSV</string>
+    <string name="det_export_csv_chooser">Экспорт CSV телеметрии</string>
+
+    <!-- Efficiency -->
+    <string name="det_eff_stats">"мин %1$s  ·  сейчас %2$s  ·  макс %3$s J/TH   (меньше — лучше)"</string>
+
+    <!-- Live telemetry metrics -->
+    <string name="det_metric_power">Мощность</string>
+    <string name="det_metric_efficiency">Эффективность</string>
+    <string name="det_metric_chip_temp">Темп. чипа</string>
+    <string name="det_metric_vr_temp">Темп. VR</string>
+    <string name="det_metric_frequency">Частота</string>
+    <string name="det_metric_core_v">V ядра</string>
+    <string name="det_metric_fan_n">Вентилятор %1$d</string>
+    <string name="det_metric_uptime">Аптайм</string>
+
+    <!-- Shares & pool -->
+    <string name="det_metric_accepted">Принято</string>
+    <string name="det_metric_rejected">Отклонено</string>
+    <string name="det_metric_best_diff">Лучшая сложность</string>
+    <string name="det_metric_session_best">Лучшая за сессию</string>
+    <string name="det_pool_prefix">Пул: %1$s</string>
+    <string name="det_fallback_active">"  (активен резервный)"</string>
+
+    <!-- Logs -->
+    <string name="det_open_live_logs">Открыть живой поток логов</string>
+    <string name="det_live_logs_hint">Пока экран открыт, транслирует логи прошивки через WebSocket майнера. Адреса кошельков скрываются.</string>
+    <string name="det_open_event_log">Открыть журнал событий</string>
+    <string name="det_event_log_hint">Эта прошивка не даёт потока логов, поэтому Hashkit записывает события здоровья по каждому опросу — перезагрузки, превышения температурных лимитов, отключения, остановки вентиляторов, всплески отказов — и анализирует их.</string>
+
+    <!-- Maintenance log -->
+    <string name="det_add_note_label">Добавить заметку (напр. «сменил пасту», «заменил вентилятор 2»)</string>
+    <string name="det_add_note">Добавить заметку</string>
+    <string name="det_gallery">Галерея</string>
+    <string name="det_camera">Камера</string>
+    <string name="det_no_notes">Заметок об обслуживании пока нет. Записывайте замену пасты, вентиляторов, чистки — они хранятся на этом устройстве и входят в полный бэкап.</string>
+    <string name="det_cd_delete_note">Удалить заметку</string>
+    <string name="det_cd_note_photo">Фото обслуживания — нажмите для полного размера</string>
+    <string name="det_cd_photo">Фото обслуживания</string>
+    <string name="det_share_photo">Поделиться фото</string>
+    <string name="det_photo_missing">Файл фото отсутствует</string>
+
+    <!-- Identity -->
+    <string name="det_id_model">Модель</string>
+    <string name="det_id_asic">ASIC</string>
+    <string name="det_id_firmware">Прошивка</string>
+    <string name="det_id_mac">MAC</string>
+    <string name="det_id_serial">Серийный номер</string>
+    <string name="det_id_address">Адрес</string>
+
+    <!-- Miner login -->
+    <string name="det_login_label_totp">Секрет TOTP (base32)</string>
+    <string name="det_login_label_bitmain">Пароль веб-интерфейса root</string>
+    <string name="det_login_label_vnish">Пароль веб-интерфейса VNish</string>
+    <string name="det_login_saved_hint">Учётные данные сохранены (зашифрованы). Введите новые, чтобы заменить, или очистите.</string>
+    <string name="det_login_totp_hint">Нужно только если на устройстве включён OTP: введите секрет TOTP из QR регистрации (otpauth://…secret=…), чтобы включить тюнинг/перезагрузку. Хранится в зашифрованном виде только на этом устройстве.</string>
+    <string name="det_login_password_hint">Введите веб-пароль майнера, чтобы включить управление. Хранится в зашифрованном виде только на этом устройстве.</string>
+    <string name="det_clear">Очистить</string>
+
+    <!-- Controls (card + autotuner entry) -->
+    <string name="det_autotuner">Автотюнер эффективности (перебор J/TH)</string>
+    <string name="det_monitoring_only">Это устройство — только для мониторинга.</string>
+    <string name="det_restart">Перезагрузить</string>
+    <string name="det_stop_blink">Остановить мигание</string>
+    <string name="det_blink_led">Мигать LED</string>
+    <string name="det_pool">Пул</string>
+    <string name="det_fan">Вентилятор</string>
+    <string name="det_tune">Тюнинг</string>
+    <string name="det_power">Питание</string>
+    <string name="det_working">Выполняется: %1$s…</string>
+    <string name="det_restart_title">Перезагрузить майнер?</string>
+    <string name="det_restart_body">Хеширование остановится на ~30–60 секунд, пока майнер перезагружается. Шары в отправке могут быть потеряны. Настройки не меняются.</string>
+    <string name="det_power_title">Пауза или возобновление хеширования</string>
+    <string name="det_power_body">«Пауза» отправляет команду мягкого выключения (майнер перестаёт брать новую работу — для сброса нагрузки или ограничения) без перезагрузки; «Возобновить» отправляет мягкое включение для перезапуска. После применения следите за хешрейтом, чтобы проверить эффект на вашей прошивке.</string>
+    <string name="det_pause">Пауза</string>
+    <string name="det_resume">Возобновить</string>
+
+    <!-- Pool dialog -->
+    <string name="det_pool_title">Сменить основной пул</string>
+    <string name="det_pool_current">Текущий: %1$s:%2$d</string>
+    <string name="det_stratum_url">Stratum URL</string>
+    <string name="det_port">Порт</string>
+    <string name="det_worker">Воркер / адрес</string>
+    <string name="det_pool_warning">Сохранённый пароль пула не изменяется. Неверный URL остановит майнинг до исправления. Старым прошивкам может понадобиться перезагрузка, чтобы применить изменение.</string>
+
+    <!-- Fan dialog -->
+    <string name="det_fan_title">Управление вентилятором</string>
+    <string name="det_fan_auto">Автоматически (управляет прошивка)</string>
+    <string name="det_fan_manual_speed">Ручная скорость: %1$d%%</string>
+    <string name="det_fan_warning" formatted="false">Ниже ~35% нагруженный майнер может перегреться. Защита прошивки от перегрева остаётся активной в любом случае.</string>
+
+    <!-- Tune dialog -->
+    <string name="det_tune_unavailable_title">Тюнинг недоступен</string>
+    <string name="det_tune_unavailable_body">Эта прошивка не публикует списки одобренных частот/напряжений (GET /api/system/asic), поэтому приложение не будет предлагать для неё значения тюнинга.</string>
+    <string name="det_tune_title">Тюнинг (значения, одобренные прошивкой)</string>
+    <string name="det_tune_current">Текущее: %1$s MHz / %2$s mV</string>
+    <string name="det_tune_stock">"  ·  Заводское: %1$s MHz / %2$s mV"</string>
+    <string name="det_frequency_mhz">Частота (MHz)</string>
+    <string name="det_core_voltage_mv">Напряжение ядра (mV)</string>
+    <string name="det_tune_warning">Значения выше заводских повышают нагрев и потребление мощности и могут сократить срок службы оборудования. После применения приложение опрашивает чаще; следите за температурами и откатите, если температура чипа или VR растёт.</string>
+    <string name="det_roll_back">Откатить</string>
+
+    <!-- Smart plug -->
+    <string name="det_plug_hint">Отключает питание через локальную умную розетку, когда температура чипа достигает лимита. Включение — только вручную: приложение никогда не восстанавливает питание автоматически. Только локальные адреса.</string>
+    <string name="det_plug">Розетка</string>
+    <string name="det_off_url">URL выключения</string>
+    <string name="det_on_url">URL включения</string>
+    <string name="det_plug_host">IP / хост розетки</string>
+    <string name="det_plug_cutoff">Отключать при темп. чипа (°C)</string>
+    <string name="det_test_off">Тест выкл</string>
+    <string name="det_test_on">Тест вкл</string>
+
+    <!-- Alerts -->
+    <string name="det_alert_active">активно</string>
+    <string name="det_alert_resolved">устранено</string>
+
+    <!-- Raw response -->
+    <string name="det_no_raw">Сырой ответ ещё не получен</string>
+    <string name="det_raw_redacted">Поля учётных данных и Wi-Fi скрыты.</string>
+
+    <!-- Remove dialog -->
+    <string name="det_remove_title">Удалить майнер?</string>
+    <string name="det_remove_body">Это удалит %1$s; история телеметрии не сохраняется.</string>
+    <string name="det_this_miner">этот майнер</string>
+    <string name="det_remove">Удалить</string>
+
+    <!-- Edit miner dialog -->
+    <string name="det_edit_miner_title">Изменить майнер</string>
+    <string name="det_name">Имя</string>
+    <string name="det_group">Группа</string>
+    <string name="det_location">Расположение (комната/стойка/полка)</string>
+    <string name="det_farm_header">ФЕРМА</string>
+    <string name="det_tags">Теги (через запятую)</string>
+    <string name="det_expected_hashrate">Ожидаемый хешрейт (GH/s, пусто = по данным устройства)</string>
+    <string name="det_notes">Заметки</string>
+    <string name="det_alert_overrides_header">ПЕРЕОПРЕДЕЛЕНИЯ ОПОВЕЩЕНИЙ (пусто = глобальные)</string>
+    <string name="det_ov_hashrate" formatted="false">Оповещение: хешрейт ниже (%)</string>
+    <string name="det_ov_chip">Оповещение: темп. чипа (°C)</string>
+    <string name="det_ov_vr">Оповещение: темп. VR (°C)</string>
+    <string name="det_ov_reject" formatted="false">Оповещение: процент отказов (%)</string>
+    <string name="det_mute">Отключить оповещения для этого майнера</string>
+    <string name="det_mute_hint">Опрос и графики продолжаются; оповещения не создаются.</string>
+
+    <!-- Per-chip health table -->
+    <string name="det_col_board">Плата</string>
+    <string name="det_col_hashrate">Хешрейт</string>
+    <string name="det_col_chips">Чипы</string>
+    <string name="det_col_hw_err">Ошибки HW</string>
+    <string name="det_col_temp">Темп.</string>
+    <string name="det_chips_failed">⚠ Обнаружено неисправных чипов: %1$d (плат: %2$d).</string>
+    <string name="det_chips_healthy">Все платы исправны (%1$d).</string>
+
+    <!-- Miner visual (accessibility) -->
+    <string name="det_cd_visual">Живой рендер майнера: статус %1$s</string>
+    <string name="det_cd_visual_chip">, чип %1$d градусов</string>
+    <string name="det_cd_visual_fan">, вентилятор %1$d RPM</string>
+
+    <!-- ViewModel-surfaced status messages -->
+    <string name="det_msg_credential_cleared">Учётные данные удалены.</string>
+    <string name="det_msg_credential_saved">Учётные данные сохранены (зашифрованы).</string>
+    <string name="det_msg_plug_on_sent">Команда включения розетки отправлена.</string>
+    <string name="det_msg_plug_off_sent">Команда выключения розетки отправлена.</string>
+    <string name="det_msg_plug_failed">Команда розетке не выполнена — проверьте адрес/URL.</string>
+    <string name="det_msg_miner_not_found">Майнер не найден.</string>
+    <string name="det_msg_done">Готово: %1$s.</string>
+    <string name="det_msg_failed">Ошибка: %1$s</string>
+    <string name="det_msg_unsupported">Не поддерживается: %1$s</string>
+    <string name="det_msg_unexpected_error">Непредвиденная ошибка</string>
+
+    <!-- ViewModel action labels (shown as "Working: …" and "Done: …") -->
+    <string name="det_act_restarting">перезагрузка</string>
+    <string name="det_act_blinking_led">мигание LED</string>
+    <string name="det_act_stopping_blink">остановка мигания</string>
+    <string name="det_act_pausing">пауза хеширования</string>
+    <string name="det_act_resuming">возобновление хеширования</string>
+    <string name="det_act_changing_pool">смена пула</string>
+    <string name="det_act_fan_auto">перевод вентилятора в авто</string>
+    <string name="det_act_fan_manual">установка вентилятора на %1$d%%</string>
+    <string name="det_act_applying_tune">применение %1$d MHz / %2$d mV</string>
+    <string name="det_act_rollback">откат тюнинга</string>
+</resources>

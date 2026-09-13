@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Heat reuse screen (HeatReuseScreen). -->
+<resources>
+    <string name="heat_title">Wärmenutzung</string>
+    <string name="heat_intro">Ein ASIC verwandelt praktisch den gesamten Strom, den er zieht, in Wärme. In der Heizsaison ersetzt diese Wärme, was du sonst fürs Heizen ausgeben würdest — der Strom ist also keine reine Mining-Ausgabe. Die Zahlen sind Schätzungen aus der Live-Flottenleistung.</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">Wärmeabgabe jetzt</string>
+    <string name="heat_output_sub">%1$s kW thermisch · %2$d Miner online</string>
+    <string name="heat_thermal_per_day">Wärmeenergie pro Tag</string>
+    <string name="heat_thermal_sub">Bei aktueller Aufnahme, 24 h durchgehend</string>
+    <string name="heat_rate_hint">Setze deinen Strompreis in den Einstellungen, um den Geldwert der Wärme zu sehen.</string>
+    <string name="heat_value_today">Heizwert heute</string>
+    <string name="heat_value_today_sub">vs. elektrische Widerstandsheizung (1:1) bei %1$s/kWh</string>
+    <string name="heat_value_month">Heizwert diesen Monat</string>
+    <string name="heat_value_month_sub">≈ %1$s Tage bei aktueller Aufnahme</string>
+    <string name="heat_pump_title">Falls du stattdessen mit Wärmepumpe heizt</string>
+    <string name="heat_pump_body">Eine Wärmepumpe (COP ≈ 3) erzeugt dieselbe Wärme mit etwa einem Drittel des Stroms — gegen sie gerechnet spart der Miner rund %1$s/Monat.</string>
+    <string name="heat_off_season">Außerhalb der Heizsaison ist die Wärme wertlos und erhöht die Kühllast — kombiniere das mit Zeitplänen, um im Sommer herunterzufahren.</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Display labels for shared enums (theme colors, webhook types, watchdog rules). -->
+<resources>
+    <string name="enum_theme_blue">Bleu</string>
+    <string name="enum_theme_green">Vert</string>
+    <string name="enum_theme_orange">Orange</string>
+    <string name="enum_theme_yellow">Jaune</string>
+    <string name="enum_theme_red">Rouge</string>
+    <string name="enum_theme_purple">Violet</string>
+
+    <string name="enum_webhook_none">Désactivé</string>
+    <string name="enum_webhook_ntfy">ntfy</string>
+    <string name="enum_webhook_gotify">Gotify</string>
+    <string name="enum_webhook_telegram">Telegram</string>
+    <string name="enum_webhook_generic">Générique (POST JSON)</string>
+
+    <string name="enum_plug_tasmota">Tasmota</string>
+    <string name="enum_plug_shelly">Shelly</string>
+    <string name="enum_plug_kasa">Kasa / TP-Link</string>
+    <string name="enum_plug_webhook">Webhook générique</string>
+
+    <string name="enum_tag_standard">Standard — 38 mm</string>
+    <string name="enum_tag_small">Petit — 25 mm</string>
+
+    <string name="enum_cond_chip_temp_above">Temp. puce au-dessus de</string>
+    <string name="enum_cond_vr_temp_above">Temp. VR au-dessus de</string>
+    <string name="enum_cond_hashrate_below_pct" formatted="false">Hashrate sous % de l\'attendu</string>
+    <string name="enum_cond_reject_rate_above">Taux de rejet au-dessus de</string>
+    <string name="enum_cond_offline">Mineur hors ligne</string>
+
+    <string name="enum_action_pause">Suspendre le minage</string>
+    <string name="enum_action_resume">Reprendre le minage</string>
+    <string name="enum_action_reboot">Redémarrer</string>
+    <string name="enum_action_plug_off">Prise connectée OFF</string>
+    <string name="enum_action_plug_on">Prise connectée ON</string>
+    <string name="enum_action_notify">Notifier seulement</string>
+</resources>

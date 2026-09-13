@@ -47,10 +47,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 import hi3.hashkit.ui.util.launchChooser
 import hi3.hashkit.ui.theme.ThemeColor
@@ -75,10 +77,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.common_settings), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -94,16 +96,13 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Section("ADVANCED FEATURES") {
+            Section(stringResource(R.string.set_section_advanced)) {
                 val unlocked = settings.advancedUnlocked
                 Text(
                     if (unlocked)
-                        "Advanced features are unlocked. This reveals the dashboard menu's " +
-                            "\"Live Bitcoin\" link; more may move here in future versions " +
-                            "(secure pages, power tools)."
+                        stringResource(R.string.set_advanced_unlocked_desc)
                     else
-                        "Enter your unlock code to reveal advanced features (currently the " +
-                            "dashboard menu's \"Live Bitcoin\" link).",
+                        stringResource(R.string.set_advanced_locked_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -111,19 +110,24 @@ fun SettingsScreen(
                 OutlinedTextField(
                     value = codeInput,
                     onValueChange = { codeInput = it },
-                    label = { Text(if (unlocked) "Unlock code (optional)" else "Unlock code") },
+                    label = {
+                        Text(
+                            if (unlocked) stringResource(R.string.set_advanced_unlock_code_optional)
+                            else stringResource(R.string.set_advanced_unlock_code)
+                        )
+                    },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 androidx.compose.material3.TextButton(onClick = {
                     viewModel.setAdvancedUnlockCode(codeInput)
-                }) { Text("Apply code") }
+                }) { Text(stringResource(R.string.set_advanced_apply_code)) }
             }
 
-            Section("ALERTS") {
+            Section(stringResource(R.string.set_section_alerts)) {
                 ToggleRow(
-                    "Alerts & notifications",
-                    "Offline, temperature, fan, reject-rate and restart alerts with recovery notices.",
+                    stringResource(R.string.set_alerts_title),
+                    stringResource(R.string.set_alerts_subtitle),
                     settings.alertsEnabled,
                 ) { enabled ->
                     viewModel.setAlertsEnabled(enabled)
@@ -131,43 +135,53 @@ fun SettingsScreen(
                         notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
                 }
-                NumberRow("Hashrate alert below (% of expected)", settings.alertThresholds.hashrateBelowPercent.toInt().toString()) {
+                NumberRow(stringResource(R.string.set_alert_hashrate_below), settings.alertThresholds.hashrateBelowPercent.toInt().toString()) {
                     it.toDoubleOrNull()?.let { v -> viewModel.setHashrateBelowPercent(v) }
                 }
-                NumberRow("Chip temp alert (°C)", settings.alertThresholds.chipTempC.toInt().toString()) {
+                NumberRow(stringResource(R.string.set_alert_chip_temp), settings.alertThresholds.chipTempC.toInt().toString()) {
                     it.toDoubleOrNull()?.let { v -> viewModel.setChipTempThreshold(v) }
                 }
-                NumberRow("VR temp alert (°C)", settings.alertThresholds.vrTempC.toInt().toString()) {
+                NumberRow(stringResource(R.string.set_alert_vr_temp), settings.alertThresholds.vrTempC.toInt().toString()) {
                     it.toDoubleOrNull()?.let { v -> viewModel.setVrTempThreshold(v) }
                 }
-                NumberRow("Reject-rate alert (%)", settings.alertThresholds.rejectRatePercent.toString()) {
+                NumberRow(stringResource(R.string.set_alert_reject_rate), settings.alertThresholds.rejectRatePercent.toString()) {
                     it.toDoubleOrNull()?.let { v -> viewModel.setRejectRateThreshold(v) }
                 }
-                NumberRow("Re-notify cooldown (min)", (settings.alertThresholds.cooldownMs / 60000).toString()) {
+                NumberRow(stringResource(R.string.set_alert_cooldown), (settings.alertThresholds.cooldownMs / 60000).toString()) {
                     it.toLongOrNull()?.let { v -> viewModel.setCooldownMinutes(v) }
                 }
             }
 
-            Section("DISCOVERY") {
+            Section(stringResource(R.string.set_section_discovery)) {
                 NumberRow(
-                    "Extra scan subnets (CSV of CIDRs)",
+                    stringResource(R.string.set_discovery_extra_subnets),
                     settings.extraSubnetsCsv,
                 ) { viewModel.setExtraSubnets(it) }
                 Text(
-                    "Add remote LANs reachable through your Tailscale subnet router, e.g. " +
-                        "192.168.50.0/24. They appear as quick-fill options on the Add screen.",
+                    stringResource(R.string.set_discovery_subnets_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
             }
 
-            Section("DISPLAY") {
-                Text("Theme", style = MaterialTheme.typography.bodyMedium)
+            Section(stringResource(R.string.set_section_display)) {
+                Text(
+                    androidx.compose.ui.res.stringResource(hi3.hashkit.R.string.language_title),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    androidx.compose.ui.res.stringResource(hi3.hashkit.R.string.language_settings_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                hi3.hashkit.ui.language.LanguagePicker()
+                Spacer(Modifier.height(4.dp))
+                Text(stringResource(R.string.set_theme), style = MaterialTheme.typography.bodyMedium)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
-                        hi3.hashkit.ui.theme.ThemeMode.SYSTEM to "System",
-                        hi3.hashkit.ui.theme.ThemeMode.DARK to "Dark",
-                        hi3.hashkit.ui.theme.ThemeMode.LIGHT to "Light",
+                        hi3.hashkit.ui.theme.ThemeMode.SYSTEM to stringResource(R.string.set_theme_system),
+                        hi3.hashkit.ui.theme.ThemeMode.DARK to stringResource(R.string.set_theme_dark),
+                        hi3.hashkit.ui.theme.ThemeMode.LIGHT to stringResource(R.string.set_theme_light),
                     ).forEach { (mode, label) ->
                         androidx.compose.material3.FilterChip(
                             selected = settings.themeMode == mode,
@@ -177,9 +191,9 @@ fun SettingsScreen(
                     }
                 }
                 Spacer(Modifier.height(4.dp))
-                Text("UI Theme", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.set_ui_theme), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "Accent color used across the app. Status colors (online/offline) don't change.",
+                    stringResource(R.string.set_ui_theme_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -188,20 +202,19 @@ fun SettingsScreen(
                     onSelect = { viewModel.setThemeColor(it) },
                 )
                 ToggleRow(
-                    "Profitability & energy card",
-                    "Show estimated revenue, power cost, and energy use on the dashboard.",
+                    stringResource(R.string.set_profit_card_title),
+                    stringResource(R.string.set_profit_card_subtitle),
                     settings.showProfitCard,
                 ) { viewModel.setShowProfitCard(it) }
                 ToggleRow(
-                    "Solo odds card",
-                    "Show block-finding probability on the dashboard.",
+                    stringResource(R.string.set_solo_card_title),
+                    stringResource(R.string.set_solo_card_subtitle),
                     settings.showSoloCard,
                 ) { viewModel.setShowSoloCard(it) }
                 Spacer(Modifier.height(4.dp))
-                Text("Dashboard card order", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.set_card_order_title), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "Arrange the dashboard's blocks — e.g. move Pool and MMP below the miner " +
-                        "list. Cards still only appear when their feature is on.",
+                    stringResource(R.string.set_card_order_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -209,7 +222,7 @@ fun SettingsScreen(
                 cardOrder.forEachIndexed { i, card ->
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "${i + 1}.  ${card.label}",
+                            "${i + 1}.  ${stringResource(card.labelRes)}",
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f),
                         )
@@ -234,17 +247,17 @@ fun SettingsScreen(
                     }
                 }
                 Spacer(Modifier.height(4.dp))
-                Text("Inventory tag", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.set_inventory_tag_title), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "Which make-tag button the Fleet table shows for labelling miners.",
+                    stringResource(R.string.set_inventory_tag_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
-                        hi3.hashkit.data.prefs.InventoryTagType.QR to "QR",
-                        hi3.hashkit.data.prefs.InventoryTagType.NFC to "NFC",
-                        hi3.hashkit.data.prefs.InventoryTagType.BOTH to "Both",
+                        hi3.hashkit.data.prefs.InventoryTagType.QR to stringResource(R.string.set_tag_qr),
+                        hi3.hashkit.data.prefs.InventoryTagType.NFC to stringResource(R.string.set_tag_nfc),
+                        hi3.hashkit.data.prefs.InventoryTagType.BOTH to stringResource(R.string.set_tag_both),
                     ).forEach { (type, label) ->
                         androidx.compose.material3.FilterChip(
                             selected = settings.inventoryTagType == type,
@@ -254,20 +267,19 @@ fun SettingsScreen(
                     }
                 }
                 ToggleRow(
-                    "Pause on exit",
-                    "Show the \"Exit Hi3 Hashkit?\" confirmation when tapping the exit button.",
+                    stringResource(R.string.set_pause_on_exit_title),
+                    stringResource(R.string.set_pause_on_exit_subtitle),
                     settings.confirmBeforeExit,
                 ) { viewModel.setConfirmBeforeExit(it) }
             }
 
-            Section("FARMS") {
-                ActionRow("Manage farms…") { onFarms() }
+            Section(stringResource(R.string.set_section_farms)) {
+                ActionRow(stringResource(R.string.set_manage_farms)) { onFarms() }
                 val farms by viewModel.farms.collectAsStateWithLifecycle()
                 if (farms.isNotEmpty()) {
-                    Text("Default farm", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.set_default_farm), style = MaterialTheme.typography.bodyMedium)
                     Text(
-                        "Pin the dashboard to one farm: the farm selector row disappears and " +
-                            "only that farm's miners show — tighter layout when you run one site.",
+                        stringResource(R.string.set_default_farm_hint),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -276,7 +288,7 @@ fun SettingsScreen(
                             selected = settings.pinnedFarmId <= 0 ||
                                 farms.none { it.id == settings.pinnedFarmId },
                             onClick = { viewModel.setPinnedFarm(-1) },
-                            label = { Text("All farms") },
+                            label = { Text(stringResource(R.string.set_all_farms)) },
                         )
                         farms.forEach { farm ->
                             androidx.compose.material3.FilterChip(
@@ -289,23 +301,22 @@ fun SettingsScreen(
                 }
             }
 
-            Section("HI3 MMP") {
+            Section(stringResource(R.string.set_section_mmp)) {
                 ToggleRow(
-                    "Hi3 MMP fleet view",
-                    "Read-only fleet summary and per-site rollups from your Mining " +
-                        "Management Platform.",
+                    stringResource(R.string.set_mmp_title),
+                    stringResource(R.string.set_mmp_subtitle),
                     settings.mmpEnabled,
                 ) { viewModel.setMmpEnabled(it) }
                 if (settings.mmpEnabled) {
-                    NumberRow("MMP URL", settings.mmpBaseUrl) { viewModel.setMmpBaseUrl(it) }
+                    NumberRow(stringResource(R.string.set_mmp_url), settings.mmpBaseUrl) { viewModel.setMmpBaseUrl(it) }
                     var keyInput by remember { mutableStateOf("") }
                     OutlinedTextField(
                         value = keyInput,
                         onValueChange = { keyInput = it },
                         label = {
                             Text(
-                                if (settings.mmpKeyConfigured) "API key (saved — enter to replace, blank to clear)"
-                                else "API key (mint one in the MMP admin UI)",
+                                if (settings.mmpKeyConfigured) stringResource(R.string.set_mmp_key_saved)
+                                else stringResource(R.string.set_mmp_key_hint),
                             )
                         },
                         singleLine = true,
@@ -315,35 +326,33 @@ fun SettingsScreen(
                     androidx.compose.material3.TextButton(onClick = {
                         viewModel.setMmpApiKey(keyInput)
                         keyInput = ""
-                    }) { Text(if (settings.mmpKeyConfigured) "Replace key" else "Save key") }
+                    }) {
+                        Text(
+                            if (settings.mmpKeyConfigured) stringResource(R.string.set_mmp_replace_key)
+                            else stringResource(R.string.set_mmp_save_key)
+                        )
+                    }
                 }
                 Text(
-                    "What is transmitted while enabled: your MMP API key in the request " +
-                        "header, over HTTPS to the MMP URL above, about once a minute while " +
-                        "the app is open — read-only fleet queries, nothing uploaded. The key " +
-                        "is stored encrypted with the Android Keystore. Off by default.",
+                    stringResource(R.string.set_mmp_disclosure),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
             }
 
             if (settings.advancedUnlocked) {
-                Section("LOCAL WEB SERVER (ADVANCED)") {
+                Section(stringResource(R.string.set_section_web_server)) {
                     ToggleRow(
-                        "Expose web dashboard + /metrics",
-                        "Run a local, read-only web server: an HTML fleet dashboard any browser " +
-                            "or TV on the LAN can open, plus a Prometheus /metrics endpoint for " +
-                            "Grafana. No auth — for a private LAN/tailnet only.",
+                        stringResource(R.string.set_web_server_title),
+                        stringResource(R.string.set_web_server_subtitle),
                         settings.prometheusEnabled,
                     ) { viewModel.setPrometheusEnabled(it) }
                     if (settings.prometheusEnabled) {
-                        NumberRow("Port", settings.prometheusPort.toString()) {
+                        NumberRow(stringResource(R.string.set_web_server_port), settings.prometheusPort.toString()) {
                             it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
                         }
                         Text(
-                            "While the app is open: dashboard at " +
-                                "http://<this-device-ip>:${settings.prometheusPort}/ and metrics at " +
-                                "/metrics. Read-only (GET only); exposes totals + per-miner data, no controls.",
+                            stringResource(R.string.set_web_server_hint, settings.prometheusPort),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.textSecondary,
                         )
@@ -351,11 +360,10 @@ fun SettingsScreen(
                 }
             }
 
-            Section("MONITORING") {
+            Section(stringResource(R.string.set_section_monitoring)) {
                 ToggleRow(
-                    "Background monitoring",
-                    "Poll every ~15 min while the app is closed (Android may delay this; " +
-                        "it is not continuous real-time monitoring).",
+                    stringResource(R.string.set_bg_monitoring_title),
+                    stringResource(R.string.set_bg_monitoring_subtitle),
                     settings.backgroundMonitoringEnabled,
                 ) { enabled ->
                     viewModel.setBackgroundMonitoring(enabled)
@@ -365,13 +373,13 @@ fun SettingsScreen(
                 }
                 val farms by viewModel.farms.collectAsStateWithLifecycle()
                 IntervalRow(
-                    label = if (farms.isEmpty()) "Refresh interval" else "Default refresh interval",
+                    label = if (farms.isEmpty()) stringResource(R.string.set_refresh_interval)
+                    else stringResource(R.string.set_default_refresh_interval),
                     currentMs = settings.pollIntervalMs,
                 ) { viewModel.setDefaultRefreshIntervalMs(it) }
                 if (farms.isNotEmpty()) {
                     Text(
-                        "Each farm refreshes at its own interval while you're viewing it; the " +
-                            "default applies when no farm is active.",
+                        stringResource(R.string.set_farm_refresh_hint),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -382,31 +390,27 @@ fun SettingsScreen(
                         ) { viewModel.setFarmRefreshIntervalMs(farm.id, it) }
                     }
                 }
-                NumberRow("Keep history (days)", settings.retentionDays.toString()) {
+                NumberRow(stringResource(R.string.set_keep_history), settings.retentionDays.toString()) {
                     it.toIntOrNull()?.let { d -> viewModel.setRetentionDays(d) }
                 }
                 ToggleRow(
-                    "Check for firmware updates",
-                    "Opt-in: checks AxeOS (Bitaxe) releases on GitHub and flags miners that " +
-                        "are behind. No flashing from the app; nothing is contacted while off.",
+                    stringResource(R.string.set_fw_check_title),
+                    stringResource(R.string.set_fw_check_subtitle),
                     settings.firmwareUpdateCheck,
                 ) { viewModel.setFirmwareUpdateCheck(it) }
                 ToggleRow(
-                    "Auto-recover offline miners",
-                    "When a miner stays offline past the threshold, power-cycle its smart plug " +
-                        "(if set) or reboot it — once, with a cooldown. Every attempt is audited.",
+                    stringResource(R.string.set_auto_recover_title),
+                    stringResource(R.string.set_auto_recover_subtitle),
                     settings.autoRecoverEnabled,
                 ) { viewModel.setAutoRecoverEnabled(it) }
                 if (settings.autoRecoverEnabled) {
-                    NumberRow("Recover after offline (min)", settings.autoRecoverAfterMin.toString()) {
+                    NumberRow(stringResource(R.string.set_auto_recover_after), settings.autoRecoverAfterMin.toString()) {
                         it.toLongOrNull()?.let { v -> viewModel.setAutoRecoverAfterMin(v) }
                     }
                 }
                 ToggleRow(
-                    "Always-on safety monitor",
-                    "Runs the smart-plug over-temp cutoff in the background (with a persistent " +
-                        "notification) even when the app is closed, and re-arms after a reboot. " +
-                        "Only useful if you've set a plug cutoff on a miner.",
+                    stringResource(R.string.set_safety_title),
+                    stringResource(R.string.set_safety_subtitle),
                     settings.safetyServiceEnabled,
                 ) { enabled ->
                     viewModel.setSafetyService(enabled)
@@ -416,29 +420,27 @@ fun SettingsScreen(
                 }
             }
 
-            Section("MQTT / HOME ASSISTANT") {
+            Section(stringResource(R.string.set_section_mqtt)) {
                 ToggleRow(
-                    "Publish to MQTT",
-                    "Send fleet + per-miner telemetry to a local MQTT broker (e.g. the " +
-                        "Mosquitto add-on in Home Assistant). Opt-in; totals and per-miner " +
-                        "hashrate/power/temp only — no addresses or credentials.",
+                    stringResource(R.string.set_mqtt_title),
+                    stringResource(R.string.set_mqtt_subtitle),
                     settings.mqttEnabled,
                 ) { viewModel.setMqttEnabled(it) }
                 if (settings.mqttEnabled) {
-                    NumberRow("Broker host", settings.mqttHost) { viewModel.setMqttHost(it) }
-                    NumberRow("Broker port", settings.mqttPort.toString()) {
+                    NumberRow(stringResource(R.string.set_mqtt_host), settings.mqttHost) { viewModel.setMqttHost(it) }
+                    NumberRow(stringResource(R.string.set_mqtt_port), settings.mqttPort.toString()) {
                         it.toIntOrNull()?.let { v -> viewModel.setMqttPort(v) }
                     }
-                    NumberRow("Base topic", settings.mqttBaseTopic) { viewModel.setMqttBaseTopic(it) }
-                    NumberRow("Username (optional)", settings.mqttUsername) { viewModel.setMqttUsername(it) }
+                    NumberRow(stringResource(R.string.set_mqtt_topic), settings.mqttBaseTopic) { viewModel.setMqttBaseTopic(it) }
+                    NumberRow(stringResource(R.string.set_mqtt_username), settings.mqttUsername) { viewModel.setMqttUsername(it) }
                     var mqttPass by remember { mutableStateOf("") }
                     OutlinedTextField(
                         value = mqttPass,
                         onValueChange = { mqttPass = it },
                         label = {
                             Text(
-                                if (settings.mqttPasswordConfigured) "Password (saved — enter to replace, blank to clear)"
-                                else "Password (optional)",
+                                if (settings.mqttPasswordConfigured) stringResource(R.string.set_mqtt_password_saved)
+                                else stringResource(R.string.set_mqtt_password_optional),
                             )
                         },
                         singleLine = true,
@@ -448,41 +450,45 @@ fun SettingsScreen(
                     androidx.compose.material3.TextButton(onClick = {
                         viewModel.setMqttPassword(mqttPass)
                         mqttPass = ""
-                    }) { Text(if (settings.mqttPasswordConfigured) "Replace password" else "Save password") }
+                    }) {
+                        Text(
+                            if (settings.mqttPasswordConfigured) stringResource(R.string.set_mqtt_replace_password)
+                            else stringResource(R.string.set_mqtt_save_password)
+                        )
+                    }
                     ToggleRow(
-                        "Home Assistant discovery",
-                        "Publish MQTT-discovery config so miners appear as HA devices/entities automatically.",
+                        stringResource(R.string.set_mqtt_ha_title),
+                        stringResource(R.string.set_mqtt_ha_subtitle),
                         settings.mqttHomeAssistantDiscovery,
                     ) { viewModel.setMqttHaDiscovery(it) }
                     Text(
-                        "Published while the app is open, each poll. The password is stored " +
-                            "encrypted in the Android Keystore. Point Prometheus/HA at this broker.",
+                        stringResource(R.string.set_mqtt_disclosure),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
                 }
             }
 
-            Section("POOL") {
+            Section(stringResource(R.string.set_section_pool)) {
                 ToggleRow(
-                    "Pool stats",
-                    "Read-only pool-side view of your workers, correlated with local miner " +
-                        "readings on the dashboard.",
+                    stringResource(R.string.set_pool_stats_title),
+                    stringResource(R.string.set_pool_stats_subtitle),
                     settings.hi3PoolEnabled,
                 ) { viewModel.setHi3PoolEnabled(it) }
                 if (settings.hi3PoolEnabled) {
                     PoolTypeRow(current = settings.poolType, onSelect = { viewModel.setPoolType(it) })
                     if (settings.poolType.comingSoon) {
                         Text(
-                            "${settings.poolType.displayName.removeSuffix(" (coming soon)")} support is on " +
-                                "the way. Its API needs verifying before we send anything, so this pool " +
-                                "contacts nothing yet — pick another pool to load live stats.",
+                            stringResource(
+                                R.string.set_pool_coming_soon,
+                                settings.poolType.displayName.removeSuffix(" (coming soon)"),
+                            ),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.statusDegraded,
                         )
                     } else {
                         if (settings.poolType.baseUrlEditable) {
-                            NumberRow("Pool URL", settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
+                            NumberRow(stringResource(R.string.set_pool_url), settings.hi3PoolBaseUrl) { viewModel.setHi3PoolBaseUrl(it) }
                         }
                         PayoutAddressRow(
                             label = settings.poolType.identifierLabel,
@@ -490,29 +496,28 @@ fun SettingsScreen(
                             onChange = { viewModel.setHi3PoolPayoutAddress(it) },
                         )
                         NumberRow(
-                            if (settings.poolType.usesToken) "Access token"
-                            else "API key / watcher token (optional)",
+                            if (settings.poolType.usesToken) stringResource(R.string.set_pool_access_token)
+                            else stringResource(R.string.set_pool_api_token),
                             settings.poolApiToken,
                         ) { viewModel.setPoolApiToken(it) }
                     }
                 }
                 if (!settings.poolType.comingSoon) {
                     Text(
-                        "What is transmitted while enabled: your ${settings.poolType.identifierLabel.lowercase()} " +
-                            "(and token if set), inside an HTTPS request to ${settings.poolType.displayName}, " +
-                            "about once a minute while the app is open. Nothing else — no miner telemetry, " +
-                            "no local IPs, no worker passwords. Off by default; turning it off stops all " +
-                            "pool requests immediately.",
+                        stringResource(
+                            R.string.set_pool_disclosure,
+                            settings.poolType.identifierLabel.lowercase(),
+                            settings.poolType.displayName,
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
                 }
             }
 
-            Section("PUSH (WEBHOOK)") {
+            Section(stringResource(R.string.set_section_push)) {
                 Text(
-                    "Mirror alerts to your own push service so they reach you when the app is " +
-                        "closed — no cloud account of ours. Fires only for active alerts.",
+                    stringResource(R.string.set_push_intro),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -520,48 +525,47 @@ fun SettingsScreen(
                 when (settings.webhookType) {
                     hi3.hashkit.data.alerts.WebhookType.NONE -> Unit
                     hi3.hashkit.data.alerts.WebhookType.NTFY ->
-                        NumberRow("ntfy topic URL (https://ntfy.sh/your-topic)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                        NumberRow(stringResource(R.string.set_push_ntfy_url), settings.webhookUrl) { viewModel.setWebhookUrl(it) }
                     hi3.hashkit.data.alerts.WebhookType.GOTIFY -> {
-                        NumberRow("Gotify server URL", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
-                        NumberRow("Gotify app token", settings.webhookToken) { viewModel.setWebhookToken(it) }
+                        NumberRow(stringResource(R.string.set_push_gotify_url), settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                        NumberRow(stringResource(R.string.set_push_gotify_token), settings.webhookToken) { viewModel.setWebhookToken(it) }
                     }
                     hi3.hashkit.data.alerts.WebhookType.TELEGRAM -> {
-                        NumberRow("Telegram bot token", settings.webhookToken) { viewModel.setWebhookToken(it) }
-                        NumberRow("Telegram chat ID", settings.webhookTarget) { viewModel.setWebhookTarget(it) }
+                        NumberRow(stringResource(R.string.set_push_telegram_token), settings.webhookToken) { viewModel.setWebhookToken(it) }
+                        NumberRow(stringResource(R.string.set_push_telegram_chat), settings.webhookTarget) { viewModel.setWebhookTarget(it) }
                     }
                     hi3.hashkit.data.alerts.WebhookType.GENERIC ->
-                        NumberRow("POST URL (JSON body)", settings.webhookUrl) { viewModel.setWebhookUrl(it) }
+                        NumberRow(stringResource(R.string.set_push_generic_url), settings.webhookUrl) { viewModel.setWebhookUrl(it) }
                 }
             }
 
-            Section("QUIET HOURS & DIGEST") {
+            Section(stringResource(R.string.set_section_quiet)) {
                 ToggleRow(
-                    "Quiet hours",
-                    "Suppress alert notifications during a nightly window. Alerts are still " +
-                        "recorded and appear in the daily digest.",
+                    stringResource(R.string.set_quiet_hours_title),
+                    stringResource(R.string.set_quiet_hours_subtitle),
                     settings.quietHoursEnabled,
                 ) { viewModel.setQuietHoursEnabled(it) }
                 if (settings.quietHoursEnabled) {
-                    NumberRow("Quiet from (HH:MM)", minutesToHhMm(settings.quietStartMinute)) {
+                    NumberRow(stringResource(R.string.set_quiet_from), minutesToHhMm(settings.quietStartMinute)) {
                         hhMmToMinutes(it)?.let { m -> viewModel.setQuietStartMinute(m) }
                     }
-                    NumberRow("Quiet until (HH:MM)", minutesToHhMm(settings.quietEndMinute)) {
+                    NumberRow(stringResource(R.string.set_quiet_until), minutesToHhMm(settings.quietEndMinute)) {
                         hhMmToMinutes(it)?.let { m -> viewModel.setQuietEndMinute(m) }
                     }
                 }
                 ToggleRow(
-                    "Daily digest",
-                    "One summary notification per day of the last 24h of alerts.",
+                    stringResource(R.string.set_digest_title),
+                    stringResource(R.string.set_digest_subtitle),
                     settings.digestEnabled,
                 ) { viewModel.setDigestEnabled(it) }
                 if (settings.digestEnabled) {
-                    NumberRow("Digest time (hour, 0–23)", settings.digestHour.toString()) {
+                    NumberRow(stringResource(R.string.set_digest_time), settings.digestHour.toString()) {
                         it.toIntOrNull()?.let { v -> viewModel.setDigestHour(v) }
                     }
                 }
             }
 
-            Section("SECURITY") {
+            Section(stringResource(R.string.set_section_security)) {
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val canLock = remember {
                     androidx.biometric.BiometricManager.from(context).canAuthenticate(
@@ -570,64 +574,62 @@ fun SettingsScreen(
                     ) == androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
                 }
                 ToggleRow(
-                    "App lock",
+                    stringResource(R.string.set_app_lock_title),
                     if (canLock)
-                        "Require fingerprint/face or your device PIN to open the app " +
-                            "(relocks after 1 minute in the background)."
+                        stringResource(R.string.set_app_lock_subtitle_available)
                     else
-                        "Unavailable: set up a screen lock (PIN/biometric) on this device first.",
+                        stringResource(R.string.set_app_lock_subtitle_unavailable),
                     settings.appLockEnabled && canLock,
                 ) { if (canLock) viewModel.setAppLockEnabled(it) }
                 Text(
-                    "Protects the app UI. Note: exported backups and the on-disk database " +
-                        "are protected by Android's standard app sandboxing, not by this lock.",
+                    stringResource(R.string.set_app_lock_note),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
             }
 
-            Section("SOLO MINING") {
+            Section(stringResource(R.string.set_section_solo)) {
                 NumberRow(
-                    "Network difficulty",
+                    stringResource(R.string.set_network_difficulty),
                     if (settings.networkDifficulty > 0) "%.0f".format(settings.networkDifficulty) else "",
                 ) { it.toDoubleOrNull()?.let { v -> viewModel.setNetworkDifficulty(v) } }
                 ToggleRow(
-                    "Fetch difficulty from mempool.space",
-                    "The app's only external request; a single HTTPS GET carrying no miner " +
-                        "data. Off by default — see docs/SECURITY.md.",
+                    stringResource(R.string.set_fetch_difficulty_title),
+                    stringResource(R.string.set_fetch_difficulty_subtitle),
                     settings.difficultyAutoFetch,
                 ) { viewModel.setDifficultyAutoFetch(it) }
             }
 
-            Section("UNITS & COST") {
-                ToggleRow("Fahrenheit", "Show temperatures in °F.", settings.useFahrenheit) {
+            Section(stringResource(R.string.set_section_units)) {
+                ToggleRow(
+                    stringResource(R.string.set_fahrenheit_title),
+                    stringResource(R.string.set_fahrenheit_subtitle),
+                    settings.useFahrenheit,
+                ) {
                     viewModel.setUseFahrenheit(it)
                 }
-                NumberRow("Electricity rate (per kWh)", settings.electricityRatePerKwh.toString()) {
+                NumberRow(stringResource(R.string.set_electricity_rate), settings.electricityRatePerKwh.toString()) {
                     it.toDoubleOrNull()?.let { v -> viewModel.setElectricityRate(v) }
                 }
-                NumberRow("Currency code", settings.currencyCode) { viewModel.setCurrencyCode(it) }
+                NumberRow(stringResource(R.string.set_currency_code), settings.currencyCode) { viewModel.setCurrencyCode(it) }
                 NumberRow(
-                    "BTC price (per coin, ${settings.currencyCode})",
+                    stringResource(R.string.set_btc_price, settings.currencyCode),
                     if (settings.btcPrice > 0) "%.0f".format(settings.btcPrice) else "",
                 ) { it.toDoubleOrNull()?.let { v -> viewModel.setBtcPrice(v) } }
                 ToggleRow(
-                    "Fetch BTC price from mempool.space",
-                    "Opt-in: a single HTTPS GET (no miner data) so the dashboard can estimate " +
-                        "revenue and profit. Off by default; enter a price manually instead if you prefer.",
+                    stringResource(R.string.set_fetch_btc_title),
+                    stringResource(R.string.set_fetch_btc_subtitle),
                     settings.btcPriceAutoFetch,
                 ) { viewModel.setBtcPriceAutoFetch(it) }
             }
 
             if (viewModel.selfUpdateEnabled) {
-                Section("UPDATE HASHKIT") {
+                Section(stringResource(R.string.set_section_update)) {
                     val ctx = androidx.compose.ui.platform.LocalContext.current
                     val status by viewModel.updateStatus.collectAsStateWithLifecycle()
-                    Text("Installed: v${viewModel.currentVersion}", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.set_update_installed, viewModel.currentVersion), style = MaterialTheme.typography.bodyMedium)
                     Text(
-                        "Checks the official GitHub release and installs the signed update over " +
-                            "the top — your miners, telemetry history, logs and settings are all kept. " +
-                            "Android may ask you to allow installing updates from this app.",
+                        stringResource(R.string.set_update_desc),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -638,7 +640,7 @@ fun SettingsScreen(
                                 modifier = Modifier.fillMaxWidth(),
                             )
                             Text(
-                                "Downloading ${(s.progress * 100).toInt()}%…",
+                                stringResource(R.string.set_update_downloading, (s.progress * 100).toInt()),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
                             )
@@ -647,9 +649,9 @@ fun SettingsScreen(
                             androidx.compose.material3.LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                             Text(
                                 if (s.confirming) {
-                                    "Waiting for Android's confirmation — tap Update in the system dialog."
+                                    stringResource(R.string.set_update_confirm_hint)
                                 } else {
-                                    "Installing… the app will restart when done."
+                                    stringResource(R.string.set_update_installing)
                                 },
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
@@ -657,8 +659,7 @@ fun SettingsScreen(
                         }
                         is SettingsViewModel.UpdateStatus.NeedsPermission -> {
                             Text(
-                                "Allow \"Install unknown apps\" for Hashkit in the settings screen " +
-                                    "that just opened, then come back and tap again.",
+                                stringResource(R.string.set_update_needs_permission),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.accentAlt,
                             )
@@ -666,11 +667,11 @@ fun SettingsScreen(
                                 viewModel.downloadAndInstall { intent ->
                                     runCatching { ctx.startActivity(intent) }
                                 }
-                            }) { Text("Download & install v${s.info.latestVersion}") }
+                            }) { Text(stringResource(R.string.set_update_download_install, s.info.latestVersion)) }
                         }
                         is SettingsViewModel.UpdateStatus.Available -> {
                             Text(
-                                "Update available: v${s.info.latestVersion}" +
+                                stringResource(R.string.set_update_available, s.info.latestVersion) +
                                     if (s.info.sizeBytes > 0) " (${s.info.sizeBytes / 1_000_000} MB)" else "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = HiBrand.accentAlt,
@@ -679,18 +680,21 @@ fun SettingsScreen(
                                 viewModel.downloadAndInstall { intent ->
                                     runCatching { ctx.startActivity(intent) }
                                 }
-                            }) { Text("Download & install v${s.info.latestVersion}") }
+                            }) { Text(stringResource(R.string.set_update_download_install, s.info.latestVersion)) }
                         }
                         else -> {
                             androidx.compose.material3.OutlinedButton(
                                 onClick = { viewModel.checkForUpdate() },
                                 enabled = s !is SettingsViewModel.UpdateStatus.Checking,
                             ) {
-                                Text(if (s is SettingsViewModel.UpdateStatus.Checking) "Checking…" else "Check for updates")
+                                Text(
+                                    if (s is SettingsViewModel.UpdateStatus.Checking) stringResource(R.string.set_update_checking)
+                                    else stringResource(R.string.set_update_check)
+                                )
                             }
                             when (s) {
                                 is SettingsViewModel.UpdateStatus.UpToDate ->
-                                    Text("You're on the latest version.", style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOnline)
+                                    Text(stringResource(R.string.set_update_up_to_date), style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOnline)
                                 is SettingsViewModel.UpdateStatus.Error ->
                                     Text(s.message, style = MaterialTheme.typography.labelSmall, color = HiBrand.statusOffline)
                                 else -> {}
@@ -700,7 +704,7 @@ fun SettingsScreen(
                 }
             }
 
-            Section("DATA & EXPORTS") {
+            Section(stringResource(R.string.set_section_data)) {
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val restoreMessage by viewModel.restoreMessage.collectAsStateWithLifecycle()
                 val pendingEnc by viewModel.pendingEncryptedRestore.collectAsStateWithLifecycle()
@@ -711,17 +715,17 @@ fun SettingsScreen(
 
                 fun share(intent: android.content.Intent, title: String) =
                     context.launchChooser(intent, title)
-                ActionRow("Fleet report — last 7 days (HTML)") {
-                    viewModel.exportOpsReport(REPORT_WEEK_DAYS) { share(it, "Fleet report") }
+                ActionRow(stringResource(R.string.set_export_report_7d)) {
+                    viewModel.exportOpsReport(REPORT_WEEK_DAYS) { share(it, context.getString(R.string.set_share_fleet_report)) }
                 }
-                ActionRow("Fleet report — last 30 days (HTML)") {
-                    viewModel.exportOpsReport(REPORT_MONTH_DAYS) { share(it, "Fleet report") }
+                ActionRow(stringResource(R.string.set_export_report_30d)) {
+                    viewModel.exportOpsReport(REPORT_MONTH_DAYS) { share(it, context.getString(R.string.set_share_fleet_report)) }
                 }
-                ActionRow("Export fleet telemetry CSV (last 7 days)") {
-                    viewModel.exportFleetCsv { share(it, "Export CSV") }
+                ActionRow(stringResource(R.string.set_export_csv_7d)) {
+                    viewModel.exportFleetCsv { share(it, context.getString(R.string.set_share_export_csv)) }
                 }
-                ActionRow("Full backup (miners, farms, pools, rules, settings…)") { backupPassPrompt = true }
-                ActionRow("Restore from backup…") {
+                ActionRow(stringResource(R.string.set_export_full_backup)) { backupPassPrompt = true }
+                ActionRow(stringResource(R.string.set_restore_backup)) {
                     restorePicker.launch(arrayOf("application/json", "application/octet-stream", "text/plain", "*/*"))
                 }
                 val backupFolderPicker = rememberLauncherForActivityResult(
@@ -737,33 +741,32 @@ fun SettingsScreen(
                     }
                 }
                 ActionRow(
-                    if (settings.autoBackupFolderUri.isBlank()) "Auto-backup weekly: off — choose folder…"
-                    else "Auto-backup weekly: on (tap to change folder)"
+                    if (settings.autoBackupFolderUri.isBlank()) stringResource(R.string.set_auto_backup_off)
+                    else stringResource(R.string.set_auto_backup_on)
                 ) { backupFolderPicker.launch(null) }
                 if (settings.autoBackupFolderUri.isNotBlank()) {
                     if (settings.autoBackupLastMs > 0) {
                         Text(
-                            "Last auto-backup: " + java.text.DateFormat.getDateTimeInstance(
-                                java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT,
-                            ).format(java.util.Date(settings.autoBackupLastMs)) +
-                                " — keeps the newest 8, plaintext JSON.",
+                            stringResource(
+                                R.string.set_last_auto_backup,
+                                java.text.DateFormat.getDateTimeInstance(
+                                    java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT,
+                                ).format(java.util.Date(settings.autoBackupLastMs)),
+                            ),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.textSecondary,
                         )
                     }
-                    ActionRow("Turn off auto-backup") { viewModel.setAutoBackupFolder("") }
+                    ActionRow(stringResource(R.string.set_auto_backup_turn_off)) { viewModel.setAutoBackupFolder("") }
                 }
-                ActionRow("Export diagnostics bundle (addresses redacted)") {
-                    viewModel.exportDiagnostics(includeAddresses = false) { share(it, "Export diagnostics") }
+                ActionRow(stringResource(R.string.set_export_diagnostics)) {
+                    viewModel.exportDiagnostics(includeAddresses = false) { share(it, context.getString(R.string.set_share_export_diagnostics)) }
                 }
                 restoreMessage?.let {
                     Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.accentAlt)
                 }
                 Text(
-                    "Backups contain miner addresses and worker names. Encrypt with a " +
-                        "passphrase (AES-256) to share or store safely; a plaintext backup is " +
-                        "for your own device only. CSV and diagnostics redact wallets; " +
-                        "diagnostics also redact IP addresses.",
+                    stringResource(R.string.set_backup_note),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -772,18 +775,17 @@ fun SettingsScreen(
                     var pass by remember { mutableStateOf("") }
                     androidx.compose.material3.AlertDialog(
                         onDismissRequest = { backupPassPrompt = false },
-                        title = { Text("Backup passphrase") },
+                        title = { Text(stringResource(R.string.set_backup_pass_title)) },
                         text = {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
-                                    "Enter a passphrase to encrypt the backup (AES-256), or " +
-                                        "leave blank for a plaintext JSON backup.",
+                                    stringResource(R.string.set_backup_pass_body),
                                     style = MaterialTheme.typography.bodySmall,
                                 )
                                 OutlinedTextField(
                                     value = pass,
                                     onValueChange = { pass = it },
-                                    label = { Text("Passphrase (optional)") },
+                                    label = { Text(stringResource(R.string.set_passphrase_optional)) },
                                     singleLine = true,
                                     visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
                                 )
@@ -792,11 +794,11 @@ fun SettingsScreen(
                         confirmButton = {
                             androidx.compose.material3.TextButton(onClick = {
                                 backupPassPrompt = false
-                                viewModel.exportBackup(pass) { share(it, "Export backup") }
-                            }) { Text("Export") }
+                                viewModel.exportBackup(pass) { share(it, context.getString(R.string.set_share_export_backup)) }
+                            }) { Text(stringResource(R.string.common_export)) }
                         },
                         dismissButton = {
-                            androidx.compose.material3.TextButton(onClick = { backupPassPrompt = false }) { Text("Cancel") }
+                            androidx.compose.material3.TextButton(onClick = { backupPassPrompt = false }) { Text(stringResource(R.string.common_cancel)) }
                         },
                     )
                 }
@@ -805,12 +807,12 @@ fun SettingsScreen(
                     var pass by remember { mutableStateOf("") }
                     androidx.compose.material3.AlertDialog(
                         onDismissRequest = { viewModel.pendingEncryptedRestore.value = null },
-                        title = { Text("Encrypted backup") },
+                        title = { Text(stringResource(R.string.set_encrypted_backup_title)) },
                         text = {
                             OutlinedTextField(
                                 value = pass,
                                 onValueChange = { pass = it },
-                                label = { Text("Passphrase") },
+                                label = { Text(stringResource(R.string.set_passphrase)) },
                                 singleLine = true,
                                 visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
                             )
@@ -818,19 +820,19 @@ fun SettingsScreen(
                         confirmButton = {
                             androidx.compose.material3.TextButton(onClick = {
                                 viewModel.restoreFrom(uri, pass)
-                            }) { Text("Restore") }
+                            }) { Text(stringResource(R.string.set_restore)) }
                         },
                         dismissButton = {
-                            androidx.compose.material3.TextButton(onClick = { viewModel.pendingEncryptedRestore.value = null }) { Text("Cancel") }
+                            androidx.compose.material3.TextButton(onClick = { viewModel.pendingEncryptedRestore.value = null }) { Text(stringResource(R.string.common_cancel)) }
                         },
                     )
                 }
             }
 
-            Section("DEMO") {
+            Section(stringResource(R.string.set_section_demo)) {
                 ToggleRow(
-                    "Demo mode",
-                    "Adds clearly-labeled synthetic miners; they never mix with real totals when off.",
+                    stringResource(R.string.set_demo_title),
+                    stringResource(R.string.set_demo_subtitle),
                     settings.demoModeEnabled,
                 ) { viewModel.setDemoMode(it) }
             }
@@ -887,7 +889,7 @@ private fun ThemeColorRow(selected: ThemeColor, onSelect: (ThemeColor) -> Unit) 
                         .clickable { onSelect(color) },
                 )
                 Text(
-                    color.label,
+                    stringResource(color.labelRes),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (isSelected) HiBrand.textPrimary else HiBrand.textSecondary,
                     modifier = Modifier.padding(top = 4.dp),
@@ -921,7 +923,7 @@ private fun PoolTypeRow(
 ) {
     var open by remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-        Text("Pool", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Text(stringResource(R.string.set_pool_label), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
         Box {
             androidx.compose.material3.AssistChip(
                 onClick = { open = true },
@@ -946,13 +948,13 @@ private fun WebhookTypeRow(
 ) {
     var open by remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-        Text("Push service", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Text(stringResource(R.string.set_push_service), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
         Box {
-            androidx.compose.material3.AssistChip(onClick = { open = true }, label = { Text(current.label) })
+            androidx.compose.material3.AssistChip(onClick = { open = true }, label = { Text(stringResource(current.labelRes)) })
             androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
                 hi3.hashkit.data.alerts.WebhookType.entries.forEach { t ->
                     androidx.compose.material3.DropdownMenuItem(
-                        text = { Text(t.label) },
+                        text = { Text(stringResource(t.labelRes)) },
                         onClick = { open = false; onSelect(t) },
                     )
                 }
@@ -975,7 +977,7 @@ private fun PayoutAddressRow(label: String, value: String, onChange: (String) ->
             scanned.contains(':') || scanned.contains('?') || scanned.any { it.isWhitespace() } ->
                 android.widget.Toast.makeText(
                     context,
-                    "That QR isn't a bare payout address (looks like a bitcoin: URI). Scan the plain address.",
+                    context.getString(R.string.set_qr_not_bare_address),
                     android.widget.Toast.LENGTH_LONG,
                 ).show()
             else -> {
@@ -994,33 +996,37 @@ private fun PayoutAddressRow(label: String, value: String, onChange: (String) ->
                 scan.launch(
                     com.journeyapps.barcodescanner.ScanOptions()
                         .setDesiredBarcodeFormats(com.journeyapps.barcodescanner.ScanOptions.QR_CODE)
-                        .setPrompt("Scan your payout-address QR")
+                        .setPrompt(context.getString(R.string.set_scan_prompt))
                         .setBeepEnabled(false)
                         .setOrientationLocked(false)
                 )
             }) {
-                Icon(Icons.Filled.QrCodeScanner, contentDescription = "Scan QR code")
+                Icon(Icons.Filled.QrCodeScanner, contentDescription = stringResource(R.string.set_scan_qr_cd))
             }
         },
         modifier = Modifier.fillMaxWidth(),
     )
 }
 
-/** Preset refresh intervals from 5 seconds to 1 day. */
-private val INTERVAL_PRESETS: List<Pair<String, Long>> = listOf(
-    "5 sec" to 5_000L, "10 sec" to 10_000L, "15 sec" to 15_000L, "30 sec" to 30_000L,
-    "1 min" to 60_000L, "2 min" to 120_000L, "5 min" to 300_000L, "15 min" to 900_000L,
-    "30 min" to 1_800_000L, "1 hour" to 3_600_000L, "6 hours" to 21_600_000L,
-    "12 hours" to 43_200_000L, "1 day" to 86_400_000L,
+/** Preset refresh intervals from 5 seconds to 1 day (label resource to milliseconds). */
+private val INTERVAL_PRESETS: List<Pair<Int, Long>> = listOf(
+    R.string.vm_interval_5s to 5_000L, R.string.vm_interval_10s to 10_000L,
+    R.string.vm_interval_15s to 15_000L, R.string.vm_interval_30s to 30_000L,
+    R.string.vm_interval_1m to 60_000L, R.string.vm_interval_2m to 120_000L,
+    R.string.vm_interval_5m to 300_000L, R.string.vm_interval_15m to 900_000L,
+    R.string.vm_interval_30m to 1_800_000L, R.string.vm_interval_1h to 3_600_000L,
+    R.string.vm_interval_6h to 21_600_000L, R.string.vm_interval_12h to 43_200_000L,
+    R.string.vm_interval_1d to 86_400_000L,
 )
 
+@Composable
 private fun intervalLabel(ms: Long): String =
-    INTERVAL_PRESETS.firstOrNull { it.second == ms }?.first
+    INTERVAL_PRESETS.firstOrNull { it.second == ms }?.first?.let { stringResource(it) }
         ?: when {
-            ms % 86_400_000L == 0L -> "${ms / 86_400_000L} day"
-            ms % 3_600_000L == 0L -> "${ms / 3_600_000L} hour"
-            ms % 60_000L == 0L -> "${ms / 60_000L} min"
-            else -> "${ms / 1000L} sec"
+            ms % 86_400_000L == 0L -> stringResource(R.string.vm_interval_days, ms / 86_400_000L)
+            ms % 3_600_000L == 0L -> stringResource(R.string.vm_interval_hours, ms / 3_600_000L)
+            ms % 60_000L == 0L -> stringResource(R.string.vm_interval_mins, ms / 60_000L)
+            else -> stringResource(R.string.vm_interval_secs, ms / 1000L)
         }
 
 @Composable
@@ -1034,9 +1040,9 @@ private fun IntervalRow(label: String, currentMs: Long, onSelect: (Long) -> Unit
                 label = { Text(intervalLabel(currentMs)) },
             )
             androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-                INTERVAL_PRESETS.forEach { (text, ms) ->
+                INTERVAL_PRESETS.forEach { (labelRes, ms) ->
                     androidx.compose.material3.DropdownMenuItem(
-                        text = { Text(text) },
+                        text = { Text(stringResource(labelRes)) },
                         onClick = { open = false; onSelect(ms) },
                     )
                 }

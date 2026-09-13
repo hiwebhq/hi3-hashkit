@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ps_title">Test de velocidad de pools</string>
+    <string name="ps_description">Mide la latencia stratum — el handshake TCP y un round-trip real de mining.subscribe, sin capturar paquetes. Prueba los pools que tu flota usa realmente (leídos de la config de pool de cada minero, así que el stratum PRIVADO/LAN funciona porque el teléfono comparte la red de la flota) más los pools que hayas activado en la libreta de pools. Medido desde la red de ESTE teléfono.</string>
+    <string name="ps_run">Ejecutar test</string>
+    <string name="ps_testing">Probando…</string>
+    <string name="ps_pool_count">%1$d pool(s)</string>
+    <string name="ps_ranked">CLASIFICADOS (el más rápido primero)</string>
+    <string name="ps_unreachable">inalcanzable</string>
+    <string name="ps_connect">conexión %1$s ms</string>
+    <string name="ps_jitter">jitter ±%1$d ms</string>
+    <string name="ps_stratum">stratum %1$s</string>
+    <string name="ps_no_response">sin respuesta</string>
+</resources>

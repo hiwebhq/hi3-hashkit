@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner detail screen (ui/detail) — French. -->
+<resources>
+    <!-- Top bar / scaffold -->
+    <string name="det_title_miner">Mineur</string>
+    <string name="det_cd_edit_miner">Modifier le mineur</string>
+    <string name="det_cd_remove_miner">Supprimer le mineur</string>
+    <string name="det_miner_not_found">Mineur introuvable</string>
+    <string name="det_percent_of_expected">%1$s de l\'attendu</string>
+
+    <!-- Section titles -->
+    <string name="det_section_live_view">VUE EN DIRECT</string>
+    <string name="det_section_hashrate_history">HISTORIQUE DU HASHRATE</string>
+    <string name="det_section_efficiency">EFFICACITÉ (J/TH)</string>
+    <string name="det_section_per_chip">SANTÉ PAR PUCE</string>
+    <string name="det_section_live_telemetry">TÉLÉMÉTRIE EN DIRECT</string>
+    <string name="det_section_shares_pool">SHARES &amp; POOL</string>
+    <string name="det_section_live_logs">JOURNAUX EN DIRECT</string>
+    <string name="det_section_event_log">JOURNAL D\'ÉVÉNEMENTS</string>
+    <string name="det_section_maintenance">JOURNAL DE MAINTENANCE</string>
+    <string name="det_section_identity">IDENTITÉ</string>
+    <string name="det_section_health">SCORE DE SANTÉ</string>
+    <string name="det_section_login">CONNEXION AU MINEUR (POUR LES CONTRÔLES)</string>
+    <string name="det_section_controls">CONTRÔLES</string>
+    <string name="det_section_plug">COUPURE DE SÉCURITÉ (PRISE CONNECTÉE)</string>
+    <string name="det_section_alerts">ALERTES RÉCENTES</string>
+    <string name="det_section_raw">RÉPONSE API BRUTE</string>
+    <string name="det_tap_to_show">"  (touchez pour afficher)"</string>
+
+    <!-- Live view -->
+    <string name="det_live_view_hint">Rendu stylisé en direct : le ventilateur tourne selon le RPM signalé, les puces s\'illuminent selon la température, la LED indique le statut.</string>
+
+    <!-- Hashrate history -->
+    <string name="det_no_reading_yet">Aucune lecture réussie pour l\'instant</string>
+    <string name="det_last_reading_seconds">Dernière lecture il y a %1$ds</string>
+    <string name="det_last_reading_minutes">Dernière lecture il y a %1$dm — obsolète</string>
+    <string name="det_uptime_energy">"  ·  uptime %1$d%%  ·  ~%2$s d\'énergie"</string>
+    <string name="det_export_csv">Exporter CSV</string>
+    <string name="det_export_csv_chooser">Exporter la télémétrie CSV</string>
+
+    <!-- Efficiency -->
+    <string name="det_eff_stats">"min %1$s  ·  actuel %2$s  ·  max %3$s J/TH   (plus bas = mieux)"</string>
+
+    <!-- Live telemetry metrics -->
+    <string name="det_metric_power">Puissance</string>
+    <string name="det_metric_efficiency">Efficacité</string>
+    <string name="det_metric_chip_temp">Temp. puce</string>
+    <string name="det_metric_vr_temp">Temp. VR</string>
+    <string name="det_metric_frequency">Fréquence</string>
+    <string name="det_metric_core_v">V cœur</string>
+    <string name="det_metric_fan_n">Ventilateur %1$d</string>
+    <string name="det_metric_uptime">Uptime</string>
+
+    <!-- Shares & pool -->
+    <string name="det_metric_accepted">Acceptées</string>
+    <string name="det_metric_rejected">Rejetées</string>
+    <string name="det_metric_best_diff">Meilleure diff.</string>
+    <string name="det_metric_session_best">Record session</string>
+    <string name="det_pool_prefix">Pool : %1$s</string>
+    <string name="det_fallback_active">"  (repli actif)"</string>
+
+    <!-- Logs -->
+    <string name="det_open_live_logs">Ouvrir le flux de journaux en direct</string>
+    <string name="det_live_logs_hint">Diffuse les journaux du firmware via le WebSocket du mineur tant que la vue est ouverte. Les adresses de portefeuille sont masquées.</string>
+    <string name="det_open_event_log">Ouvrir le journal d\'événements</string>
+    <string name="det_event_log_hint">Ce firmware n\'expose aucun flux de journaux ; Hashkit enregistre donc les événements de santé dérivés de chaque interrogation — redémarrages, dépassements de limite de température, déconnexions, arrêts de ventilateur, pics de rejets — et les analyse.</string>
+
+    <!-- Maintenance log -->
+    <string name="det_add_note_label">Ajouter une note (ex. \"pâte thermique refaite\", \"ventilateur 2 remplacé\")</string>
+    <string name="det_add_note">Ajouter une note</string>
+    <string name="det_gallery">Galerie</string>
+    <string name="det_camera">Appareil photo</string>
+    <string name="det_no_notes">Aucune note de maintenance pour l\'instant. Consignez pâte thermique, remplacements de ventilateur, nettoyages — ils restent sur cet appareil et sont inclus dans une sauvegarde complète.</string>
+    <string name="det_cd_delete_note">Supprimer la note</string>
+    <string name="det_cd_note_photo">Photo de maintenance — touchez pour afficher en taille réelle</string>
+    <string name="det_cd_photo">Photo de maintenance</string>
+    <string name="det_share_photo">Partager la photo</string>
+    <string name="det_photo_missing">Le fichier photo est introuvable</string>
+
+    <!-- Identity -->
+    <string name="det_id_model">Modèle</string>
+    <string name="det_id_asic">ASIC</string>
+    <string name="det_id_firmware">Firmware</string>
+    <string name="det_id_mac">MAC</string>
+    <string name="det_id_serial">N° de série</string>
+    <string name="det_id_address">Adresse</string>
+
+    <!-- Miner login -->
+    <string name="det_login_label_totp">Secret TOTP (base32)</string>
+    <string name="det_login_label_bitmain">Mot de passe web root</string>
+    <string name="det_login_label_vnish">Mot de passe web VNish</string>
+    <string name="det_login_saved_hint">Un identifiant est enregistré (chiffré). Saisissez-en un nouveau pour le remplacer, ou effacez-le.</string>
+    <string name="det_login_totp_hint">Requis uniquement si l\'OTP est activé sur l\'appareil : saisissez le secret TOTP de son QR d\'enrôlement (otpauth://…secret=…) pour activer réglage/redémarrage. Stocké chiffré sur cet appareil uniquement.</string>
+    <string name="det_login_password_hint">Saisissez le mot de passe web du mineur pour activer les contrôles. Stocké chiffré sur cet appareil uniquement.</string>
+    <string name="det_clear">Effacer</string>
+
+    <!-- Controls (card + autotuner entry) -->
+    <string name="det_autotuner">Autotuner d\'efficacité (balayage J/TH)</string>
+    <string name="det_monitoring_only">Cet appareil est en surveillance seule.</string>
+    <string name="det_restart">Redémarrer</string>
+    <string name="det_stop_blink">Arrêter le clignotement</string>
+    <string name="det_blink_led">Faire clignoter la LED</string>
+    <string name="det_pool">Pool</string>
+    <string name="det_fan">Ventilateur</string>
+    <string name="det_tune">Régler</string>
+    <string name="det_power">Alimentation</string>
+    <string name="det_working">En cours : %1$s…</string>
+    <string name="det_restart_title">Redémarrer le mineur ?</string>
+    <string name="det_restart_body">Le minage s\'arrête pendant ~30–60 secondes le temps du redémarrage. Les shares en cours peuvent être perdues. Aucun paramètre n\'est modifié.</string>
+    <string name="det_power_title">Suspendre ou reprendre le minage</string>
+    <string name="det_power_body">Pause envoie la commande d\'arrêt logiciel du mineur (il cesse de prendre du travail, pour le délestage ou l\'écrêtage) sans redémarrage ; Reprendre envoie la commande de marche logicielle pour le relancer. Surveillez le hashrate après application pour confirmer l\'effet sur votre firmware.</string>
+    <string name="det_pause">Pause</string>
+    <string name="det_resume">Reprendre</string>
+
+    <!-- Pool dialog -->
+    <string name="det_pool_title">Changer de pool principal</string>
+    <string name="det_pool_current">Actuel : %1$s:%2$d</string>
+    <string name="det_stratum_url">URL Stratum</string>
+    <string name="det_port">Port</string>
+    <string name="det_worker">Worker / adresse</string>
+    <string name="det_pool_warning">Le mot de passe de pool enregistré est conservé. Une URL erronée arrête le minage jusqu\'à correction. Les firmwares plus anciens peuvent nécessiter un redémarrage pour prendre en compte le changement.</string>
+
+    <!-- Fan dialog -->
+    <string name="det_fan_title">Contrôle du ventilateur</string>
+    <string name="det_fan_auto">Automatique (géré par le firmware)</string>
+    <string name="det_fan_manual_speed">Vitesse manuelle : %1$d%%</string>
+    <string name="det_fan_warning" formatted="false">Sous ~35%, un mineur en charge peut surchauffer. La protection anti-surchauffe du firmware reste active dans tous les cas.</string>
+
+    <!-- Tune dialog -->
+    <string name="det_tune_unavailable_title">Réglage indisponible</string>
+    <string name="det_tune_unavailable_body">Ce firmware ne publie pas ses listes de fréquences/tensions approuvées (GET /api/system/asic) ; l\'application ne proposera donc pas de valeurs de réglage pour celui-ci.</string>
+    <string name="det_tune_title">Réglage (valeurs approuvées par le firmware)</string>
+    <string name="det_tune_current">Actuel : %1$s MHz / %2$s mV</string>
+    <string name="det_tune_stock">"  ·  D\'origine : %1$s MHz / %2$s mV"</string>
+    <string name="det_frequency_mhz">Fréquence (MHz)</string>
+    <string name="det_core_voltage_mv">Tension du cœur (mV)</string>
+    <string name="det_tune_warning">Des valeurs au-dessus de l\'origine augmentent la chaleur et la consommation et peuvent réduire la durée de vie du matériel. L\'application interroge plus vite après application ; surveillez les températures et revenez en arrière si les températures de puce ou de VR grimpent.</string>
+    <string name="det_roll_back">Revenir en arrière</string>
+
+    <!-- Smart plug -->
+    <string name="det_plug_hint">Coupez l\'alimentation via une prise connectée locale quand la température de puce atteint la limite. La remise en marche est toujours manuelle — l\'application ne rétablit jamais le courant automatiquement. Adresses locales uniquement.</string>
+    <string name="det_plug">Prise</string>
+    <string name="det_off_url">URL OFF</string>
+    <string name="det_on_url">URL ON</string>
+    <string name="det_plug_host">IP / hôte de la prise</string>
+    <string name="det_plug_cutoff">Couper à la temp. de puce (°C)</string>
+    <string name="det_test_off">Test off</string>
+    <string name="det_test_on">Test on</string>
+
+    <!-- Alerts -->
+    <string name="det_alert_active">active</string>
+    <string name="det_alert_resolved">résolue</string>
+
+    <!-- Raw response -->
+    <string name="det_no_raw">Aucune réponse brute capturée pour l\'instant</string>
+    <string name="det_raw_redacted">Les champs d\'identifiants et de Wi-Fi sont masqués.</string>
+
+    <!-- Remove dialog -->
+    <string name="det_remove_title">Supprimer le mineur ?</string>
+    <string name="det_remove_body">Cette action supprime %1$s et ne conserve aucun historique de télémétrie.</string>
+    <string name="det_this_miner">ce mineur</string>
+    <string name="det_remove">Supprimer</string>
+
+    <!-- Edit miner dialog -->
+    <string name="det_edit_miner_title">Modifier le mineur</string>
+    <string name="det_name">Nom</string>
+    <string name="det_group">Groupe</string>
+    <string name="det_location">Emplacement (salle/rack/étagère)</string>
+    <string name="det_farm_header">FERME</string>
+    <string name="det_tags">Tags (séparés par des virgules)</string>
+    <string name="det_expected_hashrate">Hashrate attendu (GH/s, vide = valeur de l\'appareil)</string>
+    <string name="det_notes">Notes</string>
+    <string name="det_alert_overrides_header">SEUILS D\'ALERTE SPÉCIFIQUES (vide = valeur globale)</string>
+    <string name="det_ov_hashrate" formatted="false">Alerte hashrate sous (%)</string>
+    <string name="det_ov_chip">Alerte temp. puce (°C)</string>
+    <string name="det_ov_vr">Alerte temp. VR (°C)</string>
+    <string name="det_ov_reject" formatted="false">Alerte taux de rejet (%)</string>
+    <string name="det_mute">Couper les alertes pour ce mineur</string>
+    <string name="det_mute_hint">Toujours interrogé et tracé ; ne déclenche aucune alerte.</string>
+
+    <!-- Per-chip health table -->
+    <string name="det_col_board">Carte</string>
+    <string name="det_col_hashrate">Hashrate</string>
+    <string name="det_col_chips">Puces</string>
+    <string name="det_col_hw_err">Err. HW</string>
+    <string name="det_col_temp">Temp</string>
+    <string name="det_chips_failed">⚠ %1$d puce(s) défaillante(s) détectée(s) sur %2$d carte(s).</string>
+    <string name="det_chips_healthy">Les %1$d carte(s) signalent un état sain.</string>
+
+    <!-- Miner visual (accessibility) -->
+    <string name="det_cd_visual">Rendu du mineur en direct : statut %1$s</string>
+    <string name="det_cd_visual_chip">, puce %1$d degrés</string>
+    <string name="det_cd_visual_fan">, ventilateur %1$d RPM</string>
+
+    <!-- ViewModel-surfaced status messages -->
+    <string name="det_msg_credential_cleared">Identifiant effacé.</string>
+    <string name="det_msg_credential_saved">Identifiant enregistré (chiffré).</string>
+    <string name="det_msg_plug_on_sent">Commande d\'allumage de la prise envoyée.</string>
+    <string name="det_msg_plug_off_sent">Commande d\'extinction de la prise envoyée.</string>
+    <string name="det_msg_plug_failed">Échec de la commande de prise — vérifiez l\'adresse/URL.</string>
+    <string name="det_msg_miner_not_found">Mineur introuvable.</string>
+    <string name="det_msg_done">Terminé : %1$s.</string>
+    <string name="det_msg_failed">Échec : %1$s</string>
+    <string name="det_msg_unsupported">Non pris en charge : %1$s</string>
+    <string name="det_msg_unexpected_error">Erreur inattendue</string>
+
+    <!-- ViewModel action labels (shown as "Working: …" and "Done: …") -->
+    <string name="det_act_restarting">redémarrage</string>
+    <string name="det_act_blinking_led">clignotement de la LED</string>
+    <string name="det_act_stopping_blink">arrêt du clignotement</string>
+    <string name="det_act_pausing">suspension du minage</string>
+    <string name="det_act_resuming">reprise du minage</string>
+    <string name="det_act_changing_pool">changement de pool</string>
+    <string name="det_act_fan_auto">passage du ventilateur en automatique</string>
+    <string name="det_act_fan_manual">réglage du ventilateur à %1$d%%</string>
+    <string name="det_act_applying_tune">application de %1$d MHz / %2$d mV</string>
+    <string name="det_act_rollback">retour au réglage précédent</string>
+</resources>

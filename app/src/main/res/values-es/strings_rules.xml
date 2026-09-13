@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">Reglas de automatización</string>
+    <string name="rules_add_rule">Añadir regla</string>
+    <string name="rules_intro">Las reglas se comprueban en cada ciclo de sondeo. La condición debe mantenerse durante la ventana sostenida de la regla antes de ejecutar la acción, y cada regla se dispara como máximo una vez por intervalo por minero. Los mineros silenciados se omiten, las acciones de control no compatibles se omiten con un motivo, y cada disparo genera una notificación del watchdog.</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"SI %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" durante ≥%1$d min"</string>
+    <string name="rules_row_group">"  ·  grupo \"%1$s\""</string>
+    <string name="rules_row_all_miners">"  ·  todos los mineros"</string>
+    <string name="rules_row_interval">"  ·  cada %1$d min por minero"</string>
+    <string name="rules_last_fired">Último disparo %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">Nueva regla</string>
+    <string name="rules_name">Nombre</string>
+    <string name="rules_when">Cuando</string>
+    <string name="rules_then">Entonces</string>
+    <string name="rules_threshold">Umbral (%1$s)</string>
+    <string name="rules_target_group">Grupo objetivo (vacío = todos)</string>
+    <string name="rules_sustained_label">Sostenido durante (min, 0 = primera coincidencia)</string>
+    <string name="rules_min_interval_label">Intervalo mínimo entre disparos por minero (min)</string>
+    <string name="rules_editor_hint">Las acciones de control (pausar/reanudar/reiniciar) usan la vía de control verificada del minero y se omiten donde no son compatibles. Las acciones de enchufe requieren un enchufe inteligente configurado. Prueba primero con un intervalo alto.</string>
+</resources>

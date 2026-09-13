@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.FleetControl
 import hi3.hashkit.data.repo.MinerRepository
@@ -74,6 +76,7 @@ data class PriceState(
 
 @HiltViewModel
 class PriceCurtailmentViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val settingsRepository: SettingsRepository,
     private val octopus: OctopusAgileClient,
     private val repository: MinerRepository,
@@ -100,7 +103,7 @@ class PriceCurtailmentViewModel @Inject constructor(
             settingsRepository.setOctopusRegion(region)
             settingsRepository.setPriceResumePence(resume)
             settingsRepository.setPriceCurtailPence(curtail)
-            _state.value = _state.value.copy(region = region.uppercase(), resumePence = resume, curtailPence = curtail, message = "Saved.")
+            _state.value = _state.value.copy(region = region.uppercase(), resumePence = resume, curtailPence = curtail, message = appContext.getString(R.string.vm_saved))
             if (region.isNotBlank()) refresh()
         }
     }
@@ -131,7 +134,7 @@ class PriceCurtailmentViewModel @Inject constructor(
                         cheapestPence = upcoming.minOfOrNull { it.pencePerKwh },
                         priciestPence = upcoming.maxOfOrNull { it.pencePerKwh },
                         decision = decision,
-                        message = if (current == null) "No rate covers the current half-hour yet." else null,
+                        message = if (current == null) appContext.getString(R.string.vm_price_no_rate) else null,
                     )
                 }
                 is OctopusAgileClient.Result.Error -> _state.value = _state.value.copy(loading = false, message = r.message)
@@ -158,10 +161,12 @@ class PriceCurtailmentViewModel @Inject constructor(
             val plan = fleetControl.plan(hi3.hashkit.data.repo.BulkAction.Power(action), targets)
             val outcomes = fleetControl.execute(plan)
             val ok = outcomes.count { it.result is hi3.hashkit.domain.adapter.ActionResult.Success }
+            val verb = appContext.getString(if (action == PowerAction.PAUSE) R.string.vm_curtailed else R.string.vm_resumed)
             _state.value = _state.value.copy(
                 applying = false,
-                message = "${if (action == PowerAction.PAUSE) "Curtailed" else "Resumed"} $ok/${plan.supported.size} miner(s)" +
-                    (if (plan.skipped.isNotEmpty()) ", ${plan.skipped.size} skipped." else "."),
+                message = if (plan.skipped.isNotEmpty())
+                    appContext.getString(R.string.vm_curtail_result_skipped, verb, ok, plan.supported.size, plan.skipped.size)
+                else appContext.getString(R.string.vm_curtail_result, verb, ok, plan.supported.size),
             )
         }
     }
@@ -182,10 +187,10 @@ fun PriceCurtailmentScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Price curtailment", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.price_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -200,9 +205,7 @@ fun PriceCurtailmentScreen(
         ) {
             item {
                 Text(
-                    "Pause on price spikes and mine when power is cheap, using the free Octopus " +
-                        "Agile half-hourly feed (UK). No account or key needed — only the public " +
-                        "price for your region is fetched.",
+                    stringResource(R.string.price_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -221,7 +224,7 @@ fun PriceCurtailmentScreen(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(Modifier.padding(16.dp)) {
-                        Text("PRICE NOW", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                        Text(stringResource(R.string.price_now_label), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                         Text(
                             state.currentPence?.let { "%.2f p/kWh".format(it) } ?: "—",
                             style = MaterialTheme.typography.headlineMedium,
@@ -230,7 +233,11 @@ fun PriceCurtailmentScreen(
                         )
                         if (state.cheapestPence != null) {
                             Text(
-                                "Next 6h: low ${"%.1f".format(state.cheapestPence)} · high ${"%.1f".format(state.priciestPence)} p/kWh",
+                                stringResource(
+                                    R.string.price_next6h,
+                                    "%.1f".format(state.cheapestPence),
+                                    "%.1f".format(state.priciestPence),
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
                             )
@@ -238,9 +245,9 @@ fun PriceCurtailmentScreen(
                         state.decision?.let { d ->
                             Text(
                                 when (d) {
-                                    CurtailmentEngine.Action.RUN -> "Recommendation: cheap — resume mining"
-                                    CurtailmentEngine.Action.CURTAIL -> "Recommendation: expensive — curtail mining"
-                                    CurtailmentEngine.Action.HOLD -> "Recommendation: hold (within the deadband)"
+                                    CurtailmentEngine.Action.RUN -> stringResource(R.string.price_reco_run)
+                                    CurtailmentEngine.Action.CURTAIL -> stringResource(R.string.price_reco_curtail)
+                                    CurtailmentEngine.Action.HOLD -> stringResource(R.string.price_reco_hold)
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
@@ -255,7 +262,7 @@ fun PriceCurtailmentScreen(
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(onClick = viewModel::refresh, enabled = !state.loading) {
-                        Text(if (state.loading) "Loading…" else "Refresh prices")
+                        Text(if (state.loading) stringResource(R.string.common_loading) else stringResource(R.string.price_refresh))
                     }
                     if (state.loading) CircularProgressIndicator(modifier = Modifier.padding(2.dp))
                 }
@@ -263,16 +270,16 @@ fun PriceCurtailmentScreen(
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                     OutlinedButton(onClick = viewModel::applyResume, enabled = !state.applying, modifier = Modifier.weight(1f)) {
-                        Text("Resume fleet")
+                        Text(stringResource(R.string.price_resume_fleet))
                     }
                     OutlinedButton(onClick = viewModel::applyPause, enabled = !state.applying, modifier = Modifier.weight(1f)) {
-                        Text("Curtail fleet")
+                        Text(stringResource(R.string.price_curtail_fleet))
                     }
                 }
             }
 
             if (state.upcoming.isNotEmpty()) {
-                item { Text("NEXT SLOTS", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
+                item { Text(stringResource(R.string.price_next_slots), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
                 for (slot in state.upcoming) {
                     item {
                         Row(
@@ -298,12 +305,12 @@ fun PriceCurtailmentScreen(
                 }
             }
 
-            item { Text("CONFIGURATION", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
+            item { Text(stringResource(R.string.price_configuration), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
             item {
                 OutlinedTextField(
                     value = region, onValueChange = { region = it.take(1).uppercase() },
-                    label = { Text("Region letter (A–P)") },
-                    placeholder = { Text("C for London") },
+                    label = { Text(stringResource(R.string.price_region_label)) },
+                    placeholder = { Text(stringResource(R.string.price_region_placeholder)) },
                     singleLine = true, modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -311,13 +318,13 @@ fun PriceCurtailmentScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
                         value = resume, onValueChange = { resume = it.filter { c -> c.isDigit() || c == '.' } },
-                        label = { Text("Resume ≤ p/kWh") },
+                        label = { Text(stringResource(R.string.price_resume_label)) },
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true, modifier = Modifier.weight(1f),
                     )
                     OutlinedTextField(
                         value = curtail, onValueChange = { curtail = it.filter { c -> c.isDigit() || c == '.' } },
-                        label = { Text("Curtail ≥ p/kWh") },
+                        label = { Text(stringResource(R.string.price_curtail_label)) },
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true, modifier = Modifier.weight(1f),
                     )
@@ -331,7 +338,7 @@ fun PriceCurtailmentScreen(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Save configuration") }
+                ) { Text(stringResource(R.string.price_save_config)) }
             }
 
             state.message?.let { msg ->

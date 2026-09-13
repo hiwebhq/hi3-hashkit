@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: display labels for shared enums (theme colors, webhook types, watchdog rules). -->
+<resources>
+    <string name="enum_theme_blue">Синий</string>
+    <string name="enum_theme_green">Зелёный</string>
+    <string name="enum_theme_orange">Оранжевый</string>
+    <string name="enum_theme_yellow">Жёлтый</string>
+    <string name="enum_theme_red">Красный</string>
+    <string name="enum_theme_purple">Фиолетовый</string>
+
+    <string name="enum_webhook_none">Выкл</string>
+    <string name="enum_webhook_ntfy">ntfy</string>
+    <string name="enum_webhook_gotify">Gotify</string>
+    <string name="enum_webhook_telegram">Telegram</string>
+    <string name="enum_webhook_generic">Универсальный (JSON POST)</string>
+
+    <string name="enum_plug_tasmota">Tasmota</string>
+    <string name="enum_plug_shelly">Shelly</string>
+    <string name="enum_plug_kasa">Kasa / TP-Link</string>
+    <string name="enum_plug_webhook">Универсальный вебхук</string>
+
+    <string name="enum_tag_standard">Стандартная — 38 мм</string>
+    <string name="enum_tag_small">Малая — 25 мм</string>
+
+    <string name="enum_cond_chip_temp_above">Температура чипа выше</string>
+    <string name="enum_cond_vr_temp_above">Температура VR выше</string>
+    <string name="enum_cond_hashrate_below_pct" formatted="false">Хешрейт ниже % от ожидаемого</string>
+    <string name="enum_cond_reject_rate_above">Процент отказов выше</string>
+    <string name="enum_cond_offline">Майнер офлайн</string>
+
+    <string name="enum_action_pause">Приостановить хеширование</string>
+    <string name="enum_action_resume">Возобновить хеширование</string>
+    <string name="enum_action_reboot">Перезагрузить</string>
+    <string name="enum_action_plug_off">Умная розетка ВЫКЛ</string>
+    <string name="enum_action_plug_on">Умная розетка ВКЛ</string>
+    <string name="enum_action_notify">Только уведомить</string>
+</resources>

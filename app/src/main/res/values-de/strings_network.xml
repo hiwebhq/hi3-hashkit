@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">Netzwerkscan</string>
+    <string name="net_refresh_network_info">Netzwerkinfo aktualisieren</string>
+    <string name="net_intro">Scannt dein lokales Subnetz nach Minern auf ihren bekannten Ports (HTTP 80, CGMiner 4028). Nur private LAN- und Tailscale-Adressen werden geprüft. Läuft automatisch beim Start, damit Geräte schon erscheinen, bevor du „Miner hinzufügen“ öffnest.</string>
+    <string name="net_this_device">Dieses Gerät</string>
+    <string name="net_not_on_network">Nicht in einem WLAN- / LAN-Netzwerk</string>
+    <string name="net_scan_range_label">Scan-Bereich (CIDR)</string>
+    <string name="net_scanning_progress">Scanne %1$d / %2$d — %3$d gefunden</string>
+    <string name="net_last_scan">Letzter Scan %1$s.</string>
+    <string name="net_restart">Neu starten</string>
+    <string name="net_start_scan">Scan starten</string>
+    <string name="net_discovering">Suche…</string>
+    <string name="net_mdns_discover">mDNS-Suche</string>
+    <string name="net_auto_scan_title">Beim Start automatisch scannen</string>
+    <string name="net_auto_scan_subtitle">Startet einen Subnetz-Scan, wenn die App öffnet.</string>
+    <string name="net_just_now">gerade eben</string>
+    <string name="net_minutes_ago">vor %1$dm</string>
+    <string name="net_hours_ago">vor %1$dh</string>
+</resources>

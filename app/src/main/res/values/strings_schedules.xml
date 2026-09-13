@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">Schedules</string>
+    <string name="sched_add_schedule">Add schedule</string>
+    <string name="sched_intro">Schedules run when the app polls (foreground) or during background monitoring cycles (~15 min granularity) — not at exact times. A missed day is skipped, never replayed.</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s at %2$s on %3$s · targets: %4$s</string>
+    <string name="sched_row_group">group \"%1$s\"</string>
+    <string name="sched_row_all_miners">all miners</string>
+    <string name="sched_last_run">Last run %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">New schedule</string>
+    <string name="sched_name">Name</string>
+    <string name="sched_action_restart">Restart</string>
+    <string name="sched_action_pool">Pool</string>
+    <string name="sched_action_fan">Fan</string>
+    <string name="sched_action_pause">Pause</string>
+    <string name="sched_action_resume">Resume</string>
+    <string name="sched_action_plug_off">Plug off</string>
+    <string name="sched_action_plug_on">Plug on</string>
+    <string name="sched_action_tune_preset">Tune preset</string>
+    <string name="sched_stratum_url">Stratum URL</string>
+    <string name="sched_port">Port</string>
+    <string name="sched_worker">Worker</string>
+    <string name="sched_automatic">Automatic</string>
+    <string name="sched_manual_percent">Manual: %1$d%%</string>
+    <string name="sched_frequency_mhz">Frequency (MHz)</string>
+    <string name="sched_core_voltage_mv">Core voltage (mV)</string>
+    <string name="sched_time_label">Time (HH:MM, device timezone)</string>
+    <string name="sched_target_group">Target group (blank = all miners)</string>
+    <string name="sched_hint_plug">Plug on/off switches each target miner\'s configured smart plug over the LAN. Miners without a plug set up are skipped. Pair a nightly Plug off with a morning Plug on for time-of-use power control; each run is recorded.</string>
+    <string name="sched_hint_tune">Time-of-use power target: applies a fixed frequency/voltage preset. Use a low-power preset at peak-rate start and your normal preset at the end. Only firmware that accepts these values (e.g. Bitaxe/AxeOS) runs it; others are skipped. Use values your miner\'s tuner accepts.</string>
+    <string name="sched_hint_default">Time-of-use: schedule Pause at your peak-rate start and Resume at the end (pause needs a device that supports it). Unsupported devices are skipped with a reason; each run is recorded in the audit log.</string>
+</resources>

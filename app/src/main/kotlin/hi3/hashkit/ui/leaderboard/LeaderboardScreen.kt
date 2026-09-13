@@ -35,19 +35,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.annotation.StringRes
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.ui.dashboard.DashboardViewModel
 import hi3.hashkit.ui.theme.HiBrand
 
-private enum class RankBy(val label: String) { EFFICIENCY("Efficiency"), ATTAINMENT("Attainment"), HASHRATE("Hashrate") }
+private enum class RankBy(@StringRes val labelRes: Int) {
+    EFFICIENCY(R.string.lead_rank_efficiency),
+    ATTAINMENT(R.string.lead_rank_attainment),
+    HASHRATE(R.string.lead_rank_hashrate),
+}
 
 private fun attainment(m: Miner): Double? {
     val actual = m.lastTelemetry?.hashrateGhs?.value ?: return null
@@ -80,10 +87,13 @@ fun LeaderboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Leaderboard", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.lead_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -99,17 +109,19 @@ fun LeaderboardScreen(
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     RankBy.entries.forEach { r ->
-                        FilterChip(selected = rankBy == r, onClick = { rankBy = r }, label = { Text(r.label) })
+                        FilterChip(selected = rankBy == r, onClick = { rankBy = r }, label = { Text(stringResource(r.labelRes)) })
                     }
                 }
             }
             item {
                 Text(
-                    when (rankBy) {
-                        RankBy.EFFICIENCY -> "Ranked by energy efficiency (J/TH) — lower is better. Needs power data."
-                        RankBy.ATTAINMENT -> "Ranked by actual vs expected hashrate. Needs an expected hashrate."
-                        RankBy.HASHRATE -> "Ranked by current hashrate."
-                    },
+                    stringResource(
+                        when (rankBy) {
+                            RankBy.EFFICIENCY -> R.string.lead_desc_efficiency
+                            RankBy.ATTAINMENT -> R.string.lead_desc_attainment
+                            RankBy.HASHRATE -> R.string.lead_desc_hashrate
+                        },
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -117,7 +129,7 @@ fun LeaderboardScreen(
             if (ranked.isEmpty()) {
                 item {
                     Text(
-                        "No live miners with this metric yet.",
+                        stringResource(R.string.lead_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = HiBrand.textSecondary,
                         modifier = Modifier.padding(top = 8.dp),

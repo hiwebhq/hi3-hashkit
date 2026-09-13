@@ -50,9 +50,9 @@ object AssetTagPrinter {
     }
 
     /** Sticker size the user can pick when printing. */
-    enum class TagSize(val label: String) {
-        STANDARD("Standard — 38 mm"),
-        SMALL("Small — 25 mm"),
+    enum class TagSize(@androidx.annotation.StringRes val labelRes: Int) {
+        STANDARD(hi3.hashkit.R.string.enum_tag_standard),
+        SMALL(hi3.hashkit.R.string.enum_tag_small),
     }
 
     private fun sheetFor(size: TagSize): Sheet = when (size) {

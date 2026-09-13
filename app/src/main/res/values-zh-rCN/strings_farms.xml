@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">矿场</string>
+    <string name="farms_add_farm">添加矿场</string>
+    <string name="farms_intro">将矿机按矿场/站点分组，每个矿场有自己的扫描子网。默认矿场在启动时打开；仪表盘显示的是当前活动矿场。删除矿场会保留其矿机（变为未分配）。</string>
+    <string name="farms_empty">还没有矿场。添加一个以便按站点管理矿机——之后进行 ASIC 发现和按站点审计日志都很方便。</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">默认</string>
+    <string name="farms_no_subnet">无子网</string>
+    <string name="farms_miner_count">" · %1$d 台矿机"</string>
+    <string name="farms_viewing">正在查看</string>
+    <string name="farms_view">查看</string>
+    <string name="farms_set_default">设为默认</string>
+    <string name="farms_scan">扫描</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">扫描新矿场？</string>
+    <string name="farms_scan_new_body">现在扫描 %1$s 查找矿机并加入此矿场？</string>
+    <string name="farms_scan_now">立即扫描</string>
+    <string name="farms_later">稍后</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">删除 %1$s？</string>
+    <string name="farms_delete_body_also">其 %1$d 台矿机及其历史数据将一并删除。</string>
+    <string name="farms_delete_body_keep">其 %1$d 台矿机会继续被跟踪，但变为未分配。历史数据保留。</string>
+    <string name="farms_delete_also_checkbox">同时删除其 %1$d 台矿机</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">名称</string>
+    <string name="farms_name_placeholder">家庭实验室</string>
+    <string name="farms_subnet_label">扫描子网（CIDR）</string>
+    <string name="farms_create">创建</string>
+</resources>

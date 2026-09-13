@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings screen strings. Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Section headers -->
+    <string name="set_section_advanced">高级功能</string>
+    <string name="set_section_alerts">告警</string>
+    <string name="set_section_discovery">发现</string>
+    <string name="set_section_display">显示</string>
+    <string name="set_section_farms">矿场</string>
+    <string name="set_section_mmp">Hi3 MMP</string>
+    <string name="set_section_web_server">本地 Web 服务器（高级）</string>
+    <string name="set_section_monitoring">监控</string>
+    <string name="set_section_mqtt">MQTT / Home Assistant</string>
+    <string name="set_section_pool">矿池</string>
+    <string name="set_section_push">推送（Webhook）</string>
+    <string name="set_section_quiet">安静时段与摘要</string>
+    <string name="set_section_security">安全</string>
+    <string name="set_section_solo">Solo 挖矿</string>
+    <string name="set_section_units">单位与电价</string>
+    <string name="set_section_update">更新 Hashkit</string>
+    <string name="set_section_data">数据与导出</string>
+    <string name="set_section_demo">演示</string>
+
+    <!-- Advanced features -->
+    <string name="set_advanced_unlocked_desc">高级功能已解锁。这会在仪表盘菜单中显示“比特币实况”链接；未来版本可能会把更多内容移到这里（安全页面、高级工具）。</string>
+    <string name="set_advanced_locked_desc">输入解锁码以显示高级功能（目前为仪表盘菜单的“比特币实况”链接）。</string>
+    <string name="set_advanced_unlock_code_optional">解锁码（可选）</string>
+    <string name="set_advanced_unlock_code">解锁码</string>
+    <string name="set_advanced_apply_code">应用解锁码</string>
+
+    <!-- Alerts -->
+    <string name="set_alerts_title">告警与通知</string>
+    <string name="set_alerts_subtitle">离线、温度、风扇、拒绝率和重启告警，并附恢复通知。</string>
+    <string name="set_alert_hashrate_below" formatted="false">算力低于（预期的 %）时告警</string>
+    <string name="set_alert_chip_temp">芯片温度告警（°C）</string>
+    <string name="set_alert_vr_temp">VR 温度告警（°C）</string>
+    <string name="set_alert_reject_rate" formatted="false">拒绝率告警（%）</string>
+    <string name="set_alert_cooldown">重复通知冷却时间（分钟）</string>
+
+    <!-- Discovery -->
+    <string name="set_discovery_extra_subnets">额外扫描子网（CIDR，逗号分隔）</string>
+    <string name="set_discovery_subnets_hint">添加可通过你的 Tailscale 子网路由访问的远程局域网，例如 192.168.50.0/24。它们会在添加页面显示为快捷填充选项。</string>
+
+    <!-- Display -->
+    <string name="set_theme">主题</string>
+    <string name="set_theme_system">跟随系统</string>
+    <string name="set_theme_dark">深色</string>
+    <string name="set_theme_light">浅色</string>
+    <string name="set_ui_theme">界面主题</string>
+    <string name="set_ui_theme_hint">应用全局的强调色。状态颜色（在线/离线）不受影响。</string>
+    <string name="set_profit_card_title">收益与能耗卡片</string>
+    <string name="set_profit_card_subtitle">在仪表盘上显示预计收入、电费和能耗。</string>
+    <string name="set_solo_card_title">Solo 爆块概率卡片</string>
+    <string name="set_solo_card_subtitle">在仪表盘上显示找到区块的概率。</string>
+    <string name="set_card_order_title">仪表盘卡片顺序</string>
+    <string name="set_card_order_hint">调整仪表盘各模块的顺序——例如把矿池和 MMP 移到矿机列表下方。卡片仍只在对应功能开启时显示。</string>
+    <string name="set_inventory_tag_title">资产标签</string>
+    <string name="set_inventory_tag_hint">机队表格显示哪种制作标签按钮，用于给矿机贴标。</string>
+    <string name="set_tag_qr">QR</string>
+    <string name="set_tag_nfc">NFC</string>
+    <string name="set_tag_both">两者</string>
+    <string name="set_pause_on_exit_title">退出时确认</string>
+    <string name="set_pause_on_exit_subtitle">点按退出按钮时显示“退出 Hi3 Hashkit？”确认框。</string>
+
+    <!-- Farms -->
+    <string name="set_manage_farms">管理矿场…</string>
+    <string name="set_default_farm">默认矿场</string>
+    <string name="set_default_farm_hint">将仪表盘固定到某个矿场：矿场选择行会隐藏，只显示该矿场的矿机——单站点运营时布局更紧凑。</string>
+    <string name="set_all_farms">所有矿场</string>
+
+    <!-- Hi3 MMP -->
+    <string name="set_mmp_title">Hi3 MMP 机队视图</string>
+    <string name="set_mmp_subtitle">来自你的 Mining Management Platform 的只读机队概览和按站点汇总。</string>
+    <string name="set_mmp_url">MMP URL</string>
+    <string name="set_mmp_key_saved">API 密钥（已保存——输入以替换，留空以清除）</string>
+    <string name="set_mmp_key_hint">API 密钥（在 MMP 管理界面中生成）</string>
+    <string name="set_mmp_replace_key">替换密钥</string>
+    <string name="set_mmp_save_key">保存密钥</string>
+    <string name="set_mmp_disclosure">启用期间传输的内容：你的 MMP API 密钥置于请求头中，经 HTTPS 发送到上方的 MMP URL，应用打开时约每分钟一次——只读机队查询，不上传任何数据。密钥使用 Android Keystore 加密存储。默认关闭。</string>
+
+    <!-- Local web server -->
+    <string name="set_web_server_title">开放 Web 仪表盘 + /metrics</string>
+    <string name="set_web_server_subtitle">运行一个本地只读 Web 服务器：局域网内任何浏览器或电视都能打开的 HTML 机队仪表盘，外加供 Grafana 使用的 Prometheus /metrics 端点。无认证——仅限私有局域网/tailnet 使用。</string>
+    <string name="set_web_server_port">端口</string>
+    <string name="set_web_server_hint">应用打开期间：仪表盘位于 http://&lt;本机-IP>:%1$d/，指标位于 /metrics。只读（仅 GET）；提供总量和单机数据，无控制功能。</string>
+
+    <!-- Monitoring -->
+    <string name="set_bg_monitoring_title">后台监控</string>
+    <string name="set_bg_monitoring_subtitle">应用关闭时约每 15 分钟轮询一次（Android 可能延迟；这不是持续的实时监控）。</string>
+    <string name="set_refresh_interval">刷新间隔</string>
+    <string name="set_default_refresh_interval">默认刷新间隔</string>
+    <string name="set_farm_refresh_hint">查看某个矿场时按该矿场自己的间隔刷新；无活动矿场时使用默认间隔。</string>
+    <string name="set_keep_history">历史保留（天）</string>
+    <string name="set_fw_check_title">检查固件更新</string>
+    <string name="set_fw_check_subtitle">需自行开启：检查 GitHub 上的 AxeOS（Bitaxe）发布版本并标记落后的矿机。应用不做刷机；关闭时不会联网。</string>
+    <string name="set_auto_recover_title">自动恢复离线矿机</string>
+    <string name="set_auto_recover_subtitle">矿机离线超过阈值时，对其智能插座断电重启（如已配置）或重启矿机——仅一次，并有冷却时间。每次尝试都有审计记录。</string>
+    <string name="set_auto_recover_after">离线多久后恢复（分钟）</string>
+    <string name="set_safety_title">常驻安全监控</string>
+    <string name="set_safety_subtitle">即使应用关闭，也在后台运行智能插座超温断电（带常驻通知），并在手机重启后重新生效。仅当你为矿机设置了插座断电时才有用。</string>
+
+    <!-- MQTT / Home Assistant -->
+    <string name="set_mqtt_title">发布到 MQTT</string>
+    <string name="set_mqtt_subtitle">将机队及单机遥测发送到本地 MQTT 代理（例如 Home Assistant 的 Mosquitto 插件）。需自行开启；仅发送总量和单机算力/功耗/温度——不含地址或凭据。</string>
+    <string name="set_mqtt_host">代理主机</string>
+    <string name="set_mqtt_port">代理端口</string>
+    <string name="set_mqtt_topic">基础主题</string>
+    <string name="set_mqtt_username">用户名（可选）</string>
+    <string name="set_mqtt_password_saved">密码（已保存——输入以替换，留空以清除）</string>
+    <string name="set_mqtt_password_optional">密码（可选）</string>
+    <string name="set_mqtt_replace_password">替换密码</string>
+    <string name="set_mqtt_save_password">保存密码</string>
+    <string name="set_mqtt_ha_title">Home Assistant 发现</string>
+    <string name="set_mqtt_ha_subtitle">发布 MQTT 发现配置，让矿机自动显示为 HA 设备/实体。</string>
+    <string name="set_mqtt_disclosure">应用打开期间每次轮询发布一次。密码使用 Android Keystore 加密存储。可将 Prometheus/HA 指向此代理。</string>
+
+    <!-- Pool -->
+    <string name="set_pool_stats_title">矿池统计</string>
+    <string name="set_pool_stats_subtitle">矿池侧矿工数据的只读视图，并在仪表盘上与本地矿机读数关联对比。</string>
+    <string name="set_pool_coming_soon">%1$s 支持即将推出。其 API 需先验证才会发送任何数据，因此该矿池目前不会联网——请选择其他矿池以加载实时统计。</string>
+    <string name="set_pool_url">矿池 URL</string>
+    <string name="set_pool_access_token">访问令牌</string>
+    <string name="set_pool_api_token">API 密钥 / 观察者令牌（可选）</string>
+    <string name="set_pool_disclosure">启用期间传输的内容：你的%1$s（以及已设置的令牌），置于发往 %2$s 的 HTTPS 请求中，应用打开时约每分钟一次。除此之外别无其他——不含矿机遥测、本地 IP 或矿工密码。默认关闭；关闭后所有矿池请求立即停止。</string>
+    <string name="set_pool_label">矿池</string>
+
+    <!-- Push (webhook) -->
+    <string name="set_push_intro">将告警镜像到你自己的推送服务，应用关闭时也能收到——我们不设云账户。仅对活动告警触发。</string>
+    <string name="set_push_service">推送服务</string>
+    <string name="set_push_ntfy_url">ntfy 主题 URL（https://ntfy.sh/your-topic）</string>
+    <string name="set_push_gotify_url">Gotify 服务器 URL</string>
+    <string name="set_push_gotify_token">Gotify 应用令牌</string>
+    <string name="set_push_telegram_token">Telegram 机器人令牌</string>
+    <string name="set_push_telegram_chat">Telegram 会话 ID</string>
+    <string name="set_push_generic_url">POST URL（JSON 请求体）</string>
+
+    <!-- Quiet hours & digest -->
+    <string name="set_quiet_hours_title">安静时段</string>
+    <string name="set_quiet_hours_subtitle">在每晚指定时段内不发送告警通知。告警仍会记录，并出现在每日摘要中。</string>
+    <string name="set_quiet_from">开始（HH:MM）</string>
+    <string name="set_quiet_until">结束（HH:MM）</string>
+    <string name="set_digest_title">每日摘要</string>
+    <string name="set_digest_subtitle">每天一条汇总通知，涵盖过去 24 小时的告警。</string>
+    <string name="set_digest_time">摘要时间（小时，0–23）</string>
+
+    <!-- Security -->
+    <string name="set_app_lock_title">应用锁</string>
+    <string name="set_app_lock_subtitle_available">打开应用需要指纹/面容或设备 PIN（后台超过 1 分钟后重新锁定）。</string>
+    <string name="set_app_lock_subtitle_unavailable">不可用：请先在本设备上设置屏幕锁（PIN/生物识别）。</string>
+    <string name="set_app_lock_note">保护应用界面。注意：导出的备份和磁盘上的数据库由 Android 标准应用沙盒保护，而非此锁。</string>
+
+    <!-- Solo mining -->
+    <string name="set_network_difficulty">全网难度</string>
+    <string name="set_fetch_difficulty_title">从 mempool.space 获取难度</string>
+    <string name="set_fetch_difficulty_subtitle">应用唯一的外部请求；一次 HTTPS GET，不携带任何矿机数据。默认关闭——参见 docs/SECURITY.md。</string>
+
+    <!-- Units & cost -->
+    <string name="set_fahrenheit_title">华氏度</string>
+    <string name="set_fahrenheit_subtitle">以 °F 显示温度。</string>
+    <string name="set_electricity_rate">电价（每 kWh）</string>
+    <string name="set_currency_code">货币代码</string>
+    <string name="set_btc_price">BTC 价格（每枚，%1$s）</string>
+    <string name="set_fetch_btc_title">从 mempool.space 获取 BTC 价格</string>
+    <string name="set_fetch_btc_subtitle">需自行开启：一次 HTTPS GET（不含矿机数据），用于仪表盘估算收入与收益。默认关闭；也可改为手动输入价格。</string>
+
+    <!-- Update Hashkit -->
+    <string name="set_update_installed">已安装：v%1$s</string>
+    <string name="set_update_desc">检查官方 GitHub 发布并直接覆盖安装签名更新——你的矿机、遥测历史、日志和设置全部保留。Android 可能会请求允许本应用安装更新。</string>
+    <string name="set_update_downloading">正在下载 %1$d%%…</string>
+    <string name="set_update_confirm_hint">等待 Android 确认——请在系统对话框中点按“更新”。</string>
+    <string name="set_update_installing">正在安装…完成后应用将重启。</string>
+    <string name="set_update_needs_permission">请在刚打开的设置页面中为 Hashkit 允许“安装未知应用”，然后返回并再次点按。</string>
+    <string name="set_update_download_install">下载并安装 v%1$s</string>
+    <string name="set_update_available">有可用更新：v%1$s</string>
+    <string name="set_update_checking">检查中…</string>
+    <string name="set_update_check">检查更新</string>
+    <string name="set_update_up_to_date">已是最新版本。</string>
+    <string name="set_update_error_unreachable">无法连接更新服务器。</string>
+    <string name="set_update_download_failed">下载失败。</string>
+
+    <!-- Data & exports -->
+    <string name="set_share_fleet_report">机队报告</string>
+    <string name="set_share_export_csv">导出 CSV</string>
+    <string name="set_share_export_diagnostics">导出诊断信息</string>
+    <string name="set_share_export_backup">导出备份</string>
+    <string name="set_export_report_7d">机队报告——最近 7 天（HTML）</string>
+    <string name="set_export_report_30d">机队报告——最近 30 天（HTML）</string>
+    <string name="set_export_csv_7d">导出机队遥测 CSV（最近 7 天）</string>
+    <string name="set_export_full_backup">完整备份（矿机、矿场、矿池、规则、设置…）</string>
+    <string name="set_restore_backup">从备份恢复…</string>
+    <string name="set_auto_backup_off">每周自动备份：关——选择文件夹…</string>
+    <string name="set_auto_backup_on">每周自动备份：开（点按更改文件夹）</string>
+    <string name="set_last_auto_backup">上次自动备份：%1$s——保留最新 8 份，明文 JSON。</string>
+    <string name="set_auto_backup_turn_off">关闭自动备份</string>
+    <string name="set_export_diagnostics">导出诊断包（地址已隐去）</string>
+    <string name="set_backup_note">备份包含矿机地址和矿工名。分享或存放前请用口令加密（AES-256）；明文备份仅供本设备使用。CSV 和诊断信息会隐去钱包地址；诊断信息还会隐去 IP 地址。</string>
+    <string name="set_backup_pass_title">备份口令</string>
+    <string name="set_backup_pass_body">输入口令以加密备份（AES-256），留空则生成明文 JSON 备份。</string>
+    <string name="set_passphrase_optional">口令（可选）</string>
+    <string name="set_encrypted_backup_title">加密备份</string>
+    <string name="set_passphrase">口令</string>
+    <string name="set_restore">恢复</string>
+    <string name="set_restore_read_error">无法读取所选文件。</string>
+
+    <!-- Demo -->
+    <string name="set_demo_title">演示模式</string>
+    <string name="set_demo_subtitle">添加带明显标记的模拟矿机；关闭后绝不混入真实统计。</string>
+
+    <!-- Payout address / QR scanning -->
+    <string name="set_qr_not_bare_address">该 QR 不是纯收款地址（看起来是 bitcoin: URI）。请扫描纯地址。</string>
+    <string name="set_scan_prompt">扫描你的收款地址 QR</string>
+    <string name="set_scan_qr_cd">扫描 QR 码</string>
+</resources>

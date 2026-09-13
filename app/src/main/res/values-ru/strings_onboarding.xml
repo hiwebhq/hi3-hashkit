@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_tagline">Ваш парк майнеров — в кармане.</string>
+    <string name="onboarding_local_title">Локально прежде всего</string>
+    <string name="onboarding_local_body">Общается только с майнерами в вашей сети — или через ваш VPN Tailscale. Без аккаунта, без облака.</string>
+    <string name="onboarding_live_title">Живые и честные данные</string>
+    <string name="onboarding_live_body">Реальный хешрейт, температуры, мощность и состояние — с явной пометкой, когда значение оценочное или недоступно.</string>
+    <string name="onboarding_safe_title">Безопасное управление</string>
+    <string name="onboarding_safe_body">Перезагрузка, пул, вентиляторы и тюнинг в пределах прошивки — с подтверждениями и откатом, только там, где это проверено.</string>
+    <string name="onboarding_private_title">Приватность</string>
+    <string name="onboarding_private_body">Ваши данные остаются на этом устройстве. Просмотры Hi3 Pool и MMP — опциональные, только для чтения и выключены по умолчанию.</string>
+    <string name="onboarding_get_started">Начать</string>
+    <string name="onboarding_next_hint">Дальше можно просканировать сеть, добавить майнер по IP или попробовать демо-режим.</string>
+</resources>

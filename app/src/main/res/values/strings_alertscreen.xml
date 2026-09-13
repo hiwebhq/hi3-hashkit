@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alerts_title">Alerts</string>
+    <string name="alerts_ack_all">Ack all</string>
+    <string name="alerts_empty">No alerts recorded. Alerts fire while the app is open, and every 15+ minutes when background monitoring is enabled in Settings.</string>
+    <string name="alerts_active">Active</string>
+    <string name="alerts_resolved">Resolved</string>
+    <string name="alerts_acknowledge">Acknowledge</string>
+</resources>

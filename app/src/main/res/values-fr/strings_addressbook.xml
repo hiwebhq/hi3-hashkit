@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ab_title">Carnet d\'adresses de pools</string>
+    <string name="ab_add_pool">Ajouter un pool</string>
+    <string name="ab_intro">Enregistrez les pools/portefeuilles que vous utilisez, puis appliquez-en un à toute la flotte en un geste. Le worker est l\'adresse de paiement (éventuellement adresse.nomdeworker). Aucun mot de passe de pool n\'est stocké — le firmware garde le sien.</string>
+
+    <!-- Apply-to-fleet confirm dialog -->
+    <string name="ab_apply_title">Appliquer « %1$s » ?</string>
+    <string name="ab_apply_body">Définit le pool principal sur %1$s:%2$d (worker %3$s) sur tous les mineurs qui prennent en charge un changement de pool. Les mineurs non compatibles sont ignorés.</string>
+    <string name="ab_limit_group">Limiter au groupe (vide = tous les mineurs)</string>
+    <string name="ab_apply_to_fleet">Appliquer à la flotte</string>
+
+    <!-- Pool row -->
+    <string name="ab_active_count">"  ● ACTIF (%1$d)"</string>
+    <string name="ab_speed_test">Test de vitesse</string>
+
+    <!-- Editor dialog -->
+    <string name="ab_saved_pool">Pool enregistré</string>
+    <string name="ab_edit_pool">Modifier le pool</string>
+    <string name="ab_name">Nom</string>
+    <string name="ab_stratum_url">URL Stratum</string>
+    <string name="ab_port">Port</string>
+    <string name="ab_worker_payout">Worker / adresse de paiement</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: Energy & profit screen (EnergyCostScreen). -->
+<resources>
+    <string name="energy_title">Энергия &amp; прибыль</string>
+    <string name="energy_filter_hint">Фильтр (имя, IP, модель)</string>
+
+    <!-- Sort chips (EnergySort) -->
+    <string name="energy_sort_cost">Затраты</string>
+    <string name="energy_sort_efficiency">J/TH</string>
+    <string name="energy_sort_net">Прибыль/день</string>
+
+    <!-- Hints -->
+    <string name="energy_rate_hint">Укажите тариф на электроэнергию в настройках, чтобы видеть оценку затрат (энергопотребление отображается в любом случае).</string>
+    <string name="energy_revenue_hint">Для дохода и прибыли нужны сложность сети и цена BTC — включите автозагрузку или задайте их в настройках. Оценки не учитывают комиссии пула и транзакций.</string>
+
+    <!-- Fleet total metrics -->
+    <string name="energy_fleet_energy_est">Оценка энергии парка</string>
+    <string name="energy_revenue_est">Оценка дохода</string>
+    <string name="energy_net_est">Оценка прибыли</string>
+    <string name="energy_this_month">В этом месяце</string>
+    <string name="energy_energy">Энергия</string>
+    <string name="energy_machines">Машины</string>
+
+    <!-- "$1.23/day" suffix around a pre-formatted money value -->
+    <string name="energy_per_day_fmt">%1$s/день</string>
+
+    <!-- Row card -->
+    <string name="energy_offline">офлайн</string>
+    <string name="energy_power">Мощность</string>
+    <string name="energy_efficiency">Эффективность</string>
+    <string name="energy_cost">Затраты</string>
+    <string name="energy_revenue">Доход</string>
+    <string name="energy_net">Прибыль</string>
+    <string name="energy_est_month">Оценка за месяц</string>
+</resources>

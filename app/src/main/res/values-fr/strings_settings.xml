@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings screen strings (French). Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Section headers -->
+    <string name="set_section_advanced">FONCTIONS AVANCÉES</string>
+    <string name="set_section_alerts">ALERTES</string>
+    <string name="set_section_discovery">DÉCOUVERTE</string>
+    <string name="set_section_display">AFFICHAGE</string>
+    <string name="set_section_farms">FERMES</string>
+    <string name="set_section_mmp">HI3 MMP</string>
+    <string name="set_section_web_server">SERVEUR WEB LOCAL (AVANCÉ)</string>
+    <string name="set_section_monitoring">SURVEILLANCE</string>
+    <string name="set_section_mqtt">MQTT / HOME ASSISTANT</string>
+    <string name="set_section_pool">POOL</string>
+    <string name="set_section_push">PUSH (WEBHOOK)</string>
+    <string name="set_section_quiet">HEURES CALMES &amp; RÉSUMÉ</string>
+    <string name="set_section_security">SÉCURITÉ</string>
+    <string name="set_section_solo">MINAGE SOLO</string>
+    <string name="set_section_units">UNITÉS &amp; COÛT</string>
+    <string name="set_section_update">MISE À JOUR DE HASHKIT</string>
+    <string name="set_section_data">DONNÉES &amp; EXPORTS</string>
+    <string name="set_section_demo">DÉMO</string>
+
+    <!-- Advanced features -->
+    <string name="set_advanced_unlocked_desc">Les fonctions avancées sont déverrouillées. Cela révèle le lien \"Live Bitcoin\" du menu du tableau de bord ; d\'autres pourraient s\'y ajouter dans les prochaines versions (pages sécurisées, outils avancés).</string>
+    <string name="set_advanced_locked_desc">Saisissez votre code de déverrouillage pour révéler les fonctions avancées (actuellement le lien \"Live Bitcoin\" du menu du tableau de bord).</string>
+    <string name="set_advanced_unlock_code_optional">Code de déverrouillage (facultatif)</string>
+    <string name="set_advanced_unlock_code">Code de déverrouillage</string>
+    <string name="set_advanced_apply_code">Appliquer le code</string>
+
+    <!-- Alerts -->
+    <string name="set_alerts_title">Alertes &amp; notifications</string>
+    <string name="set_alerts_subtitle">Alertes hors ligne, température, ventilateur, taux de rejet et redémarrage, avec avis de rétablissement.</string>
+    <string name="set_alert_hashrate_below" formatted="false">Alerte hashrate en dessous de (% de l\'attendu)</string>
+    <string name="set_alert_chip_temp">Alerte temp. puce (°C)</string>
+    <string name="set_alert_vr_temp">Alerte temp. VR (°C)</string>
+    <string name="set_alert_reject_rate" formatted="false">Alerte taux de rejet (%)</string>
+    <string name="set_alert_cooldown">Délai avant re-notification (min)</string>
+
+    <!-- Discovery -->
+    <string name="set_discovery_extra_subnets">Sous-réseaux de scan supplémentaires (CIDR en CSV)</string>
+    <string name="set_discovery_subnets_hint">Ajoutez des LAN distants accessibles via votre routeur de sous-réseau Tailscale, p. ex. 192.168.50.0/24. Ils apparaissent comme options de remplissage rapide sur l\'écran d\'ajout.</string>
+
+    <!-- Display -->
+    <string name="set_theme">Thème</string>
+    <string name="set_theme_system">Système</string>
+    <string name="set_theme_dark">Sombre</string>
+    <string name="set_theme_light">Clair</string>
+    <string name="set_ui_theme">Thème de l\'interface</string>
+    <string name="set_ui_theme_hint">Couleur d\'accentuation utilisée dans toute l\'app. Les couleurs d\'état (en ligne/hors ligne) ne changent pas.</string>
+    <string name="set_profit_card_title">Carte rentabilité &amp; énergie</string>
+    <string name="set_profit_card_subtitle">Afficher les revenus estimés, le coût électrique et la consommation d\'énergie sur le tableau de bord.</string>
+    <string name="set_solo_card_title">Carte chances en solo</string>
+    <string name="set_solo_card_subtitle">Afficher la probabilité de trouver un bloc sur le tableau de bord.</string>
+    <string name="set_card_order_title">Ordre des cartes du tableau de bord</string>
+    <string name="set_card_order_hint">Organisez les blocs du tableau de bord — p. ex. placez Pool et MMP sous la liste des mineurs. Les cartes n\'apparaissent que si leur fonction est activée.</string>
+    <string name="set_inventory_tag_title">Étiquette d\'inventaire</string>
+    <string name="set_inventory_tag_hint">Bouton de création d\'étiquette affiché dans le tableau Flotte pour identifier les mineurs.</string>
+    <string name="set_tag_qr">QR</string>
+    <string name="set_tag_nfc">NFC</string>
+    <string name="set_tag_both">Les deux</string>
+    <string name="set_pause_on_exit_title">Pause à la sortie</string>
+    <string name="set_pause_on_exit_subtitle">Afficher la confirmation \"Quitter Hi3 Hashkit ?\" lors de l\'appui sur le bouton de sortie.</string>
+
+    <!-- Farms -->
+    <string name="set_manage_farms">Gérer les fermes…</string>
+    <string name="set_default_farm">Ferme par défaut</string>
+    <string name="set_default_farm_hint">Épinglez le tableau de bord à une seule ferme : la ligne de sélection disparaît et seuls les mineurs de cette ferme s\'affichent — mise en page plus compacte pour un site unique.</string>
+    <string name="set_all_farms">Toutes les fermes</string>
+
+    <!-- Hi3 MMP -->
+    <string name="set_mmp_title">Vue de flotte Hi3 MMP</string>
+    <string name="set_mmp_subtitle">Résumé de flotte en lecture seule et agrégats par site depuis votre Mining Management Platform.</string>
+    <string name="set_mmp_url">URL MMP</string>
+    <string name="set_mmp_key_saved">Clé API (enregistrée — saisir pour remplacer, vide pour effacer)</string>
+    <string name="set_mmp_key_hint">Clé API (à créer dans l\'interface admin MMP)</string>
+    <string name="set_mmp_replace_key">Remplacer la clé</string>
+    <string name="set_mmp_save_key">Enregistrer la clé</string>
+    <string name="set_mmp_disclosure">Ce qui est transmis quand la fonction est activée : votre clé API MMP dans l\'en-tête de requête, en HTTPS vers l\'URL MMP ci-dessus, environ une fois par minute quand l\'app est ouverte — requêtes de flotte en lecture seule, rien n\'est envoyé. La clé est stockée chiffrée avec l\'Android Keystore. Désactivé par défaut.</string>
+
+    <!-- Local web server -->
+    <string name="set_web_server_title">Exposer le tableau de bord web + /metrics</string>
+    <string name="set_web_server_subtitle">Lance un serveur web local en lecture seule : un tableau de bord HTML de la flotte accessible depuis tout navigateur ou TV du LAN, plus un point d\'accès Prometheus /metrics pour Grafana. Sans authentification — réservé à un LAN/tailnet privé.</string>
+    <string name="set_web_server_port">Port</string>
+    <string name="set_web_server_hint">Quand l\'app est ouverte : tableau de bord sur http://&lt;ip-de-cet-appareil>:%1$d/ et métriques sur /metrics. Lecture seule (GET uniquement) ; expose les totaux + données par mineur, aucun contrôle.</string>
+
+    <!-- Monitoring -->
+    <string name="set_bg_monitoring_title">Surveillance en arrière-plan</string>
+    <string name="set_bg_monitoring_subtitle">Interroge environ toutes les 15 min quand l\'app est fermée (Android peut retarder cela ; ce n\'est pas une surveillance continue en temps réel).</string>
+    <string name="set_refresh_interval">Intervalle d\'actualisation</string>
+    <string name="set_default_refresh_interval">Intervalle d\'actualisation par défaut</string>
+    <string name="set_farm_refresh_hint">Chaque ferme s\'actualise à son propre intervalle quand vous la consultez ; la valeur par défaut s\'applique quand aucune ferme n\'est active.</string>
+    <string name="set_keep_history">Conserver l\'historique (jours)</string>
+    <string name="set_fw_check_title">Vérifier les mises à jour du firmware</string>
+    <string name="set_fw_check_subtitle">Optionnel : vérifie les versions AxeOS (Bitaxe) sur GitHub et signale les mineurs en retard. Pas de flash depuis l\'app ; rien n\'est contacté quand c\'est désactivé.</string>
+    <string name="set_auto_recover_title">Récupération auto des mineurs hors ligne</string>
+    <string name="set_auto_recover_subtitle">Quand un mineur reste hors ligne au-delà du seuil, coupe et rallume sa prise connectée (si définie) ou le redémarre — une fois, avec un délai. Chaque tentative est auditée.</string>
+    <string name="set_auto_recover_after">Récupérer après hors ligne (min)</string>
+    <string name="set_safety_title">Moniteur de sécurité permanent</string>
+    <string name="set_safety_subtitle">Exécute la coupure de prise connectée en cas de surchauffe en arrière-plan (avec une notification persistante) même quand l\'app est fermée, et se réarme après un redémarrage. Utile seulement si vous avez configuré une coupure de prise sur un mineur.</string>
+
+    <!-- MQTT / Home Assistant -->
+    <string name="set_mqtt_title">Publier vers MQTT</string>
+    <string name="set_mqtt_subtitle">Envoie la télémétrie de la flotte et de chaque mineur à un broker MQTT local (p. ex. l\'add-on Mosquitto de Home Assistant). Optionnel ; totaux et hashrate/puissance/température par mineur uniquement — pas d\'adresses ni d\'identifiants.</string>
+    <string name="set_mqtt_host">Hôte du broker</string>
+    <string name="set_mqtt_port">Port du broker</string>
+    <string name="set_mqtt_topic">Topic de base</string>
+    <string name="set_mqtt_username">Nom d\'utilisateur (facultatif)</string>
+    <string name="set_mqtt_password_saved">Mot de passe (enregistré — saisir pour remplacer, vide pour effacer)</string>
+    <string name="set_mqtt_password_optional">Mot de passe (facultatif)</string>
+    <string name="set_mqtt_replace_password">Remplacer le mot de passe</string>
+    <string name="set_mqtt_save_password">Enregistrer le mot de passe</string>
+    <string name="set_mqtt_ha_title">Découverte Home Assistant</string>
+    <string name="set_mqtt_ha_subtitle">Publie la configuration de découverte MQTT pour que les mineurs apparaissent automatiquement comme appareils/entités HA.</string>
+    <string name="set_mqtt_disclosure">Publié quand l\'app est ouverte, à chaque interrogation. Le mot de passe est stocké chiffré dans l\'Android Keystore. Pointez Prometheus/HA vers ce broker.</string>
+
+    <!-- Pool -->
+    <string name="set_pool_stats_title">Statistiques du pool</string>
+    <string name="set_pool_stats_subtitle">Vue en lecture seule de vos workers côté pool, corrélée aux mesures locales des mineurs sur le tableau de bord.</string>
+    <string name="set_pool_coming_soon">La prise en charge de %1$s arrive. Son API doit être vérifiée avant tout envoi, donc ce pool ne contacte rien pour l\'instant — choisissez un autre pool pour charger des stats en direct.</string>
+    <string name="set_pool_url">URL du pool</string>
+    <string name="set_pool_access_token">Jeton d\'accès</string>
+    <string name="set_pool_api_token">Clé API / jeton watcher (facultatif)</string>
+    <string name="set_pool_disclosure">Ce qui est transmis quand la fonction est activée : votre %1$s (et le jeton s\'il est défini), dans une requête HTTPS vers %2$s, environ une fois par minute quand l\'app est ouverte. Rien d\'autre — pas de télémétrie des mineurs, pas d\'IP locales, pas de mots de passe de workers. Désactivé par défaut ; le désactiver arrête immédiatement toutes les requêtes au pool.</string>
+    <string name="set_pool_label">Pool</string>
+
+    <!-- Push (webhook) -->
+    <string name="set_push_intro">Renvoyez les alertes vers votre propre service push pour les recevoir quand l\'app est fermée — aucun compte cloud chez nous. Ne se déclenche que pour les alertes actives.</string>
+    <string name="set_push_service">Service push</string>
+    <string name="set_push_ntfy_url">URL du topic ntfy (https://ntfy.sh/votre-topic)</string>
+    <string name="set_push_gotify_url">URL du serveur Gotify</string>
+    <string name="set_push_gotify_token">Jeton d\'app Gotify</string>
+    <string name="set_push_telegram_token">Jeton de bot Telegram</string>
+    <string name="set_push_telegram_chat">ID de chat Telegram</string>
+    <string name="set_push_generic_url">URL POST (corps JSON)</string>
+
+    <!-- Quiet hours & digest -->
+    <string name="set_quiet_hours_title">Heures calmes</string>
+    <string name="set_quiet_hours_subtitle">Supprime les notifications d\'alerte pendant une plage nocturne. Les alertes restent enregistrées et figurent dans le résumé quotidien.</string>
+    <string name="set_quiet_from">Calme de (HH:MM)</string>
+    <string name="set_quiet_until">Calme jusqu\'à (HH:MM)</string>
+    <string name="set_digest_title">Résumé quotidien</string>
+    <string name="set_digest_subtitle">Une notification de synthèse par jour couvrant les alertes des dernières 24 h.</string>
+    <string name="set_digest_time">Heure du résumé (heure, 0–23)</string>
+
+    <!-- Security -->
+    <string name="set_app_lock_title">Verrouillage de l\'app</string>
+    <string name="set_app_lock_subtitle_available">Exiger l\'empreinte/le visage ou le code PIN de l\'appareil pour ouvrir l\'app (se reverrouille après 1 minute en arrière-plan).</string>
+    <string name="set_app_lock_subtitle_unavailable">Indisponible : configurez d\'abord un verrouillage d\'écran (PIN/biométrie) sur cet appareil.</string>
+    <string name="set_app_lock_note">Protège l\'interface de l\'app. Remarque : les sauvegardes exportées et la base de données sur disque sont protégées par le sandboxing standard d\'Android, pas par ce verrou.</string>
+
+    <!-- Solo mining -->
+    <string name="set_network_difficulty">Difficulté du réseau</string>
+    <string name="set_fetch_difficulty_title">Récupérer la difficulté depuis mempool.space</string>
+    <string name="set_fetch_difficulty_subtitle">La seule requête externe de l\'app ; un unique GET HTTPS sans aucune donnée de mineur. Désactivé par défaut — voir docs/SECURITY.md.</string>
+
+    <!-- Units & cost -->
+    <string name="set_fahrenheit_title">Fahrenheit</string>
+    <string name="set_fahrenheit_subtitle">Afficher les températures en °F.</string>
+    <string name="set_electricity_rate">Tarif de l\'électricité (par kWh)</string>
+    <string name="set_currency_code">Code de devise</string>
+    <string name="set_btc_price">Prix du BTC (par coin, %1$s)</string>
+    <string name="set_fetch_btc_title">Récupérer le prix du BTC depuis mempool.space</string>
+    <string name="set_fetch_btc_subtitle">Optionnel : un unique GET HTTPS (sans donnée de mineur) pour que le tableau de bord puisse estimer revenus et profit. Désactivé par défaut ; saisissez plutôt un prix manuellement si vous préférez.</string>
+
+    <!-- Update Hashkit -->
+    <string name="set_update_installed">Installée : v%1$s</string>
+    <string name="set_update_desc">Vérifie la release GitHub officielle et installe la mise à jour signée par-dessus — vos mineurs, l\'historique de télémétrie, les journaux et les paramètres sont conservés. Android peut vous demander d\'autoriser l\'installation de mises à jour depuis cette app.</string>
+    <string name="set_update_downloading">Téléchargement %1$d%%…</string>
+    <string name="set_update_confirm_hint">En attente de la confirmation d\'Android — appuyez sur Mettre à jour dans la boîte de dialogue système.</string>
+    <string name="set_update_installing">Installation… l\'app redémarrera une fois terminée.</string>
+    <string name="set_update_needs_permission">Autorisez \"Installer des applis inconnues\" pour Hashkit dans l\'écran de paramètres qui vient de s\'ouvrir, puis revenez et appuyez à nouveau.</string>
+    <string name="set_update_download_install">Télécharger &amp; installer v%1$s</string>
+    <string name="set_update_available">Mise à jour disponible : v%1$s</string>
+    <string name="set_update_checking">Vérification…</string>
+    <string name="set_update_check">Rechercher des mises à jour</string>
+    <string name="set_update_up_to_date">Vous êtes sur la dernière version.</string>
+    <string name="set_update_error_unreachable">Impossible de joindre le serveur de mise à jour.</string>
+    <string name="set_update_download_failed">Échec du téléchargement.</string>
+
+    <!-- Data & exports -->
+    <string name="set_share_fleet_report">Rapport de flotte</string>
+    <string name="set_share_export_csv">Exporter en CSV</string>
+    <string name="set_share_export_diagnostics">Exporter les diagnostics</string>
+    <string name="set_share_export_backup">Exporter la sauvegarde</string>
+    <string name="set_export_report_7d">Rapport de flotte — 7 derniers jours (HTML)</string>
+    <string name="set_export_report_30d">Rapport de flotte — 30 derniers jours (HTML)</string>
+    <string name="set_export_csv_7d">Exporter la télémétrie de la flotte en CSV (7 derniers jours)</string>
+    <string name="set_export_full_backup">Sauvegarde complète (mineurs, fermes, pools, règles, paramètres…)</string>
+    <string name="set_restore_backup">Restaurer depuis une sauvegarde…</string>
+    <string name="set_auto_backup_off">Sauvegarde auto hebdomadaire : désactivée — choisir un dossier…</string>
+    <string name="set_auto_backup_on">Sauvegarde auto hebdomadaire : activée (appuyez pour changer de dossier)</string>
+    <string name="set_last_auto_backup">Dernière sauvegarde auto : %1$s — conserve les 8 plus récentes, JSON en clair.</string>
+    <string name="set_auto_backup_turn_off">Désactiver la sauvegarde auto</string>
+    <string name="set_export_diagnostics">Exporter le lot de diagnostics (adresses masquées)</string>
+    <string name="set_backup_note">Les sauvegardes contiennent les adresses des mineurs et les noms des workers. Chiffrez avec une phrase secrète (AES-256) pour partager ou stocker en sécurité ; une sauvegarde en clair est réservée à votre propre appareil. CSV et diagnostics masquent les wallets ; les diagnostics masquent aussi les adresses IP.</string>
+    <string name="set_backup_pass_title">Phrase secrète de sauvegarde</string>
+    <string name="set_backup_pass_body">Saisissez une phrase secrète pour chiffrer la sauvegarde (AES-256), ou laissez vide pour une sauvegarde JSON en clair.</string>
+    <string name="set_passphrase_optional">Phrase secrète (facultative)</string>
+    <string name="set_encrypted_backup_title">Sauvegarde chiffrée</string>
+    <string name="set_passphrase">Phrase secrète</string>
+    <string name="set_restore">Restaurer</string>
+    <string name="set_restore_read_error">Impossible de lire le fichier sélectionné.</string>
+
+    <!-- Demo -->
+    <string name="set_demo_title">Mode démo</string>
+    <string name="set_demo_subtitle">Ajoute des mineurs synthétiques clairement identifiés ; ils ne se mêlent jamais aux vrais totaux une fois le mode désactivé.</string>
+
+    <!-- Payout address / QR scanning -->
+    <string name="set_qr_not_bare_address">Ce QR n\'est pas une adresse de paiement brute (on dirait un URI bitcoin:). Scannez l\'adresse simple.</string>
+    <string name="set_scan_prompt">Scannez le QR de votre adresse de paiement</string>
+    <string name="set_scan_qr_cd">Scanner le code QR</string>
+</resources>

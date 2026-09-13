@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solar-surplus mining screen (SolarSurplusScreen). -->
+<resources>
+    <string name="solar_title">Mineração com excedente solar</string>
+    <string name="solar_intro">Limite a fazenda à sua exportação solar. Lê um sensor de exportação/excedente para a rede (em watts) do seu Home Assistant local pela API REST dele — o token é armazenado criptografado e só é enviado ao seu próprio host HA na sua rede.</string>
+
+    <!-- Live signal card -->
+    <string name="solar_export_label">EXPORTAÇÃO SOLAR</string>
+    <string name="solar_fleet_draw">Consumo da fazenda %1$s W · %2$d online</string>
+    <string name="solar_reco_run">Recomendação: excedente disponível — retomar a mineração</string>
+    <string name="solar_reco_curtail">Recomendação: sem excedente — cortar a mineração</string>
+    <string name="solar_reco_hold">Recomendação: manter (dentro da banda morta)</string>
+
+    <!-- Actions -->
+    <string name="solar_check_now">Verificar agora</string>
+    <string name="solar_checking">Verificando…</string>
+    <string name="solar_resume_fleet">Retomar fazenda</string>
+    <string name="solar_curtail_fleet">Cortar fazenda</string>
+
+    <!-- Configuration -->
+    <string name="solar_base_url_label">URL base do HA (privada/Tailscale)</string>
+    <string name="solar_entity_label">entity_id do sensor (watts)</string>
+    <string name="solar_token_label">Token de longa duração</string>
+    <string name="solar_token_saved_label">Token de longa duração (salvo — deixe vazio para manter)</string>
+    <string name="solar_resume_label">Retomar ≥ W</string>
+    <string name="solar_curtail_label">Cortar ≤ W</string>
+    <string name="solar_save_config">Salvar configuração</string>
+</resources>

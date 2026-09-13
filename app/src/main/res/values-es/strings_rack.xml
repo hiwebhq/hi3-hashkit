@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rack_title">Rack y distribución del sitio</string>
+    <string name="rack_empty">Aún no hay mineros. Añade mineros y define la ubicación de cada uno (sala / rack / estante) para verlos organizados aquí.</string>
+    <string name="rack_group_stats">%1$d/%2$d activos · %3$s</string>
+</resources>

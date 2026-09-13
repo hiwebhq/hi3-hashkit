@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">Сканирование сети</string>
+    <string name="net_refresh_network_info">Обновить информацию о сети</string>
+    <string name="net_intro">Сканирует локальную подсеть в поисках майнеров на известных портах (HTTP 80, CGMiner 4028). Проверяются только частные LAN- и Tailscale-адреса. Запускается автоматически при старте, чтобы устройства появились до открытия экрана «Добавить майнер».</string>
+    <string name="net_this_device">Это устройство</string>
+    <string name="net_not_on_network">Нет подключения к Wi-Fi / LAN</string>
+    <string name="net_scan_range_label">Диапазон сканирования (CIDR)</string>
+    <string name="net_scanning_progress">Сканирование %1$d / %2$d — найдено: %3$d</string>
+    <string name="net_last_scan">Последнее сканирование: %1$s.</string>
+    <string name="net_restart">Перезапустить</string>
+    <string name="net_start_scan">Начать сканирование</string>
+    <string name="net_discovering">Обнаружение…</string>
+    <string name="net_mdns_discover">Обнаружение mDNS</string>
+    <string name="net_auto_scan_title">Сканировать автоматически при запуске</string>
+    <string name="net_auto_scan_subtitle">Запускать сканирование подсети при открытии приложения.</string>
+    <string name="net_just_now">только что</string>
+    <string name="net_minutes_ago">%1$d мин назад</string>
+    <string name="net_hours_ago">%1$d ч назад</string>
+</resources>

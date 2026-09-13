@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран таблицы лидеров (ui/leaderboard). -->
+<resources>
+    <string name="lead_title">Таблица лидеров</string>
+    <string name="lead_rank_efficiency">Эффективность</string>
+    <string name="lead_rank_attainment">Достижение</string>
+    <string name="lead_rank_hashrate">Хешрейт</string>
+    <string name="lead_desc_efficiency">Ранжирование по энергоэффективности (J/TH) — меньше лучше. Нужны данные о мощности.</string>
+    <string name="lead_desc_attainment">Ранжирование по фактическому хешрейту относительно ожидаемого. Нужен ожидаемый хешрейт.</string>
+    <string name="lead_desc_hashrate">Ранжирование по текущему хешрейту.</string>
+    <string name="lead_empty">Пока нет майнеров онлайн с этой метрикой.</string>
+</resources>

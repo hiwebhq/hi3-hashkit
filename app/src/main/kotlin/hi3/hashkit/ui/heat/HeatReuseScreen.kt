@@ -24,6 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +32,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.MinerRepository
@@ -106,10 +108,10 @@ fun HeatReuseScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Heat reuse", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.heat_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -124,9 +126,7 @@ fun HeatReuseScreen(
         ) {
             item {
                 Text(
-                    "An ASIC turns essentially all the electricity it draws into heat. In heating " +
-                        "season, that heat offsets what you'd otherwise spend to warm the space — so " +
-                        "the power isn't a pure mining cost. Figures are estimates from live fleet power.",
+                    stringResource(R.string.heat_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -134,16 +134,16 @@ fun HeatReuseScreen(
 
             item {
                 BigCard(
-                    label = "Heat output now",
+                    label = stringResource(R.string.heat_output_now),
                     value = state.btuPerHour?.let { "%,.0f BTU/hr".format(it) } ?: "—",
-                    sub = "${"%.2f".format(state.kwThermal)} kW thermal · ${state.onlineMiners} miner(s) online",
+                    sub = stringResource(R.string.heat_output_sub, "%.2f".format(state.kwThermal), state.onlineMiners),
                 )
             }
             item {
                 BigCard(
-                    label = "Thermal energy per day",
+                    label = stringResource(R.string.heat_thermal_per_day),
                     value = state.kwhThermalPerDay?.let { "%,.1f kWh".format(it) } ?: "—",
-                    sub = "At the current draw, sustained for 24 h",
+                    sub = stringResource(R.string.heat_thermal_sub),
                 )
             }
 
@@ -155,7 +155,7 @@ fun HeatReuseScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
-                            "Set your electricity rate in Settings to see the heat's cash value.",
+                            stringResource(R.string.heat_rate_hint),
                             style = MaterialTheme.typography.bodyMedium,
                             color = HiBrand.textSecondary,
                             modifier = Modifier.padding(14.dp),
@@ -165,17 +165,17 @@ fun HeatReuseScreen(
             } else {
                 item {
                     BigCard(
-                        label = "Heating value today",
+                        label = stringResource(R.string.heat_value_today),
                         value = state.valuePerDay?.let { money(it, state.currencyCode) } ?: "—",
-                        sub = "vs. resistive electric heat (1:1) at ${money(state.ratePerKwh, state.currencyCode)}/kWh",
+                        sub = stringResource(R.string.heat_value_today_sub, money(state.ratePerKwh, state.currencyCode)),
                         accent = true,
                     )
                 }
                 item {
                     BigCard(
-                        label = "Heating value this month",
+                        label = stringResource(R.string.heat_value_month),
                         value = state.valuePerMonth?.let { money(it, state.currencyCode) } ?: "—",
-                        sub = "≈ ${"%.1f".format(HeatReuseMath.DAYS_PER_MONTH)} days at the current rate of draw",
+                        sub = stringResource(R.string.heat_value_month_sub, "%.1f".format(HeatReuseMath.DAYS_PER_MONTH)),
                         accent = true,
                     )
                 }
@@ -187,15 +187,15 @@ fun HeatReuseScreen(
                     ) {
                         Column(Modifier.padding(14.dp)) {
                             Text(
-                                "If you heat with a heat pump instead",
+                                stringResource(R.string.heat_pump_title),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = HiBrand.textPrimary,
                             )
                             Text(
-                                "A heat pump (COP ≈ 3) makes the same heat for about a third of the " +
-                                    "electricity, so the miner offsets roughly " +
-                                    (state.valuePerMonthHeatPump?.let { money(it, state.currencyCode) } ?: "—") +
-                                    "/month against one.",
+                                stringResource(
+                                    R.string.heat_pump_body,
+                                    state.valuePerMonthHeatPump?.let { money(it, state.currencyCode) } ?: "—",
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
                             )
@@ -206,8 +206,7 @@ fun HeatReuseScreen(
 
             item {
                 Text(
-                    "Off heating season the heat has no value and adds cooling load — pair this with " +
-                        "Schedules to wind down in summer.",
+                    stringResource(R.string.heat_off_season),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )

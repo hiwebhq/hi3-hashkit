@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Heat reuse screen (HeatReuseScreen). -->
+<resources>
+    <string name="heat_title">热回收</string>
+    <string name="heat_intro">ASIC 消耗的电能几乎全部转化为热量。在供暖季，这些热量可以抵扣你原本用于取暖的开支——因此这部分电费并非纯粹的挖矿成本。数据基于机队实时功耗估算。</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">当前热输出</string>
+    <string name="heat_output_sub">%1$s kW 热功率 · %2$d 台矿机在线</string>
+    <string name="heat_thermal_per_day">每日热能</string>
+    <string name="heat_thermal_sub">按当前功耗持续 24 小时计算</string>
+    <string name="heat_rate_hint">在设置中填写电价即可查看热量的现金价值。</string>
+    <string name="heat_value_today">今日供暖价值</string>
+    <string name="heat_value_today_sub">相对电阻式电暖（1:1），按 %1$s/kWh 计算</string>
+    <string name="heat_value_month">本月供暖价值</string>
+    <string name="heat_value_month_sub">按当前功耗约合 %1$s 天</string>
+    <string name="heat_pump_title">如果你改用热泵供暖</string>
+    <string name="heat_pump_body">热泵（COP ≈ 3）产生同样热量只需约三分之一的电，相较之下矿机每月约可抵扣 %1$s。</string>
+    <string name="heat_off_season">非供暖季这些热量没有价值，还会增加制冷负荷——可配合“计划任务”在夏季降载。</string>
+</resources>

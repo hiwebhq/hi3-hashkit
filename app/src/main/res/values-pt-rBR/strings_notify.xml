@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notification strings: channel names, alert titles, and notification actions. -->
+<resources>
+    <!-- Notification channel names -->
+    <string name="notif_channel_offline">Mineradores offline</string>
+    <string name="notif_channel_thermal">Temperatura</string>
+    <string name="notif_channel_fan">Ventoinhas</string>
+    <string name="notif_channel_shares">Shares rejeitadas</string>
+    <string name="notif_channel_status">Mudanças de status</string>
+    <string name="notif_channel_recovery">Recuperações</string>
+    <string name="notif_channel_watchdog">Watchdog e automação</string>
+    <string name="notif_channel_digest">Resumo diário</string>
+
+    <!-- Alert notification titles -->
+    <string name="notif_alert_title">Alerta: %1$s</string>
+    <string name="notif_recovered_title">Recuperado: %1$s</string>
+
+    <!-- Notification actions -->
+    <string name="notif_action_acknowledge">Confirmar</string>
+</resources>

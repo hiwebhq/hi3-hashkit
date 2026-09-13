@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_tagline">你的矿机机队，尽在掌握。</string>
+    <string name="onboarding_local_title">本地优先</string>
+    <string name="onboarding_local_body">只与你网络内的矿机通信——或经由你的 Tailscale VPN。无需账户，无需云端。</string>
+    <string name="onboarding_live_title">实时且如实</string>
+    <string name="onboarding_live_body">真实的算力、温度、功耗与健康状况——数值为估算或不可用时会清楚标注。</string>
+    <string name="onboarding_safe_title">安全控制</string>
+    <string name="onboarding_safe_body">重启、矿池、风扇及固件限定范围内的调优，均带确认与回滚，且仅在已验证的机型上提供。</string>
+    <string name="onboarding_private_title">隐私保护</string>
+    <string name="onboarding_private_body">数据只保存在本设备上。Hi3 Pool 和 MMP 视图为可选、只读且默认关闭。</string>
+    <string name="onboarding_get_started">开始使用</string>
+    <string name="onboarding_next_hint">接下来你可以扫描网络、按 IP 添加矿机，或试用演示模式。</string>
+</resources>

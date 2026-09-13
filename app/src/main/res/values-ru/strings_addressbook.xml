@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: Pool address book screen. -->
+<resources>
+    <string name="ab_title">Адресная книга пулов</string>
+    <string name="ab_add_pool">Добавить пул</string>
+    <string name="ab_intro">Сохраните используемые пулы/кошельки и применяйте любой ко всему парку в одно касание. Воркер — это адрес выплаты (опционально адрес.имя_воркера). Пароль пула не хранится — прошивка хранит свой собственный.</string>
+
+    <!-- Apply-to-fleet confirm dialog -->
+    <string name="ab_apply_title">Применить «%1$s»?</string>
+    <string name="ab_apply_body">Устанавливает основным пулом %1$s:%2$d (воркер %3$s) на всех майнерах, поддерживающих смену пула. Неподдерживаемые майнеры пропускаются.</string>
+    <string name="ab_limit_group">Ограничить группой (пусто = все майнеры)</string>
+    <string name="ab_apply_to_fleet">Применить к парку</string>
+
+    <!-- Pool row -->
+    <string name="ab_active_count">"  ● АКТИВЕН (%1$d)"</string>
+    <string name="ab_speed_test">Тест скорости</string>
+
+    <!-- Editor dialog -->
+    <string name="ab_saved_pool">Сохранённый пул</string>
+    <string name="ab_edit_pool">Изменить пул</string>
+    <string name="ab_name">Название</string>
+    <string name="ab_stratum_url">Stratum URL</string>
+    <string name="ab_port">Порт</string>
+    <string name="ab_worker_payout">Воркер / адрес выплаты</string>
+</resources>

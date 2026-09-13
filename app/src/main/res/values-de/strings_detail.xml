@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner detail screen (ui/detail): MinerDetailScreen, ControlsCard, MinerInsights,
+     MinerVisual, MinerDetailViewModel. -->
+<resources>
+    <!-- Top bar / scaffold -->
+    <string name="det_title_miner">Miner</string>
+    <string name="det_cd_edit_miner">Miner bearbeiten</string>
+    <string name="det_cd_remove_miner">Miner entfernen</string>
+    <string name="det_miner_not_found">Miner nicht gefunden</string>
+    <string name="det_percent_of_expected">%1$s vom Soll</string>
+
+    <!-- Section titles -->
+    <string name="det_section_live_view">LIVE-ANSICHT</string>
+    <string name="det_section_hashrate_history">HASHRATE-VERLAUF</string>
+    <string name="det_section_efficiency">EFFIZIENZ (J/TH)</string>
+    <string name="det_section_per_chip">CHIP-GESUNDHEIT</string>
+    <string name="det_section_live_telemetry">LIVE-TELEMETRIE</string>
+    <string name="det_section_shares_pool">SHARES &amp; POOL</string>
+    <string name="det_section_live_logs">LIVE-LOGS</string>
+    <string name="det_section_event_log">EREIGNISPROTOKOLL</string>
+    <string name="det_section_maintenance">WARTUNGSPROTOKOLL</string>
+    <string name="det_section_identity">IDENTITÄT</string>
+    <string name="det_section_health">GESUNDHEITSWERT</string>
+    <string name="det_section_login">MINER-LOGIN (FÜR STEUERUNG)</string>
+    <string name="det_section_controls">STEUERUNG</string>
+    <string name="det_section_plug">NOTABSCHALTUNG (SMART-STECKDOSE)</string>
+    <string name="det_section_alerts">LETZTE ALARME</string>
+    <string name="det_section_raw">API-ROHANTWORT</string>
+    <string name="det_tap_to_show">"  (zum Anzeigen tippen)"</string>
+
+    <!-- Live view -->
+    <string name="det_live_view_hint">Stilisierte Live-Darstellung: Lüfter dreht mit gemeldeter RPM, Chips glühen nach Temperatur, LED zeigt den Status.</string>
+
+    <!-- Hashrate history -->
+    <string name="det_no_reading_yet">Noch keine erfolgreiche Messung</string>
+    <string name="det_last_reading_seconds">Letzte Messung vor %1$ds</string>
+    <string name="det_last_reading_minutes">Letzte Messung vor %1$dm — veraltet</string>
+    <string name="det_uptime_energy">"  ·  Verfügbarkeit %1$d%%  ·  ~%2$s Energie"</string>
+    <string name="det_export_csv">CSV exportieren</string>
+    <string name="det_export_csv_chooser">Telemetrie-CSV exportieren</string>
+
+    <!-- Efficiency -->
+    <string name="det_eff_stats">"min %1$s  ·  jetzt %2$s  ·  max %3$s J/TH   (weniger ist besser)"</string>
+
+    <!-- Live telemetry metrics -->
+    <string name="det_metric_power">Leistung</string>
+    <string name="det_metric_efficiency">Effizienz</string>
+    <string name="det_metric_chip_temp">Chip-Temp</string>
+    <string name="det_metric_vr_temp">VR-Temp</string>
+    <string name="det_metric_frequency">Frequenz</string>
+    <string name="det_metric_core_v">Kernspannung</string>
+    <string name="det_metric_fan_n">Lüfter %1$d</string>
+    <string name="det_metric_uptime">Laufzeit</string>
+
+    <!-- Shares & pool -->
+    <string name="det_metric_accepted">Akzeptiert</string>
+    <string name="det_metric_rejected">Abgelehnt</string>
+    <string name="det_metric_best_diff">Beste Diff</string>
+    <string name="det_metric_session_best">Session-Best</string>
+    <string name="det_pool_prefix">Pool: %1$s</string>
+    <string name="det_fallback_active">"  (Fallback aktiv)"</string>
+
+    <!-- Logs -->
+    <string name="det_open_live_logs">Live-Log-Stream öffnen</string>
+    <string name="det_live_logs_hint">Streamt Firmware-Logs über den WebSocket des Miners, solange geöffnet. Wallet-Adressen werden geschwärzt.</string>
+    <string name="det_open_event_log">Ereignisprotokoll öffnen</string>
+    <string name="det_event_log_hint">Diese Firmware bietet keinen Log-Stream, daher zeichnet Hashkit aus jedem Poll abgeleitete Gesundheitsereignisse auf — Neustarts, Temperaturlimit-Überschreitungen, Verbindungsabbrüche, Lüfterstopps, Ablehnungsspitzen — und analysiert diese.</string>
+
+    <!-- Maintenance log -->
+    <string name="det_add_note_label">Notiz hinzufügen (z. B. \"neue Paste\", \"Lüfter 2 getauscht\")</string>
+    <string name="det_add_note">Notiz hinzufügen</string>
+    <string name="det_gallery">Galerie</string>
+    <string name="det_camera">Kamera</string>
+    <string name="det_no_notes">Noch keine Wartungsnotizen. Protokolliere Paste-Wechsel, Lüftertausch, Reinigungen — sie bleiben auf diesem Gerät und sind Teil des Voll-Backups.</string>
+    <string name="det_cd_delete_note">Notiz löschen</string>
+    <string name="det_cd_note_photo">Wartungsfoto — zum Vergrößern tippen</string>
+    <string name="det_cd_photo">Wartungsfoto</string>
+    <string name="det_share_photo">Foto teilen</string>
+    <string name="det_photo_missing">Fotodatei fehlt</string>
+
+    <!-- Identity -->
+    <string name="det_id_model">Modell</string>
+    <string name="det_id_asic">ASIC</string>
+    <string name="det_id_firmware">Firmware</string>
+    <string name="det_id_mac">MAC</string>
+    <string name="det_id_serial">Seriennr.</string>
+    <string name="det_id_address">Adresse</string>
+
+    <!-- Miner login -->
+    <string name="det_login_label_totp">TOTP-Secret (Base32)</string>
+    <string name="det_login_label_bitmain">Root-Web-Passwort</string>
+    <string name="det_login_label_vnish">VNish-Web-Passwort</string>
+    <string name="det_login_saved_hint">Ein Zugang ist gespeichert (verschlüsselt). Gib einen neuen ein, um ihn zu ersetzen, oder lösche ihn.</string>
+    <string name="det_login_totp_hint">Nur nötig, wenn OTP auf dem Gerät aktiv ist: Gib das TOTP-Secret aus dem Registrierungs-QR ein (otpauth://…secret=…), um Tuning/Neustart freizuschalten. Wird nur auf diesem Gerät verschlüsselt gespeichert.</string>
+    <string name="det_login_password_hint">Gib das Web-Passwort des Miners ein, um die Steuerung freizuschalten. Wird nur auf diesem Gerät verschlüsselt gespeichert.</string>
+    <string name="det_clear">Löschen</string>
+
+    <!-- Controls (card + autotuner entry) -->
+    <string name="det_autotuner">Effizienz-Autotuner (J/TH-Sweep)</string>
+    <string name="det_monitoring_only">Dieses Gerät ist nur zur Überwachung.</string>
+    <string name="det_restart">Neustart</string>
+    <string name="det_stop_blink">Blinken stoppen</string>
+    <string name="det_blink_led">LED blinken</string>
+    <string name="det_pool">Pool</string>
+    <string name="det_fan">Lüfter</string>
+    <string name="det_tune">Tuning</string>
+    <string name="det_power">Power</string>
+    <string name="det_working">Läuft: %1$s…</string>
+    <string name="det_restart_title">Miner neu starten?</string>
+    <string name="det_restart_body">Das Hashing stoppt für ~30–60 Sekunden während des Neustarts. Shares unterwegs können verloren gehen. Keine Einstellungen werden geändert.</string>
+    <string name="det_power_title">Hashing pausieren oder fortsetzen</string>
+    <string name="det_power_body">Pause sendet den Soft-Off-Befehl des Miners (nimmt keine neue Arbeit mehr an — für Lastabwurf oder Drosselung) ohne Neustart; Fortsetzen sendet Soft-On. Beobachte die Hashrate nach dem Anwenden, um die Wirkung auf deiner Firmware zu bestätigen.</string>
+    <string name="det_pause">Pause</string>
+    <string name="det_resume">Fortsetzen</string>
+
+    <!-- Pool dialog -->
+    <string name="det_pool_title">Primären Pool ändern</string>
+    <string name="det_pool_current">Aktuell: %1$s:%2$d</string>
+    <string name="det_stratum_url">Stratum-URL</string>
+    <string name="det_port">Port</string>
+    <string name="det_worker">Worker / Adresse</string>
+    <string name="det_pool_warning">Das gespeicherte Pool-Passwort bleibt erhalten. Eine falsche URL stoppt das Mining bis zur Korrektur. Ältere Firmware braucht evtl. einen Neustart, um die Änderung zu übernehmen.</string>
+
+    <!-- Fan dialog -->
+    <string name="det_fan_title">Lüftersteuerung</string>
+    <string name="det_fan_auto">Automatisch (Firmware-geregelt)</string>
+    <string name="det_fan_manual_speed">Manuelle Drehzahl: %1$d%%</string>
+    <string name="det_fan_warning" formatted="false">Unter ~35% kann ein Miner unter Last überhitzen. Der Überhitzungsschutz der Firmware bleibt in jedem Fall aktiv.</string>
+
+    <!-- Tune dialog -->
+    <string name="det_tune_unavailable_title">Tuning nicht verfügbar</string>
+    <string name="det_tune_unavailable_body">Diese Firmware veröffentlicht ihre freigegebenen Frequenz-/Spannungslisten nicht (GET /api/system/asic), daher bietet die App dafür keine Tuning-Werte an.</string>
+    <string name="det_tune_title">Tuning (Firmware-freigegebene Werte)</string>
+    <string name="det_tune_current">Aktuell: %1$s MHz / %2$s mV</string>
+    <string name="det_tune_stock">"  ·  Werk: %1$s MHz / %2$s mV"</string>
+    <string name="det_frequency_mhz">Frequenz (MHz)</string>
+    <string name="det_core_voltage_mv">Kernspannung (mV)</string>
+    <string name="det_tune_warning">Werte über Werk erhöhen Wärme und Leistungsaufnahme und können die Lebensdauer verkürzen. Die App pollt nach dem Anwenden schneller; beobachte die Temperaturen und mach einen Rollback, wenn Chip- oder VR-Temps steigen.</string>
+    <string name="det_roll_back">Rollback</string>
+
+    <!-- Smart plug -->
+    <string name="det_plug_hint">Trennt den Strom über eine lokale Smart-Steckdose, wenn die Chip-Temp das Limit erreicht. Einschalten ist immer manuell — die App stellt den Strom nie automatisch wieder her. Nur lokale Adressen.</string>
+    <string name="det_plug">Steckdose</string>
+    <string name="det_off_url">AUS-URL</string>
+    <string name="det_on_url">AN-URL</string>
+    <string name="det_plug_host">Steckdosen-IP / Host</string>
+    <string name="det_plug_cutoff">Strom trennen bei Chip-Temp (°C)</string>
+    <string name="det_test_off">Test aus</string>
+    <string name="det_test_on">Test an</string>
+
+    <!-- Alerts -->
+    <string name="det_alert_active">aktiv</string>
+    <string name="det_alert_resolved">behoben</string>
+
+    <!-- Raw response -->
+    <string name="det_no_raw">Noch keine Rohantwort erfasst</string>
+    <string name="det_raw_redacted">Zugangs- und WLAN-Felder sind geschwärzt.</string>
+
+    <!-- Remove dialog -->
+    <string name="det_remove_title">Miner entfernen?</string>
+    <string name="det_remove_body">Entfernt %1$s und behält keinen Telemetrie-Verlauf.</string>
+    <string name="det_this_miner">diesen Miner</string>
+    <string name="det_remove">Entfernen</string>
+
+    <!-- Edit miner dialog -->
+    <string name="det_edit_miner_title">Miner bearbeiten</string>
+    <string name="det_name">Name</string>
+    <string name="det_group">Gruppe</string>
+    <string name="det_location">Standort (Raum/Rack/Regal)</string>
+    <string name="det_farm_header">FARM</string>
+    <string name="det_tags">Tags (kommagetrennt)</string>
+    <string name="det_expected_hashrate">Soll-Hashrate (GH/s, leer = gerätgemeldet)</string>
+    <string name="det_notes">Notizen</string>
+    <string name="det_alert_overrides_header">ALARM-OVERRIDES (leer = globaler Standard)</string>
+    <string name="det_ov_hashrate" formatted="false">Hashrate-Alarm unter (%)</string>
+    <string name="det_ov_chip">Chip-Temp-Alarm (°C)</string>
+    <string name="det_ov_vr">VR-Temp-Alarm (°C)</string>
+    <string name="det_ov_reject" formatted="false">Ablehnungsraten-Alarm (%)</string>
+    <string name="det_mute">Alarme für diesen Miner stummschalten</string>
+    <string name="det_mute_hint">Wird weiter gepollt und aufgezeichnet; löst keine Alarme aus.</string>
+
+    <!-- Per-chip health table -->
+    <string name="det_col_board">Board</string>
+    <string name="det_col_hashrate">Hashrate</string>
+    <string name="det_col_chips">Chips</string>
+    <string name="det_col_hw_err">HW-Fehler</string>
+    <string name="det_col_temp">Temp</string>
+    <string name="det_chips_failed">⚠ %1$d ausgefallene(r) Chip(s) auf %2$d Board(s) erkannt.</string>
+    <string name="det_chips_healthy">Alle %1$d Board(s) melden sich gesund.</string>
+
+    <!-- Miner visual (accessibility) -->
+    <string name="det_cd_visual">Live-Miner-Darstellung: Status %1$s</string>
+    <string name="det_cd_visual_chip">, Chip %1$d Grad</string>
+    <string name="det_cd_visual_fan">, Lüfter %1$d RPM</string>
+
+    <!-- ViewModel-surfaced status messages -->
+    <string name="det_msg_credential_cleared">Zugang gelöscht.</string>
+    <string name="det_msg_credential_saved">Zugang gespeichert (verschlüsselt).</string>
+    <string name="det_msg_plug_on_sent">Einschalt-Befehl an Steckdose gesendet.</string>
+    <string name="det_msg_plug_off_sent">Ausschalt-Befehl an Steckdose gesendet.</string>
+    <string name="det_msg_plug_failed">Steckdosen-Befehl fehlgeschlagen — prüfe Adresse/URL.</string>
+    <string name="det_msg_miner_not_found">Miner nicht gefunden.</string>
+    <string name="det_msg_done">Fertig: %1$s.</string>
+    <string name="det_msg_failed">Fehlgeschlagen: %1$s</string>
+    <string name="det_msg_unsupported">Nicht unterstützt: %1$s</string>
+    <string name="det_msg_unexpected_error">Unerwarteter Fehler</string>
+
+    <!-- ViewModel action labels (shown as "Working: …" and "Done: …") -->
+    <string name="det_act_restarting">Neustart</string>
+    <string name="det_act_blinking_led">LED blinkt</string>
+    <string name="det_act_stopping_blink">Blinken wird gestoppt</string>
+    <string name="det_act_pausing">Hashing wird pausiert</string>
+    <string name="det_act_resuming">Hashing wird fortgesetzt</string>
+    <string name="det_act_changing_pool">Pool wird gewechselt</string>
+    <string name="det_act_fan_auto">Lüfter wird auf automatisch gestellt</string>
+    <string name="det_act_fan_manual">Lüfter wird auf %1$d%% gestellt</string>
+    <string name="det_act_applying_tune">%1$d MHz / %2$d mV werden angewendet</string>
+    <string name="det_act_rollback">Tuning-Rollback</string>
+</resources>

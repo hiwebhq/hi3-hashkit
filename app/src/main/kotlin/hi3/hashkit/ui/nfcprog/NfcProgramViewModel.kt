@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.tag.MinerTag
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,6 +47,7 @@ data class NfcProgramState(
 @HiltViewModel
 class NfcProgramViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
 ) : ViewModel() {
 
@@ -76,7 +78,7 @@ class NfcProgramViewModel @Inject constructor(
             }
             _state.value = _state.value.copy(
                 targets = targets, loading = false,
-                message = if (targets.isEmpty()) "No miners to program." else null,
+                message = if (targets.isEmpty()) appContext.getString(R.string.vm_nfc_none) else null,
             )
         }
     }
@@ -103,8 +105,8 @@ class NfcProgramViewModel @Inject constructor(
         _state.value = s.copy(
             written = written,
             index = nextUnwritten ?: s.index,
-            message = "Wrote ${s.targets.firstOrNull { it.id == id }?.name ?: "tag"}." +
-                if (written.size == s.targets.size) " All ${s.targets.size} done." else "",
+            message = appContext.getString(R.string.vm_nfc_wrote, s.targets.firstOrNull { it.id == id }?.name ?: appContext.getString(R.string.vm_nfc_tag_fallback)) +
+                if (written.size == s.targets.size) appContext.getString(R.string.vm_nfc_all_done, s.targets.size) else "",
         )
     }
 

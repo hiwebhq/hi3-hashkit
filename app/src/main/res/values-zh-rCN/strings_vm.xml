@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings surfaced from ViewModels / shared domain classes (no Composable Context at the
+     point of composition). vm_ = ViewModel messages, logan_ = LogAnalyzer/LogClassifier,
+     acou_ = AcousticAnalyzer, bulk_ = FleetControl BulkAction labels. -->
+<resources>
+
+    <!-- AutotuneViewModel -->
+    <string name="vm_tune_miner_not_found">未找到矿机。</string>
+    <string name="vm_tune_not_tunable">此矿机不提供可调优选项。</string>
+    <string name="vm_tune_no_voltage">没有可保持恒定的核心电压。</string>
+    <string name="vm_tune_sweeping">正在以 %2$d mV 扫描 %1$d 档频率，上限 %3$d°C…</string>
+    <string name="vm_tune_step_label">%1$d MHz @ %2$d mV——应用并稳定 %3$d 秒</string>
+    <string name="vm_tune_stopped_early">"提前停止：触及 %1$d°C 上限。"</string>
+    <string name="vm_tune_no_safe_point">没有安全工作点产生有效读数。</string>
+    <string name="vm_tune_best_hashrate">最高算力：%1$d MHz（%2$s）。</string>
+    <string name="vm_tune_best_efficiency">最高能效：%1$d MHz，%2$s J/TH。</string>
+    <string name="vm_tune_restored">" 已恢复你原来的设定点。"</string>
+    <string name="vm_tune_applied">已应用 %1$d MHz @ %2$d mV。</string>
+    <string name="vm_tune_apply_failed">应用失败：%1$s</string>
+    <string name="vm_tune_cancelled">扫描已取消——原设定点已恢复。</string>
+
+    <!-- PoolSpeedViewModel -->
+    <string name="vm_ps_no_pools">未找到矿池。请在矿机上或地址簿中配置矿池。</string>
+    <string name="vm_ps_tested">已测试 %1$d 个矿池。</string>
+
+    <!-- AddressBookViewModel -->
+    <string name="vm_ab_applied">已应用“%1$s”：成功 %2$d，失败 %3$d，不支持 %4$d。</string>
+
+    <!-- Shared by PriceCurtailmentViewModel + SolarSurplusViewModel -->
+    <string name="vm_saved">已保存。</string>
+    <string name="vm_curtailed">已限载</string>
+    <string name="vm_resumed">已恢复</string>
+    <string name="vm_curtail_result">%1$s %2$d/%3$d 台矿机。</string>
+    <string name="vm_curtail_result_skipped">%1$s %2$d/%3$d 台矿机，跳过 %4$d 台。</string>
+
+    <!-- PriceCurtailmentViewModel -->
+    <string name="vm_price_no_rate">尚无覆盖当前半小时时段的电价。</string>
+
+    <!-- SolarSurplusViewModel -->
+    <string name="vm_solar_read">已从 Home Assistant 读取 %1$s。</string>
+
+    <!-- SettingsScreen refresh-interval presets -->
+    <string name="vm_interval_5s">5 秒</string>
+    <string name="vm_interval_10s">10 秒</string>
+    <string name="vm_interval_15s">15 秒</string>
+    <string name="vm_interval_30s">30 秒</string>
+    <string name="vm_interval_1m">1 分钟</string>
+    <string name="vm_interval_2m">2 分钟</string>
+    <string name="vm_interval_5m">5 分钟</string>
+    <string name="vm_interval_15m">15 分钟</string>
+    <string name="vm_interval_30m">30 分钟</string>
+    <string name="vm_interval_1h">1 小时</string>
+    <string name="vm_interval_6h">6 小时</string>
+    <string name="vm_interval_12h">12 小时</string>
+    <string name="vm_interval_1d">1 天</string>
+    <string name="vm_interval_days">%1$d 天</string>
+    <string name="vm_interval_hours">%1$d 小时</string>
+    <string name="vm_interval_mins">%1$d 分钟</string>
+    <string name="vm_interval_secs">%1$d 秒</string>
+
+    <!-- ArOverlayViewModel -->
+    <string name="vm_ar_blank_tag">空白 NFC 标签——请从矿机的“制作标签”写入</string>
+    <string name="vm_ar_not_hashkit_tag">不是 Hi3 Hashkit 标签</string>
+    <string name="vm_ar_scanned">已扫描 ✓ %1$s</string>
+    <string name="vm_ar_miner_fallback">矿机</string>
+    <string name="vm_ar_not_added_yet">已扫描标签——%1$s 尚未添加</string>
+    <string name="vm_ar_no_match">已扫描标签——没有匹配的矿机</string>
+    <string name="vm_ar_adding">正在添加 %1$s…</string>
+    <string name="vm_ar_added">已添加 %1$s。</string>
+    <string name="vm_ar_unreachable">无法连接 %1$s：%2$s</string>
+
+    <!-- AddMinerViewModel -->
+    <string name="vm_add_private_only">仅允许私有局域网或 Tailscale（100.x）地址。</string>
+    <string name="vm_add_added">已添加——正在拉取首次遥测…</string>
+    <string name="vm_add_already_tracked">已在跟踪中；地址已更新。</string>
+    <string name="vm_add_unreachable">无法连接：%1$s</string>
+    <string name="vm_add_cidr_hint">请输入私有 CIDR，例如 192.168.1.0/24。</string>
+    <string name="vm_add_range_too_large">网段大于 /%1$d——请缩小后再扫描。</string>
+    <string name="vm_add_scan_done">已扫描 %1$d 台主机，发现 %2$d 台矿机。</string>
+    <string name="vm_add_scan_cancelled">扫描已取消。</string>
+    <string name="vm_add_mdns_searching">正在通过 mDNS 搜索…</string>
+    <string name="vm_add_mdns_done">mDNS 搜索完成：%1$d 台矿机。</string>
+
+    <!-- NfcProgramViewModel -->
+    <string name="vm_nfc_wrote">已写入 %1$s。</string>
+    <string name="vm_nfc_tag_fallback">标签</string>
+    <string name="vm_nfc_all_done">" 全部 %1$d 个已完成。"</string>
+    <string name="vm_nfc_none">没有可写入的矿机。</string>
+
+    <!-- LogClassifier categories -->
+    <string name="logan_cat_pool">矿池</string>
+    <string name="logan_cat_shares">份额</string>
+    <string name="logan_cat_asic">ASIC</string>
+    <string name="logan_cat_thermal">温度</string>
+    <string name="logan_cat_network">网络</string>
+    <string name="logan_cat_system">系统</string>
+    <string name="logan_cat_other">其他</string>
+
+    <!-- LogAnalyzer findings -->
+    <string name="logan_disconnects_title">近期日志中有 %1$d 次矿池/网络断连</string>
+    <string name="logan_disconnects_suggestion">检查矿池 URL/端口和 Wi-Fi 信号；不稳定的链路会导致份额丢失。</string>
+    <string name="logan_restarts_title">有 %1$d 次重启/复位的迹象</string>
+    <string name="logan_restarts_suggestion">反复重启通常意味着供电（电源/USB）或散热问题——请检查电源和散热。</string>
+    <string name="logan_thermal_title">%1$d 条温度警告/错误</string>
+    <string name="logan_thermal_suggestion">改善风道或降低调优参数；持续高温会限制算力并缩短硬件寿命。</string>
+    <string name="logan_asic_title">%1$d 个 ASIC 错误</string>
+    <string name="logan_asic_suggestion">持续的 ASIC 错误可能表明芯片/算力板故障——请对比单芯片健康状况，并考虑重刷固件。</string>
+    <string name="logan_rejects_title">%1$d 条份额被拒消息</string>
+    <string name="logan_rejects_suggestion">拒绝率高通常意味着任务过期（网络延迟）或调优过于激进。</string>
+    <string name="logan_clean_title">近期日志中未发现问题。</string>
+    <string name="logan_errors_no_pattern_title">%1$d 行错误，但没有已知的问题模式。</string>
+    <string name="logan_none_suggestion">没有发现需要处理的问题。保持日志流打开以捕捉间歇性故障。</string>
+
+    <!-- AcousticAnalyzer findings -->
+    <string name="acou_bearing">高频噪声偏高——可能是轴承磨损或轴承缺油。</string>
+    <string name="acou_imbalance">%1$d Hz 处有强烈低音——可能是失衡或异物。</string>
+    <string name="acou_broadband">声音为宽频且无明显风扇音调——请确认麦克风靠近风扇且环境安静。</string>
+    <string name="acou_no_fault">本段音频未发现明显风扇故障（仅供参考）。</string>
+
+    <!-- FleetControl BulkAction labels (dialog titles) -->
+    <string name="bulk_restart">重启</string>
+    <string name="bulk_set_pool">将主矿池更改为 %1$s:%2$d</string>
+    <string name="bulk_fan_auto">将风扇设为自动</string>
+    <string name="bulk_fan_manual">将风扇设为 %1$d%%</string>
+    <string name="bulk_pause">暂停挖矿</string>
+    <string name="bulk_resume">恢复挖矿</string>
+    <string name="bulk_tune">调优至 %1$d MHz @ %2$d mV</string>
+
+</resources>

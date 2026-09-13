@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fleet table screen (ui/table). Unit-only headers (J/TH, MHz, mV) are not translatable
+     and are inherited from the default locale. -->
+<resources>
+    <string name="table_title">Flottentabelle</string>
+    <string name="table_filter_label">Filter (Name, IP, Modell, Pool)</string>
+    <string name="table_print_qr">QR-Codes drucken</string>
+    <string name="table_program_nfc">NFC-Tags programmieren</string>
+    <string name="table_scan_tag_qr">Tag / QR scannen</string>
+    <string name="table_scan_nfc">NFC scannen</string>
+    <string name="table_tag_hint">%1$d Tag(s) · scannbar im AR-Rack-Overlay · Zeile lang drücken zum Auswählen</string>
+
+    <!-- Column headers -->
+    <string name="table_col_name">Name</string>
+    <string name="table_col_ip">IP</string>
+    <string name="table_col_model">Modell</string>
+    <string name="table_col_hashrate">Hashrate</string>
+    <string name="table_col_temp">Temp</string>
+    <string name="table_col_fan">Lüfter</string>
+    <string name="table_col_pool">Pool</string>
+    <string name="table_col_uptime">Laufzeit</string>
+
+    <string name="table_cell_offline">offline</string>
+
+    <!-- Print dialog -->
+    <string name="table_qr_sticker_size">QR-Sticker-Größe</string>
+    <string name="table_qr_size_hint">Wie groß soll jeder gedruckte Sticker sein? Kleiner passt öfter auf eine Seite.</string>
+
+    <!-- Selection bar + dialogs -->
+    <string name="table_selected_count">%1$d ausgewählt</string>
+    <string name="table_assign_to_farm">Farm zuweisen</string>
+    <string name="table_blink_led">LED blinken</string>
+    <string name="table_stop_blink">Blinken stoppen</string>
+    <string name="table_select_all">Alle %1$d auswählen</string>
+    <string name="table_clear">Aufheben</string>
+    <string name="table_assign_title">%1$d Miner zuweisen an…</string>
+    <string name="table_no_farms">Noch keine Farmen — lege zuerst unter Erweitert → Farmen eine an.</string>
+    <string name="table_no_farm_unassign">Keine Farm (Zuordnung aufheben)</string>
+    <string name="table_delete_title">%1$d Miner löschen?</string>
+    <string name="table_delete_body">Entfernt sie und ihren Telemetrie-Verlauf aus der App. Die physischen Maschinen bleiben unberührt.</string>
+</resources>

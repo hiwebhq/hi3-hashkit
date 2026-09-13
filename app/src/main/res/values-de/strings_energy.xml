@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Energy & profit screen (EnergyCostScreen). -->
+<resources>
+    <string name="energy_title">Energie &amp; Gewinn</string>
+    <string name="energy_filter_hint">Filter (Name, IP, Modell)</string>
+
+    <!-- Sort chips (EnergySort) -->
+    <string name="energy_sort_cost">Kosten</string>
+    <string name="energy_sort_efficiency">J/TH</string>
+    <string name="energy_sort_net">Netto/Tag</string>
+
+    <!-- Hints -->
+    <string name="energy_rate_hint">Setze deinen Strompreis in den Einstellungen, um Kostenschätzungen zu sehen (der Energieverbrauch wird immer angezeigt).</string>
+    <string name="energy_revenue_hint">Ertrag und Netto brauchen Netzwerk-Difficulty und einen BTC-Preis — aktiviere den Auto-Abruf oder setze sie in den Einstellungen. Schätzungen ohne Pool- und Transaktionsgebühren.</string>
+
+    <!-- Fleet total metrics -->
+    <string name="energy_fleet_energy_est">Flotten-Energie gesch.</string>
+    <string name="energy_revenue_est">Ertrag gesch.</string>
+    <string name="energy_net_est">Netto gesch.</string>
+    <string name="energy_this_month">Dieser Monat</string>
+    <string name="energy_energy">Energie</string>
+    <string name="energy_machines">Maschinen</string>
+
+    <!-- "$1.23/day" suffix around a pre-formatted money value -->
+    <string name="energy_per_day_fmt">%1$s/Tag</string>
+
+    <!-- Row card -->
+    <string name="energy_offline">offline</string>
+    <string name="energy_power">Leistung</string>
+    <string name="energy_efficiency">Effizienz</string>
+    <string name="energy_cost">Kosten</string>
+    <string name="energy_revenue">Ertrag</string>
+    <string name="energy_net">Netto</string>
+    <string name="energy_est_month">Monat gesch.</string>
+</resources>

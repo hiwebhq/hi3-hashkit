@@ -36,8 +36,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 
 /** The live capture page: status, controls, and the filling rack map. */
@@ -71,21 +73,38 @@ private fun StatusCard(state: SiteMapState, cfg: SiteMapConfig) {
     Card(colors = CardDefaults.cardColors(containerColor = HiBrand.surface), shape = RoundedCornerShape(12.dp)) {
         Column(Modifier.fillMaxWidth().padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             val headline = when {
-                state.phase == SitePhase.DONE -> "Capture finished"
-                state.running -> "Listening on UDP 14235 — press the IP Report button on:"
-                else -> "Paused — presses are ignored"
+                state.phase == SitePhase.DONE -> stringResource(R.string.site_capture_finished)
+                state.running -> stringResource(R.string.site_listening)
+                else -> stringResource(R.string.site_paused)
             }
             Text(headline, style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary)
             if (state.phase == SitePhase.CAPTURE && current != null) {
-                Text(current.label, style = MaterialTheme.typography.titleMedium, color = HiBrand.accent)
+                Text(
+                    stringResource(
+                        R.string.site_slot_label,
+                        current.building, current.rack, current.tier, current.position,
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = HiBrand.accent,
+                )
             }
             Text(
-                "${state.captured.size} of ${cfg.totalSlots} captured" +
-                    (if (state.skipped.isNotEmpty()) " · ${state.skipped.size} skipped" else ""),
+                stringResource(R.string.site_captured_count, state.captured.size, cfg.totalSlots) +
+                    (
+                        if (state.skipped.isNotEmpty()) {
+                            stringResource(R.string.site_skipped_suffix, state.skipped.size)
+                        } else {
+                            ""
+                        }
+                        ),
                 style = MaterialTheme.typography.bodySmall, color = HiBrand.textPrimary,
             )
             state.lastEvent?.let {
-                Text("Last: $it", style = MaterialTheme.typography.bodySmall, color = HiBrand.statusOnline)
+                Text(
+                    stringResource(R.string.site_last_event, it),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HiBrand.statusOnline,
+                )
             }
             state.error?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.statusOffline)
@@ -98,20 +117,20 @@ private fun StatusCard(state: SiteMapState, cfg: SiteMapConfig) {
 private fun ControlButtons(vm: SiteMapViewModel, state: SiteMapState) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
         if (state.running) {
-            OutlinedButton(onClick = vm::pause, modifier = Modifier.weight(1f)) { Text("Pause") }
+            OutlinedButton(onClick = vm::pause, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.site_pause)) }
         } else {
-            Button(onClick = vm::resume, modifier = Modifier.weight(1f)) { Text("Resume") }
+            Button(onClick = vm::resume, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.site_resume)) }
         }
-        OutlinedButton(onClick = vm::stop, modifier = Modifier.weight(1f)) { Text("Stop") }
+        OutlinedButton(onClick = vm::stop, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_stop)) }
     }
 }
 
 @Composable
 private fun EditButtons(vm: SiteMapViewModel, onManual: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        OutlinedButton(onClick = vm::undoLast, modifier = Modifier.weight(1f)) { Text("Undo") }
-        OutlinedButton(onClick = vm::skipCurrent, modifier = Modifier.weight(1f)) { Text("Skip slot") }
-        OutlinedButton(onClick = onManual, modifier = Modifier.weight(1f)) { Text("Manual") }
+        OutlinedButton(onClick = vm::undoLast, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.site_undo)) }
+        OutlinedButton(onClick = vm::skipCurrent, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.site_skip_slot)) }
+        OutlinedButton(onClick = onManual, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.site_manual)) }
     }
 }
 
@@ -131,20 +150,20 @@ private fun RackMap(state: SiteMapState, cfg: SiteMapConfig) {
         Column(Modifier.fillMaxWidth().padding(10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 IconButton(onClick = { if (viewed > 0) viewed-- }, enabled = viewed > 0) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous rack")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.site_prev_rack))
                 }
                 Text(
-                    "Building $building · Rack $rack",
+                    stringResource(R.string.site_building_rack, building, rack),
                     style = MaterialTheme.typography.titleSmall, color = HiBrand.textPrimary,
                     modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
                 )
                 IconButton(onClick = { if (viewed < totalRacks - 1) viewed++ }, enabled = viewed < totalRacks - 1) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next rack")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.site_next_rack))
                 }
             }
             RackGrid(state, cfg, building, rack)
             Text(
-                "Tier 1 is the bottom row; positions run left → right.",
+                stringResource(R.string.site_tier_hint),
                 style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
             )
         }

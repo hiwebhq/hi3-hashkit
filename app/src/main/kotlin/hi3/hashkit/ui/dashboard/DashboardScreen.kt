@@ -68,11 +68,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.domain.model.Miner
 import androidx.compose.ui.semantics.contentDescription
@@ -170,58 +172,58 @@ fun DashboardScreen(
                                 }
                             }
                         ) {
-                            Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
+                            Icon(Icons.Filled.Notifications, contentDescription = stringResource(R.string.dash_cd_notifications))
                         }
                     }
                     if (state.settings.advancedUnlocked) {
                         IconButton(onClick = onScan) {
-                            Icon(Icons.Filled.QrCodeScanner, contentDescription = "Scan a miner tag")
+                            Icon(Icons.Filled.QrCodeScanner, contentDescription = stringResource(R.string.dash_cd_scan_tag))
                         }
                     }
                     IconButton(onClick = onSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Setup")
+                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.dash_cd_setup))
                     }
                     IconButton(onClick = {
                         if (state.settings.confirmBeforeExit) confirmExit = true else onExit()
                     }) {
                         Icon(
                             Icons.Filled.PowerSettingsNew,
-                            contentDescription = "Exit app",
+                            contentDescription = stringResource(R.string.dash_cd_exit_app),
                             tint = HiBrand.statusOffline,
                         )
                     }
                     Box {
                         IconButton(onClick = { menuOpen = true }) {
-                            Icon(Icons.Filled.MoreVert, contentDescription = "More")
+                            Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.dash_cd_more))
                         }
                         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                             DropdownMenuItem(
-                                text = { Text("Refresh") },
+                                text = { Text(stringResource(R.string.common_refresh)) },
                                 leadingIcon = { Icon(Icons.Filled.Refresh, contentDescription = null) },
                                 onClick = { menuOpen = false; viewModel.refreshNow() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Flow view") },
+                                text = { Text(stringResource(R.string.dash_menu_flow_view)) },
                                 leadingIcon = { Icon(Icons.Filled.AccountTree, contentDescription = null) },
                                 onClick = { menuOpen = false; onFlow() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Network scan") },
+                                text = { Text(stringResource(R.string.dash_menu_network_scan)) },
                                 leadingIcon = { Icon(Icons.Filled.Wifi, contentDescription = null) },
                                 onClick = { menuOpen = false; onNetworkScan() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Leaderboard") },
+                                text = { Text(stringResource(R.string.dash_menu_leaderboard)) },
                                 leadingIcon = { Icon(Icons.Filled.EmojiEvents, contentDescription = null) },
                                 onClick = { menuOpen = false; onLeaderboard() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Fleet table") },
+                                text = { Text(stringResource(R.string.dash_menu_fleet_table)) },
                                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
                                 onClick = { menuOpen = false; onTable() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Wall / TV mode") },
+                                text = { Text(stringResource(R.string.dash_menu_wall_tv)) },
                                 leadingIcon = { Icon(Icons.Filled.Tv, contentDescription = null) },
                                 onClick = { menuOpen = false; onWall() },
                             )
@@ -229,14 +231,14 @@ fun DashboardScreen(
                             // Revealed once unlocked in Settings → Advanced features.
                             if (state.settings.advancedUnlocked) {
                                 DropdownMenuItem(
-                                    text = { Text("Advanced") },
+                                    text = { Text(stringResource(R.string.dash_menu_advanced)) },
                                     leadingIcon = { Icon(Icons.Filled.Tune, contentDescription = null) },
                                     onClick = { menuOpen = false; onAdvanced() },
                                 )
                             }
                             androidx.compose.material3.HorizontalDivider()
                             DropdownMenuItem(
-                                text = { Text("Store") },
+                                text = { Text(stringResource(R.string.dash_menu_store)) },
                                 leadingIcon = { Icon(Icons.Filled.Store, contentDescription = null) },
                                 onClick = {
                                     menuOpen = false
@@ -244,18 +246,18 @@ fun DashboardScreen(
                                 },
                             )
                             DropdownMenuItem(
-                                text = { Text("About") },
+                                text = { Text(stringResource(R.string.dash_menu_about)) },
                                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null) },
                                 onClick = { menuOpen = false; onAbout() },
                             )
                             DropdownMenuItem(
-                                text = { Text("Privacy Policy") },
+                                text = { Text(stringResource(R.string.dash_menu_privacy_policy)) },
                                 leadingIcon = { Icon(Icons.Filled.Shield, contentDescription = null) },
                                 onClick = { menuOpen = false; onPrivacy() },
                             )
                             androidx.compose.material3.HorizontalDivider()
                             DropdownMenuItem(
-                                text = { Text("Panic — whole fleet", color = HiBrand.statusOffline) },
+                                text = { Text(stringResource(R.string.dash_panic_title), color = HiBrand.statusOffline) },
                                 leadingIcon = {
                                     Icon(
                                         Icons.Filled.Warning,
@@ -275,7 +277,7 @@ fun DashboardScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddMiner) {
-                Icon(Icons.Filled.Add, contentDescription = "Add miner")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.dash_cd_add_miner))
             }
         },
         containerColor = HiBrand.background,
@@ -339,7 +341,7 @@ fun DashboardScreen(
                     androidx.compose.material3.OutlinedTextField(
                         value = state.searchQuery,
                         onValueChange = viewModel::setSearch,
-                        placeholder = { Text("Search") },
+                        placeholder = { Text(stringResource(R.string.common_search)) },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
                     )
@@ -347,7 +349,7 @@ fun DashboardScreen(
                         IconButton(onClick = { viewModel.rescanLocalNetwork() }) {
                             Icon(
                                 Icons.Filled.Refresh,
-                                contentDescription = "Rescan network for new miners",
+                                contentDescription = stringResource(R.string.dash_cd_rescan),
                                 tint = HiBrand.accent,
                             )
                         }
@@ -365,7 +367,7 @@ fun DashboardScreen(
                     if (state.groups.size > 1 || group != null) {
                         item(key = "group-${group ?: "~none"}") {
                             Text(
-                                (group ?: "Ungrouped").uppercase(),
+                                (group ?: stringResource(R.string.dash_group_ungrouped)).uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
                                 modifier = Modifier.padding(top = 6.dp),
@@ -437,7 +439,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(
-                                "Demo mode is showing synthetic miners",
+                                stringResource(R.string.dash_demo_banner),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = HiBrand.statusDegraded,
                             )
@@ -468,12 +470,11 @@ fun DashboardScreen(
         var dontAskAgain by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { confirmExit = false },
-            title = { Text("Exit Hi3 Hashkit?") },
+            title = { Text(stringResource(R.string.dash_exit_title)) },
             text = {
                 Column {
                     Text(
-                        "This closes the app and stops foreground polling. Background " +
-                            "monitoring, if enabled, keeps running.",
+                        stringResource(R.string.dash_exit_body),
                     )
                     Spacer(Modifier.height(12.dp))
                     Row(
@@ -485,7 +486,7 @@ fun DashboardScreen(
                             onCheckedChange = { dontAskAgain = it },
                         )
                         Text(
-                            "Don't ask again — exit straight away next time",
+                            stringResource(R.string.dash_exit_dont_ask),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
@@ -497,10 +498,10 @@ fun DashboardScreen(
                     if (dontAskAgain) viewModel.setConfirmBeforeExit(false)
                     confirmExit = false
                     onExit()
-                }) { Text("Exit", color = HiBrand.statusOffline) }
+                }) { Text(stringResource(R.string.dash_exit_confirm), color = HiBrand.statusOffline) }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { confirmExit = false }) { Text("Cancel") }
+                androidx.compose.material3.TextButton(onClick = { confirmExit = false }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }
@@ -508,28 +509,25 @@ fun DashboardScreen(
     if (panicOpen) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { panicOpen = false },
-            title = { Text("Panic — whole fleet") },
+            title = { Text(stringResource(R.string.dash_panic_title)) },
             text = {
                 Text(
-                    "Apply an action to every miner at once. You'll see which are supported " +
-                        "and get a final confirmation before anything is sent.\n\n" +
-                        "• Pause all — stop hashing on every miner that supports it (reversible).\n" +
-                        "• Reboot all — restart every miner that supports reboot.",
+                    stringResource(R.string.dash_panic_body),
                 )
             },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = {
                     panicOpen = false
                     viewModel.planPanic(hi3.hashkit.data.repo.BulkAction.Power(hi3.hashkit.domain.adapter.PowerAction.PAUSE))
-                }) { Text("Pause all") }
+                }) { Text(stringResource(R.string.dash_pause_all)) }
             },
             dismissButton = {
                 Row {
                     androidx.compose.material3.TextButton(onClick = {
                         panicOpen = false
                         viewModel.planPanic(hi3.hashkit.data.repo.BulkAction.Reboot)
-                    }) { Text("Reboot all", color = HiBrand.statusOffline) }
-                    androidx.compose.material3.TextButton(onClick = { panicOpen = false }) { Text("Cancel") }
+                    }) { Text(stringResource(R.string.dash_reboot_all), color = HiBrand.statusOffline) }
+                    androidx.compose.material3.TextButton(onClick = { panicOpen = false }) { Text(stringResource(R.string.common_cancel)) }
                 }
             },
         )
@@ -553,10 +551,10 @@ fun FleetDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Fleet", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.dash_fleet_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 actions = {
@@ -639,7 +637,7 @@ private fun FirmwareUpdateBanner(
             Icon(Icons.Filled.Refresh, contentDescription = null, tint = HiBrand.accent, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(10.dp))
             Text(
-                "AxeOS ${latest.tag} available — $outdated miner(s) can update. Tap for release notes.",
+                stringResource(R.string.dash_firmware_banner, latest.tag, outdated),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textPrimary,
             )
@@ -651,16 +649,17 @@ private fun FirmwareUpdateBanner(
 @Composable
 private fun FarmSelector(state: DashboardUiState, onSelect: (Long) -> Unit) {
     var open by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
-    val activeName = state.farms.firstOrNull { it.id == state.activeFarmId }?.name ?: "All farms"
+    val activeName = state.farms.firstOrNull { it.id == state.activeFarmId }?.name
+        ?: stringResource(R.string.dash_all_farms)
     Box {
         androidx.compose.material3.AssistChip(
             onClick = { open = true },
             label = { Text(activeName) },
-            leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = "Farm", modifier = Modifier.size(18.dp)) },
+            leadingIcon = { Icon(Icons.Filled.Warehouse, contentDescription = stringResource(R.string.dash_cd_farm), modifier = Modifier.size(18.dp)) },
         )
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
-                text = { Text("All farms") },
+                text = { Text(stringResource(R.string.dash_all_farms)) },
                 onClick = { open = false; onSelect(-1) },
             )
             state.farms.forEach { farm ->
@@ -721,7 +720,7 @@ private fun BulkBar(
     ) {
         Column(Modifier.padding(12.dp)) {
             Text(
-                "$count selected — bulk actions run only on devices that support them",
+                stringResource(R.string.dash_bulk_selected, count),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
@@ -729,12 +728,12 @@ private fun BulkBar(
             androidx.compose.foundation.layout.FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                androidx.compose.material3.OutlinedButton(onClick = onReboot) { Text("Restart") }
-                androidx.compose.material3.OutlinedButton(onClick = onPool) { Text("Pool") }
-                androidx.compose.material3.OutlinedButton(onClick = onFan) { Text("Fan") }
-                androidx.compose.material3.OutlinedButton(onClick = onPause) { Text("Pause") }
-                androidx.compose.material3.OutlinedButton(onClick = onResume) { Text("Resume") }
-                androidx.compose.material3.TextButton(onClick = onClear) { Text("Clear") }
+                androidx.compose.material3.OutlinedButton(onClick = onReboot) { Text(stringResource(R.string.dash_bulk_restart)) }
+                androidx.compose.material3.OutlinedButton(onClick = onPool) { Text(stringResource(R.string.dash_bulk_pool)) }
+                androidx.compose.material3.OutlinedButton(onClick = onFan) { Text(stringResource(R.string.dash_bulk_fan)) }
+                androidx.compose.material3.OutlinedButton(onClick = onPause) { Text(stringResource(R.string.dash_bulk_pause)) }
+                androidx.compose.material3.OutlinedButton(onClick = onResume) { Text(stringResource(R.string.dash_bulk_resume)) }
+                androidx.compose.material3.TextButton(onClick = onClear) { Text(stringResource(R.string.dash_bulk_clear)) }
             }
         }
     }
@@ -763,7 +762,7 @@ private fun FleetSummary(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("FLEET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                Text(stringResource(R.string.dash_fleet_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 Text(
                     lastRefreshLabel(state.lastRefresh),
                     style = MaterialTheme.typography.labelSmall,
@@ -786,19 +785,19 @@ private fun FleetSummary(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 4.dp),
                 ) {
-                    Counter(totals?.online ?: 0, "on", HiBrand.statusOnline)
-                    (totals?.degraded ?: 0).takeIf { it > 0 }?.let { Counter(it, "deg", HiBrand.statusDegraded) }
-                    (totals?.offline ?: 0).takeIf { it > 0 }?.let { Counter(it, "off", HiBrand.statusOffline) }
-                    (totals?.unknown ?: 0).takeIf { it > 0 }?.let { Counter(it, "stale", HiBrand.statusUnknown) }
+                    Counter(totals?.online ?: 0, stringResource(R.string.dash_counter_on), HiBrand.statusOnline)
+                    (totals?.degraded ?: 0).takeIf { it > 0 }?.let { Counter(it, stringResource(R.string.dash_counter_deg), HiBrand.statusDegraded) }
+                    (totals?.offline ?: 0).takeIf { it > 0 }?.let { Counter(it, stringResource(R.string.dash_counter_off), HiBrand.statusOffline) }
+                    (totals?.unknown ?: 0).takeIf { it > 0 }?.let { Counter(it, stringResource(R.string.dash_counter_stale), HiBrand.statusUnknown) }
                 }
             }
             Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Metric("Power", Units.formatPower(totals?.totalMeasuredPowerW))
-                Metric("Efficiency", Units.formatEfficiency(totals?.fleetEfficiencyJTh))
-                Metric("Hottest", Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
+                Metric(stringResource(R.string.dash_metric_power), Units.formatPower(totals?.totalMeasuredPowerW))
+                Metric(stringResource(R.string.dash_metric_efficiency), Units.formatEfficiency(totals?.fleetEfficiencyJTh))
+                Metric(stringResource(R.string.dash_metric_hottest), Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
                 totals?.dailyCost?.let { cost ->
-                    Metric("Energy Est.", Units.formatMoney(cost, state.settings.currencyCode))
+                    Metric(stringResource(R.string.dash_metric_energy_est), Units.formatMoney(cost, state.settings.currencyCode))
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -808,7 +807,7 @@ private fun FleetSummary(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    "Fleet hashrate",
+                    stringResource(R.string.dash_fleet_hashrate),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -827,7 +826,7 @@ private fun FleetSummary(
                 FleetTrendChart(trend, Modifier.fillMaxWidth().height(72.dp))
             } else {
                 Text(
-                    "Collecting data…",
+                    stringResource(R.string.dash_collecting_data),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.height(72.dp),
@@ -842,8 +841,9 @@ private fun FleetTrendChart(
     trend: List<hi3.hashkit.data.repo.FleetTrendPoint>,
     modifier: Modifier = Modifier,
 ) {
+    val chartDescription = stringResource(R.string.dash_cd_fleet_trend_chart)
     androidx.compose.foundation.Canvas(
-        modifier.semantics { contentDescription = "Fleet hashrate trend chart" },
+        modifier.semantics { contentDescription = chartDescription },
     ) {
         val minT = trend.first().timeMs
         val maxT = trend.last().timeMs
@@ -886,9 +886,11 @@ private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardU
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("HI3 MMP FLEET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                Text(stringResource(R.string.dash_mmp_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 Text(
-                    mmp.lastUpdated?.let { "updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: "",
+                    mmp.lastUpdated?.let {
+                        stringResource(R.string.dash_updated_ago, java.time.Duration.between(it, Instant.now()).seconds)
+                    } ?: "",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -904,22 +906,22 @@ private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardU
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
             ) {
                 Metric(
-                    "MMP hashrate",
+                    stringResource(R.string.dash_metric_mmp_hashrate),
                     Units.formatHashrate(s.hashrateThs?.times(1000.0)),
                     valueColor = HiBrand.accentAlt,
                 )
-                Metric("Online", "${s.online ?: "—"}/${s.installed ?: "—"}")
-                Metric("Power", s.powerKw?.let { Units.formatPower(it * 1000.0) } ?: "—")
-                s.realizationPct?.let { Metric("Realization", "${it.toInt()}%") }
+                Metric(stringResource(R.string.status_online), "${s.online ?: "—"}/${s.installed ?: "—"}")
+                Metric(stringResource(R.string.dash_metric_power), s.powerKw?.let { Units.formatPower(it * 1000.0) } ?: "—")
+                s.realizationPct?.let { Metric(stringResource(R.string.dash_metric_realization), "${it.toInt()}%") }
             }
             if ((s.needsAttention ?: 0) > 0 || (s.zeroHash ?: 0) > 0) {
                 Spacer(Modifier.height(6.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     s.needsAttention?.takeIf { it > 0 }?.let {
-                        Metric("Attention", "$it", valueColor = HiBrand.statusDegraded)
+                        Metric(stringResource(R.string.dash_metric_attention), "$it", valueColor = HiBrand.statusDegraded)
                     }
                     s.zeroHash?.takeIf { it > 0 }?.let {
-                        Metric("Zero-hash", "$it", valueColor = HiBrand.statusOffline)
+                        Metric(stringResource(R.string.dash_metric_zero_hash), "$it", valueColor = HiBrand.statusOffline)
                     }
                 }
             }
@@ -943,8 +945,11 @@ private fun MmpCard(mmp: hi3.hashkit.integrations.hi3.MmpState, dash: DashboardU
             dash.totals?.let { totals ->
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "Local = ${Units.formatHashrate(totals.totalHashrateGhs)} vs " +
-                        "MMP Fleet-Wide = ${Units.formatHashrate(s.hashrateThs?.times(1000.0))}",
+                    stringResource(
+                        R.string.dash_mmp_local_vs,
+                        Units.formatHashrate(totals.totalHashrateGhs),
+                        Units.formatHashrate(s.hashrateThs?.times(1000.0)),
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     maxLines = 1,
@@ -969,7 +974,9 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
             ) {
                 Text(pool.poolType.displayName.uppercase(), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 Text(
-                    pool.lastUpdated?.let { "pool view · updated ${java.time.Duration.between(it, Instant.now()).seconds}s ago" } ?: "",
+                    pool.lastUpdated?.let {
+                        stringResource(R.string.dash_pool_updated_ago, java.time.Duration.between(it, Instant.now()).seconds)
+                    } ?: "",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -980,16 +987,14 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
                 return@Column
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Metric("Pool-side hashrate", Units.formatHashrate(pool.totalPoolHashrateGhs), valueColor = HiBrand.accentAlt)
-                Metric("Workers", "${pool.workersCount}")
-                pool.blockHeight?.let { Metric("Height", "$it") }
+                Metric(stringResource(R.string.dash_metric_pool_hashrate), Units.formatHashrate(pool.totalPoolHashrateGhs), valueColor = HiBrand.accentAlt)
+                Metric(stringResource(R.string.dash_metric_workers), "${pool.workersCount}")
+                pool.blockHeight?.let { Metric(stringResource(R.string.dash_metric_height), "$it") }
             }
             if (pool.aggregatedViaProxy) {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Miners reach the pool through your stratum proxy, so the pool reports " +
-                        "them as ${pool.workersCount} aggregated worker(s). Comparing fleet " +
-                        "total vs pool total below.",
+                    stringResource(R.string.dash_pool_proxy_note, pool.workersCount),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -997,8 +1002,8 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
             if (pool.comparisons.isNotEmpty()) {
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    if (pool.aggregatedViaProxy) "FLEET vs POOL"
-                    else "MINER vs POOL (pool averages lag live readings)",
+                    if (pool.aggregatedViaProxy) stringResource(R.string.dash_pool_fleet_vs_pool)
+                    else stringResource(R.string.dash_pool_miner_vs_pool),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -1009,7 +1014,7 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
                         modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
                     ) {
                         Text(
-                            c.localMinerName ?: "${c.poolWorkerName} (no local match)",
+                            c.localMinerName ?: stringResource(R.string.dash_pool_no_local_match, c.poolWorkerName),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f),
                         )
@@ -1035,7 +1040,7 @@ private fun Hi3PoolCard(pool: hi3.hashkit.integrations.hi3.Hi3PoolState) {
             if (pool.unmatchedLocal.isNotEmpty()) {
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "Not seen by this pool: ${pool.unmatchedLocal.joinToString(", ")}",
+                    stringResource(R.string.dash_pool_not_seen, pool.unmatchedLocal.joinToString(", ")),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.statusDegraded,
                 )
@@ -1053,13 +1058,13 @@ private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("PROFITABILITY & ENERGY", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Text(stringResource(R.string.dash_profit_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                Metric("Revenue/day", money(p.revenuePerDay))
-                Metric("Power cost/day", money(p.costPerDay))
+                Metric(stringResource(R.string.dash_metric_revenue_day), money(p.revenuePerDay))
+                Metric(stringResource(R.string.dash_metric_power_cost_day), money(p.costPerDay))
                 Metric(
-                    "Net/day",
+                    stringResource(R.string.dash_metric_net_day),
                     money(p.profitPerDay),
                     valueColor = when {
                         (p.profitPerDay ?: 0.0) > 0 -> HiBrand.statusOnline
@@ -1070,14 +1075,16 @@ private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary) {
             }
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                Metric("BTC/day", p.btcPerDay?.let { "%.8f".format(it) } ?: "—")
-                Metric("Energy/day", p.energyKwhPerDay?.let { "%.1f kWh".format(it) } ?: "—")
-                Metric("Heat", p.heatBtuPerHour?.let { "%,.0f BTU/hr".format(it) } ?: "—")
+                Metric(stringResource(R.string.dash_metric_btc_day), p.btcPerDay?.let { "%.8f".format(it) } ?: "—")
+                Metric(stringResource(R.string.dash_metric_energy_day), p.energyKwhPerDay?.let { "%.1f kWh".format(it) } ?: "—")
+                Metric(stringResource(R.string.dash_metric_heat), p.heatBtuPerHour?.let { "%,.0f BTU/hr".format(it) } ?: "—")
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                "Estimate: BTC/day assumes the ${"%.3f".format(hi3.hashkit.domain.solo.ProfitMath.BLOCK_SUBSIDY_BTC)}-BTC block subsidy " +
-                    "(excludes tx & pool fees); revenue needs a BTC price and network difficulty set/fetched in Settings.",
+                stringResource(
+                    R.string.dash_profit_estimate_note,
+                    "%.3f".format(hi3.hashkit.domain.solo.ProfitMath.BLOCK_SUBSIDY_BTC),
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
@@ -1093,24 +1100,28 @@ private fun SoloCard(solo: hi3.hashkit.ui.dashboard.SoloSummary) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("SOLO ODDS", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Text(stringResource(R.string.dash_solo_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                Metric("Day", hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pDay))
-                Metric("Week", hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pWeek))
-                Metric("Month", hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pMonth))
-                Metric("Year", hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pYear))
+                Metric(stringResource(R.string.dash_metric_day), hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pDay))
+                Metric(stringResource(R.string.dash_metric_week), hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pWeek))
+                Metric(stringResource(R.string.dash_metric_month), hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pMonth))
+                Metric(stringResource(R.string.dash_metric_year), hi3.hashkit.domain.solo.SoloMiningMath.formatProbability(solo.pYear))
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                "Expected time to a block: " +
-                    hi3.hashkit.domain.solo.SoloMiningMath.formatExpectedTime(solo.expectedSeconds) +
-                    solo.bestDifficulty?.let { "  ·  Fleet best diff: ${Units.formatDifficulty(it)}" }.orEmpty(),
+                stringResource(
+                    R.string.dash_solo_expected_time,
+                    hi3.hashkit.domain.solo.SoloMiningMath.formatExpectedTime(solo.expectedSeconds),
+                ) +
+                    solo.bestDifficulty?.let {
+                        stringResource(R.string.dash_solo_best_diff_suffix, Units.formatDifficulty(it))
+                    }.orEmpty(),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
             Text(
-                "Statistical expectation, not a prediction — each share is an independent lottery ticket.",
+                stringResource(R.string.dash_solo_disclaimer),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
@@ -1128,30 +1139,38 @@ private fun HalvingCountdownCard(epoch: hi3.hashkit.data.repo.DifficultyReposito
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("BITCOIN NETWORK", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Text(stringResource(R.string.dash_network_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                Metric("Block", "%,d".format(epoch.currentHeight))
-                Metric("Subsidy", "%.3f BTC".format(math.subsidyBtc(epoch.currentHeight)))
+                Metric(stringResource(R.string.dash_metric_block), "%,d".format(epoch.currentHeight))
+                Metric(stringResource(R.string.dash_metric_subsidy), "%.3f BTC".format(math.subsidyBtc(epoch.currentHeight)))
             }
             Spacer(Modifier.height(10.dp))
             val changeSign = if (epoch.difficultyChangePercent >= 0) "+" else ""
             Text(
-                "Next difficulty adjustment: ${epoch.remainingBlocks} blocks " +
-                    "(~${math.humanDuration(epoch.remainingTimeMs)}), " +
-                    "est. $changeSign${"%.1f".format(epoch.difficultyChangePercent)}%",
+                stringResource(
+                    R.string.dash_next_adjustment,
+                    "${epoch.remainingBlocks}",
+                    math.humanDuration(epoch.remainingTimeMs),
+                    changeSign,
+                    "%.1f".format(epoch.difficultyChangePercent),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textPrimary,
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "Next halving: block ${"%,d".format(math.nextHalvingBlock(epoch.currentHeight))} " +
-                    "— $blocksToHalving blocks (~${math.humanDuration(math.timeToHalvingMs(epoch.currentHeight))})",
+                stringResource(
+                    R.string.dash_next_halving,
+                    "%,d".format(math.nextHalvingBlock(epoch.currentHeight)),
+                    "$blocksToHalving",
+                    math.humanDuration(math.timeToHalvingMs(epoch.currentHeight)),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textPrimary,
             )
             Text(
-                "Estimates from mempool.space (opt-in). ~10-min blocks; actual timing varies.",
+                stringResource(R.string.dash_halving_note),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
@@ -1176,13 +1195,14 @@ private fun Counter(count: Int, label: String, color: androidx.compose.ui.graphi
     }
 }
 
+@Composable
 private fun lastRefreshLabel(instant: Instant?): String {
-    if (instant == null) return "no refresh yet"
+    if (instant == null) return stringResource(R.string.dash_no_refresh_yet)
     val secs = Duration.between(instant, Instant.now()).seconds
     return when {
-        secs < 5 -> "just now"
-        secs < 120 -> "${secs}s ago"
-        else -> "${secs / 60}m ago — stale"
+        secs < 5 -> stringResource(R.string.dash_just_now)
+        secs < 120 -> stringResource(R.string.dash_ago_seconds, secs)
+        else -> stringResource(R.string.dash_ago_minutes_stale, secs / 60)
     }
 }
 
@@ -1204,6 +1224,7 @@ private fun DensitySelector(
         hi3.hashkit.data.prefs.CardDensity.COMPACT -> hi3.hashkit.data.prefs.CardDensity.GRID
         hi3.hashkit.data.prefs.CardDensity.GRID -> hi3.hashkit.data.prefs.CardDensity.LARGE
     }
+    val styleDescription = stringResource(R.string.dash_cd_card_style, label)
     Text(
         label,
         style = MaterialTheme.typography.labelLarge,
@@ -1213,7 +1234,7 @@ private fun DensitySelector(
             .background(HiBrand.accent.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
             .clickable { onSelect(next) }
             .padding(horizontal = 12.dp, vertical = 8.dp)
-            .semantics { contentDescription = "Card style: $label. Tap to change." },
+            .semantics { contentDescription = styleDescription },
     )
 }
 
@@ -1268,8 +1289,8 @@ private fun MinerCard(
                         listOfNotNull(
                             Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
                             Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
-                            t?.uptimeSeconds?.let { "up ${Units.formatUptime(it)}" },
-                        ).joinToString(" · ").ifEmpty { "no telemetry" },
+                            t?.uptimeSeconds?.let { stringResource(R.string.dash_up_prefix, Units.formatUptime(it)) },
+                        ).joinToString(" · ").ifEmpty { stringResource(R.string.dash_no_telemetry) },
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                         maxLines = 1,
@@ -1345,9 +1366,9 @@ private fun MinerCard(
                             Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
                             Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
                             Units.formatEfficiency(t?.efficiencyJTh?.value).takeIf { it != "—" },
-                            t?.uptimeSeconds?.let { "up ${Units.formatUptime(it)}" },
-                            t?.attainmentPercent?.let { "${it.toInt()}% of exp." },
-                        ).joinToString("  ·  ").ifEmpty { "no telemetry" },
+                            t?.uptimeSeconds?.let { stringResource(R.string.dash_up_prefix, Units.formatUptime(it)) },
+                            t?.attainmentPercent?.let { stringResource(R.string.dash_pct_of_expected, it.toInt()) },
+                        ).joinToString("  ·  ").ifEmpty { stringResource(R.string.dash_no_telemetry) },
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -1382,7 +1403,7 @@ private fun MinerCard(
                         )
                         if (miner.isDemo) {
                             Text(
-                                "DEMO",
+                                stringResource(R.string.dash_demo_badge),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.statusDegraded,
                                 modifier = Modifier
@@ -1411,14 +1432,14 @@ private fun MinerCard(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
             ) {
                 Metric(
-                    "Hashrate",
+                    stringResource(R.string.dash_metric_hashrate),
                     Units.formatHashrate(t?.hashrateGhs?.value),
                     valueColor = HiBrand.accent,
                 )
-                Metric("Power", Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
-                Metric("Chip", Units.formatTemp(t?.chipTempC?.value))
-                Metric("Eff.", Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
-                Metric("Uptime", Units.formatUptime(t?.uptimeSeconds))
+                Metric(stringResource(R.string.dash_metric_power), Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
+                Metric(stringResource(R.string.dash_metric_chip), Units.formatTemp(t?.chipTempC?.value))
+                Metric(stringResource(R.string.dash_metric_eff), Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
+                Metric(stringResource(R.string.dash_metric_uptime), Units.formatUptime(t?.uptimeSeconds))
             }
             if ((sparkline?.size ?: 0) >= 2) {
                 Spacer(Modifier.height(8.dp))
@@ -1434,8 +1455,9 @@ private fun MinerCard(
 
 @Composable
 private fun MiniSparkline(points: List<Double>, modifier: Modifier, color: androidx.compose.ui.graphics.Color) {
+    val sparklineDescription = stringResource(R.string.dash_cd_sparkline)
     androidx.compose.foundation.Canvas(
-        modifier.semantics { contentDescription = "Recent hashrate trend" },
+        modifier.semantics { contentDescription = sparklineDescription },
     ) {
         val maxV = (points.max() * 1.1).coerceAtLeast(1.0)
         val minV = (points.min() * 0.9).coerceAtLeast(0.0)
@@ -1463,24 +1485,23 @@ private fun EmptyState(onAddMiner: () -> Unit, onEnableDemo: () -> Unit) {
         shape = RoundedCornerShape(16.dp),
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text("No miners yet", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.dash_empty_title), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(6.dp))
             Text(
-                "Hi3 Miner Watch is local-first: it talks only to miners on your network " +
-                    "(or over your existing Tailscale VPN) and needs no account.",
+                stringResource(R.string.dash_empty_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = HiBrand.textSecondary,
             )
             Spacer(Modifier.height(14.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
                 Text(
-                    "Scan or add a miner",
+                    stringResource(R.string.dash_empty_scan_add),
                     color = HiBrand.accent,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.clickable { onAddMiner() },
                 )
                 Text(
-                    "Try demo mode",
+                    stringResource(R.string.dash_empty_try_demo),
                     color = HiBrand.accentAlt,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.clickable { onEnableDemo() },

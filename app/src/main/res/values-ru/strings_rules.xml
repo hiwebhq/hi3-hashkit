@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">Правила автоматизации</string>
+    <string name="rules_add_rule">Добавить правило</string>
+    <string name="rules_intro">Правила проверяются в каждом цикле опроса. Условие должно держаться в течение заданного окна, прежде чем выполнится действие, и каждое правило срабатывает не чаще одного раза за интервал на майнер. Заглушённые майнеры пропускаются, неподдерживаемые действия управления пропускаются с указанием причины, а каждое срабатывание создаёт уведомление вотчдога.</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"ЕСЛИ %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" в течение ≥%1$d мин"</string>
+    <string name="rules_row_group">"  ·  группа «%1$s»"</string>
+    <string name="rules_row_all_miners">"  ·  все майнеры"</string>
+    <string name="rules_row_interval">"  ·  каждые %1$d мин на майнер"</string>
+    <string name="rules_last_fired">Последнее срабатывание %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">Новое правило</string>
+    <string name="rules_name">Название</string>
+    <string name="rules_when">Когда</string>
+    <string name="rules_then">Тогда</string>
+    <string name="rules_threshold">Порог (%1$s)</string>
+    <string name="rules_target_group">Целевая группа (пусто = все)</string>
+    <string name="rules_sustained_label">Длительность (мин, 0 = первое совпадение)</string>
+    <string name="rules_min_interval_label">Мин. интервал между срабатываниями на майнер (мин)</string>
+    <string name="rules_editor_hint">Действия управления (пауза/продолжить/перезагрузка) используют проверенный канал управления майнера и пропускаются там, где не поддерживаются. Действиям с розеткой нужна настроенная умная розетка. Сначала тестируйте с большим интервалом.</string>
+</resources>

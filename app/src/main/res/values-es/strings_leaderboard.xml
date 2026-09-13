@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lead_title">Clasificación</string>
+    <string name="lead_rank_efficiency">Eficiencia</string>
+    <string name="lead_rank_attainment">Rendimiento</string>
+    <string name="lead_rank_hashrate">Hashrate</string>
+    <string name="lead_desc_efficiency">Ordenado por eficiencia energética (J/TH) — menos es mejor. Requiere datos de consumo.</string>
+    <string name="lead_desc_attainment">Ordenado por hashrate real vs. esperado. Requiere un hashrate esperado.</string>
+    <string name="lead_desc_hashrate">Ordenado por hashrate actual.</string>
+    <string name="lead_empty">Aún no hay mineros en vivo con esta métrica.</string>
+</resources>

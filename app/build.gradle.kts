@@ -35,8 +35,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 35
-        versionCode = 129
-        versionName = "0.77.7"
+        versionCode = 130
+        versionName = "0.78.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -112,6 +112,8 @@ androidComponents {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    // Per-app language: AppCompatDelegate.setApplicationLocales backport for API 26-32.
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)

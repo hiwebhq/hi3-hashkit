@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">Escaneo de red</string>
+    <string name="net_refresh_network_info">Actualizar info de red</string>
+    <string name="net_intro">Escanea tu subred local buscando mineros en sus puertos conocidos (HTTP 80, CGMiner 4028). Solo se sondean direcciones privadas de LAN y Tailscale. Se ejecuta automáticamente al abrir la app, así los dispositivos aparecen antes de entrar en Añadir minero.</string>
+    <string name="net_this_device">Este dispositivo</string>
+    <string name="net_not_on_network">Sin red Wi-Fi / LAN</string>
+    <string name="net_scan_range_label">Rango de escaneo (CIDR)</string>
+    <string name="net_scanning_progress">Escaneando %1$d / %2$d — %3$d encontrados</string>
+    <string name="net_last_scan">Último escaneo %1$s.</string>
+    <string name="net_restart">Reiniciar</string>
+    <string name="net_start_scan">Iniciar escaneo</string>
+    <string name="net_discovering">Descubriendo…</string>
+    <string name="net_mdns_discover">Descubrir por mDNS</string>
+    <string name="net_auto_scan_title">Escanear automáticamente al abrir</string>
+    <string name="net_auto_scan_subtitle">Lanza un escaneo de subred al abrir la app.</string>
+    <string name="net_just_now">ahora mismo</string>
+    <string name="net_minutes_ago">hace %1$d min</string>
+    <string name="net_hours_ago">hace %1$d h</string>
+</resources>

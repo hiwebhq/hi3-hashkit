@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="price_title">Recorte por precio</string>
+    <string name="price_intro">Pausa en los picos de precio y mina cuando la luz es barata, usando el feed semihorario gratuito de Octopus Agile (Reino Unido). Sin cuenta ni clave — solo se consulta el precio público de tu región.</string>
+
+    <!-- Live price card -->
+    <string name="price_now_label">PRECIO AHORA</string>
+    <string name="price_next6h">Próximas 6 h: mín %1$s · máx %2$s p/kWh</string>
+    <string name="price_reco_run">Recomendación: barato — reanudar minería</string>
+    <string name="price_reco_curtail">Recomendación: caro — recortar minería</string>
+    <string name="price_reco_hold">Recomendación: mantener (dentro de la banda muerta)</string>
+
+    <!-- Actions -->
+    <string name="price_refresh">Actualizar precios</string>
+    <string name="price_resume_fleet">Reanudar flota</string>
+    <string name="price_curtail_fleet">Recortar flota</string>
+
+    <!-- Sections & configuration -->
+    <string name="price_next_slots">PRÓXIMOS TRAMOS</string>
+    <string name="price_configuration">CONFIGURACIÓN</string>
+    <string name="price_region_label">Letra de región (A–P)</string>
+    <string name="price_region_placeholder">C para Londres</string>
+    <string name="price_resume_label">Reanudar ≤ p/kWh</string>
+    <string name="price_curtail_label">Recortar ≥ p/kWh</string>
+    <string name="price_save_config">Guardar configuración</string>
+</resources>

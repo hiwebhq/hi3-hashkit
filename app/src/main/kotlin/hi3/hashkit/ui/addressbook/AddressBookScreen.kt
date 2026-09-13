@@ -38,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,6 +46,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.db.SavedPoolDao
 import hi3.hashkit.data.db.SavedPoolEntity
 import hi3.hashkit.data.repo.ControlRepository
@@ -62,6 +64,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddressBookViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val dao: SavedPoolDao,
     private val minerRepository: MinerRepository,
     private val controlRepository: ControlRepository,
@@ -113,7 +116,7 @@ class AddressBookViewModel @Inject constructor(
                     else -> failed++
                 }
             }
-            applyMessage.value = "Applied \"${pool.label}\": $ok ok, $failed failed, $skipped unsupported."
+            applyMessage.value = appContext.getString(R.string.vm_ab_applied, pool.label, ok, failed, skipped)
         }
     }
 }
@@ -134,10 +137,13 @@ fun AddressBookScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pool address book", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.ab_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -145,7 +151,7 @@ fun AddressBookScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { editPool = null; editing = true }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add pool")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.ab_add_pool))
             }
         },
         containerColor = HiBrand.background,
@@ -157,9 +163,7 @@ fun AddressBookScreen(
         ) {
             item {
                 Text(
-                    "Save the pools/wallets you use, then apply one across the fleet in a tap. " +
-                        "The worker is the payout address (optionally address.workername). No pool " +
-                        "password is stored — the firmware keeps its own.",
+                    stringResource(R.string.ab_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -192,31 +196,31 @@ fun AddressBookScreen(
         var group by rememberSaveable { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { viewModel.cancelApply() },
-            title = { Text("Apply \"${pool.label}\"?") },
+            title = { Text(stringResource(R.string.ab_apply_title, pool.label)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        "Sets the primary pool to ${pool.url}:${pool.port} (worker ${pool.worker}) " +
-                            "on all miners that support a pool change. Unsupported miners are skipped.",
+                        stringResource(R.string.ab_apply_body, pool.url, pool.port, pool.worker),
                     )
                     OutlinedTextField(
                         value = group,
                         onValueChange = { group = it },
-                        label = { Text("Limit to group (blank = all miners)") },
+                        label = { Text(stringResource(R.string.ab_limit_group)) },
                         singleLine = true,
                     )
                 }
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.confirmApply(group.trim().ifBlank { null }) }) {
-                    Text("Apply to fleet", color = HiBrand.statusDegraded)
+                    Text(stringResource(R.string.ab_apply_to_fleet), color = HiBrand.statusDegraded)
                 }
             },
-            dismissButton = { TextButton(onClick = { viewModel.cancelApply() }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { viewModel.cancelApply() }) { Text(stringResource(R.string.common_cancel)) } },
         )
     }
 }
 
+@Suppress("LongMethod") // declarative row layout; stringResource extraction added lines, not logic
 @Composable
 private fun PoolRow(
     pool: SavedPoolEntity,
@@ -240,7 +244,7 @@ private fun PoolRow(
                     Text(pool.label, style = MaterialTheme.typography.titleSmall)
                     if (activeCount > 0) {
                         Text(
-                            "  ● ACTIVE ($activeCount)",
+                            stringResource(R.string.ab_active_count, activeCount),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.statusOnline,
                         )
@@ -248,10 +252,18 @@ private fun PoolRow(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onEdit) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = HiBrand.textSecondary)
+                        Icon(
+                            Icons.Filled.Edit,
+                            contentDescription = stringResource(R.string.common_edit),
+                            tint = HiBrand.textSecondary,
+                        )
                     }
                     IconButton(onClick = onDelete) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = HiBrand.statusOffline)
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.common_delete),
+                            tint = HiBrand.statusOffline,
+                        )
                     }
                 }
             }
@@ -268,9 +280,9 @@ private fun PoolRow(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
             ) {
-                OutlinedButton(onClick = onApply) { Text("Apply to fleet") }
+                OutlinedButton(onClick = onApply) { Text(stringResource(R.string.ab_apply_to_fleet)) }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Speed test", style = MaterialTheme.typography.labelMedium, color = HiBrand.textSecondary)
+                    Text(stringResource(R.string.ab_speed_test), style = MaterialTheme.typography.labelMedium, color = HiBrand.textSecondary)
                     androidx.compose.material3.Switch(
                         checked = pool.includeInTest,
                         onCheckedChange = onToggleTest,
@@ -294,13 +306,17 @@ private fun PoolEditorDialog(existing: SavedPoolEntity?, onSave: (SavedPoolEntit
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (existing == null) "Saved pool" else "Edit pool") },
+        title = {
+            Text(
+                if (existing == null) stringResource(R.string.ab_saved_pool) else stringResource(R.string.ab_edit_pool),
+            )
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)
-                OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text("Stratum URL") }, singleLine = true)
-                OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text("Port") }, singleLine = true)
-                OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text("Worker / payout address") }, singleLine = true)
+                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text(stringResource(R.string.ab_name)) }, singleLine = true)
+                OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text(stringResource(R.string.ab_stratum_url)) }, singleLine = true)
+                OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text(stringResource(R.string.ab_port)) }, singleLine = true)
+                OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text(stringResource(R.string.ab_worker_payout)) }, singleLine = true)
             }
         },
         confirmButton = {
@@ -318,8 +334,8 @@ private fun PoolEditorDialog(existing: SavedPoolEntity?, onSave: (SavedPoolEntit
                         )
                     )
                 },
-            ) { Text("Save") }
+            ) { Text(stringResource(R.string.common_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

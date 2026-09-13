@@ -45,6 +45,7 @@
         android:banner="@drawable/tv_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.Hi3MinerWatch">
@@ -124,6 +125,17 @@
                 <data android:mimeType="application/vnd.hi3.hashkit" />
             </intent-filter>
         </activity>
+
+        <!-- Persist the in-app language choice across restarts on API 26-32
+             (Android 13+ stores per-app locales itself). Never actually started. -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
 
         <!-- Opt-in always-on smart-plug over-temp safety cutoff. -->
         <service

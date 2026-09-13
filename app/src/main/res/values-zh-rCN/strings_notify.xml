@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notification strings: channel names, alert titles, and notification actions. -->
+<resources>
+    <!-- Notification channel names -->
+    <string name="notif_channel_offline">矿机离线</string>
+    <string name="notif_channel_thermal">温度</string>
+    <string name="notif_channel_fan">风扇</string>
+    <string name="notif_channel_shares">拒绝份额</string>
+    <string name="notif_channel_status">状态变化</string>
+    <string name="notif_channel_recovery">恢复</string>
+    <string name="notif_channel_watchdog">看门狗与自动化</string>
+    <string name="notif_channel_digest">每日摘要</string>
+
+    <!-- Alert notification titles -->
+    <string name="notif_alert_title">告警：%1$s</string>
+    <string name="notif_recovered_title">已恢复：%1$s</string>
+
+    <!-- Notification actions -->
+    <string name="notif_action_acknowledge">确认</string>
+</resources>

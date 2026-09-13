@@ -19,8 +19,10 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.domain.model.ChainReading
 import hi3.hashkit.domain.model.MinerTelemetry
@@ -97,11 +99,11 @@ fun PerChipHealthCard(perChain: List<ChainReading>, fahrenheit: Boolean) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         // Header row
         Row(Modifier.fillMaxWidth()) {
-            HeaderCell("Board", 1.1f)
-            HeaderCell("Hashrate", 1.4f)
-            HeaderCell("Chips", 1.1f)
-            HeaderCell("HW err", 0.9f)
-            HeaderCell("Temp", 0.9f)
+            HeaderCell(stringResource(R.string.det_col_board), 1.1f)
+            HeaderCell(stringResource(R.string.det_col_hashrate), 1.4f)
+            HeaderCell(stringResource(R.string.det_col_chips), 1.1f)
+            HeaderCell(stringResource(R.string.det_col_hw_err), 0.9f)
+            HeaderCell(stringResource(R.string.det_col_temp), 0.9f)
         }
         perChain.forEach { c ->
             val weak = avg > 0 && (c.hashrateGhs ?: 0.0) in 0.0..(avg * 0.85)
@@ -139,9 +141,9 @@ fun PerChipHealthCard(perChain: List<ChainReading>, fahrenheit: Boolean) {
         val deadTotal = perChain.sumOf { it.chipsDead ?: 0 }
         Text(
             if (deadTotal > 0)
-                "⚠ $deadTotal failed chip(s) detected across ${perChain.size} board(s)."
+                stringResource(R.string.det_chips_failed, deadTotal, perChain.size)
             else
-                "All ${perChain.size} board(s) reporting healthy.",
+                stringResource(R.string.det_chips_healthy, perChain.size),
             style = MaterialTheme.typography.labelSmall,
             color = if (deadTotal > 0) HiBrand.statusOffline else HiBrand.textSecondary,
         )

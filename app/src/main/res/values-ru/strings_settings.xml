@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строки экрана настроек. Общая лексика — в strings_common.xml. -->
+<resources>
+    <!-- Section headers -->
+    <string name="set_section_advanced">РАСШИРЕННЫЕ ФУНКЦИИ</string>
+    <string name="set_section_alerts">ОПОВЕЩЕНИЯ</string>
+    <string name="set_section_discovery">ОБНАРУЖЕНИЕ</string>
+    <string name="set_section_display">ЭКРАН</string>
+    <string name="set_section_farms">ФЕРМЫ</string>
+    <string name="set_section_mmp">HI3 MMP</string>
+    <string name="set_section_web_server">ЛОКАЛЬНЫЙ ВЕБ-СЕРВЕР (РАСШИРЕННОЕ)</string>
+    <string name="set_section_monitoring">МОНИТОРИНГ</string>
+    <string name="set_section_mqtt">MQTT / HOME ASSISTANT</string>
+    <string name="set_section_pool">ПУЛ</string>
+    <string name="set_section_push">PUSH (ВЕБХУК)</string>
+    <string name="set_section_quiet">ТИХИЕ ЧАСЫ И СВОДКА</string>
+    <string name="set_section_security">БЕЗОПАСНОСТЬ</string>
+    <string name="set_section_solo">СОЛО-МАЙНИНГ</string>
+    <string name="set_section_units">ЕДИНИЦЫ И СТОИМОСТЬ</string>
+    <string name="set_section_update">ОБНОВЛЕНИЕ HASHKIT</string>
+    <string name="set_section_data">ДАННЫЕ И ЭКСПОРТ</string>
+    <string name="set_section_demo">ДЕМО</string>
+
+    <!-- Advanced features -->
+    <string name="set_advanced_unlocked_desc">Расширенные функции разблокированы. В меню дашборда появляется ссылка «Live Bitcoin»; в будущих версиях здесь может появиться больше (защищённые страницы, инструменты питания).</string>
+    <string name="set_advanced_locked_desc">Введите код разблокировки, чтобы открыть расширенные функции (сейчас — ссылка «Live Bitcoin» в меню дашборда).</string>
+    <string name="set_advanced_unlock_code_optional">Код разблокировки (необязательно)</string>
+    <string name="set_advanced_unlock_code">Код разблокировки</string>
+    <string name="set_advanced_apply_code">Применить код</string>
+
+    <!-- Alerts -->
+    <string name="set_alerts_title">Оповещения и уведомления</string>
+    <string name="set_alerts_subtitle">Оповещения об офлайне, температуре, вентиляторах, проценте отказов и перезапусках, с уведомлениями о восстановлении.</string>
+    <string name="set_alert_hashrate_below" formatted="false">Оповещение при хешрейте ниже (% от ожидаемого)</string>
+    <string name="set_alert_chip_temp">Оповещение по температуре чипа (°C)</string>
+    <string name="set_alert_vr_temp">Оповещение по температуре VR (°C)</string>
+    <string name="set_alert_reject_rate" formatted="false">Оповещение по проценту отказов (%)</string>
+    <string name="set_alert_cooldown">Пауза между повторами (мин)</string>
+
+    <!-- Discovery -->
+    <string name="set_discovery_extra_subnets">Доп. подсети для сканирования (CIDR через запятую)</string>
+    <string name="set_discovery_subnets_hint">Добавьте удалённые LAN, доступные через ваш подсетевой маршрутизатор Tailscale, напр. 192.168.50.0/24. Они появятся как варианты быстрого ввода на экране добавления.</string>
+
+    <!-- Display -->
+    <string name="set_theme">Тема</string>
+    <string name="set_theme_system">Системная</string>
+    <string name="set_theme_dark">Тёмная</string>
+    <string name="set_theme_light">Светлая</string>
+    <string name="set_ui_theme">Тема интерфейса</string>
+    <string name="set_ui_theme_hint">Акцентный цвет по всему приложению. Цвета статусов (онлайн/офлайн) не меняются.</string>
+    <string name="set_profit_card_title">Карточка доходности и энергии</string>
+    <string name="set_profit_card_subtitle">Показывать на дашборде расчётный доход, стоимость электроэнергии и потребление.</string>
+    <string name="set_solo_card_title">Карточка соло-шансов</string>
+    <string name="set_solo_card_subtitle">Показывать на дашборде вероятность найти блок.</string>
+    <string name="set_card_order_title">Порядок карточек дашборда</string>
+    <string name="set_card_order_hint">Расставьте блоки дашборда — например, переместите Пул и MMP под список майнеров. Карточки по-прежнему видны только при включённой функции.</string>
+    <string name="set_inventory_tag_title">Инвентарная метка</string>
+    <string name="set_inventory_tag_hint">Какую кнопку создания метки показывает таблица парка для маркировки майнеров.</string>
+    <string name="set_tag_qr">QR</string>
+    <string name="set_tag_nfc">NFC</string>
+    <string name="set_tag_both">Оба</string>
+    <string name="set_pause_on_exit_title">Подтверждение выхода</string>
+    <string name="set_pause_on_exit_subtitle">Показывать вопрос «Выйти из Hi3 Hashkit?» при нажатии кнопки выхода.</string>
+
+    <!-- Farms -->
+    <string name="set_manage_farms">Управление фермами…</string>
+    <string name="set_default_farm">Ферма по умолчанию</string>
+    <string name="set_default_farm_hint">Закрепите дашборд за одной фермой: строка выбора фермы исчезнет, и будут видны только её майнеры — компактнее, если площадка одна.</string>
+    <string name="set_all_farms">Все фермы</string>
+
+    <!-- Hi3 MMP -->
+    <string name="set_mmp_title">Обзор парка Hi3 MMP</string>
+    <string name="set_mmp_subtitle">Сводка по парку и площадкам из вашей Mining Management Platform, только для чтения.</string>
+    <string name="set_mmp_url">MMP URL</string>
+    <string name="set_mmp_key_saved">API-ключ (сохранён — введите новый для замены, пусто — чтобы удалить)</string>
+    <string name="set_mmp_key_hint">API-ключ (создайте в админке MMP)</string>
+    <string name="set_mmp_replace_key">Заменить ключ</string>
+    <string name="set_mmp_save_key">Сохранить ключ</string>
+    <string name="set_mmp_disclosure">Что передаётся при включении: ваш API-ключ MMP в заголовке запроса, по HTTPS на указанный выше MMP URL, примерно раз в минуту при открытом приложении — только запросы парка на чтение, ничего не выгружается. Ключ хранится в зашифрованном виде через Android Keystore. По умолчанию выключено.</string>
+
+    <!-- Local web server -->
+    <string name="set_web_server_title">Веб-дашборд + /metrics</string>
+    <string name="set_web_server_subtitle">Локальный веб-сервер только для чтения: HTML-дашборд парка, открываемый любым браузером или ТВ в LAN, плюс Prometheus-эндпоинт /metrics для Grafana. Без авторизации — только для приватной LAN/tailnet.</string>
+    <string name="set_web_server_port">Порт</string>
+    <string name="set_web_server_hint">Пока приложение открыто: дашборд на http://&lt;ip-этого-устройства>:%1$d/ и метрики на /metrics. Только чтение (лишь GET); отдаёт итоги и данные по майнерам, без управления.</string>
+
+    <!-- Monitoring -->
+    <string name="set_bg_monitoring_title">Фоновый мониторинг</string>
+    <string name="set_bg_monitoring_subtitle">Опрос примерно каждые 15 мин при закрытом приложении (Android может задерживать; это не непрерывный мониторинг в реальном времени).</string>
+    <string name="set_refresh_interval">Интервал обновления</string>
+    <string name="set_default_refresh_interval">Интервал обновления по умолчанию</string>
+    <string name="set_farm_refresh_hint">Каждая ферма обновляется со своим интервалом, пока вы её просматриваете; интервал по умолчанию действует, когда ферма не выбрана.</string>
+    <string name="set_keep_history">Хранить историю (дней)</string>
+    <string name="set_fw_check_title">Проверять обновления прошивки</string>
+    <string name="set_fw_check_subtitle">По желанию: проверяет релизы AxeOS (Bitaxe) на GitHub и помечает отстающие майнеры. Прошивка из приложения не устанавливается; при выключении ничего не запрашивается.</string>
+    <string name="set_auto_recover_title">Автовосстановление офлайн-майнеров</string>
+    <string name="set_auto_recover_subtitle">Если майнер офлайн дольше порога — перезапуск питания через умную розетку (если задана) или перезагрузка — один раз, с паузой. Каждая попытка фиксируется в журнале.</string>
+    <string name="set_auto_recover_after">Восстанавливать после офлайна (мин)</string>
+    <string name="set_safety_title">Постоянный монитор безопасности</string>
+    <string name="set_safety_subtitle">Держит отсечку умной розетки по перегреву в фоне (с постоянным уведомлением) даже при закрытом приложении и снова включается после перезагрузки. Полезно, только если у майнера задана отсечка розетки.</string>
+
+    <!-- MQTT / Home Assistant -->
+    <string name="set_mqtt_title">Публикация в MQTT</string>
+    <string name="set_mqtt_subtitle">Отправка телеметрии парка и майнеров на локальный MQTT-брокер (напр. аддон Mosquitto в Home Assistant). По желанию; только итоги и хешрейт/мощность/температура по майнерам — без адресов и учётных данных.</string>
+    <string name="set_mqtt_host">Хост брокера</string>
+    <string name="set_mqtt_port">Порт брокера</string>
+    <string name="set_mqtt_topic">Базовый топик</string>
+    <string name="set_mqtt_username">Имя пользователя (необязательно)</string>
+    <string name="set_mqtt_password_saved">Пароль (сохранён — введите новый для замены, пусто — чтобы удалить)</string>
+    <string name="set_mqtt_password_optional">Пароль (необязательно)</string>
+    <string name="set_mqtt_replace_password">Заменить пароль</string>
+    <string name="set_mqtt_save_password">Сохранить пароль</string>
+    <string name="set_mqtt_ha_title">Обнаружение Home Assistant</string>
+    <string name="set_mqtt_ha_subtitle">Публиковать конфигурацию MQTT-discovery, чтобы майнеры автоматически появлялись как устройства/сущности HA.</string>
+    <string name="set_mqtt_disclosure">Публикуется при открытом приложении, при каждом опросе. Пароль хранится в зашифрованном виде в Android Keystore. Направьте Prometheus/HA на этот брокер.</string>
+
+    <!-- Pool -->
+    <string name="set_pool_stats_title">Статистика пула</string>
+    <string name="set_pool_stats_subtitle">Данные о ваших воркерах со стороны пула (только чтение), сопоставленные с локальными показаниями майнеров на дашборде.</string>
+    <string name="set_pool_coming_soon">Поддержка %1$s на подходе. Её API требует проверки, прежде чем мы что-либо отправим, поэтому этот пул пока никуда не обращается — выберите другой пул для живой статистики.</string>
+    <string name="set_pool_url">URL пула</string>
+    <string name="set_pool_access_token">Токен доступа</string>
+    <string name="set_pool_api_token">API-ключ / токен наблюдателя (необязательно)</string>
+    <string name="set_pool_disclosure">Что передаётся при включении: ваш %1$s (и токен, если задан) в HTTPS-запросе к %2$s, примерно раз в минуту при открытом приложении. Ничего больше — ни телеметрии майнеров, ни локальных IP, ни паролей воркеров. По умолчанию выключено; выключение сразу останавливает все запросы к пулу.</string>
+    <string name="set_pool_label">Пул</string>
+
+    <!-- Push (webhook) -->
+    <string name="set_push_intro">Дублируйте оповещения в свой push-сервис, чтобы получать их при закрытом приложении — без нашего облачного аккаунта. Срабатывает только для активных оповещений.</string>
+    <string name="set_push_service">Push-сервис</string>
+    <string name="set_push_ntfy_url">URL топика ntfy (https://ntfy.sh/your-topic)</string>
+    <string name="set_push_gotify_url">URL сервера Gotify</string>
+    <string name="set_push_gotify_token">Токен приложения Gotify</string>
+    <string name="set_push_telegram_token">Токен Telegram-бота</string>
+    <string name="set_push_telegram_chat">ID чата Telegram</string>
+    <string name="set_push_generic_url">URL для POST (тело JSON)</string>
+
+    <!-- Quiet hours & digest -->
+    <string name="set_quiet_hours_title">Тихие часы</string>
+    <string name="set_quiet_hours_subtitle">Не показывать уведомления об оповещениях в ночном окне. Оповещения всё равно записываются и попадают в дневную сводку.</string>
+    <string name="set_quiet_from">Тихо с (ЧЧ:ММ)</string>
+    <string name="set_quiet_until">Тихо до (ЧЧ:ММ)</string>
+    <string name="set_digest_title">Дневная сводка</string>
+    <string name="set_digest_subtitle">Одно сводное уведомление в день по оповещениям за последние 24 ч.</string>
+    <string name="set_digest_time">Время сводки (час, 0–23)</string>
+
+    <!-- Security -->
+    <string name="set_app_lock_title">Блокировка приложения</string>
+    <string name="set_app_lock_subtitle_available">Требовать отпечаток/лицо или PIN устройства при открытии приложения (блокируется снова после 1 минуты в фоне).</string>
+    <string name="set_app_lock_subtitle_unavailable">Недоступно: сначала настройте блокировку экрана (PIN/биометрия) на этом устройстве.</string>
+    <string name="set_app_lock_note">Защищает интерфейс приложения. Примечание: экспортированные резервные копии и база данных на диске защищены стандартной песочницей приложений Android, а не этой блокировкой.</string>
+
+    <!-- Solo mining -->
+    <string name="set_network_difficulty">Сложность сети</string>
+    <string name="set_fetch_difficulty_title">Получать сложность с mempool.space</string>
+    <string name="set_fetch_difficulty_subtitle">Единственный внешний запрос приложения; один HTTPS GET без данных майнеров. По умолчанию выключено — см. docs/SECURITY.md.</string>
+
+    <!-- Units & cost -->
+    <string name="set_fahrenheit_title">Фаренгейт</string>
+    <string name="set_fahrenheit_subtitle">Показывать температуру в °F.</string>
+    <string name="set_electricity_rate">Тариф на электроэнергию (за kWh)</string>
+    <string name="set_currency_code">Код валюты</string>
+    <string name="set_btc_price">Цена BTC (за монету, %1$s)</string>
+    <string name="set_fetch_btc_title">Получать цену BTC с mempool.space</string>
+    <string name="set_fetch_btc_subtitle">По желанию: один HTTPS GET (без данных майнеров), чтобы дашборд оценивал доход и прибыль. По умолчанию выключено; при желании введите цену вручную.</string>
+
+    <!-- Update Hashkit -->
+    <string name="set_update_installed">Установлена: v%1$s</string>
+    <string name="set_update_desc">Проверяет официальный релиз на GitHub и устанавливает подписанное обновление поверх — майнеры, история телеметрии, журналы и настройки сохраняются. Android может попросить разрешить установку обновлений из этого приложения.</string>
+    <string name="set_update_downloading">Загрузка: %1$d%%…</string>
+    <string name="set_update_confirm_hint">Ожидание подтверждения Android — нажмите «Обновить» в системном диалоге.</string>
+    <string name="set_update_installing">Установка… приложение перезапустится по завершении.</string>
+    <string name="set_update_needs_permission">Разрешите «Установку неизвестных приложений» для Hashkit на только что открывшемся экране настроек, затем вернитесь и нажмите снова.</string>
+    <string name="set_update_download_install">Скачать и установить v%1$s</string>
+    <string name="set_update_available">Доступно обновление: v%1$s</string>
+    <string name="set_update_checking">Проверка…</string>
+    <string name="set_update_check">Проверить обновления</string>
+    <string name="set_update_up_to_date">У вас последняя версия.</string>
+    <string name="set_update_error_unreachable">Не удалось связаться с сервером обновлений.</string>
+    <string name="set_update_download_failed">Загрузка не удалась.</string>
+
+    <!-- Data & exports -->
+    <string name="set_share_fleet_report">Отчёт по парку</string>
+    <string name="set_share_export_csv">Экспорт CSV</string>
+    <string name="set_share_export_diagnostics">Экспорт диагностики</string>
+    <string name="set_share_export_backup">Экспорт резервной копии</string>
+    <string name="set_export_report_7d">Отчёт по парку — последние 7 дней (HTML)</string>
+    <string name="set_export_report_30d">Отчёт по парку — последние 30 дней (HTML)</string>
+    <string name="set_export_csv_7d">Экспорт телеметрии парка в CSV (последние 7 дней)</string>
+    <string name="set_export_full_backup">Полная резервная копия (майнеры, фермы, пулы, правила, настройки…)</string>
+    <string name="set_restore_backup">Восстановить из резервной копии…</string>
+    <string name="set_auto_backup_off">Еженедельный автобэкап: выкл — выбрать папку…</string>
+    <string name="set_auto_backup_on">Еженедельный автобэкап: вкл (нажмите, чтобы сменить папку)</string>
+    <string name="set_last_auto_backup">Последний автобэкап: %1$s — хранятся 8 новейших, открытый JSON.</string>
+    <string name="set_auto_backup_turn_off">Выключить автобэкап</string>
+    <string name="set_export_diagnostics">Экспорт пакета диагностики (адреса скрыты)</string>
+    <string name="set_backup_note">Резервные копии содержат адреса майнеров и имена воркеров. Для передачи или безопасного хранения зашифруйте паролем (AES-256); незашифрованная копия — только для вашего устройства. В CSV и диагностике кошельки скрыты; в диагностике также скрыты IP-адреса.</string>
+    <string name="set_backup_pass_title">Пароль резервной копии</string>
+    <string name="set_backup_pass_body">Введите пароль для шифрования копии (AES-256) или оставьте пустым для незашифрованного JSON.</string>
+    <string name="set_passphrase_optional">Пароль (необязательно)</string>
+    <string name="set_encrypted_backup_title">Зашифрованная резервная копия</string>
+    <string name="set_passphrase">Пароль</string>
+    <string name="set_restore">Восстановить</string>
+    <string name="set_restore_read_error">Не удалось прочитать выбранный файл.</string>
+
+    <!-- Demo -->
+    <string name="set_demo_title">Демо-режим</string>
+    <string name="set_demo_subtitle">Добавляет явно помеченные синтетические майнеры; при выключении они никогда не смешиваются с реальными итогами.</string>
+
+    <!-- Payout address / QR scanning -->
+    <string name="set_qr_not_bare_address">Этот QR — не просто адрес выплат (похоже на bitcoin:-URI). Отсканируйте сам адрес.</string>
+    <string name="set_scan_prompt">Отсканируйте QR своего адреса выплат</string>
+    <string name="set_scan_qr_cd">Сканировать QR-код</string>
+</resources>

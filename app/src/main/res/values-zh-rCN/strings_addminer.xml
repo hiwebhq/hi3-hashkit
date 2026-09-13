@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="addm_title">添加矿机</string>
+    <string name="addm_manual_entry">手动输入</string>
+    <string name="addm_manual_hint">输入矿机的 IP 或主机名——当本设备已加入你的 tailnet 时，也支持 Tailscale 地址（100.x.y.z）。</string>
+    <string name="addm_host_label">IP 地址或主机名</string>
+    <string name="addm_probing">正在探测…</string>
+    <string name="addm_probe_add">探测并添加</string>
+    <string name="addm_scan_local_network">扫描本地网络</string>
+    <string name="addm_scan_hint">仅探测私有地址、仅限矿机端口，并有严格限制。超过 /22 的网段会被拒绝。</string>
+    <string name="addm_cidr_label">CIDR 网段</string>
+    <string name="addm_scan">扫描</string>
+    <string name="addm_hosts_progress">%1$d / %2$d 台主机</string>
+    <string name="addm_added">已添加</string>
+    <string name="addm_known">已知</string>
+</resources>

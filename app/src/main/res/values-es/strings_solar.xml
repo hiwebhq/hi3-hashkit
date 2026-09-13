@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="solar_title">Minería con excedente solar</string>
+    <string name="solar_intro">Ajusta la flota a tu exportación solar. Lee un sensor de exportación/excedente a red (en vatios) de tu Home Assistant local vía su API REST — el token se guarda cifrado y solo se envía a tu propio host de HA en tu red.</string>
+
+    <!-- Live signal card -->
+    <string name="solar_export_label">EXPORTACIÓN SOLAR</string>
+    <string name="solar_fleet_draw">Consumo de flota %1$s W · %2$d en línea</string>
+    <string name="solar_reco_run">Recomendación: hay excedente — reanudar minería</string>
+    <string name="solar_reco_curtail">Recomendación: sin excedente — recortar minería</string>
+    <string name="solar_reco_hold">Recomendación: mantener (dentro de la banda muerta)</string>
+
+    <!-- Actions -->
+    <string name="solar_check_now">Comprobar ahora</string>
+    <string name="solar_checking">Comprobando…</string>
+    <string name="solar_resume_fleet">Reanudar flota</string>
+    <string name="solar_curtail_fleet">Recortar flota</string>
+
+    <!-- Configuration -->
+    <string name="solar_base_url_label">URL base de HA (privada/Tailscale)</string>
+    <string name="solar_entity_label">entity_id del sensor (vatios)</string>
+    <string name="solar_token_label">Token de larga duración</string>
+    <string name="solar_token_saved_label">Token de larga duración (guardado — deja en blanco para conservarlo)</string>
+    <string name="solar_resume_label">Reanudar ≥ W</string>
+    <string name="solar_curtail_label">Recortar ≤ W</string>
+    <string name="solar_save_config">Guardar configuración</string>
+</resources>

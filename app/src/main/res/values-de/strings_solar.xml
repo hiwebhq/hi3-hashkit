@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solar-surplus mining screen (SolarSurplusScreen). -->
+<resources>
+    <string name="solar_title">Solarüberschuss-Mining</string>
+    <string name="solar_intro">Drossle die Flotte auf deinen Solar-Export. Liest einen Netz-Export-/Überschusssensor (in Watt) aus deinem lokalen Home Assistant über dessen REST-API — der Token wird verschlüsselt gespeichert und nur an deinen eigenen HA-Host in deinem Netzwerk gesendet.</string>
+
+    <!-- Live signal card -->
+    <string name="solar_export_label">SOLAR-EXPORT</string>
+    <string name="solar_fleet_draw">Flottenaufnahme %1$s W · %2$d online</string>
+    <string name="solar_reco_run">Empfehlung: Überschuss vorhanden — Mining fortsetzen</string>
+    <string name="solar_reco_curtail">Empfehlung: kein Überschuss — Mining drosseln</string>
+    <string name="solar_reco_hold">Empfehlung: halten (innerhalb des Totbands)</string>
+
+    <!-- Actions -->
+    <string name="solar_check_now">Jetzt prüfen</string>
+    <string name="solar_checking">Prüfe…</string>
+    <string name="solar_resume_fleet">Flotte fortsetzen</string>
+    <string name="solar_curtail_fleet">Flotte drosseln</string>
+
+    <!-- Configuration -->
+    <string name="solar_base_url_label">HA-Basis-URL (privat/Tailscale)</string>
+    <string name="solar_entity_label">Sensor-entity_id (Watt)</string>
+    <string name="solar_token_label">Langlebiger Token</string>
+    <string name="solar_token_saved_label">Langlebiger Token (gespeichert — leer lassen zum Behalten)</string>
+    <string name="solar_resume_label">Fortsetzen ≥ W</string>
+    <string name="solar_curtail_label">Drosseln ≤ W</string>
+    <string name="solar_save_config">Konfiguration speichern</string>
+</resources>

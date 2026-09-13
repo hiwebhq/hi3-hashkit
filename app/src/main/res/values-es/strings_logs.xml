@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logs_title">Logs de %1$s</string>
+    <string name="logs_status_redacted">"%1$s  ·  wallets ocultadas"</string>
+    <string name="logs_status_connecting">Conectando…</string>
+    <string name="logs_status_live">En vivo</string>
+    <string name="logs_status_disconnected">Desconectado: %1$s</string>
+    <string name="logs_status_event_log">Registro de eventos — derivado de sondeos (sin stream de log del firmware)</string>
+    <string name="logs_show_raw">Mostrar log en bruto</string>
+    <string name="logs_analyze">Analizar log</string>
+    <string name="logs_resume">Reanudar</string>
+    <string name="logs_pause">Pausar</string>
+    <string name="logs_clear">Limpiar</string>
+    <string name="logs_reconnect">Reconectar</string>
+    <string name="logs_window_live">En vivo</string>
+    <string name="logs_analysis_summary">"ANÁLISIS DEL LOG  ·  %1$d líneas  ·  %2$d errores  ·  %3$d avisos"</string>
+    <string name="logs_findings">HALLAZGOS</string>
+    <string name="logs_export">Exportar logs capturados</string>
+    <string name="logs_export_chooser">Exportar logs</string>
+    <string name="logs_analysis_footer">Análisis heurístico en el dispositivo — sin nube. En vivo analiza el stream actual; 1h/24h/7d analizan el historial capturado (guardado por minero, ~7 días). Wallets ocultadas.</string>
+</resources>

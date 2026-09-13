@@ -3,6 +3,7 @@ package hi3.hashkit.ui.discovery
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.repo.AddMinerResult
 import hi3.hashkit.data.repo.MinerRepository
@@ -38,6 +39,7 @@ data class AddMinerUiState(
 
 @HiltViewModel
 class AddMinerViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val scanner: MinerScanner,
     private val networkInspector: NetworkInspector,
@@ -79,7 +81,7 @@ class AddMinerViewModel @Inject constructor(
         if (host.isEmpty()) return
         if (!MinerHostValidator.resolvesToAllowed(host)) {
             _state.value = _state.value.copy(
-                manualMessage = "Only private LAN or Tailscale (100.x) addresses are allowed.",
+                manualMessage = appContext.getString(R.string.vm_add_private_only),
             )
             return
         }
@@ -87,10 +89,10 @@ class AddMinerViewModel @Inject constructor(
         viewModelScope.launch {
             val result = repository.addByHost(host)
             val message = when (result) {
-                is AddMinerResult.Added -> "Added — pulling first telemetry…"
-                is AddMinerResult.AlreadyKnown -> "Already tracked; address updated."
+                is AddMinerResult.Added -> appContext.getString(R.string.vm_add_added)
+                is AddMinerResult.AlreadyKnown -> appContext.getString(R.string.vm_add_already_tracked)
                 is AddMinerResult.NotSupported -> result.message
-                is AddMinerResult.Unreachable -> "Unreachable: ${result.message}"
+                is AddMinerResult.Unreachable -> appContext.getString(R.string.vm_add_unreachable, result.message)
             }
             if (result is AddMinerResult.Added || result is AddMinerResult.AlreadyKnown) {
                 pollingEngine.pollAllOnce()
@@ -104,14 +106,14 @@ class AddMinerViewModel @Inject constructor(
         val cidr = SubnetUtils.parseCidr(_state.value.scanCidr)
         if (cidr == null) {
             _state.value = _state.value.copy(
-                scanMessage = "Enter a private CIDR like 192.168.1.0/24.",
+                scanMessage = appContext.getString(R.string.vm_add_cidr_hint),
             )
             return
         }
         val hosts = SubnetUtils.expand(cidr)
         if (hosts == null) {
             _state.value = _state.value.copy(
-                scanMessage = "Range larger than /${SubnetUtils.DEFAULT_MAX_PREFIX} — narrow it before scanning.",
+                scanMessage = appContext.getString(R.string.vm_add_range_too_large, SubnetUtils.DEFAULT_MAX_PREFIX),
             )
             return
         }
@@ -147,7 +149,7 @@ class AddMinerViewModel @Inject constructor(
                     is ScanEvent.Finished -> {
                         _state.value = _state.value.copy(
                             scanning = false,
-                            scanMessage = "Scanned ${event.scanned} hosts, found ${event.found} miner(s).",
+                            scanMessage = appContext.getString(R.string.vm_add_scan_done, event.scanned, event.found),
                         )
                         pollingEngine.pollAllOnce()
                     }
@@ -159,14 +161,14 @@ class AddMinerViewModel @Inject constructor(
     fun cancelScan() {
         scanJob?.cancel()
         scanJob = null
-        _state.value = _state.value.copy(scanning = false, scanMessage = "Scan cancelled.")
+        _state.value = _state.value.copy(scanning = false, scanMessage = appContext.getString(R.string.vm_add_scan_cancelled))
     }
 
     /** mDNS browse for ~10s, probing every resolved private host. */
     fun startMdnsSearch() {
         if (_state.value.scanning) return
         _state.value = _state.value.copy(
-            scanning = true, scanMessage = "Searching via mDNS…", scanProgress = null, discovered = emptyList(),
+            scanning = true, scanMessage = appContext.getString(R.string.vm_add_mdns_searching), scanProgress = null, discovered = emptyList(),
         )
         scanJob = viewModelScope.launch {
             val seen = mutableSetOf<String>()
@@ -189,7 +191,7 @@ class AddMinerViewModel @Inject constructor(
             job.cancel()
             _state.value = _state.value.copy(
                 scanning = false,
-                scanMessage = "mDNS search finished: ${_state.value.discovered.size} miner(s).",
+                scanMessage = appContext.getString(R.string.vm_add_mdns_done, _state.value.discovered.size),
             )
             pollingEngine.pollAllOnce()
         }

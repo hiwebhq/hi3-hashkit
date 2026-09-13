@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hash rental screen (HashRentalScreen). -->
+<resources>
+    <string name="rental_title">Aluguel de hash</string>
+    <string name="rental_edit_link">Editar link de aluguel</string>
+    <string name="rental_intro">Alugue hashrate de Bitcoin no mercado spot Braiins Hashpower. Aqui você vê o mercado público ao vivo — o aluguel acontece na Braiins, não neste app.</string>
+    <string name="rental_show_in">Mostrar em</string>
+    <string name="rental_set_btc_price">Defina ou busque o preço do BTC nas Configurações para ver valores em %1$s.</string>
+
+    <!-- Error banner -->
+    <string name="rental_unavailable">O Braiins Hashpower está temporariamente indisponível.</string>
+    <string name="rental_showing_from">Mostrando preços de %1$s.</string>
+    <string name="rental_details">Detalhes</string>
+    <string name="rental_hide_details">Ocultar detalhes</string>
+
+    <!-- Market card -->
+    <string name="rental_spot_market">MERCADO SPOT</string>
+    <string name="rental_best_ask_caption">Melhor oferta de venda (hashrate mais barato para alugar)</string>
+    <string name="rental_last_avg_price">Último preço médio</string>
+    <string name="rental_best_bid">Melhor oferta de compra</string>
+    <string name="rental_hashrate_available">Hashrate disponível</string>
+    <string name="rental_hashrate_matched">Hashrate negociado</string>
+    <string name="rental_cheapest_offers">OFERTAS MAIS BARATAS</string>
+    <string name="rental_ph_avail">%1$s PH/s disp.</string>
+
+    <!-- Rent button & footer -->
+    <string name="rental_rent_button">Alugar no Braiins Hashpower ↗</string>
+    <string name="rental_footer">Os preços vêm ao vivo da API pública de mercado do Braiins Hashpower. O aluguel é concluído em hashpower.braiins.com com sua própria conta.</string>
+
+    <!-- Rent-link dialog -->
+    <string name="rental_dialog_title">Link de aluguel</string>
+    <string name="rental_dialog_body">A URL que o botão \"Alugar\" abre. Cole aqui seu link de indicação do Braiins Hashpower, se tiver — deixe vazio para voltar ao padrão.</string>
+    <string name="rental_url_label">URL</string>
+</resources>

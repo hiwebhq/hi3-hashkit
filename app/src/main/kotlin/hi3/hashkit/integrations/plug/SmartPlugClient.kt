@@ -12,11 +12,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /** Local-network smart plugs used for the over-temp safety cutoff. */
-enum class PlugType(val label: String) {
-    TASMOTA("Tasmota"),
-    SHELLY("Shelly"),
-    KASA("Kasa / TP-Link"),
-    WEBHOOK("Generic webhook");
+enum class PlugType(val label: String, @androidx.annotation.StringRes val labelRes: Int) {
+    TASMOTA("Tasmota", hi3.hashkit.R.string.enum_plug_tasmota),
+    SHELLY("Shelly", hi3.hashkit.R.string.enum_plug_shelly),
+    KASA("Kasa / TP-Link", hi3.hashkit.R.string.enum_plug_kasa),
+    WEBHOOK("Generic webhook", hi3.hashkit.R.string.enum_plug_webhook);
 
     companion object {
         fun fromName(name: String?): PlugType? = entries.firstOrNull { it.name == name }

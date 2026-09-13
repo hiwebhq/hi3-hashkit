@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ar_title_qr">Tag / QR scannen</string>
+    <string name="ar_title_nfc">NFC scannen</string>
+    <string name="ar_camera_needed">Kamerazugriff wird benötigt, um die QR-Sticker der Miner zu lesen.</string>
+    <string name="ar_nfc_still_works">" NFC-Tags gehen trotzdem — einfach antippen."</string>
+    <string name="ar_grant_camera">Kamera erlauben</string>
+    <string name="ar_no_match">Kein Miner passt zu \"%1$s\". Programmiere Tag/QR mit Name, IP, MAC oder ID des Miners.</string>
+    <string name="ar_point_qr">Richte die Kamera auf den QR-Sticker eines Miners</string>
+    <string name="ar_or_tap_nfc">" oder tippe sein NFC-Tag an"</string>
+    <string name="ar_guidance_suffix">" — Name, IP, MAC oder ID. Live-Werte erscheinen hier."</string>
+    <string name="ar_turn_on_nfc_suffix">"  (Schalte NFC ein, um Tags anzutippen.)"</string>
+    <string name="ar_add_dialog_title">Diesen Miner hinzufügen?</string>
+    <string name="ar_a_miner">ein Miner</string>
+    <string name="ar_add_body">Das Tag verweist auf %1$s unter %2$s — noch nicht in der App.</string>
+    <string name="ar_add_location_line">\nStandort: %1$s</string>
+    <string name="ar_add_confirm_line">\n\nJetzt hinzufügen und die Adresse prüfen?</string>
+    <string name="ar_no_nfc_hw">Dieses Gerät hat kein NFC.</string>
+    <string name="ar_turn_on_nfc">Schalte NFC ein, um Tags zu scannen.</string>
+    <string name="ar_hold_tag">Halte das NFC-Tag eines Miners an die Rückseite deines Handys.</string>
+    <string name="ar_nfc_body">Öffnet sofort die Live-Telemetrie dieses Miners — ganz ohne Kamera.</string>
+    <string name="ar_stat_hash">HASH</string>
+    <string name="ar_stat_power">LEISTUNG</string>
+    <string name="ar_stat_temp">TEMP</string>
+    <string name="ar_tap_to_open">Zum Öffnen tippen · anderen Marker scannen zum Wechseln</string>
+</resources>

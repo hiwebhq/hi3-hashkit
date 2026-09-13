@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Heat reuse screen (HeatReuseScreen). -->
+<resources>
+    <string name="heat_title">Reúso de calor</string>
+    <string name="heat_intro">Um ASIC transforma essencialmente toda a eletricidade que consome em calor. Na estação de aquecimento, esse calor compensa o que você gastaria para aquecer o ambiente — então a energia não é um custo puro de mineração. Os números são estimativas a partir da potência ao vivo da fazenda.</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">Calor gerado agora</string>
+    <string name="heat_output_sub">%1$s kW térmicos · %2$d minerador(es) online</string>
+    <string name="heat_thermal_per_day">Energia térmica por dia</string>
+    <string name="heat_thermal_sub">No consumo atual, mantido por 24 h</string>
+    <string name="heat_rate_hint">Defina sua tarifa de energia nas Configurações para ver o valor em dinheiro do calor.</string>
+    <string name="heat_value_today">Valor de aquecimento hoje</string>
+    <string name="heat_value_today_sub">vs. aquecimento elétrico resistivo (1:1) a %1$s/kWh</string>
+    <string name="heat_value_month">Valor de aquecimento este mês</string>
+    <string name="heat_value_month_sub">≈ %1$s dias no ritmo de consumo atual</string>
+    <string name="heat_pump_title">Se você aquece com bomba de calor</string>
+    <string name="heat_pump_body">Uma bomba de calor (COP ≈ 3) gera o mesmo calor com cerca de um terço da eletricidade, então o minerador compensa aproximadamente %1$s/mês em comparação com uma.</string>
+    <string name="heat_off_season">Fora da estação de aquecimento o calor não tem valor e aumenta a carga de refrigeração — combine isto com Agendamentos para reduzir no verão.</string>
+</resources>

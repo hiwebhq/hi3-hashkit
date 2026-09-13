@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nfcp_title">写入 NFC 标签</string>
+    <string name="nfcp_no_miners">没有可写入的矿机。</string>
+    <string name="nfcp_written_progress">已写入 %1$d / %2$d</string>
+    <string name="nfcp_no_nfc_device">此设备没有 NFC</string>
+    <string name="nfcp_turn_on_nfc">开启 NFC 后方可写入</string>
+    <string name="nfcp_programming">正在写入第 %1$d 个，共 %2$d 个</string>
+    <string name="nfcp_written">已写入</string>
+    <string name="nfcp_label_mac">MAC</string>
+    <string name="nfcp_label_ip">IP</string>
+    <string name="nfcp_label_location">位置</string>
+    <string name="nfcp_hold_tag">将空白 NFC 标签贴近手机背面即可写入。</string>
+    <string name="nfcp_enable_nfc">启用 NFC 以写入，或改用“显示 QR”打印贴纸。</string>
+    <string name="nfcp_prev">上一个</string>
+    <string name="nfcp_skip">跳过</string>
+    <string name="nfcp_next">下一个</string>
+    <string name="nfcp_show_qr">显示 QR</string>
+    <string name="nfcp_qr_for">%1$s 的 QR</string>
+    <string name="nfcp_qr_hint">截图后可打印成贴纸——可在 AR 机架叠加中扫描。</string>
+    <string name="nfcp_write_failed">写入失败：%1$s</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ar_title_qr">扫描标签 / QR</string>
+    <string name="ar_title_nfc">扫描 NFC</string>
+    <string name="ar_camera_needed">需要相机权限才能读取矿机 QR 贴纸。</string>
+    <string name="ar_nfc_still_works">" NFC 标签仍然可用——触碰一下即可。"</string>
+    <string name="ar_grant_camera">授予相机权限</string>
+    <string name="ar_no_match">没有矿机匹配“%1$s”。请用矿机的名称、IP、MAC 或 id 写入标签/QR。</string>
+    <string name="ar_point_qr">对准矿机的 QR 贴纸</string>
+    <string name="ar_or_tap_nfc">" 或触碰其 NFC 标签"</string>
+    <string name="ar_guidance_suffix">"——名称、IP、MAC 或 id。实时数据会显示在这里。"</string>
+    <string name="ar_turn_on_nfc_suffix">"  （开启 NFC 后即可触碰标签。）"</string>
+    <string name="ar_add_dialog_title">添加这台矿机？</string>
+    <string name="ar_a_miner">一台矿机</string>
+    <string name="ar_add_body">该标签指向位于 %2$s 的 %1$s，应用中尚未添加。</string>
+    <string name="ar_add_location_line">\n位置：%1$s</string>
+    <string name="ar_add_confirm_line">\n\n现在就探测该地址并添加吗？</string>
+    <string name="ar_no_nfc_hw">此设备没有 NFC。</string>
+    <string name="ar_turn_on_nfc">开启 NFC 以扫描标签。</string>
+    <string name="ar_hold_tag">将矿机的 NFC 标签贴近手机背面。</string>
+    <string name="ar_nfc_body">它会直接打开该矿机的实时遥测——无需相机。</string>
+    <string name="ar_stat_hash">算力</string>
+    <string name="ar_stat_power">功耗</string>
+    <string name="ar_stat_temp">温度</string>
+    <string name="ar_tap_to_open">点按打开 · 扫描其他标记可切换</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wall / TV kiosk dashboard (ui/wall). -->
+<resources>
+    <string name="wall_size_small">Klein</string>
+    <string name="wall_size_medium">Mittel</string>
+    <string name="wall_size_large">Groß</string>
+    <string name="wall_counts">%1$d online · %2$d offline · %3$d Miner</string>
+    <string name="wall_display_options">Anzeigeoptionen</string>
+    <string name="wall_card_size">KARTENGRÖSSE</string>
+    <string name="wall_grid_columns">RASTERSPALTEN</string>
+    <string name="wall_fewer_columns">Weniger Spalten</string>
+    <string name="wall_more_columns">Mehr Spalten</string>
+    <string name="wall_columns_auto">Auto</string>
+    <string name="wall_exit">Wandmodus verlassen</string>
+    <string name="wall_no_miners">Keine Miner anzuzeigen.</string>
+</resources>

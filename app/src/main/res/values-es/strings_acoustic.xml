@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ac_title">Chequeo acústico de ventiladores</string>
+    <string name="ac_intro">Acerca el micrófono del teléfono a pocos cm de los ventiladores del minero, mantén la sala en silencio y graba un clip de %1$d segundos. El audio se analiza en el dispositivo (FFT) y nunca se guarda ni se envía. Es un chequeo orientativo de mejor esfuerzo — no un diagnóstico calibrado.</string>
+    <string name="ac_record">Grabar %1$d s</string>
+    <string name="ac_listening">Escuchando…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">No se pudo capturar audio. Revisa el permiso del micrófono e inténtalo de nuevo.</string>
+    <string name="ac_clip_too_short">Clip demasiado corto para analizar.</string>
+    <string name="ac_mic_permission">Se necesita el permiso del micrófono para escuchar los ventiladores.</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">Sin fallo evidente</string>
+    <string name="ac_check_fans">Revisa los ventiladores</string>
+    <string name="ac_measured">MEDIDO</string>
+    <string name="ac_dominant_tone">Tono dominante: %1$d Hz (≈ %2$d RPM si es la fundamental)</string>
+    <string name="ac_tonality">Tonalidad: %1$s× · energía de alta frecuencia: %2$s%%</string>
+</resources>

@@ -27,12 +27,15 @@ fun MinerStatus.color(): Color = when (this) {
     MinerStatus.UNKNOWN -> HiBrand.statusUnknown
 }
 
-fun MinerStatus.label(): String = when (this) {
-    MinerStatus.ONLINE -> "Online"
-    MinerStatus.DEGRADED -> "Degraded"
-    MinerStatus.OFFLINE -> "Offline"
-    MinerStatus.UNKNOWN -> "Stale"
-}
+@Composable
+fun MinerStatus.label(): String = androidx.compose.ui.res.stringResource(
+    when (this) {
+        MinerStatus.ONLINE -> hi3.hashkit.R.string.status_online
+        MinerStatus.DEGRADED -> hi3.hashkit.R.string.status_degraded
+        MinerStatus.OFFLINE -> hi3.hashkit.R.string.status_offline
+        MinerStatus.UNKNOWN -> hi3.hashkit.R.string.status_stale
+    },
+)
 
 @Composable
 fun StatusDot(status: MinerStatus, modifier: Modifier = Modifier) {
@@ -68,8 +71,10 @@ fun SourceTag(source: ValueSource) {
     val (label, color) = when (source) {
         ValueSource.MEASURED -> null to HiBrand.textSecondary
         ValueSource.REPORTED -> null to HiBrand.textSecondary
-        ValueSource.CALCULATED -> "calc" to HiBrand.accentAlt
-        ValueSource.ESTIMATED -> "est" to HiBrand.statusDegraded
+        ValueSource.CALCULATED ->
+            androidx.compose.ui.res.stringResource(hi3.hashkit.R.string.source_calc) to HiBrand.accentAlt
+        ValueSource.ESTIMATED ->
+            androidx.compose.ui.res.stringResource(hi3.hashkit.R.string.source_est) to HiBrand.statusDegraded
         ValueSource.UNAVAILABLE -> null to HiBrand.textSecondary
     }
     if (label != null) {

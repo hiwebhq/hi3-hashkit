@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-tuner screen (ui/autotune). -->
+<resources>
+    <string name="tune_title">自动调优</string>
+    <string name="tune_description">在当前电压下扫描固件许可的各档频率，每档稳定后测量 J/TH 与芯片温度，随后恢复原设定点，并推荐温度上限内的最佳工作点。一旦触及上限即停止升频。应用推荐值需另行点按——扫描期间请保持应用打开。</string>
+    <string name="tune_not_supported">此矿机不支持。</string>
+    <string name="tune_settle_per_step">每档稳定时间</string>
+    <string name="tune_temp_ceiling">温度上限</string>
+    <string name="tune_optimize_for">优化目标</string>
+    <string name="tune_efficiency">能效</string>
+    <string name="tune_hashrate">算力</string>
+    <string name="tune_step_progress">第 %1$d/%2$d 步——%3$s</string>
+    <string name="tune_start_sweep">开始扫描</string>
+    <string name="tune_apply_best">应用最佳（%1$d MHz）</string>
+    <string name="tune_results_header">结果（最佳在前）</string>
+    <string name="tune_over_ceiling">"  ⚠ 超过上限"</string>
+    <string name="tune_optimizer_header">优化器——已保存 %1$d 个数据点</string>
+    <string name="tune_clear">清除</string>
+    <string name="tune_most_efficient">最高能效：%1$d MHz @ %2$d mV——%3$s J/TH</string>
+    <string name="tune_most_hashrate">最高算力：%1$d MHz @ %2$d mV——%3$s</string>
+    <string name="tune_optimizer_hint">基于此矿机的全部扫描数据构建——多跑几次扫描可使曲线更精确。</string>
+    <string name="tune_efficiency_curve">能效曲线</string>
+    <string name="tune_observed_points">观测到的工作点（7 天）</string>
+    <string name="tune_mark_best_efficiency">" ⚡最佳 J/TH"</string>
+    <string name="tune_mark_best_rate">" ▲最高算力"</string>
+    <string name="tune_observed_point">%1$.0f MHz / %2$.0f mV——%3$.2f TH/s · %4$s J/TH · 最高 %5$s · ≈%6$.1f 小时%7$s</string>
+    <string name="tune_peer_gap">与同型号矿机（%1$d 台）相比：算力 %2$s（24 小时均值）</string>
+</resources>

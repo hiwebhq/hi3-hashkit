@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nfcp_title">Program NFC tags</string>
+    <string name="nfcp_no_miners">No miners to program.</string>
+    <string name="nfcp_written_progress">%1$d of %2$d written</string>
+    <string name="nfcp_no_nfc_device">no NFC on this device</string>
+    <string name="nfcp_turn_on_nfc">turn on NFC to write</string>
+    <string name="nfcp_programming">Programming %1$d of %2$d</string>
+    <string name="nfcp_written">written</string>
+    <string name="nfcp_label_mac">MAC</string>
+    <string name="nfcp_label_ip">IP</string>
+    <string name="nfcp_label_location">Location</string>
+    <string name="nfcp_hold_tag">Hold a blank NFC tag to the back of the phone to write it.</string>
+    <string name="nfcp_enable_nfc">Enable NFC to write, or use Show QR to print a sticker instead.</string>
+    <string name="nfcp_prev">Prev</string>
+    <string name="nfcp_skip">Skip</string>
+    <string name="nfcp_next">Next</string>
+    <string name="nfcp_show_qr">Show QR</string>
+    <string name="nfcp_qr_for">QR for %1$s</string>
+    <string name="nfcp_qr_hint">Screenshot to print as a sticker — scans in the AR rack overlay.</string>
+    <string name="nfcp_write_failed">Write failed: %1$s</string>
+</resources>

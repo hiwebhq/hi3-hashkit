@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner logs screen chrome (ui/logs). Log CONTENT from miners is never localized. -->
+<resources>
+    <string name="logs_title">%1$s — Logs</string>
+    <string name="logs_status_redacted">"%1$s  ·  Wallets geschwärzt"</string>
+    <string name="logs_status_connecting">Verbinde…</string>
+    <string name="logs_status_live">Live</string>
+    <string name="logs_status_disconnected">Getrennt: %1$s</string>
+    <string name="logs_status_event_log">Ereignisprotokoll — aus Polls abgeleitet (kein Firmware-Log-Stream)</string>
+    <string name="logs_show_raw">Roh-Log anzeigen</string>
+    <string name="logs_analyze">Log analysieren</string>
+    <string name="logs_resume">Fortsetzen</string>
+    <string name="logs_pause">Pause</string>
+    <string name="logs_clear">Leeren</string>
+    <string name="logs_reconnect">Neu verbinden</string>
+    <string name="logs_window_live">Live</string>
+    <string name="logs_analysis_summary">"LOG-ANALYSE  ·  %1$d Zeilen  ·  %2$d Fehler  ·  %3$d Warnungen"</string>
+    <string name="logs_findings">BEFUNDE</string>
+    <string name="logs_export">Erfasste Logs exportieren</string>
+    <string name="logs_export_chooser">Logs exportieren</string>
+    <string name="logs_analysis_footer">Heuristische Analyse auf dem Gerät — keine Cloud. Live analysiert den aktuellen Stream; 1h/24h/7d analysieren erfasste Historie (pro Miner, ~7 Tage). Wallets geschwärzt.</string>
+</resources>

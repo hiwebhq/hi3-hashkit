@@ -42,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,6 +50,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.db.ScheduleDao
 import hi3.hashkit.data.db.ScheduleEntity
 import hi3.hashkit.ui.theme.HiBrand
@@ -94,10 +96,13 @@ fun SchedulesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Schedules", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.sched_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -105,7 +110,7 @@ fun SchedulesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { editing = true }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add schedule")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.sched_add_schedule))
             }
         },
         containerColor = HiBrand.background,
@@ -117,9 +122,7 @@ fun SchedulesScreen(
         ) {
             item {
                 Text(
-                    "Schedules run when the app polls (foreground) or during background " +
-                        "monitoring cycles (~15 min granularity) — not at exact times. A " +
-                        "missed day is skipped, never replayed.",
+                    stringResource(R.string.sched_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -162,23 +165,33 @@ private fun ScheduleRow(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = schedule.enabled, onCheckedChange = onToggle)
                     IconButton(onClick = onDelete) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = HiBrand.statusOffline)
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.common_delete),
+                            tint = HiBrand.statusOffline,
+                        )
                     }
                 }
             }
             Text(
-                "${schedule.actionType} at %02d:%02d on %s · targets: %s".format(
-                    schedule.timeMinutesOfDay / 60,
-                    schedule.timeMinutesOfDay % 60,
+                stringResource(
+                    R.string.sched_row_summary,
+                    schedule.actionType,
+                    "%02d:%02d".format(schedule.timeMinutesOfDay / 60, schedule.timeMinutesOfDay % 60),
                     schedule.daysOfWeekCsv.split(",").joinToString(" ") { it.take(3) },
-                    schedule.targetGroup?.let { "group \"$it\"" } ?: "all miners",
+                    schedule.targetGroup?.let { stringResource(R.string.sched_row_group, it) }
+                        ?: stringResource(R.string.sched_row_all_miners),
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textSecondary,
             )
             schedule.lastRunAtEpochMs?.let {
                 Text(
-                    "Last run ${java.text.DateFormat.getDateTimeInstance().format(Date(it))}: ${schedule.lastResult}",
+                    stringResource(
+                        R.string.sched_last_run,
+                        java.text.DateFormat.getDateTimeInstance().format(Date(it)),
+                        schedule.lastResult.toString(),
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -222,42 +235,46 @@ private fun ScheduleEditorDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New schedule") },
+        title = { Text(stringResource(R.string.sched_new_schedule)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)
+                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text(stringResource(R.string.sched_name)) }, singleLine = true)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf(
-                        "reboot" to "Restart", "set_pool" to "Pool", "set_fan" to "Fan",
-                        "pause" to "Pause", "resume" to "Resume",
-                        "plug_off" to "Plug off", "plug_on" to "Plug on",
-                        "apply_tune" to "Tune preset",
+                        "reboot" to stringResource(R.string.sched_action_restart),
+                        "set_pool" to stringResource(R.string.sched_action_pool),
+                        "set_fan" to stringResource(R.string.sched_action_fan),
+                        "pause" to stringResource(R.string.sched_action_pause),
+                        "resume" to stringResource(R.string.sched_action_resume),
+                        "plug_off" to stringResource(R.string.sched_action_plug_off),
+                        "plug_on" to stringResource(R.string.sched_action_plug_on),
+                        "apply_tune" to stringResource(R.string.sched_action_tune_preset),
                     ).forEach { (key, text) ->
                         FilterChip(selected = action == key, onClick = { action = key }, label = { Text(text) })
                     }
                 }
                 when (action) {
                     "set_pool" -> {
-                        OutlinedTextField(value = poolUrl, onValueChange = { poolUrl = it }, label = { Text("Stratum URL") }, singleLine = true)
-                        OutlinedTextField(value = poolPort, onValueChange = { poolPort = it }, label = { Text("Port") }, singleLine = true)
-                        OutlinedTextField(value = poolWorker, onValueChange = { poolWorker = it }, label = { Text("Worker") }, singleLine = true)
+                        OutlinedTextField(value = poolUrl, onValueChange = { poolUrl = it }, label = { Text(stringResource(R.string.sched_stratum_url)) }, singleLine = true)
+                        OutlinedTextField(value = poolPort, onValueChange = { poolPort = it }, label = { Text(stringResource(R.string.sched_port)) }, singleLine = true)
+                        OutlinedTextField(value = poolWorker, onValueChange = { poolWorker = it }, label = { Text(stringResource(R.string.sched_worker)) }, singleLine = true)
                     }
                     "set_fan" -> {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Automatic", Modifier.padding(end = 10.dp))
+                            Text(stringResource(R.string.sched_automatic), Modifier.padding(end = 10.dp))
                             Switch(checked = fanAuto, onCheckedChange = { fanAuto = it })
                         }
                         if (!fanAuto) {
-                            Text("Manual: ${fanPercent.roundToInt()}%")
+                            Text(stringResource(R.string.sched_manual_percent, fanPercent.roundToInt()))
                             Slider(value = fanPercent, onValueChange = { fanPercent = it }, valueRange = 20f..100f)
                         }
                     }
                     "apply_tune" -> {
-                        OutlinedTextField(value = tuneFreq, onValueChange = { tuneFreq = it }, label = { Text("Frequency (MHz)") }, singleLine = true)
-                        OutlinedTextField(value = tuneVolt, onValueChange = { tuneVolt = it }, label = { Text("Core voltage (mV)") }, singleLine = true)
+                        OutlinedTextField(value = tuneFreq, onValueChange = { tuneFreq = it }, label = { Text(stringResource(R.string.sched_frequency_mhz)) }, singleLine = true)
+                        OutlinedTextField(value = tuneVolt, onValueChange = { tuneVolt = it }, label = { Text(stringResource(R.string.sched_core_voltage_mv)) }, singleLine = true)
                     }
                 }
-                OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text("Time (HH:MM, device timezone)") }, singleLine = true)
+                OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text(stringResource(R.string.sched_time_label)) }, singleLine = true)
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     DayOfWeek.entries.forEach { day ->
                         FilterChip(
@@ -269,21 +286,14 @@ private fun ScheduleEditorDialog(
                         )
                     }
                 }
-                OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all miners)") }, singleLine = true)
+                OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text(stringResource(R.string.sched_target_group)) }, singleLine = true)
                 Spacer(Modifier.height(2.dp))
                 val hint = if (action == "plug_on" || action == "plug_off") {
-                    "Plug on/off switches each target miner's configured smart plug over the LAN. " +
-                        "Miners without a plug set up are skipped. Pair a nightly Plug off with a " +
-                        "morning Plug on for time-of-use power control; each run is recorded."
+                    stringResource(R.string.sched_hint_plug)
                 } else if (action == "apply_tune") {
-                    "Time-of-use power target: applies a fixed frequency/voltage preset. Use a " +
-                        "low-power preset at peak-rate start and your normal preset at the end. " +
-                        "Only firmware that accepts these values (e.g. Bitaxe/AxeOS) runs it; " +
-                        "others are skipped. Use values your miner's tuner accepts."
+                    stringResource(R.string.sched_hint_tune)
                 } else {
-                    "Time-of-use: schedule Pause at your peak-rate start and Resume at the end " +
-                        "(pause needs a device that supports it). Unsupported devices are skipped " +
-                        "with a reason; each run is recorded in the audit log."
+                    stringResource(R.string.sched_hint_default)
                 }
                 Text(
                     hint,
@@ -328,8 +338,8 @@ private fun ScheduleEditorDialog(
                         )
                     )
                 },
-            ) { Text("Save") }
+            ) { Text(stringResource(R.string.common_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

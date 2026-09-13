@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">Automation rules</string>
+    <string name="rules_add_rule">Add rule</string>
+    <string name="rules_intro">Rules are checked each poll cycle. A condition must hold for the rule\'s sustained window before the action runs, and each rule fires at most once per interval per miner. Muted miners are skipped, unsupported control actions are skipped with a reason, and every fire raises a watchdog notification.</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"IF %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" for ≥%1$dm"</string>
+    <string name="rules_row_group">"  ·  group \"%1$s\""</string>
+    <string name="rules_row_all_miners">"  ·  all miners"</string>
+    <string name="rules_row_interval">"  ·  every %1$dm per miner"</string>
+    <string name="rules_last_fired">Last fired %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">New rule</string>
+    <string name="rules_name">Name</string>
+    <string name="rules_when">When</string>
+    <string name="rules_then">Then</string>
+    <string name="rules_threshold">Threshold (%1$s)</string>
+    <string name="rules_target_group">Target group (blank = all)</string>
+    <string name="rules_sustained_label">Sustained for (min, 0 = first match)</string>
+    <string name="rules_min_interval_label">Min interval between fires per miner (min)</string>
+    <string name="rules_editor_hint">Control actions (pause/resume/reboot) use the miner\'s verified control path and are skipped where unsupported. Plug actions need a configured smart plug. Test with a high interval first.</string>
+</resources>

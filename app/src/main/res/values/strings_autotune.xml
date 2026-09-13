@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-tuner screen (ui/autotune). -->
+<resources>
+    <string name="tune_title">Auto-tuner</string>
+    <string name="tune_description">Sweeps the firmware-approved frequencies at your current voltage, lets each settle, measures J/TH and chip temp, then restores your original setpoint and recommends the best point under your temperature ceiling. It stops climbing once the ceiling is hit. Applying is a separate tap — keep the app open during the sweep.</string>
+    <string name="tune_not_supported">Not supported on this miner.</string>
+    <string name="tune_settle_per_step">Settle per step</string>
+    <string name="tune_temp_ceiling">Temp ceiling</string>
+    <string name="tune_optimize_for">Optimize for</string>
+    <string name="tune_efficiency">Efficiency</string>
+    <string name="tune_hashrate">Hashrate</string>
+    <string name="tune_step_progress">Step %1$d/%2$d — %3$s</string>
+    <string name="tune_start_sweep">Start sweep</string>
+    <string name="tune_apply_best">Apply best (%1$d MHz)</string>
+    <string name="tune_results_header">RESULTS (best first)</string>
+    <string name="tune_over_ceiling">"  ⚠ over ceiling"</string>
+    <string name="tune_optimizer_header">OPTIMIZER — %1$d saved point(s)</string>
+    <string name="tune_clear">Clear</string>
+    <string name="tune_most_efficient">Most efficient: %1$d MHz @ %2$d mV — %3$s J/TH</string>
+    <string name="tune_most_hashrate">Most hashrate: %1$d MHz @ %2$d mV — %3$s</string>
+    <string name="tune_optimizer_hint">Built from all sweeps on this miner — run more sweeps to sharpen the curve.</string>
+    <string name="tune_efficiency_curve">EFFICIENCY CURVE</string>
+    <string name="tune_observed_points">OBSERVED OPERATING POINTS (7 DAYS)</string>
+    <string name="tune_mark_best_efficiency">" ⚡best J/TH"</string>
+    <string name="tune_mark_best_rate">" ▲best rate"</string>
+    <string name="tune_observed_point">%1$.0f MHz / %2$.0f mV — %3$.2f TH/s · %4$s J/TH · max %5$s · ≈%6$.1f h%7$s</string>
+    <string name="tune_peer_gap">vs same-model peers (%1$d): %2$s hashrate (24h avg)</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nfcp_title">NFC-Tags programmieren</string>
+    <string name="nfcp_no_miners">Keine Miner zu programmieren.</string>
+    <string name="nfcp_written_progress">%1$d von %2$d geschrieben</string>
+    <string name="nfcp_no_nfc_device">kein NFC auf diesem Gerät</string>
+    <string name="nfcp_turn_on_nfc">NFC einschalten zum Schreiben</string>
+    <string name="nfcp_programming">Programmiere %1$d von %2$d</string>
+    <string name="nfcp_written">geschrieben</string>
+    <string name="nfcp_label_mac">MAC</string>
+    <string name="nfcp_label_ip">IP</string>
+    <string name="nfcp_label_location">Standort</string>
+    <string name="nfcp_hold_tag">Halte ein leeres NFC-Tag an die Rückseite des Handys, um es zu beschreiben.</string>
+    <string name="nfcp_enable_nfc">Aktiviere NFC zum Schreiben oder nutze „QR zeigen“, um stattdessen einen Sticker zu drucken.</string>
+    <string name="nfcp_prev">Zurück</string>
+    <string name="nfcp_skip">Überspringen</string>
+    <string name="nfcp_next">Weiter</string>
+    <string name="nfcp_show_qr">QR zeigen</string>
+    <string name="nfcp_qr_for">QR für %1$s</string>
+    <string name="nfcp_qr_hint">Screenshot machen und als Sticker drucken — scannbar im AR-Rack-Overlay.</string>
+    <string name="nfcp_write_failed">Schreiben fehlgeschlagen: %1$s</string>
+</resources>

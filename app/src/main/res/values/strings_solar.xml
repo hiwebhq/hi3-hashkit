@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solar-surplus mining screen (SolarSurplusScreen). -->
+<resources>
+    <string name="solar_title">Solar-surplus mining</string>
+    <string name="solar_intro">Curtail the fleet to your solar export. Reads a grid-export/surplus sensor (in watts) from your local Home Assistant over its REST API — the token is stored encrypted and only sent to your own HA host on your network.</string>
+
+    <!-- Live signal card -->
+    <string name="solar_export_label">SOLAR EXPORT</string>
+    <string name="solar_fleet_draw">Fleet draw %1$s W · %2$d online</string>
+    <string name="solar_reco_run">Recommendation: surplus available — resume mining</string>
+    <string name="solar_reco_curtail">Recommendation: no surplus — curtail mining</string>
+    <string name="solar_reco_hold">Recommendation: hold (within the deadband)</string>
+
+    <!-- Actions -->
+    <string name="solar_check_now">Check now</string>
+    <string name="solar_checking">Checking…</string>
+    <string name="solar_resume_fleet">Resume fleet</string>
+    <string name="solar_curtail_fleet">Curtail fleet</string>
+
+    <!-- Configuration -->
+    <string name="solar_base_url_label">HA base URL (private/Tailscale)</string>
+    <string name="solar_entity_label">Sensor entity_id (watts)</string>
+    <string name="solar_token_label">Long-lived token</string>
+    <string name="solar_token_saved_label">Long-lived token (saved — leave blank to keep)</string>
+    <string name="solar_resume_label">Resume ≥ W</string>
+    <string name="solar_curtail_label">Curtail ≤ W</string>
+    <string name="solar_save_config">Save configuration</string>
+</resources>

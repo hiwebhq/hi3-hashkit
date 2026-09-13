@@ -25,13 +25,13 @@ class LogAnalyzerTest {
     @Test fun flagsRepeatedRestarts() {
         val lines = List(3) { "E (100) system: brownout reset, rebooting" }
         val a = LogAnalyzer.analyze(lines)
-        assertTrue(a.findings.any { it.title.contains("restart", true) && it.level == LogAnalyzer.FindingLevel.ERROR })
+        assertTrue(a.findings.any { it.titleRes == hi3.hashkit.R.string.logan_restarts_title && it.level == LogAnalyzer.FindingLevel.ERROR })
     }
 
     @Test fun flagsDisconnectStorm() {
         val lines = List(4) { "W (1) pool: connection closed, reconnect" }
         val a = LogAnalyzer.analyze(lines)
-        assertTrue(a.findings.any { it.title.contains("disconnect", true) })
+        assertTrue(a.findings.any { it.titleRes == hi3.hashkit.R.string.logan_disconnects_title })
     }
 
     @Test fun cleanLogProducesNoProblemFinding() {

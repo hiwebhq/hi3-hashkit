@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="adv_title">Avançado</string>
+    <string name="adv_intro">Ferramentas para usuários avançados. Tudo aqui roda na sua própria rede e com seus dados — nenhuma conta na nuvem é necessária.</string>
+
+    <string name="adv_energy_title">Energia e lucro</string>
+    <string name="adv_energy_subtitle">Custo de energia por minerador, ranking de J/TH e receita estimada vs custo</string>
+    <string name="adv_heat_reuse_title">Painel de reúso de calor</string>
+    <string name="adv_heat_reuse_subtitle">Quanto vale o calor residual dos seus mineradores como aquecimento de ambiente</string>
+    <string name="adv_solar_title">Mineração com excedente solar</string>
+    <string name="adv_solar_subtitle">Limite a fazenda à sua exportação solar via Home Assistant</string>
+    <string name="adv_price_curtailment_title">Corte por preço de energia</string>
+    <string name="adv_price_curtailment_subtitle">Pause em picos de preço usando o feed de meia em meia hora do Octopus Agile</string>
+    <string name="adv_hash_rental_title">Aluguel de hash</string>
+    <string name="adv_hash_rental_subtitle">Mercado spot Braiins Hashpower ao vivo — alugue hashrate</string>
+    <string name="adv_acoustic_title">Teste acústico das ventoinhas</string>
+    <string name="adv_acoustic_subtitle">Grave as ventoinhas de um minerador e detecte desgaste de rolamento no aparelho</string>
+    <string name="adv_ar_overlay_title">Sobreposição AR do rack</string>
+    <string name="adv_ar_overlay_subtitle">Escaneie o adesivo QR de um minerador ou encoste na tag NFC para flutuar suas estatísticas ao vivo</string>
+    <string name="adv_nfc_title">Programador de tags NFC</string>
+    <string name="adv_nfc_subtitle">Grave tags NFC dos mineradores (e QR) — fazenda inteira, ou filtrado pela tabela da Fazenda</string>
+    <string name="adv_rules_title">Regras de automação</string>
+    <string name="adv_rules_subtitle">Regras condição → ação em toda a fazenda</string>
+    <string name="adv_schedules_title">Agendamentos</string>
+    <string name="adv_schedules_subtitle">Planos de tarifa horária e horas de silêncio para mineradores e tomadas</string>
+    <string name="adv_address_book_title">Agenda de pools</string>
+    <string name="adv_address_book_subtitle">Endpoints stratum salvos para redirecionar rápido</string>
+    <string name="adv_site_map_title">Mapa do site</string>
+    <string name="adv_site_map_subtitle">Mapeie prédios/racks/níveis e capture mineradores percorrendo com o botão Informar IP</string>
+    <string name="adv_heatmap_title">Mapa de calor</string>
+    <string name="adv_heatmap_subtitle">Layout do rack colorido pela temperatura dos chips ao vivo — ache o canto quente</string>
+    <string name="adv_rack_title">Rack e site</string>
+    <string name="adv_rack_subtitle">Layout físico do rack, agrupado pela Localização de cada minerador</string>
+    <string name="adv_pool_speed_title">Teste de velocidade da pool</string>
+    <string name="adv_pool_speed_subtitle">Meça a latência stratum a partir da rede deste celular</string>
+    <string name="adv_live_bitcoin_title">Bitcoin ao vivo</string>
+    <string name="adv_live_bitcoin_subtitle">Abra o painel Bitcoin ao vivo da Hi3</string>
+</resources>

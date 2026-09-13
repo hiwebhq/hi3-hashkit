@@ -1,5 +1,7 @@
 package hi3.hashkit.domain.logs
 
+import androidx.annotation.StringRes
+import hi3.hashkit.R
 import hi3.hashkit.domain.logs.LogClassifier.Category
 import hi3.hashkit.domain.logs.LogClassifier.Severity
 
@@ -19,7 +21,13 @@ object LogAnalyzer {
 
     enum class FindingLevel { INFO, WARN, ERROR }
 
-    data class Finding(val level: FindingLevel, val title: String, val suggestion: String)
+    data class Finding(
+        val level: FindingLevel,
+        @StringRes val titleRes: Int,
+        @StringRes val suggestionRes: Int,
+        /** Positional args for [titleRes], resolved at render time. */
+        val titleArgs: List<Any> = emptyList(),
+    )
 
     data class Analysis(
         val summary: Summary,
@@ -39,6 +47,7 @@ object LogAnalyzer {
         return Analysis(summary, findings, classified)
     }
 
+    @Suppress("LongMethod") // flat checklist of independent findings; resource-ID conversion added lines, not logic
     private fun buildFindings(classified: List<LogClassifier.Classified>, errors: Int): List<Finding> {
         val findings = mutableListOf<Finding>()
         // Lowercase each line once, not once per needle per call.
@@ -50,8 +59,9 @@ object LogAnalyzer {
         if (disconnects >= 3) {
             findings += Finding(
                 FindingLevel.WARN,
-                "$disconnects pool/network disconnects in the recent log",
-                "Check the pool URL/port and your Wi-Fi signal; a flaky link causes lost shares.",
+                R.string.logan_disconnects_title,
+                R.string.logan_disconnects_suggestion,
+                listOf(disconnects),
             )
         }
 
@@ -60,8 +70,9 @@ object LogAnalyzer {
         if (restarts >= 2) {
             findings += Finding(
                 FindingLevel.ERROR,
-                "Signs of $restarts restart(s) / resets",
-                "Repeated restarts usually mean a power (PSU/USB) or thermal problem — check the supply and cooling.",
+                R.string.logan_restarts_title,
+                R.string.logan_restarts_suggestion,
+                listOf(restarts),
             )
         }
 
@@ -71,8 +82,9 @@ object LogAnalyzer {
         if (thermal >= 1) {
             findings += Finding(
                 FindingLevel.WARN,
-                "$thermal thermal warning(s)/error(s)",
-                "Improve airflow or lower the tune; sustained heat throttles hashrate and shortens hardware life.",
+                R.string.logan_thermal_title,
+                R.string.logan_thermal_suggestion,
+                listOf(thermal),
             )
         }
 
@@ -80,8 +92,9 @@ object LogAnalyzer {
         if (asicErrors >= 1) {
             findings += Finding(
                 FindingLevel.ERROR,
-                "$asicErrors ASIC error(s)",
-                "Persistent ASIC errors can indicate a failing chip/board — compare per-chip health and consider a reflash.",
+                R.string.logan_asic_title,
+                R.string.logan_asic_suggestion,
+                listOf(asicErrors),
             )
         }
 
@@ -89,16 +102,22 @@ object LogAnalyzer {
         if (rejects >= 5) {
             findings += Finding(
                 FindingLevel.WARN,
-                "$rejects rejected-share message(s)",
-                "High rejects often mean stale work (network latency) or an over-aggressive tune.",
+                R.string.logan_rejects_title,
+                R.string.logan_rejects_suggestion,
+                listOf(rejects),
             )
         }
 
         if (findings.isEmpty()) {
-            findings += Finding(
+            findings += if (errors == 0) Finding(
                 FindingLevel.INFO,
-                if (errors == 0) "No problems detected in the recent log." else "$errors error line(s), but no known problem pattern.",
-                "Nothing actionable stood out. Keep the stream open to catch intermittent issues.",
+                R.string.logan_clean_title,
+                R.string.logan_none_suggestion,
+            ) else Finding(
+                FindingLevel.INFO,
+                R.string.logan_errors_no_pattern_title,
+                R.string.logan_none_suggestion,
+                listOf(errors),
             )
         }
         return findings

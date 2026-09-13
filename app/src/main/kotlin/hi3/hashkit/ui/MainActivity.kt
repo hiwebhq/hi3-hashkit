@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -54,8 +55,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+// AppCompatActivity (extends FragmentActivity, so BiometricPrompt still works) is required
+// for the per-app language backport: AppCompatDelegate.setApplicationLocales on API 26-32.
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var pollingEngine: PollingEngine
@@ -230,7 +233,7 @@ class MainActivity : FragmentActivity() {
         )
         prompt.authenticate(
             BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Unlock Hi3 Hashkit")
+                .setTitle(getString(hi3.hashkit.R.string.lock_prompt_title))
                 .setAllowedAuthenticators(BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
                 .build()
         )
@@ -267,7 +270,9 @@ class MainActivity : FragmentActivity() {
         ) {
             hi3.hashkit.ui.theme.HiLogo(markSize = 40.dp, fontSize = 28.sp)
             Spacer(Modifier.height(24.dp))
-            Button(onClick = onUnlock) { Text("Unlock") }
+            Button(onClick = onUnlock) {
+                Text(androidx.compose.ui.res.stringResource(hi3.hashkit.R.string.lock_unlock))
+            }
         }
     }
 

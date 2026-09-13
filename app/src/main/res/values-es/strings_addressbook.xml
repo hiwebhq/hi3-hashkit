@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ab_title">Libreta de pools</string>
+    <string name="ab_add_pool">Añadir pool</string>
+    <string name="ab_intro">Guarda los pools/wallets que usas y aplica uno a toda la flota con un toque. El worker es la dirección de pago (opcionalmente direccion.nombreworker). No se guarda la contraseña del pool — el firmware conserva la suya.</string>
+
+    <!-- Apply-to-fleet confirm dialog -->
+    <string name="ab_apply_title">¿Aplicar \"%1$s\"?</string>
+    <string name="ab_apply_body">Establece el pool principal a %1$s:%2$d (worker %3$s) en todos los mineros que admiten cambio de pool. Los no compatibles se omiten.</string>
+    <string name="ab_limit_group">Limitar al grupo (vacío = todos los mineros)</string>
+    <string name="ab_apply_to_fleet">Aplicar a la flota</string>
+
+    <!-- Pool row -->
+    <string name="ab_active_count">"  ● ACTIVO (%1$d)"</string>
+    <string name="ab_speed_test">Test de velocidad</string>
+
+    <!-- Editor dialog -->
+    <string name="ab_saved_pool">Pool guardado</string>
+    <string name="ab_edit_pool">Editar pool</string>
+    <string name="ab_name">Nombre</string>
+    <string name="ab_stratum_url">URL de Stratum</string>
+    <string name="ab_port">Puerto</string>
+    <string name="ab_worker_payout">Worker / dirección de pago</string>
+</resources>

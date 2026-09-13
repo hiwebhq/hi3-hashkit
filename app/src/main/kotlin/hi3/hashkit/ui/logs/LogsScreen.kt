@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.adapters.espminer.EspMinerLogStream
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.adapter.MinerHost
@@ -62,7 +64,11 @@ data class LogsUiState(
     val minerName: String = "",
     val lines: List<String> = emptyList(),
     val paused: Boolean = false,
-    val status: String = "Connecting…",
+    val status: String = "",
+    /** True while the stream is delivering lines (drives the "Live" highlight). */
+    val live: Boolean = false,
+    /** True after the stream closed (drives the reconnect screen). */
+    val disconnected: Boolean = false,
 )
 
 @HiltViewModel
@@ -110,6 +116,7 @@ class LogsViewModel @Inject constructor(
     private val pending = java.util.Collections.synchronizedList(mutableListOf<String>())
 
     init {
+        _state.value = _state.value.copy(status = appContext.getString(R.string.logs_status_connecting))
         connect()
         // Flush captured lines to storage on a light cadence.
         viewModelScope.launch {
@@ -140,27 +147,39 @@ class LogsViewModel @Inject constructor(
             if (caps == null || hi3.hashkit.domain.model.Capability.LOGS !in caps) {
                 _state.value = _state.value.copy(
                     minerName = entity.name,
-                    status = "Event log — derived from polls (no firmware log stream)",
+                    status = appContext.getString(R.string.logs_status_event_log),
+                    live = false,
+                    disconnected = false,
                 )
                 logRepository.observeRecentTexts(minerId, MAX_LINES).collect { texts ->
                     if (!_state.value.paused) _state.value = _state.value.copy(lines = texts)
                 }
                 return@launch
             }
-            _state.value = _state.value.copy(minerName = entity.name, status = "Connecting…")
+            _state.value = _state.value.copy(
+                minerName = entity.name,
+                status = appContext.getString(R.string.logs_status_connecting),
+                live = false,
+                disconnected = false,
+            )
             logStream.stream(MinerHost(entity.host, entity.port)).collect { event ->
                 when (event) {
                     is EspMinerLogStream.LogEvent.Line -> {
                         pending.add(event.text) // always captured, even while paused
                         if (!_state.value.paused) {
                             _state.value = _state.value.copy(
-                                status = "Live",
+                                status = appContext.getString(R.string.logs_status_live),
+                                live = true,
                                 lines = (_state.value.lines + event.text).takeLast(MAX_LINES),
                             )
                         }
                     }
                     is EspMinerLogStream.LogEvent.Closed ->
-                        _state.value = _state.value.copy(status = "Disconnected: ${event.reason}")
+                        _state.value = _state.value.copy(
+                            status = appContext.getString(R.string.logs_status_disconnected, event.reason),
+                            live = false,
+                            disconnected = true,
+                        )
                 }
             }
         }
@@ -232,17 +251,20 @@ fun LogsScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text("${state.minerName} logs", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.logs_title, state.minerName), fontWeight = FontWeight.Bold)
                         Text(
-                            state.status + "  ·  wallets redacted",
+                            stringResource(R.string.logs_status_redacted, state.status),
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (state.status == "Live") HiBrand.statusOnline else HiBrand.textSecondary,
+                            color = if (state.live) HiBrand.statusOnline else HiBrand.textSecondary,
                         )
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 actions = {
@@ -250,7 +272,9 @@ fun LogsScreen(
                         IconButton(onClick = { analyze = !analyze }) {
                             Icon(
                                 Icons.Filled.Analytics,
-                                contentDescription = if (analyze) "Show raw log" else "Analyze log",
+                                contentDescription = stringResource(
+                                    if (analyze) R.string.logs_show_raw else R.string.logs_analyze,
+                                ),
                                 tint = if (analyze) HiBrand.accent else HiBrand.textSecondary,
                             )
                         }
@@ -258,11 +282,13 @@ fun LogsScreen(
                     IconButton(onClick = viewModel::togglePause) {
                         Icon(
                             if (state.paused) Icons.Filled.PlayArrow else Icons.Filled.Pause,
-                            contentDescription = if (state.paused) "Resume" else "Pause",
+                            contentDescription = stringResource(
+                                if (state.paused) R.string.logs_resume else R.string.logs_pause,
+                            ),
                         )
                     }
                     IconButton(onClick = viewModel::clear) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Clear")
+                        Icon(Icons.Filled.Clear, contentDescription = stringResource(R.string.logs_clear))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -270,14 +296,14 @@ fun LogsScreen(
         },
         containerColor = HiBrand.background,
     ) { padding ->
-        if (state.status.startsWith("Disconnected")) {
+        if (state.disconnected) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(state.status, color = HiBrand.statusDegraded)
                 androidx.compose.material3.OutlinedButton(onClick = viewModel::reconnect) {
-                    Text("Reconnect")
+                    Text(stringResource(R.string.logs_reconnect))
                 }
             }
             return@Scaffold
@@ -329,7 +355,8 @@ private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modi
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 listOf(
-                    0L to "Live", 3_600_000L to "1h", 86_400_000L to "24h", 604_800_000L to "7d",
+                    0L to stringResource(R.string.logs_window_live),
+                    3_600_000L to "1h", 86_400_000L to "24h", 604_800_000L to "7d",
                 ).forEach { (ms, label) ->
                     androidx.compose.material3.FilterChip(
                         selected = window == ms,
@@ -341,8 +368,10 @@ private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modi
         }
         item {
             Text(
-                "LOG ANALYSIS  ·  ${analysis.summary.total} lines" +
-                    "  ·  ${analysis.summary.errors} errors  ·  ${analysis.summary.warnings} warnings",
+                stringResource(
+                    R.string.logs_analysis_summary,
+                    analysis.summary.total, analysis.summary.errors, analysis.summary.warnings,
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
@@ -352,14 +381,14 @@ private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modi
                 Text(
                     analysis.summary.byCategory.entries
                         .sortedByDescending { it.value }
-                        .joinToString("   ") { "${it.key.label} ${it.value}" },
+                        .joinToString("   ") { "${ctx.getString(it.key.labelRes)} ${it.value}" },
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
             }
         }
         item {
-            Text("FINDINGS", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Text(stringResource(R.string.logs_findings), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
         }
         items(analysis.findings) { f ->
             val color = when (f.level) {
@@ -372,22 +401,21 @@ private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modi
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(Modifier.padding(12.dp)) {
-                    Text(f.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = color)
-                    Text(f.suggestion, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    Text(stringResource(f.titleRes, *f.titleArgs.toTypedArray()), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = color)
+                    Text(stringResource(f.suggestionRes), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 }
             }
         }
         item {
             androidx.compose.material3.OutlinedButton(onClick = {
                 viewModel.exportLogs { intent ->
-                    ctx.launchChooser(intent, "Export logs")
+                    ctx.launchChooser(intent, ctx.getString(R.string.logs_export_chooser))
                 }
-            }) { Text("Export captured logs") }
+            }) { Text(stringResource(R.string.logs_export)) }
         }
         item {
             Text(
-                "Heuristic, on-device analysis — no cloud. Live analyzes the current stream; " +
-                    "1h/24h/7d analyze captured history (kept per miner, ~7 days). Wallets redacted.",
+                stringResource(R.string.logs_analysis_footer),
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )

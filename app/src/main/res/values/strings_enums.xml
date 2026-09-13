@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Display labels for shared enums (theme colors, webhook types, watchdog rules). -->
+<resources>
+    <string name="enum_theme_blue">Blue</string>
+    <string name="enum_theme_green">Green</string>
+    <string name="enum_theme_orange">Orange</string>
+    <string name="enum_theme_yellow">Yellow</string>
+    <string name="enum_theme_red">Red</string>
+    <string name="enum_theme_purple">Purple</string>
+
+    <string name="enum_webhook_none">Off</string>
+    <string name="enum_webhook_ntfy">ntfy</string>
+    <string name="enum_webhook_gotify">Gotify</string>
+    <string name="enum_webhook_telegram">Telegram</string>
+    <string name="enum_webhook_generic">Generic (JSON POST)</string>
+
+    <string name="enum_plug_tasmota">Tasmota</string>
+    <string name="enum_plug_shelly">Shelly</string>
+    <string name="enum_plug_kasa">Kasa / TP-Link</string>
+    <string name="enum_plug_webhook">Generic webhook</string>
+
+    <string name="enum_tag_standard">Standard — 38 mm</string>
+    <string name="enum_tag_small">Small — 25 mm</string>
+
+    <string name="enum_cond_chip_temp_above">Chip temp above</string>
+    <string name="enum_cond_vr_temp_above">VR temp above</string>
+    <string name="enum_cond_hashrate_below_pct" formatted="false">Hashrate below % of expected</string>
+    <string name="enum_cond_reject_rate_above">Reject rate above</string>
+    <string name="enum_cond_offline">Miner offline</string>
+
+    <string name="enum_action_pause">Pause hashing</string>
+    <string name="enum_action_resume">Resume hashing</string>
+    <string name="enum_action_reboot">Reboot</string>
+    <string name="enum_action_plug_off">Smart plug OFF</string>
+    <string name="enum_action_plug_on">Smart plug ON</string>
+    <string name="enum_action_notify">Notify only</string>
+</resources>

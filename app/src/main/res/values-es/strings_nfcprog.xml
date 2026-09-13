@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nfcp_title">Programar etiquetas NFC</string>
+    <string name="nfcp_no_miners">No hay mineros que programar.</string>
+    <string name="nfcp_written_progress">%1$d de %2$d escritas</string>
+    <string name="nfcp_no_nfc_device">este dispositivo no tiene NFC</string>
+    <string name="nfcp_turn_on_nfc">activa NFC para escribir</string>
+    <string name="nfcp_programming">Programando %1$d de %2$d</string>
+    <string name="nfcp_written">escrita</string>
+    <string name="nfcp_label_mac">MAC</string>
+    <string name="nfcp_label_ip">IP</string>
+    <string name="nfcp_label_location">Ubicación</string>
+    <string name="nfcp_hold_tag">Acerca una etiqueta NFC en blanco a la parte trasera del teléfono para escribirla.</string>
+    <string name="nfcp_enable_nfc">Activa NFC para escribir, o usa Mostrar QR para imprimir una pegatina.</string>
+    <string name="nfcp_prev">Anterior</string>
+    <string name="nfcp_skip">Omitir</string>
+    <string name="nfcp_next">Siguiente</string>
+    <string name="nfcp_show_qr">Mostrar QR</string>
+    <string name="nfcp_qr_for">QR de %1$s</string>
+    <string name="nfcp_qr_hint">Haz una captura para imprimirla como pegatina — se escanea en la vista AR del rack.</string>
+    <string name="nfcp_write_failed">Error al escribir: %1$s</string>
+</resources>

@@ -49,16 +49,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.ui.components.Metric
 import hi3.hashkit.ui.components.StatusBadge
 import hi3.hashkit.ui.theme.HiBrand
 import hi3.hashkit.ui.util.launchChooser
+import hi3.hashkit.ui.util.openUrl
 import hi3.hashkit.ui.util.shareFile
 import java.time.Duration
 import java.time.Instant
@@ -95,18 +98,18 @@ fun MinerDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(miner?.name ?: "Miner", fontWeight = FontWeight.Bold) },
+                title = { Text(miner?.name ?: stringResource(R.string.det_title_miner), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { editing = true }) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit miner")
+                        Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.det_cd_edit_miner))
                     }
                     IconButton(onClick = { confirmDelete = true }) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Remove miner")
+                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.det_cd_remove_miner))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -116,7 +119,7 @@ fun MinerDetailScreen(
     ) { padding ->
         if (miner == null) {
             Text(
-                "Miner not found",
+                stringResource(R.string.det_miner_not_found),
                 modifier = Modifier.padding(padding).padding(16.dp),
                 color = HiBrand.textSecondary,
             )
@@ -144,7 +147,10 @@ fun MinerDetailScreen(
                     )
                     t?.attainmentPercent?.let {
                         Text(
-                            String.format(java.util.Locale.US, "%.1f%% of expected", it),
+                            stringResource(
+                                R.string.det_percent_of_expected,
+                                String.format(java.util.Locale.US, "%.1f%%", it),
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = HiBrand.textSecondary,
                         )
@@ -153,7 +159,7 @@ fun MinerDetailScreen(
                 StatusBadge(miner.status)
             }
 
-            SectionCard("LIVE VIEW") {
+            SectionCard(stringResource(R.string.det_section_live_view)) {
                 MinerVisual(
                     status = miner.status,
                     chipTempC = t?.chipTempC?.value,
@@ -161,14 +167,13 @@ fun MinerDetailScreen(
                     fanPercent = t?.fans?.firstOrNull()?.percent,
                 )
                 Text(
-                    "Stylized live render: fan spins with reported RPM, chips glow by " +
-                        "temperature, LED shows status.",
+                    stringResource(R.string.det_live_view_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
             }
 
-            SectionCard("HASHRATE HISTORY") {
+            SectionCard(stringResource(R.string.det_section_hashrate_history)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf(
                         "1h" to 3_600_000L,
@@ -189,7 +194,7 @@ fun MinerDetailScreen(
                 val stats = historyStats(state.history)
                 Text(
                     lastReadingLabel(t?.timestamp) +
-                        (stats?.let { "  ·  uptime ${it.first}%  ·  ~${it.second} energy" } ?: ""),
+                        (stats?.let { stringResource(R.string.det_uptime_energy, it.first, it.second) } ?: ""),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -203,18 +208,21 @@ fun MinerDetailScreen(
                 }
                 androidx.compose.material3.TextButton(onClick = {
                     viewModel.exportCsv { intent ->
-                        context.launchChooser(intent, "Export telemetry CSV")
+                        context.launchChooser(intent, context.getString(R.string.det_export_csv_chooser))
                     }
-                }) { Text("Export CSV") }
+                }) { Text(stringResource(R.string.det_export_csv)) }
             }
 
             if (efficiencyStats(state.history) != null) {
-                SectionCard("EFFICIENCY (J/TH)") {
+                SectionCard(stringResource(R.string.det_section_efficiency)) {
                     EfficiencyChart(state.history)
                     Spacer(Modifier.height(4.dp))
                     val e = efficiencyStats(state.history)!!
                     Text(
-                        "min %.1f  ·  now %.1f  ·  max %.1f J/TH   (lower is better)".format(e.first, e.second, e.third),
+                        stringResource(
+                            R.string.det_eff_stats,
+                            "%.1f".format(e.first), "%.1f".format(e.second), "%.1f".format(e.third),
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -222,13 +230,13 @@ fun MinerDetailScreen(
             }
 
             (t?.perChain ?: emptyList()).takeIf { it.isNotEmpty() }?.let { chains ->
-                SectionCard("PER-CHIP HEALTH") {
+                SectionCard(stringResource(R.string.det_section_per_chip)) {
                     PerChipHealthCard(chains, state.settings.useFahrenheit)
                 }
             }
 
             SectionCard(
-                "LIVE TELEMETRY",
+                stringResource(R.string.det_section_live_telemetry),
                 modifier = Modifier.onGloballyPositioned {
                     // boundsInParent here is the static content offset (does not move with scroll),
                     // so it's the value to scroll to. Kept current as the charts above settle.
@@ -239,75 +247,72 @@ fun MinerDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                 ) {
-                    Metric("Power", Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
-                    Metric("Efficiency", Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
-                    Metric("Chip temp", Units.formatTemp(t?.chipTempC?.value, state.settings.useFahrenheit))
-                    Metric("VR temp", Units.formatTemp(t?.vrTempC?.value, state.settings.useFahrenheit))
+                    Metric(stringResource(R.string.det_metric_power), Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
+                    Metric(stringResource(R.string.det_metric_efficiency), Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
+                    Metric(stringResource(R.string.det_metric_chip_temp), Units.formatTemp(t?.chipTempC?.value, state.settings.useFahrenheit))
+                    Metric(stringResource(R.string.det_metric_vr_temp), Units.formatTemp(t?.vrTempC?.value, state.settings.useFahrenheit))
                 }
                 Spacer(Modifier.height(12.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                 ) {
-                    Metric("Frequency", t?.frequencyMhz?.value?.let { "${it.toInt()} MHz" } ?: "—")
-                    Metric("Core V", t?.coreVoltageMv?.value?.let { "${it.toInt()} mV" } ?: "—")
+                    Metric(stringResource(R.string.det_metric_frequency), t?.frequencyMhz?.value?.let { "${it.toInt()} MHz" } ?: "—")
+                    Metric(stringResource(R.string.det_metric_core_v), t?.coreVoltageMv?.value?.let { "${it.toInt()} mV" } ?: "—")
                     t?.fans?.forEach { fan ->
                         Metric(
-                            "Fan ${fan.index + 1}",
+                            stringResource(R.string.det_metric_fan_n, fan.index + 1),
                             fan.rpm?.let { "$it RPM" } ?: fan.percent?.let { "$it%" } ?: "—",
                         )
                     }
-                    Metric("Uptime", Units.formatUptime(t?.uptimeSeconds))
+                    Metric(stringResource(R.string.det_metric_uptime), Units.formatUptime(t?.uptimeSeconds))
                 }
             }
 
-            SectionCard("SHARES & POOL") {
+            SectionCard(stringResource(R.string.det_section_shares_pool)) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                 ) {
-                    Metric("Accepted", t?.sharesAccepted?.toString() ?: "—")
-                    Metric("Rejected", t?.sharesRejected?.toString() ?: "—")
-                    Metric("Best diff", Units.formatDifficulty(t?.bestDifficulty))
-                    Metric("Session best", Units.formatDifficulty(t?.bestSessionDifficulty))
+                    Metric(stringResource(R.string.det_metric_accepted), t?.sharesAccepted?.toString() ?: "—")
+                    Metric(stringResource(R.string.det_metric_rejected), t?.sharesRejected?.toString() ?: "—")
+                    Metric(stringResource(R.string.det_metric_best_diff), Units.formatDifficulty(t?.bestDifficulty))
+                    Metric(stringResource(R.string.det_metric_session_best), Units.formatDifficulty(t?.bestSessionDifficulty))
                 }
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    "Pool: " + (t?.poolUrl?.let { "$it:${t.poolPort ?: "?"}" } ?: "—") +
-                        if (t?.usingFallbackPool == true) "  (fallback active)" else "",
+                    stringResource(R.string.det_pool_prefix, t?.poolUrl?.let { "$it:${t.poolPort ?: "?"}" } ?: "—") +
+                        if (t?.usingFallbackPool == true) stringResource(R.string.det_fallback_active) else "",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
             }
 
             if (state.capabilities?.let { hi3.hashkit.domain.model.Capability.LOGS in it } == true) {
-                SectionCard("LIVE LOGS") {
+                SectionCard(stringResource(R.string.det_section_live_logs)) {
                     androidx.compose.material3.OutlinedButton(onClick = onLogs) {
-                        Text("Open live log stream")
+                        Text(stringResource(R.string.det_open_live_logs))
                     }
                     Text(
-                        "Streams firmware logs over the miner's WebSocket while open. " +
-                            "Wallet addresses are redacted.",
+                        stringResource(R.string.det_live_logs_hint),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
                 }
             } else if (state.capabilities != null) {
-                SectionCard("EVENT LOG") {
+                SectionCard(stringResource(R.string.det_section_event_log)) {
                     androidx.compose.material3.OutlinedButton(onClick = onLogs) {
-                        Text("Open event log")
+                        Text(stringResource(R.string.det_open_event_log))
                     }
                     Text(
-                        "This firmware exposes no log stream, so Hashkit records health " +
-                            "events derived from each poll — reboots, temp-limit crossings, " +
-                            "disconnects, fan stops, reject spikes — and analyzes those.",
+                        stringResource(R.string.det_event_log_hint),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
                 }
             }
 
-            SectionCard("MAINTENANCE LOG") {
+            SectionCard(stringResource(R.string.det_section_maintenance)) {
                 val notes by viewModel.maintenanceNotes.collectAsStateWithLifecycle()
                 var noteText by remember { mutableStateOf("") }
                 var pendingPhoto by remember { mutableStateOf<android.net.Uri?>(null) }
@@ -323,7 +328,7 @@ fun MinerDetailScreen(
                 OutlinedTextField(
                     value = noteText,
                     onValueChange = { noteText = it },
-                    label = { Text("Add a note (e.g. \"repasted\", \"replaced fan 2\")") },
+                    label = { Text(stringResource(R.string.det_add_note_label)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -333,14 +338,14 @@ fun MinerDetailScreen(
                             viewModel.addMaintenanceNote(noteText, pendingPhoto)
                             noteText = ""; pendingPhoto = null
                         },
-                    ) { Text("Add note") }
+                    ) { Text(stringResource(R.string.det_add_note)) }
                     androidx.compose.material3.TextButton(onClick = {
                         photoPicker.launch(
                             androidx.activity.result.PickVisualMediaRequest(
                                 androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly,
                             )
                         )
-                    }) { Text("Gallery") }
+                    }) { Text(stringResource(R.string.det_gallery)) }
                     androidx.compose.material3.TextButton(onClick = {
                         runCatching {
                             val dir = java.io.File(context.cacheDir, "camera").apply { mkdirs() }
@@ -351,15 +356,14 @@ fun MinerDetailScreen(
                             cameraTarget = uri
                             cameraLauncher.launch(uri)
                         }
-                    }) { Text("Camera") }
+                    }) { Text(stringResource(R.string.det_camera)) }
                     if (pendingPhoto != null) {
                         Text("📷", style = MaterialTheme.typography.bodyMedium)
                     }
                 }
                 if (notes.isEmpty()) {
                     Text(
-                        "No maintenance notes yet. Log repastes, fan swaps, cleanings — they " +
-                            "stay on this device and are included in a full backup.",
+                        stringResource(R.string.det_no_notes),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -388,7 +392,7 @@ fun MinerDetailScreen(
                             ) {
                                 Icon(
                                     androidx.compose.material.icons.Icons.Filled.Delete,
-                                    contentDescription = "Delete note",
+                                    contentDescription = stringResource(R.string.det_cd_delete_note),
                                     tint = HiBrand.statusOffline,
                                 )
                             }
@@ -397,17 +401,22 @@ fun MinerDetailScreen(
                 }
             }
 
-            SectionCard("IDENTITY") {
-                InfoRow("Model", miner.identity.model)
-                InfoRow("ASIC", miner.identity.asicModel)
-                InfoRow("Firmware", listOfNotNull(miner.identity.firmwareFamily, miner.identity.firmwareVersion).joinToString(" "))
-                InfoRow("MAC", miner.identity.macAddress)
-                InfoRow("Serial", miner.identity.serialNumber)
-                InfoRow("Address", "${miner.host}:${miner.port}")
+            SectionCard(stringResource(R.string.det_section_identity)) {
+                InfoRow(stringResource(R.string.det_id_model), miner.identity.model)
+                InfoRow(stringResource(R.string.det_id_asic), miner.identity.asicModel)
+                InfoRow(stringResource(R.string.det_id_firmware), listOfNotNull(miner.identity.firmwareFamily, miner.identity.firmwareVersion).joinToString(" "))
+                InfoRow(stringResource(R.string.det_id_mac), miner.identity.macAddress)
+                InfoRow(stringResource(R.string.det_id_serial), miner.identity.serialNumber)
+                InfoRow(
+                    stringResource(R.string.det_id_address), "${miner.host}:${miner.port}",
+                    // Opens the machine's own web UI; the web interface lives on port 80
+                    // for every supported family even when the API port differs (e.g. 4028).
+                    onClick = { context.openUrl("http://${miner.host}") },
+                )
             }
 
             state.healthScore?.let { health ->
-                SectionCard("HEALTH SCORE") {
+                SectionCard(stringResource(R.string.det_section_health)) {
                     Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                         Text(
                             "${health.score}",
@@ -444,24 +453,19 @@ fun MinerDetailScreen(
                 model.contains("NerdAxe", ignoreCase = true)
             val needsLogin = "vnish" in fw || "bitmain" in fw || isNerdQaxe
             val loginLabel = when {
-                isNerdQaxe -> "TOTP secret (base32)"
-                "bitmain" in fw -> "Root web password"
-                else -> "VNish web password"
+                isNerdQaxe -> stringResource(R.string.det_login_label_totp)
+                "bitmain" in fw -> stringResource(R.string.det_login_label_bitmain)
+                else -> stringResource(R.string.det_login_label_vnish)
             }
             if (needsLogin) {
-                SectionCard("MINER LOGIN (FOR CONTROLS)") {
+                SectionCard(stringResource(R.string.det_section_login)) {
                     val credSet by viewModel.credentialSet.collectAsStateWithLifecycle()
                     var pw by remember { mutableStateOf("") }
                     Text(
                         when {
-                            credSet -> "A credential is saved (encrypted). Enter a new one to replace it, or clear it."
-                            isNerdQaxe ->
-                                "Only needed if OTP is enabled on the device: enter the TOTP secret " +
-                                    "from its enrollment QR (otpauth://…secret=…) to enable tune/reboot. " +
-                                    "Stored encrypted on this device only."
-                            else ->
-                                "Enter the miner's web password to enable controls. " +
-                                    "Stored encrypted on this device only."
+                            credSet -> stringResource(R.string.det_login_saved_hint)
+                            isNerdQaxe -> stringResource(R.string.det_login_totp_hint)
+                            else -> stringResource(R.string.det_login_password_hint)
                         },
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
@@ -475,16 +479,16 @@ fun MinerDetailScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        androidx.compose.material3.Button(onClick = { viewModel.setCredential(pw); pw = "" }) { Text("Save") }
+                        androidx.compose.material3.Button(onClick = { viewModel.setCredential(pw); pw = "" }) { Text(stringResource(R.string.common_save)) }
                         if (credSet) {
-                            androidx.compose.material3.OutlinedButton(onClick = { viewModel.setCredential("") }) { Text("Clear") }
+                            androidx.compose.material3.OutlinedButton(onClick = { viewModel.setCredential("") }) { Text(stringResource(R.string.det_clear)) }
                         }
                     }
                 }
             }
 
             state.capabilities?.let { caps ->
-                SectionCard("CONTROLS") {
+                SectionCard(stringResource(R.string.det_section_controls)) {
                     ControlsCard(
                         capabilities = caps,
                         tuneOptions = state.tuneOptions,
@@ -511,12 +515,12 @@ fun MinerDetailScreen(
                         androidx.compose.material3.OutlinedButton(
                             onClick = onAutotune,
                             modifier = Modifier.fillMaxWidth(),
-                        ) { Text("Efficiency autotuner (sweep J/TH)") }
+                        ) { Text(stringResource(R.string.det_autotuner)) }
                     }
                 }
             }
 
-            SectionCard("SAFETY CUTOFF (SMART PLUG)") {
+            SectionCard(stringResource(R.string.det_section_plug)) {
                 val plug by viewModel.plug.collectAsStateWithLifecycle()
                 SmartPlugCard(
                     plug = plug,
@@ -526,7 +530,7 @@ fun MinerDetailScreen(
             }
 
             if (state.alerts.isNotEmpty()) {
-                SectionCard("RECENT ALERTS") {
+                SectionCard(stringResource(R.string.det_section_alerts)) {
                     state.alerts.take(6).forEach { alert ->
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -540,7 +544,8 @@ fun MinerDetailScreen(
                                 else HiBrand.textSecondary,
                             )
                             Text(
-                                if (alert.resolvedAtEpochMs == null) "active" else "resolved",
+                                if (alert.resolvedAtEpochMs == null) stringResource(R.string.det_alert_active)
+                                else stringResource(R.string.det_alert_resolved),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (alert.resolvedAtEpochMs == null) HiBrand.statusDegraded
                                 else HiBrand.statusOnline,
@@ -551,17 +556,18 @@ fun MinerDetailScreen(
             }
 
             SectionCard(
-                title = "RAW API RESPONSE" + if (state.showRaw) "" else "  (tap to show)",
+                title = stringResource(R.string.det_section_raw) +
+                    if (state.showRaw) "" else stringResource(R.string.det_tap_to_show),
                 onClick = { viewModel.toggleRaw() },
             ) {
                 if (state.showRaw) {
                     Text(
-                        state.rawResponse ?: "No raw response captured yet",
+                        state.rawResponse ?: stringResource(R.string.det_no_raw),
                         style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
                         color = HiBrand.textSecondary,
                     )
                     Text(
-                        "Credential and Wi-Fi fields are redacted.",
+                        stringResource(R.string.det_raw_redacted),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.statusDegraded,
                     )
@@ -588,16 +594,23 @@ fun MinerDetailScreen(
     if (confirmDelete) {
         AlertDialog(
             onDismissRequest = { confirmDelete = false },
-            title = { Text("Remove miner?") },
-            text = { Text("This removes ${miner?.name ?: "this miner"} and keeps no telemetry history.") },
+            title = { Text(stringResource(R.string.det_remove_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.det_remove_body,
+                        miner?.name ?: stringResource(R.string.det_this_miner),
+                    )
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     confirmDelete = false
                     viewModel.deleteMiner(onDeleted = onBack)
-                }) { Text("Remove", color = HiBrand.statusOffline) }
+                }) { Text(stringResource(R.string.det_remove), color = HiBrand.statusOffline) }
             },
             dismissButton = {
-                TextButton(onClick = { confirmDelete = false }) { Text("Cancel") }
+                TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }
@@ -617,7 +630,7 @@ private fun NotePhoto(path: String) {
     if (bitmap != null) {
         androidx.compose.foundation.Image(
             bitmap = bitmap,
-            contentDescription = "Maintenance photo — tap to view full size",
+            contentDescription = stringResource(R.string.det_cd_note_photo),
             contentScale = androidx.compose.ui.layout.ContentScale.Crop,
             modifier = Modifier
                 .padding(top = 6.dp)
@@ -661,7 +674,7 @@ private fun NotePhoto(path: String) {
                 if (full != null) {
                     androidx.compose.foundation.Image(
                         bitmap = full,
-                        contentDescription = "Maintenance photo",
+                        contentDescription = stringResource(R.string.det_cd_photo),
                         contentScale = androidx.compose.ui.layout.ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxSize()
@@ -687,17 +700,17 @@ private fun NotePhoto(path: String) {
                             },
                     )
                     androidx.compose.material3.IconButton(
-                        onClick = { context.shareFile(java.io.File(path), "image/jpeg", "Share photo") },
+                        onClick = { context.shareFile(java.io.File(path), "image/jpeg", context.getString(R.string.det_share_photo)) },
                         modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
                     ) {
                         Icon(
                             androidx.compose.material.icons.Icons.Filled.Share,
-                            contentDescription = "Share photo",
+                            contentDescription = stringResource(R.string.det_share_photo),
                             tint = androidx.compose.ui.graphics.Color.White,
                         )
                     }
                 } else {
-                    Text("Photo file is missing", color = HiBrand.textSecondary)
+                    Text(stringResource(R.string.det_photo_missing), color = HiBrand.textSecondary)
                 }
             }
         }
@@ -727,15 +740,22 @@ private fun SectionCard(
 }
 
 @Composable
-private fun InfoRow(label: String, value: String?) {
+private fun InfoRow(label: String, value: String?, onClick: (() -> Unit)? = null) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { m -> if (onClick != null) m.clickable(onClick = onClick) else m }
+            .padding(vertical = 2.dp),
     ) {
         Text(label, style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary)
         Text(
             value?.takeIf { it.isNotBlank() } ?: "—",
             style = MaterialTheme.typography.bodySmall,
+            color = if (onClick != null) HiBrand.accent else androidx.compose.ui.graphics.Color.Unspecified,
+            textDecoration = if (onClick != null) {
+                androidx.compose.ui.text.style.TextDecoration.Underline
+            } else null,
         )
     }
 }
@@ -787,24 +807,24 @@ private fun EditMinerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit miner") },
+        title = { Text(stringResource(R.string.det_edit_miner_title)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
-                androidx.compose.material3.OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, singleLine = true)
-                androidx.compose.material3.OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Group") }, singleLine = true)
-                androidx.compose.material3.OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location (room/rack/shelf)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text(stringResource(R.string.det_name)) }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text(stringResource(R.string.det_group)) }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text(stringResource(R.string.det_location)) }, singleLine = true)
                 if (farms.isNotEmpty()) {
-                    Text("FARM", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    Text(stringResource(R.string.det_farm_header), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                     androidx.compose.foundation.layout.FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
                         androidx.compose.material3.FilterChip(
                             selected = farmId == null,
                             onClick = { farmId = null },
-                            label = { Text("None") },
+                            label = { Text(stringResource(R.string.common_none)) },
                         )
                         farms.forEach { farm ->
                             androidx.compose.material3.FilterChip(
@@ -815,28 +835,28 @@ private fun EditMinerDialog(
                         }
                     }
                 }
-                androidx.compose.material3.OutlinedTextField(value = tags, onValueChange = { tags = it }, label = { Text("Tags (comma-separated)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = tags, onValueChange = { tags = it }, label = { Text(stringResource(R.string.det_tags)) }, singleLine = true)
                 androidx.compose.material3.OutlinedTextField(
                     value = expected,
                     onValueChange = { expected = it },
-                    label = { Text("Expected hashrate (GH/s, blank = device-reported)") },
+                    label = { Text(stringResource(R.string.det_expected_hashrate)) },
                     singleLine = true,
                 )
-                androidx.compose.material3.OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("Notes") })
+                androidx.compose.material3.OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text(stringResource(R.string.det_notes)) })
                 Text(
-                    "ALERT OVERRIDES (blank = global default)",
+                    stringResource(R.string.det_alert_overrides_header),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
-                androidx.compose.material3.OutlinedTextField(value = ovHash, onValueChange = { ovHash = it }, label = { Text("Hashrate alert below (%)") }, singleLine = true)
-                androidx.compose.material3.OutlinedTextField(value = ovChip, onValueChange = { ovChip = it }, label = { Text("Chip temp alert (°C)") }, singleLine = true)
-                androidx.compose.material3.OutlinedTextField(value = ovVr, onValueChange = { ovVr = it }, label = { Text("VR temp alert (°C)") }, singleLine = true)
-                androidx.compose.material3.OutlinedTextField(value = ovReject, onValueChange = { ovReject = it }, label = { Text("Reject-rate alert (%)") }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovHash, onValueChange = { ovHash = it }, label = { Text(stringResource(R.string.det_ov_hashrate)) }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovChip, onValueChange = { ovChip = it }, label = { Text(stringResource(R.string.det_ov_chip)) }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovVr, onValueChange = { ovVr = it }, label = { Text(stringResource(R.string.det_ov_vr)) }, singleLine = true)
+                androidx.compose.material3.OutlinedTextField(value = ovReject, onValueChange = { ovReject = it }, label = { Text(stringResource(R.string.det_ov_reject)) }, singleLine = true)
                 Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text("Mute alerts for this miner", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.det_mute), style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "Still polled and charted; raises no alerts.",
+                            stringResource(R.string.det_mute_hint),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.textSecondary,
                         )
@@ -861,16 +881,18 @@ private fun EditMinerDialog(
                         farmId,
                     )
                 },
-            ) { Text("Save") }
+            ) { Text(stringResource(R.string.common_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 
+@Composable
 private fun lastReadingLabel(ts: Instant?): String {
-    if (ts == null) return "No successful reading yet"
+    if (ts == null) return stringResource(R.string.det_no_reading_yet)
     val secs = Duration.between(ts, Instant.now()).seconds
-    return if (secs < 90) "Last reading ${secs}s ago" else "Last reading ${secs / 60}m ago — stale"
+    return if (secs < 90) stringResource(R.string.det_last_reading_seconds, secs)
+    else stringResource(R.string.det_last_reading_minutes, secs / 60)
 }
 
 @Composable
@@ -889,22 +911,21 @@ private fun SmartPlugCard(
 
     Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
         Text(
-            "Cut power via a local smart plug when chip temp reaches the limit. On is always " +
-                "manual — the app never auto-restores power. Local addresses only.",
+            stringResource(R.string.det_plug_hint),
             style = MaterialTheme.typography.labelSmall,
             color = HiBrand.textSecondary,
         )
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Text("Plug", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.det_plug), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
             androidx.compose.foundation.layout.Box {
                 androidx.compose.material3.AssistChip(
                     onClick = { menu = true },
-                    label = { Text(type?.label ?: "Disabled") },
+                    label = { Text(type?.label ?: stringResource(R.string.common_disabled)) },
                 )
                 androidx.compose.material3.DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                    androidx.compose.material3.DropdownMenuItem(text = { Text("Disabled") }, onClick = { menu = false; type = null })
+                    androidx.compose.material3.DropdownMenuItem(text = { Text(stringResource(R.string.common_disabled)) }, onClick = { menu = false; type = null })
                     types.forEach { t ->
-                        androidx.compose.material3.DropdownMenuItem(text = { Text(t.label) }, onClick = { menu = false; type = t })
+                        androidx.compose.material3.DropdownMenuItem(text = { Text(stringResource(t.labelRes)) }, onClick = { menu = false; type = t })
                     }
                 }
             }
@@ -912,19 +933,19 @@ private fun SmartPlugCard(
         when (type) {
             null -> Unit
             hi3.hashkit.integrations.plug.PlugType.WEBHOOK -> {
-                androidx.compose.material3.OutlinedTextField(value = offUrl, onValueChange = { offUrl = it }, label = { Text("OFF URL") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-                androidx.compose.material3.OutlinedTextField(value = onUrl, onValueChange = { onUrl = it }, label = { Text("ON URL") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                androidx.compose.material3.OutlinedTextField(value = offUrl, onValueChange = { offUrl = it }, label = { Text(stringResource(R.string.det_off_url)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                androidx.compose.material3.OutlinedTextField(value = onUrl, onValueChange = { onUrl = it }, label = { Text(stringResource(R.string.det_on_url)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
             }
-            else -> androidx.compose.material3.OutlinedTextField(value = host, onValueChange = { host = it }, label = { Text("Plug IP / host") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            else -> androidx.compose.material3.OutlinedTextField(value = host, onValueChange = { host = it }, label = { Text(stringResource(R.string.det_plug_host)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
         }
         if (type != null) {
-            androidx.compose.material3.OutlinedTextField(value = cutoff, onValueChange = { cutoff = it }, label = { Text("Cut power at chip temp (°C)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            androidx.compose.material3.OutlinedTextField(value = cutoff, onValueChange = { cutoff = it }, label = { Text(stringResource(R.string.det_plug_cutoff)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
         }
         Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
-            androidx.compose.material3.Button(onClick = { onSave(type, host, onUrl, offUrl, cutoff.toDoubleOrNull()) }) { Text("Save") }
+            androidx.compose.material3.Button(onClick = { onSave(type, host, onUrl, offUrl, cutoff.toDoubleOrNull()) }) { Text(stringResource(R.string.common_save)) }
             if (type != null) {
-                androidx.compose.material3.OutlinedButton(onClick = { onTest(false) }) { Text("Test off") }
-                androidx.compose.material3.OutlinedButton(onClick = { onTest(true) }) { Text("Test on") }
+                androidx.compose.material3.OutlinedButton(onClick = { onTest(false) }) { Text(stringResource(R.string.det_test_off)) }
+                androidx.compose.material3.OutlinedButton(onClick = { onTest(true) }) { Text(stringResource(R.string.det_test_on)) }
             }
         }
     }

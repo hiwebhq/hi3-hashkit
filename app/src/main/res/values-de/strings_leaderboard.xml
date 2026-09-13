@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leaderboard screen (ui/leaderboard). -->
+<resources>
+    <string name="lead_title">Rangliste</string>
+    <string name="lead_rank_efficiency">Effizienz</string>
+    <string name="lead_rank_attainment">Zielerreichung</string>
+    <string name="lead_rank_hashrate">Hashrate</string>
+    <string name="lead_desc_efficiency">Sortiert nach Energieeffizienz (J/TH) — weniger ist besser. Braucht Leistungsdaten.</string>
+    <string name="lead_desc_attainment">Sortiert nach tatsächlicher vs. Soll-Hashrate. Braucht eine Soll-Hashrate.</string>
+    <string name="lead_desc_hashrate">Sortiert nach aktueller Hashrate.</string>
+    <string name="lead_empty">Noch keine Live-Miner mit dieser Metrik.</string>
+</resources>

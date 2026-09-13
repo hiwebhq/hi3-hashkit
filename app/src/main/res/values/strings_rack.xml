@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rack & site layout screen (ui/rack). -->
+<resources>
+    <string name="rack_title">Rack &amp; site layout</string>
+    <string name="rack_empty">No miners yet. Add miners and set each one\'s Location (room / rack / shelf) to see them arranged here.</string>
+    <string name="rack_group_stats">%1$d/%2$d up · %3$s</string>
+</resources>

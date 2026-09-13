@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner logs screen chrome (ui/logs). Log CONTENT from miners is never localized. -->
+<resources>
+    <string name="logs_title">%1$s logs</string>
+    <string name="logs_status_redacted">"%1$s  ·  wallets redacted"</string>
+    <string name="logs_status_connecting">Connecting…</string>
+    <string name="logs_status_live">Live</string>
+    <string name="logs_status_disconnected">Disconnected: %1$s</string>
+    <string name="logs_status_event_log">Event log — derived from polls (no firmware log stream)</string>
+    <string name="logs_show_raw">Show raw log</string>
+    <string name="logs_analyze">Analyze log</string>
+    <string name="logs_resume">Resume</string>
+    <string name="logs_pause">Pause</string>
+    <string name="logs_clear">Clear</string>
+    <string name="logs_reconnect">Reconnect</string>
+    <string name="logs_window_live">Live</string>
+    <string name="logs_analysis_summary">"LOG ANALYSIS  ·  %1$d lines  ·  %2$d errors  ·  %3$d warnings"</string>
+    <string name="logs_findings">FINDINGS</string>
+    <string name="logs_export">Export captured logs</string>
+    <string name="logs_export_chooser">Export logs</string>
+    <string name="logs_analysis_footer">Heuristic, on-device analysis — no cloud. Live analyzes the current stream; 1h/24h/7d analyze captured history (kept per miner, ~7 days). Wallets redacted.</string>
+</resources>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dashboard, fleet detail and bulk-action strings. Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Top bar / overflow menu -->
+    <string name="dash_cd_notifications">通知</string>
+    <string name="dash_cd_scan_tag">扫描矿机标签</string>
+    <string name="dash_cd_setup">设置向导</string>
+    <string name="dash_cd_exit_app">退出应用</string>
+    <string name="dash_cd_more">更多</string>
+    <string name="dash_menu_flow_view">流程视图</string>
+    <string name="dash_menu_network_scan">网络扫描</string>
+    <string name="dash_menu_leaderboard">排行榜</string>
+    <string name="dash_menu_fleet_table">机队表格</string>
+    <string name="dash_menu_wall_tv">墙屏 / 电视模式</string>
+    <string name="dash_menu_advanced">高级</string>
+    <string name="dash_menu_store">商店</string>
+    <string name="dash_menu_about">关于</string>
+    <string name="dash_menu_privacy_policy">隐私政策</string>
+    <string name="dash_cd_add_miner">添加矿机</string>
+
+    <!-- Exit confirmation -->
+    <string name="dash_exit_title">退出 Hi3 Hashkit？</string>
+    <string name="dash_exit_body">这会关闭应用并停止前台轮询。若已启用后台监控，其将继续运行。</string>
+    <string name="dash_exit_dont_ask">不再询问——下次直接退出</string>
+    <string name="dash_exit_confirm">退出</string>
+
+    <!-- Panic (whole fleet) -->
+    <string name="dash_panic_title">紧急操作——整个机队</string>
+    <string name="dash_panic_body">对所有矿机同时执行一项操作。发送前会显示哪些矿机受支持，并需要最终确认。\n\n• 全部暂停——让所有支持的矿机停止挖矿（可恢复）。\n• 全部重启——重启所有支持重启的矿机。</string>
+    <string name="dash_pause_all">全部暂停</string>
+    <string name="dash_reboot_all">全部重启</string>
+
+    <!-- Firmware banner / farm selector -->
+    <string name="dash_firmware_banner">AxeOS %1$s 已发布——%2$d 台矿机可更新。点按查看更新说明。</string>
+    <string name="dash_all_farms">所有矿场</string>
+    <string name="dash_cd_farm">矿场</string>
+
+    <!-- Miner list -->
+    <string name="dash_cd_rescan">重新扫描网络以发现新矿机</string>
+    <string name="dash_group_ungrouped">未分组</string>
+    <string name="dash_demo_banner">演示模式正在显示模拟矿机</string>
+    <string name="dash_demo_badge">演示</string>
+    <string name="dash_up_prefix">已运行 %1$s</string>
+    <string name="dash_no_telemetry">无遥测数据</string>
+    <string name="dash_pct_of_expected">预期的 %1$d%%</string>
+    <string name="dash_cd_card_style">卡片样式：%1$s。点按切换。</string>
+    <string name="dash_cd_sparkline">近期算力走势</string>
+
+    <!-- Empty state -->
+    <string name="dash_empty_title">还没有矿机</string>
+    <string name="dash_empty_body">Hi3 Miner Watch 是本地优先的：只与你网络内（或经由你已有的 Tailscale VPN）的矿机通信，无需任何账户。</string>
+    <string name="dash_empty_scan_add">扫描或添加矿机</string>
+    <string name="dash_empty_try_demo">试用演示模式</string>
+
+    <!-- Fleet summary card -->
+    <string name="dash_fleet_header">机队</string>
+    <string name="dash_fleet_title">机队</string>
+    <string name="dash_no_refresh_yet">尚未刷新</string>
+    <string name="dash_just_now">刚刚</string>
+    <string name="dash_ago_seconds">%1$d 秒前</string>
+    <string name="dash_ago_minutes_stale">%1$d 分钟前——已过期</string>
+    <string name="dash_counter_on">在线</string>
+    <string name="dash_counter_deg">降级</string>
+    <string name="dash_counter_off">离线</string>
+    <string name="dash_counter_stale">过期</string>
+    <string name="dash_metric_power">功耗</string>
+    <string name="dash_metric_efficiency">能效</string>
+    <string name="dash_metric_hottest">最高温</string>
+    <string name="dash_metric_energy_est">能耗估算</string>
+    <string name="dash_fleet_hashrate">机队算力</string>
+    <string name="dash_collecting_data">正在收集数据…</string>
+    <string name="dash_cd_fleet_trend_chart">机队算力走势图</string>
+
+    <!-- Miner card metrics -->
+    <string name="dash_metric_hashrate">算力</string>
+    <string name="dash_metric_chip">芯片</string>
+    <string name="dash_metric_eff">能效</string>
+    <string name="dash_metric_uptime">运行时间</string>
+
+    <!-- MMP card -->
+    <string name="dash_mmp_header">HI3 MMP 机队</string>
+    <string name="dash_updated_ago">%1$d 秒前更新</string>
+    <string name="dash_metric_mmp_hashrate">MMP 算力</string>
+    <string name="dash_metric_realization">实现率</string>
+    <string name="dash_metric_attention">需关注</string>
+    <string name="dash_metric_zero_hash">零算力</string>
+    <string name="dash_mmp_local_vs">本地 = %1$s，MMP 全网 = %2$s</string>
+
+    <!-- Pool card -->
+    <string name="dash_pool_updated_ago">矿池视图 · %1$d 秒前更新</string>
+    <string name="dash_metric_pool_hashrate">矿池侧算力</string>
+    <string name="dash_metric_workers">矿工数</string>
+    <string name="dash_metric_height">区块高度</string>
+    <string name="dash_pool_proxy_note">矿机通过你的 Stratum 代理连接矿池，因此矿池将其上报为 %1$d 个聚合矿工。下方对比机队总算力与矿池总算力。</string>
+    <string name="dash_pool_fleet_vs_pool">机队 vs 矿池</string>
+    <string name="dash_pool_miner_vs_pool">矿机 vs 矿池（矿池均值滞后于实时读数）</string>
+    <string name="dash_pool_no_local_match">%1$s（无本地匹配）</string>
+    <string name="dash_pool_not_seen">此矿池未见到：%1$s</string>
+
+    <!-- Profitability card -->
+    <string name="dash_profit_header">收益与能耗</string>
+    <string name="dash_metric_revenue_day">日收入</string>
+    <string name="dash_metric_power_cost_day">日电费</string>
+    <string name="dash_metric_net_day">日净收益</string>
+    <string name="dash_metric_btc_day">BTC/天</string>
+    <string name="dash_metric_energy_day">能耗/天</string>
+    <string name="dash_metric_heat">发热</string>
+    <string name="dash_profit_estimate_note">估算：BTC/天 按 %1$s BTC 区块补贴计算（不含交易费与矿池费）；计算收入需在设置中填写或获取 BTC 价格和全网难度。</string>
+
+    <!-- Solo odds card -->
+    <string name="dash_solo_header">Solo 爆块概率</string>
+    <string name="dash_metric_day">天</string>
+    <string name="dash_metric_week">周</string>
+    <string name="dash_metric_month">月</string>
+    <string name="dash_metric_year">年</string>
+    <string name="dash_solo_expected_time">期望出块时间：%1$s</string>
+    <string name="dash_solo_best_diff_suffix">"  ·  机队最佳难度：%1$s"</string>
+    <string name="dash_solo_disclaimer">这是统计期望而非预测——每个份额都是一张独立的彩票。</string>
+
+    <!-- Bitcoin network / halving card -->
+    <string name="dash_network_header">比特币网络</string>
+    <string name="dash_metric_block">区块</string>
+    <string name="dash_metric_subsidy">补贴</string>
+    <string name="dash_next_adjustment">下次难度调整：%1$s 个区块（约 %2$s），预计 %3$s%4$s%%</string>
+    <string name="dash_next_halving">下次减半：区块 %1$s——还有 %2$s 个区块（约 %3$s）</string>
+    <string name="dash_halving_note">估算数据来自 mempool.space（需自行开启）。按约 10 分钟一个区块计算；实际时间会有偏差。</string>
+
+    <!-- Bulk selection bar -->
+    <string name="dash_bulk_selected">已选 %1$d 台——批量操作仅在支持的设备上执行</string>
+    <string name="dash_bulk_restart">重启</string>
+    <string name="dash_bulk_pool">矿池</string>
+    <string name="dash_bulk_fan">风扇</string>
+    <string name="dash_bulk_pause">暂停</string>
+    <string name="dash_bulk_resume">恢复</string>
+    <string name="dash_bulk_clear">清除</string>
+
+    <!-- Bulk dialogs -->
+    <string name="dash_bulk_pool_title">批量更换矿池</string>
+    <string name="dash_field_stratum_url">Stratum URL</string>
+    <string name="dash_field_port">端口</string>
+    <string name="dash_field_worker">矿工 / 地址</string>
+    <string name="dash_bulk_pool_note">将应用到每台所选矿机的主矿池。已保存的矿池密码不受影响。接下来会显示逐台设备的预览。</string>
+    <string name="dash_preview">预览</string>
+    <string name="dash_bulk_fan_title">批量调整风扇</string>
+    <string name="dash_fan_automatic">自动（由固件管理）</string>
+    <string name="dash_fan_manual_speed">手动转速：%1$d%%</string>
+    <string name="dash_plan_will_run">将在 %1$d 台矿机上执行：</string>
+    <string name="dash_plan_skipped">已跳过 %1$d 台（不支持）：</string>
+    <string name="dash_plan_reboot_warning">每台矿机在重启期间会停止挖矿约 30–60 秒。</string>
+    <string name="dash_plan_executing">正在依次执行…</string>
+    <string name="dash_plan_run_on">在 %1$d 台矿机上执行</string>
+    <string name="dash_results_done">完成：%1$d 台成功</string>
+    <string name="dash_results_partial">部分完成：%1$d 台成功，%2$d 台失败</string>
+    <string name="dash_result_ok">成功</string>
+    <string name="dash_results_skipped">已跳过 %1$d 台不支持的矿机。</string>
+
+    <!-- Dashboard card labels (DashboardCard enum) -->
+    <string name="dash_card_fleet">机队概览</string>
+    <string name="dash_card_profit">收益</string>
+    <string name="dash_card_solo">Solo 爆块概率</string>
+    <string name="dash_card_halving">减半倒计时</string>
+    <string name="dash_card_pool">Hi3 Pool 统计</string>
+    <string name="dash_card_mmp">MMP 机队</string>
+    <string name="dash_card_miners">矿机列表</string>
+    <string name="dash_rescan_no_network">未检测到可扫描的本地网络。</string>
+    <string name="dash_rescan_too_large">本地网段太大，无法自动扫描；请使用添加 → 扫描。</string>
+    <string name="dash_rescan_scanning">正在扫描 %1$d 台主机…</string>
+    <string name="dash_rescan_done">重新扫描完成——发现 %1$d 台矿机。</string>
+</resources>

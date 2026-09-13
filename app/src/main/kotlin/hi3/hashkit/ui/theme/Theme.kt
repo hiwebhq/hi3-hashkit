@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import hi3.hashkit.R
 import androidx.compose.ui.graphics.luminance
 
 enum class ThemeMode { SYSTEM, DARK, LIGHT }
@@ -21,18 +22,18 @@ enum class ThemeMode { SYSTEM, DARK, LIGHT }
  * light accent tuned for contrast on the respective ground.
  */
 enum class ThemeColor(
-    val label: String,
+    @androidx.annotation.StringRes val labelRes: Int,
     val darkAccent: Color,
     val darkAccentAlt: Color,
     val lightAccent: Color,
     val lightAccentAlt: Color,
 ) {
-    BLUE("Blue", Color(0xFF3987E5), Color(0xFF6FB1FF), Color(0xFF1C6FD0), Color(0xFF1C6FD0)),
-    GREEN("Green", Color(0xFF2BB673), Color(0xFF5FD79B), Color(0xFF158A54), Color(0xFF158A54)),
-    ORANGE("Orange", Color(0xFFF08A24), Color(0xFFFFB05A), Color(0xFFD9720F), Color(0xFFD9720F)),
-    YELLOW("Yellow", Color(0xFFE6B800), Color(0xFFF3D46A), Color(0xFF9A7B00), Color(0xFF9A7B00)),
-    RED("Red", Color(0xFFE5484D), Color(0xFFFF7B7F), Color(0xFFC93338), Color(0xFFC93338)),
-    PURPLE("Purple", Color(0xFF8B5CF6), Color(0xFFB794FF), Color(0xFF6D3FD4), Color(0xFF6D3FD4));
+    BLUE(R.string.enum_theme_blue, Color(0xFF3987E5), Color(0xFF6FB1FF), Color(0xFF1C6FD0), Color(0xFF1C6FD0)),
+    GREEN(R.string.enum_theme_green, Color(0xFF2BB673), Color(0xFF5FD79B), Color(0xFF158A54), Color(0xFF158A54)),
+    ORANGE(R.string.enum_theme_orange, Color(0xFFF08A24), Color(0xFFFFB05A), Color(0xFFD9720F), Color(0xFFD9720F)),
+    YELLOW(R.string.enum_theme_yellow, Color(0xFFE6B800), Color(0xFFF3D46A), Color(0xFF9A7B00), Color(0xFF9A7B00)),
+    RED(R.string.enum_theme_red, Color(0xFFE5484D), Color(0xFFFF7B7F), Color(0xFFC93338), Color(0xFFC93338)),
+    PURPLE(R.string.enum_theme_purple, Color(0xFF8B5CF6), Color(0xFFB794FF), Color(0xFF6D3FD4), Color(0xFF6D3FD4));
 
     fun accent(dark: Boolean): Color = if (dark) darkAccent else lightAccent
     fun accentAlt(dark: Boolean): Color = if (dark) darkAccentAlt else lightAccentAlt

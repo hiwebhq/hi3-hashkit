@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +43,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.prefs.DEFAULT_HASH_RENTAL_URL
 import hi3.hashkit.integrations.hashpower.BraiinsHashpowerClient
 import hi3.hashkit.ui.theme.HiBrand
@@ -144,15 +146,15 @@ fun HashRentalScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hash rental", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.rental_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { editingUrl = true }) {
-                        Icon(Icons.Filled.Link, contentDescription = "Edit rent link")
+                        Icon(Icons.Filled.Link, contentDescription = stringResource(R.string.rental_edit_link))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -167,8 +169,7 @@ fun HashRentalScreen(
         ) {
             item {
                 Text(
-                    "Rent Bitcoin hashrate on the Braiins Hashpower spot market. This shows the live " +
-                        "public market — renting happens on Braiins, not in this app.",
+                    stringResource(R.string.rental_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -176,7 +177,7 @@ fun HashRentalScreen(
 
             item {
                 Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Show in", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
+                    Text(stringResource(R.string.rental_show_in), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
                     FilterChip(selected = !showUsd, onClick = { showUsd = false }, label = { Text("sat") })
                     FilterChip(
                         selected = showUsd,
@@ -189,7 +190,7 @@ fun HashRentalScreen(
             if (showUsd && state.btcPrice <= 0) {
                 item {
                     Text(
-                        "Set or fetch the BTC price in Settings to see ${state.currency} values.",
+                        stringResource(R.string.rental_set_btc_price, state.currency),
                         style = MaterialTheme.typography.labelSmall, color = HiBrand.statusDegraded,
                     )
                 }
@@ -202,23 +203,26 @@ fun HashRentalScreen(
                     var showDetails by remember { mutableStateOf(false) }
                     Column {
                         Text(
-                            "Braiins Hashpower is temporarily unavailable.",
+                            stringResource(R.string.rental_unavailable),
                             style = MaterialTheme.typography.bodyMedium,
                             color = HiBrand.statusDegraded,
                         )
                         if (state.market != null && state.asOfEpochMs > 0) {
                             Text(
-                                "Showing prices from " + java.text.DateFormat.getTimeInstance(
-                                    java.text.DateFormat.SHORT,
-                                ).format(java.util.Date(state.asOfEpochMs)) + ".",
+                                stringResource(
+                                    R.string.rental_showing_from,
+                                    java.text.DateFormat.getTimeInstance(
+                                        java.text.DateFormat.SHORT,
+                                    ).format(java.util.Date(state.asOfEpochMs)),
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
                             )
                         }
                         Row {
-                            TextButton(onClick = { viewModel.refresh() }) { Text("Retry") }
+                            TextButton(onClick = { viewModel.refresh() }) { Text(stringResource(R.string.common_retry)) }
                             TextButton(onClick = { showDetails = !showDetails }) {
-                                Text(if (showDetails) "Hide details" else "Details")
+                                Text(if (showDetails) stringResource(R.string.rental_hide_details) else stringResource(R.string.rental_details))
                             }
                         }
                         if (showDetails) {
@@ -236,31 +240,35 @@ fun HashRentalScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Column(Modifier.padding(16.dp)) {
-                            Text("SPOT MARKET", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                            Text(stringResource(R.string.rental_spot_market), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                             Text(
                                 m.bestAskSat?.let { price(it) } ?: "—",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = HiBrand.accent,
                             )
-                            Text("Best ask (cheapest hashrate to rent)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                            Text(stringResource(R.string.rental_best_ask_caption), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                             Spacer12()
-                            m.lastAvgPriceSat?.let { Line("Last avg price", price(it)) }
-                            m.bestBidSat?.let { Line("Best bid", price(it)) }
-                            m.availablePh?.let { Line("Hashrate available", "%,.0f PH/s".format(it)) }
-                            m.matchedPh?.let { Line("Hashrate matched", "%,.0f PH/s".format(it)) }
+                            m.lastAvgPriceSat?.let { Line(stringResource(R.string.rental_last_avg_price), price(it)) }
+                            m.bestBidSat?.let { Line(stringResource(R.string.rental_best_bid), price(it)) }
+                            m.availablePh?.let { Line(stringResource(R.string.rental_hashrate_available), "%,.0f PH/s".format(it)) }
+                            m.matchedPh?.let { Line(stringResource(R.string.rental_hashrate_matched), "%,.0f PH/s".format(it)) }
                         }
                     }
                 }
             }
 
             if (state.asks.isNotEmpty()) {
-                item { Text("CHEAPEST OFFERS", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
+                item { Text(stringResource(R.string.rental_cheapest_offers), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
                 for (ask in state.asks) {
                     item {
                         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(price(ask.priceSat), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
-                            Text("%,.0f PH/s avail".format(ask.availablePh), style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary)
+                            Text(
+                                stringResource(R.string.rental_ph_avail, "%,.0f".format(ask.availablePh)),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = HiBrand.textSecondary,
+                            )
                         }
                     }
                 }
@@ -268,13 +276,12 @@ fun HashRentalScreen(
 
             item {
                 Button(onClick = { openRent() }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
-                    Text("Rent on Braiins Hashpower ↗")
+                    Text(stringResource(R.string.rental_rent_button))
                 }
             }
             item {
                 Text(
-                    "Prices are live from Braiins Hashpower's public market API. Renting is completed " +
-                        "on hashpower.braiins.com with your own account.",
+                    stringResource(R.string.rental_footer),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -296,12 +303,11 @@ private fun RentUrlDialog(current: String, onDismiss: () -> Unit, onSave: (Strin
     var text by remember { mutableStateOf(current) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Rent link") },
+        title = { Text(stringResource(R.string.rental_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    "The URL the \"Rent\" button opens. Paste your Braiins Hashpower referral link " +
-                        "here if you have one — leave blank to reset to the default.",
+                    stringResource(R.string.rental_dialog_body),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -309,14 +315,14 @@ private fun RentUrlDialog(current: String, onDismiss: () -> Unit, onSave: (Strin
                     value = text,
                     onValueChange = { text = it },
                     singleLine = true,
-                    label = { Text("URL") },
+                    label = { Text(stringResource(R.string.rental_url_label)) },
                     placeholder = { Text(DEFAULT_HASH_RENTAL_URL) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         },
-        confirmButton = { TextButton(onClick = { onSave(text) }) { Text("Save") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = { onSave(text) }) { Text(stringResource(R.string.common_save)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nfcp_title">Programar tags NFC</string>
+    <string name="nfcp_no_miners">Nenhum minerador para programar.</string>
+    <string name="nfcp_written_progress">%1$d de %2$d gravadas</string>
+    <string name="nfcp_no_nfc_device">sem NFC neste aparelho</string>
+    <string name="nfcp_turn_on_nfc">ative o NFC para gravar</string>
+    <string name="nfcp_programming">Programando %1$d de %2$d</string>
+    <string name="nfcp_written">gravada</string>
+    <string name="nfcp_label_mac">MAC</string>
+    <string name="nfcp_label_ip">IP</string>
+    <string name="nfcp_label_location">Localização</string>
+    <string name="nfcp_hold_tag">Encoste uma tag NFC virgem na parte de trás do celular para gravá-la.</string>
+    <string name="nfcp_enable_nfc">Ative o NFC para gravar, ou use Mostrar QR para imprimir um adesivo.</string>
+    <string name="nfcp_prev">Anterior</string>
+    <string name="nfcp_skip">Pular</string>
+    <string name="nfcp_next">Próximo</string>
+    <string name="nfcp_show_qr">Mostrar QR</string>
+    <string name="nfcp_qr_for">QR de %1$s</string>
+    <string name="nfcp_qr_hint">Capture a tela para imprimir como adesivo — é lido na sobreposição AR do rack.</string>
+    <string name="nfcp_write_failed">Falha na gravação: %1$s</string>
+</resources>

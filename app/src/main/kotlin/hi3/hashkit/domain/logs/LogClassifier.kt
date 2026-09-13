@@ -1,5 +1,8 @@
 package hi3.hashkit.domain.logs
 
+import androidx.annotation.StringRes
+import hi3.hashkit.R
+
 /**
  * Classifies a single ESP-Miner / AxeOS log line into a severity and a category. Pure and
  * pattern-based (no cloud, no LLM), tuned to the ESP-IDF log format ("E (12345) tag: msg")
@@ -9,14 +12,14 @@ object LogClassifier {
 
     enum class Severity { INFO, WARN, ERROR }
 
-    enum class Category(val label: String) {
-        POOL("Pool"),
-        SHARE("Shares"),
-        ASIC("ASIC"),
-        THERMAL("Thermal"),
-        NETWORK("Network"),
-        SYSTEM("System"),
-        OTHER("Other"),
+    enum class Category(@StringRes val labelRes: Int) {
+        POOL(R.string.logan_cat_pool),
+        SHARE(R.string.logan_cat_shares),
+        ASIC(R.string.logan_cat_asic),
+        THERMAL(R.string.logan_cat_thermal),
+        NETWORK(R.string.logan_cat_network),
+        SYSTEM(R.string.logan_cat_system),
+        OTHER(R.string.logan_cat_other),
     }
 
     data class Classified(val severity: Severity, val category: Category, val text: String)

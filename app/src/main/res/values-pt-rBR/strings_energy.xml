@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Energy & profit screen (EnergyCostScreen). -->
+<resources>
+    <string name="energy_title">Energia e lucro</string>
+    <string name="energy_filter_hint">Filtrar (nome, IP, modelo)</string>
+
+    <!-- Sort chips (EnergySort) -->
+    <string name="energy_sort_cost">Custo</string>
+    <string name="energy_sort_efficiency">J/TH</string>
+    <string name="energy_sort_net">Líquido/dia</string>
+
+    <!-- Hints -->
+    <string name="energy_rate_hint">Defina sua tarifa de energia nas Configurações para ver estimativas de custo (o consumo aparece de qualquer forma).</string>
+    <string name="energy_revenue_hint">Receita e líquido exigem a dificuldade da rede e um preço do BTC — ative a busca automática ou defina-os nas Configurações. As estimativas excluem taxas de pool e de transação.</string>
+
+    <!-- Fleet total metrics -->
+    <string name="energy_fleet_energy_est">Energia est. da fazenda</string>
+    <string name="energy_revenue_est">Receita est.</string>
+    <string name="energy_net_est">Líquido est.</string>
+    <string name="energy_this_month">Este mês</string>
+    <string name="energy_energy">Energia</string>
+    <string name="energy_machines">Máquinas</string>
+
+    <!-- "$1.23/day" suffix around a pre-formatted money value -->
+    <string name="energy_per_day_fmt">%1$s/dia</string>
+
+    <!-- Row card -->
+    <string name="energy_offline">offline</string>
+    <string name="energy_power">Potência</string>
+    <string name="energy_efficiency">Eficiência</string>
+    <string name="energy_cost">Custo</string>
+    <string name="energy_revenue">Receita</string>
+    <string name="energy_net">Líquido</string>
+    <string name="energy_est_month">Mês est.</string>
+</resources>

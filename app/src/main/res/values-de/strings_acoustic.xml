@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Acoustic fan check screen (AcousticScreen). -->
+<resources>
+    <string name="ac_title">Akustischer Lüfter-Check</string>
+    <string name="ac_intro">Halte das Handy-Mikro wenige cm an die Lüfter des Miners, halte den Raum ruhig und nimm einen %1$d-Sekunden-Clip auf. Das Audio wird auf dem Gerät analysiert (FFT) und nie gespeichert oder gesendet. Dies ist ein grober, hinweisender Check — keine kalibrierte Diagnose.</string>
+    <string name="ac_record">%1$d s aufnehmen</string>
+    <string name="ac_listening">Höre zu…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">Audioaufnahme fehlgeschlagen. Prüfe die Mikrofon-Berechtigung und versuch es erneut.</string>
+    <string name="ac_clip_too_short">Clip zu kurz für eine Analyse.</string>
+    <string name="ac_mic_permission">Für das Abhören der Lüfter wird die Mikrofon-Berechtigung benötigt.</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">Kein offensichtlicher Defekt</string>
+    <string name="ac_check_fans">Lüfter prüfen</string>
+    <string name="ac_measured">GEMESSEN</string>
+    <string name="ac_dominant_tone">Dominanter Ton: %1$d Hz (≈ %2$d RPM, falls Grundton)</string>
+    <string name="ac_tonality">Tonalität: %1$s× · Hochfrequenz-Energie: %2$s%%</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: Alerts screen. -->
+<resources>
+    <string name="alerts_title">Оповещения</string>
+    <string name="alerts_ack_all">Подтв. все</string>
+    <string name="alerts_empty">Оповещений нет. Оповещения срабатывают, пока приложение открыто, и каждые 15+ минут, если в Настройках включён фоновый мониторинг.</string>
+    <string name="alerts_active">Активные</string>
+    <string name="alerts_resolved">Устранённые</string>
+    <string name="alerts_acknowledge">Подтвердить</string>
+</resources>

@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.data.db.FarmEntity
 import hi3.hashkit.ui.theme.HiBrand
 
@@ -31,20 +33,24 @@ internal fun TableSelectionBar(
 ) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
         Text(
-            "$count selected",
+            stringResource(R.string.table_selected_count, count),
             style = MaterialTheme.typography.labelSmall,
             color = HiBrand.accent,
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onAssignFarm) { Text("Assign to farm") }
+            OutlinedButton(onClick = onAssignFarm) { Text(stringResource(R.string.table_assign_to_farm)) }
             // Locate lights (miners whose firmware has no locate control are skipped).
-            OutlinedButton(onClick = { onBlink(true) }) { Text("Blink LED") }
-            OutlinedButton(onClick = { onBlink(false) }) { Text("Stop blink") }
-            OutlinedButton(onClick = onDelete) { Text("Delete", color = HiBrand.statusOffline) }
-            if (count < filteredCount) {
-                TextButton(onClick = onSelectAll) { Text("Select all $filteredCount") }
+            OutlinedButton(onClick = { onBlink(true) }) { Text(stringResource(R.string.table_blink_led)) }
+            OutlinedButton(onClick = { onBlink(false) }) { Text(stringResource(R.string.table_stop_blink)) }
+            OutlinedButton(onClick = onDelete) {
+                Text(stringResource(R.string.common_delete), color = HiBrand.statusOffline)
             }
-            TextButton(onClick = onClear) { Text("Clear") }
+            if (count < filteredCount) {
+                TextButton(onClick = onSelectAll) {
+                    Text(stringResource(R.string.table_select_all, filteredCount))
+                }
+            }
+            TextButton(onClick = onClear) { Text(stringResource(R.string.table_clear)) }
         }
     }
 }
@@ -59,12 +65,12 @@ internal fun AssignFarmDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Assign $count miner(s) to…") },
+        title = { Text(stringResource(R.string.table_assign_title, count)) },
         text = {
             Column {
                 if (farms.isEmpty()) {
                     Text(
-                        "No farms yet — create one under Advanced → Farms first.",
+                        stringResource(R.string.table_no_farms),
                         style = MaterialTheme.typography.bodySmall,
                         color = HiBrand.textSecondary,
                     )
@@ -73,12 +79,12 @@ internal fun AssignFarmDialog(
                     TextButton(onClick = { onPick(farm.id) }) { Text(farm.name) }
                 }
                 TextButton(onClick = { onPick(null) }) {
-                    Text("No farm (unassign)", color = HiBrand.textSecondary)
+                    Text(stringResource(R.string.table_no_farm_unassign), color = HiBrand.textSecondary)
                 }
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 
@@ -90,16 +96,15 @@ internal fun ConfirmDeleteSelectedDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete $count miner(s)?") },
+        title = { Text(stringResource(R.string.table_delete_title, count)) },
         text = {
-            Text(
-                "Removes them and their telemetry history from the app. " +
-                    "The physical machines are not touched.",
-            )
+            Text(stringResource(R.string.table_delete_body))
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Delete", color = HiBrand.statusOffline) }
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.common_delete), color = HiBrand.statusOffline)
+            }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

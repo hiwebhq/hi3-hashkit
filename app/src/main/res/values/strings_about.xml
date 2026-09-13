@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About screen -->
+    <string name="about_title">About</string>
+    <string name="about_section_about">ABOUT</string>
+    <string name="about_section_supported">SUPPORTED MINERS</string>
+    <string name="about_section_howto">HOW TO USE</string>
+
+    <string name="about_app_version">"%1$s  ·  v%2$s"</string>
+    <string name="about_app_desc">Hi3 Hashkit is a local-first Android dashboard for Bitcoin miners: it discovers, monitors, and safely controls your fleet on your own network — no account, no cloud, your data stays on your device.</string>
+
+    <string name="about_link_guide_title">User guide</string>
+    <string name="about_link_guide_subtitle">How to use Hi3 Hashkit (PDF, offline)</string>
+    <string name="about_link_guide_label">Open PDF</string>
+    <string name="about_link_hi3_subtitle">The Hi3 mining platform</string>
+    <string name="about_link_pool_title">Bitcoin pool services</string>
+    <string name="about_link_pool_subtitle">Solo, PPLNS and TIDES payouts on Hi3 Pool</string>
+    <string name="about_link_support_title">Help &amp; support</string>
+    <string name="about_link_support_subtitle">Assistance with this app and fleet management</string>
+    <string name="about_link_share_title">Share app</string>
+    <string name="about_link_share_subtitle">Send a friend the download link</string>
+    <string name="about_link_feedback_title">Feature request</string>
+    <string name="about_link_feedback_subtitle">Suggest an improvement or report an issue</string>
+
+    <string name="about_guide_error">Couldn\'t open the guide — no PDF viewer installed?</string>
+    <string name="about_share_subject">%1$s — local-first Bitcoin miner dashboard</string>
+    <string name="about_share_text">Check out %1$s, a local-first Android app for monitoring and safely controlling Bitcoin miners: https://mmp.hi3.cc/hashkit</string>
+    <string name="about_share_chooser">Share %1$s</string>
+
+    <string name="about_supported_intro">Support is by firmware/API family, so every model in a family works — you don\'t need each one. \"Verified\" = confirmed on real hardware; \"compat-gated\" = same firmware API, pending confirmation on that model (basic telemetry is safe). Unverified controls are never guessed.</string>
+
+    <!-- Supported miner families -->
+    <string name="about_miner_bitaxe_family">Bitaxe / ESP-Miner (AxeOS)</string>
+    <string name="about_miner_bitaxe_models">Max (202), Ultra (204), Supra (400), Gamma (600), Gamma Turbo, Supra Hex</string>
+    <string name="about_miner_bitaxe_support">Full monitoring + safe controls: reboot, pool, fan, firmware-bounded tuning + autotune.</string>
+    <string name="about_miner_nerdqaxe_family">NerdQAxe (ESP-Miner fork)</string>
+    <string name="about_miner_nerdqaxe_models">NerdQAxe++, NerdQAxe+, NerdQAxe+ Hydro, Lucky-Miner-style forks</string>
+    <string name="about_miner_nerdqaxe_support">Full monitoring; controls stay off until verified on that firmware.</string>
+    <string name="about_miner_bmminer_family">Antminer — stock Bitmain (BMMiner)</string>
+    <string name="about_miner_bmminer_models">S21 Pro (verified); S21+, S21+ Hyd, S21 Hyd, S21 XP, S19 series, S17 series (compat-gated)</string>
+    <string name="about_miner_bmminer_support">Hashrate, chip temps, fans, frequency, expected, ASIC count, shares, uptime, pool. No controls; power isn\'t in this API.</string>
+    <string name="about_miner_vnish_family">Antminer — VNish firmware</string>
+    <string name="about_miner_vnish_models">S21 Pro (verified) and other VNish-flashed Antminers</string>
+    <string name="about_miner_vnish_support">Full monitoring including wall power and efficiency (J/TH). No controls.</string>
+    <string name="about_miner_luxos_family">Antminer — LuxOS firmware</string>
+    <string name="about_miner_luxos_models">LuxOS-flashed Antminers</string>
+    <string name="about_miner_luxos_support">Basic monitoring: hashrate, shares, uptime, pool.</string>
+    <string name="about_miner_avalon_family">Canaan Avalon</string>
+    <string name="about_miner_avalon_models">Nano 3 (verified); Nano 3S, Avalon Q, Avalon Mini 3 (compat-gated)</string>
+    <string name="about_miner_avalon_support">Nano 3: monitoring + Pause/Resume/Reboot. Others: monitoring over the CGMiner API.</string>
+    <string name="about_miner_braiins_family">Braiins OS (BOSer)</string>
+    <string name="about_miner_braiins_models">Braiins Mini Miner BMM 100 (verified)</string>
+    <string name="about_miner_braiins_support">Full monitoring over the CGMiner API. No power sensor on the unit → power unavailable.</string>
+    <string name="about_miner_whatsminer_family">WhatsMiner (MicroBT)</string>
+    <string name="about_miner_whatsminer_models">M2X / M3X / M5X / M6X families (compat-gated)</string>
+    <string name="about_miner_whatsminer_support">Hashrate, shares, uptime, pool, chip temp, fans, and power where reported. No controls.</string>
+    <string name="about_miner_demo_family">Demo</string>
+    <string name="about_miner_demo_models">Synthetic miners</string>
+    <string name="about_miner_demo_support">Demo mode only — never mixed with real miners.</string>
+
+    <!-- How-to steps -->
+    <string name="about_howto_1_title">1 · Get on the same network</string>
+    <string name="about_howto_1_body">Connect this phone to the Wi-Fi/LAN your miners are on — or bring up Tailscale and advertise the site\'s subnet route to reach them remotely.</string>
+    <string name="about_howto_2_title">2 · Let it discover your miners</string>
+    <string name="about_howto_2_body">Hi3 Hashkit scans your local subnet automatically at launch, so miners usually appear on their own. Open the ⋮ menu → Network scan to see your IP, change the range, or start/stop a scan. Nothing is added but devices that answer a known miner API.</string>
+    <string name="about_howto_3_title">3 · Or add one by hand</string>
+    <string name="about_howto_3_body">Tap + on the dashboard to add a miner by IP/hostname, or run a scan of a CIDR. Only private LAN and Tailscale addresses are allowed.</string>
+    <string name="about_howto_4_title">4 · Organize into farms</string>
+    <string name="about_howto_4_body">Use ⋮ → Farms to group miners by site, each with its own scan subnet. Mark one as the default (it opens on launch) and switch the dashboard between farms with the chip at the top. Adding a farm offers an immediate scan of its subnet.</string>
+    <string name="about_howto_5_title">5 · Read the dashboard honestly</string>
+    <string name="about_howto_5_body">Every value is tagged by source — measured, reported, calculated, estimated or unavailable — so an estimate is never shown as fact. Tap a miner for live telemetry, history charts and the raw response.</string>
+    <string name="about_howto_6_title">6 · Control safely (where verified)</string>
+    <string name="about_howto_6_body">On supported firmware you can reboot, change the pool, adjust fans and apply firmware-bounded tuning — each with a confirmation and rollback. Long-press cards to select several and run bulk actions; a preview shows which devices support each.</string>
+    <string name="about_howto_7_title">7 · Turn on alerts when ready</string>
+    <string name="about_howto_7_body">Alerts are off by default. Enable them in Setup → Alerts to get offline, temperature, fan and reject-rate notifications with recovery notices, and set per-miner overrides.</string>
+    <string name="about_howto_8_title">8 · Stay private</string>
+    <string name="about_howto_8_body">Everything stays on this device. The Hi3 Pool and MMP views are optional, read-only, and off by default.</string>
+</resources>

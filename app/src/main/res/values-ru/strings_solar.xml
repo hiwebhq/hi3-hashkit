@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран майнинга на солнечном избытке (SolarSurplusScreen). -->
+<resources>
+    <string name="solar_title">Майнинг на солнечном избытке</string>
+    <string name="solar_intro">Ограничивайте мощность парка по вашему экспорту солнечной энергии в сеть. Считывает датчик экспорта/избытка (в ваттах) из вашего локального Home Assistant через его REST API — токен хранится в зашифрованном виде и отправляется только на ваш собственный хост HA в вашей сети.</string>
+
+    <!-- Карточка живого сигнала -->
+    <string name="solar_export_label">СОЛНЕЧНЫЙ ЭКСПОРТ</string>
+    <string name="solar_fleet_draw">Потребление парка %1$s W · онлайн: %2$d</string>
+    <string name="solar_reco_run">Рекомендация: есть избыток — возобновить майнинг</string>
+    <string name="solar_reco_curtail">Рекомендация: избытка нет — ограничить майнинг</string>
+    <string name="solar_reco_hold">Рекомендация: удерживать (в пределах мёртвой зоны)</string>
+
+    <!-- Действия -->
+    <string name="solar_check_now">Проверить сейчас</string>
+    <string name="solar_checking">Проверка…</string>
+    <string name="solar_resume_fleet">Возобновить парк</string>
+    <string name="solar_curtail_fleet">Ограничить парк</string>
+
+    <!-- Конфигурация -->
+    <string name="solar_base_url_label">Базовый URL HA (частный/Tailscale)</string>
+    <string name="solar_entity_label">entity_id датчика (ватты)</string>
+    <string name="solar_token_label">Долгоживущий токен</string>
+    <string name="solar_token_saved_label">Долгоживущий токен (сохранён — оставьте пустым, чтобы не менять)</string>
+    <string name="solar_resume_label">Возобновлять ≥ W</string>
+    <string name="solar_curtail_label">Ограничивать ≤ W</string>
+    <string name="solar_save_config">Сохранить конфигурацию</string>
+</resources>

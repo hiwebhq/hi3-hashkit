@@ -22,7 +22,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.data.repo.BulkAction
 import hi3.hashkit.data.repo.BulkOutcome
 import hi3.hashkit.data.repo.BulkPlan
@@ -58,15 +60,14 @@ fun BulkParamsDialog(
             val portInt = port.toIntOrNull()
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text("Bulk pool change") },
+                title = { Text(stringResource(R.string.dash_bulk_pool_title)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text("Stratum URL") }, singleLine = true)
-                        OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text("Port") }, singleLine = true)
-                        OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text("Worker / address") }, singleLine = true)
+                        OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text(stringResource(R.string.dash_field_stratum_url)) }, singleLine = true)
+                        OutlinedTextField(value = port, onValueChange = { port = it }, label = { Text(stringResource(R.string.dash_field_port)) }, singleLine = true)
+                        OutlinedTextField(value = worker, onValueChange = { worker = it }, label = { Text(stringResource(R.string.dash_field_worker)) }, singleLine = true)
                         Text(
-                            "Applied to each selected miner's PRIMARY pool. Stored pool " +
-                                "passwords are preserved. You will see a per-device preview next.",
+                            stringResource(R.string.dash_bulk_pool_note),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.statusDegraded,
                         )
@@ -76,9 +77,9 @@ fun BulkParamsDialog(
                     TextButton(
                         enabled = url.isNotBlank() && worker.isNotBlank() && portInt != null && portInt in 1..65535,
                         onClick = { onPlan(BulkAction.SetPool(url.trim(), portInt ?: 0, worker.trim())) },
-                    ) { Text("Preview") }
+                    ) { Text(stringResource(R.string.dash_preview)) }
                 },
-                dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+                dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
             )
         }
         BulkActionKind.FAN -> {
@@ -86,15 +87,15 @@ fun BulkParamsDialog(
             var percent by rememberSaveable { mutableStateOf(70f) }
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text("Bulk fan change") },
+                title = { Text(stringResource(R.string.dash_bulk_fan_title)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Automatic (firmware-managed)", Modifier.padding(end = 12.dp))
+                            Text(stringResource(R.string.dash_fan_automatic), Modifier.padding(end = 12.dp))
                             Switch(checked = auto, onCheckedChange = { auto = it })
                         }
                         if (!auto) {
-                            Text("Manual speed: ${percent.roundToInt()}%")
+                            Text(stringResource(R.string.dash_fan_manual_speed, percent.roundToInt()))
                             Slider(value = percent, onValueChange = { percent = it }, valueRange = 20f..100f)
                         }
                     }
@@ -106,9 +107,9 @@ fun BulkParamsDialog(
                                 if (auto) FanControl.Automatic() else FanControl.Manual(percent.roundToInt())
                             )
                         )
-                    }) { Text("Preview") }
+                    }) { Text(stringResource(R.string.dash_preview)) }
                 },
-                dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+                dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
             )
         }
     }
@@ -123,21 +124,21 @@ fun BulkPlanDialog(
 ) {
     AlertDialog(
         onDismissRequest = { if (!running) onDismiss() },
-        title = { Text(plan.action.label) },
+        title = { Text(stringResource(plan.action.labelRes, *plan.action.labelArgs.toTypedArray())) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 modifier = Modifier.heightIn(max = 380.dp).verticalScroll(rememberScrollState()),
             ) {
                 Text(
-                    "Will run on ${plan.supported.size} miner(s):",
+                    stringResource(R.string.dash_plan_will_run, plan.supported.size),
                     style = MaterialTheme.typography.labelMedium,
                     color = HiBrand.statusOnline,
                 )
                 plan.supported.forEach { Text("• ${it.name}", style = MaterialTheme.typography.bodySmall) }
                 if (plan.skipped.isNotEmpty()) {
                     Text(
-                        "Skipped ${plan.skipped.size} (unsupported):",
+                        stringResource(R.string.dash_plan_skipped, plan.skipped.size),
                         style = MaterialTheme.typography.labelMedium,
                         color = HiBrand.statusDegraded,
                     )
@@ -151,23 +152,23 @@ fun BulkPlanDialog(
                 }
                 if (plan.action is BulkAction.Reboot) {
                     Text(
-                        "Each miner stops hashing for ~30–60 s while it restarts.",
+                        stringResource(R.string.dash_plan_reboot_warning),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.statusDegraded,
                     )
                 }
                 if (running) {
-                    Text("Executing sequentially…", color = HiBrand.accentAlt)
+                    Text(stringResource(R.string.dash_plan_executing), color = HiBrand.accentAlt)
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onExecute, enabled = !running && plan.supported.isNotEmpty()) {
-                Text("Run on ${plan.supported.size} miner(s)", color = HiBrand.statusDegraded)
+                Text(stringResource(R.string.dash_plan_run_on, plan.supported.size), color = HiBrand.statusDegraded)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !running) { Text("Cancel") }
+            TextButton(onClick = onDismiss, enabled = !running) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }
@@ -184,7 +185,8 @@ fun BulkResultsDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                if (failed == 0) "Done: $ok succeeded" else "Partial: $ok succeeded, $failed failed",
+                if (failed == 0) stringResource(R.string.dash_results_done, ok)
+                else stringResource(R.string.dash_results_partial, ok, failed),
                 color = if (failed == 0) HiBrand.statusOnline else HiBrand.statusDegraded,
             )
         },
@@ -195,7 +197,7 @@ fun BulkResultsDialog(
             ) {
                 outcomes.forEach { outcome ->
                     val (label, color) = when (val r = outcome.result) {
-                        is ActionResult.Success -> "ok" to HiBrand.statusOnline
+                        is ActionResult.Success -> stringResource(R.string.dash_result_ok) to HiBrand.statusOnline
                         is ActionResult.Failure -> r.message to HiBrand.statusOffline
                         is ActionResult.Unsupported -> r.reason to HiBrand.statusDegraded
                     }
@@ -214,13 +216,13 @@ fun BulkResultsDialog(
                 }
                 if (skippedCount > 0) {
                     Text(
-                        "$skippedCount unsupported miner(s) were skipped.",
+                        stringResource(R.string.dash_results_skipped, skippedCount),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) } },
     )
 }

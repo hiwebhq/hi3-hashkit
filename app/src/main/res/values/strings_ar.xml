@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ar_title_qr">Scan tag / QR</string>
+    <string name="ar_title_nfc">Scan NFC</string>
+    <string name="ar_camera_needed">Camera access is needed to read the miner QR stickers.</string>
+    <string name="ar_nfc_still_works">" NFC tags still work — just tap one."</string>
+    <string name="ar_grant_camera">Grant camera</string>
+    <string name="ar_no_match">No miner matches \"%1$s\". Program the tag/QR with the miner\'s name, IP, MAC or id.</string>
+    <string name="ar_point_qr">Point at a miner\'s QR sticker</string>
+    <string name="ar_or_tap_nfc">" or tap its NFC tag"</string>
+    <string name="ar_guidance_suffix">" — name, IP, MAC or id. Live stats appear here."</string>
+    <string name="ar_turn_on_nfc_suffix">"  (Turn on NFC to tap tags.)"</string>
+    <string name="ar_add_dialog_title">Add this miner?</string>
+    <string name="ar_a_miner">a miner</string>
+    <string name="ar_add_body">The tag points to %1$s at %2$s, which isn\'t in the app yet.</string>
+    <string name="ar_add_location_line">\nLocation: %1$s</string>
+    <string name="ar_add_confirm_line">\n\nAdd it now by probing that address?</string>
+    <string name="ar_no_nfc_hw">This device has no NFC.</string>
+    <string name="ar_turn_on_nfc">Turn on NFC to scan tags.</string>
+    <string name="ar_hold_tag">Hold a miner\'s NFC tag to the back of your phone.</string>
+    <string name="ar_nfc_body">It opens that miner\'s live telemetry straight away — no camera needed.</string>
+    <string name="ar_stat_hash">HASH</string>
+    <string name="ar_stat_power">POWER</string>
+    <string name="ar_stat_temp">TEMP</string>
+    <string name="ar_tap_to_open">Tap to open · scan another marker to switch</string>
+</resources>

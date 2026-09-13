@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Site Map: setup -->
+    <string name="site_title">Mapa do site</string>
+    <string name="site_setup_intro">Defina o site e depois percorra os racks pressionando o botão IP Report de cada minerador. A captura sempre começa no Prédio 1, Rack 1, Nível 1, Posição 1 (extremo esquerdo), preenche cada nível da esquerda→direita, depois o nível acima, depois o próximo rack.</string>
+    <string name="site_name_label">Nome do site (usado em Salvar na fazenda)</string>
+    <string name="site_buildings">Prédios</string>
+    <string name="site_racks_per_building">Racks por prédio</string>
+    <string name="site_tiers_per_rack">Níveis por rack (prateleiras)</string>
+    <string name="site_positions_per_tier">Posições por nível (mineradores por fileira)</string>
+    <string name="site_setup_summary">%1$d slots no total — %2$d por rack, %3$d por prédio.</string>
+    <string name="site_supported_models">Modelos suportados</string>
+    <string name="site_supported_models_body">A captura escuta o broadcast do botão IP Report (UDP 14235): Bitmain Antminer (era S9 a S21) com firmware de fábrica, Braiins OS e LuxOS. O app devolve um ack para o minerador piscar verde quando o toque é registrado. WhatsMiner, Canaan e Bitaxe/ESP-Miner não enviam esse broadcast — preencha os slots deles com Manual. O celular precisa estar no Wi-Fi da LAN dos mineradores (broadcasts não cruzam roteadores nem o Tailscale).</string>
+    <string name="site_start_capture">Iniciar captura</string>
+
+    <!-- Site Map: capture -->
+    <string name="site_capture_finished">Captura concluída</string>
+    <string name="site_listening">Escutando em UDP 14235 — pressione o botão IP Report em:</string>
+    <string name="site_paused">Pausado — toques são ignorados</string>
+    <string name="site_slot_label">Prédio %1$d · Rack %2$d · Nível %3$d · Posição %4$d</string>
+    <string name="site_captured_count">%1$d de %2$d capturados</string>
+    <string name="site_skipped_suffix">" · %1$d pulados"</string>
+    <string name="site_last_event">Último: %1$s</string>
+    <string name="site_pause">Pausar</string>
+    <string name="site_resume">Retomar</string>
+    <string name="site_undo">Desfazer</string>
+    <string name="site_skip_slot">Pular slot</string>
+    <string name="site_manual">Manual</string>
+    <string name="site_prev_rack">Rack anterior</string>
+    <string name="site_next_rack">Próximo rack</string>
+    <string name="site_building_rack">Prédio %1$d · Rack %2$d</string>
+    <string name="site_tier_hint">O nível 1 é a fileira de baixo; as posições vão da esquerda → direita.</string>
+
+    <!-- Site Map: results -->
+    <string name="site_results">Resultados (%1$d)</string>
+    <string name="site_export_csv">Exportar CSV</string>
+    <string name="site_share_csv_title">CSV do mapa do site</string>
+    <string name="site_new_session">Nova sessão</string>
+    <string name="site_scanning_progress">Varrendo… %1$d/%2$d</string>
+    <string name="site_scan_miners">Varrer mineradores (API): MAC · nº de série · pool · worker · hashrate</string>
+    <string name="site_farm_name">Nome da fazenda</string>
+    <string name="site_existing_farms">Existentes: %1$s</string>
+    <string name="site_saving">Salvando…</string>
+    <string name="site_save_to_farm">Salvar na fazenda</string>
+    <string name="site_col_location">Localização</string>
+    <string name="site_col_ip">IP</string>
+    <string name="site_col_mac">MAC</string>
+    <string name="site_col_source">Origem</string>
+    <string name="site_source_manual">manual</string>
+    <string name="site_source_button">botão</string>
+    <string name="site_scan_failed">falha na varredura: %1$s</string>
+    <string name="site_sn_prefix">SN %1$s</string>
+    <string name="site_no_details">nenhum detalhe informado</string>
+    <string name="site_manual_fill_title">Preenchimento manual</string>
+    <string name="site_manual_fill_body">Digite o IP do minerador no slot atual — para equipamentos sem botão IP Report (WhatsMiner, Canaan, Bitaxe).</string>
+    <string name="site_ipv4_label">Endereço IPv4</string>
+    <string name="site_fill_slot">Preencher slot</string>
+
+    <!-- Site Map: ViewModel messages -->
+    <string name="site_error_enter_numbers">Informe primeiro o número de prédios, racks, níveis e posições.</string>
+    <string name="site_error_invalid_ipv4">\"%1$s\" não é um endereço IPv4 válido.</string>
+    <string name="site_listener_failed">O listener falhou: %1$s</string>
+    <string name="site_undid">Desfeito %1$s (%2$s)</string>
+    <string name="site_saved_result">Salvo em \"%1$s\": %2$d adicionados, %3$d já conhecidos</string>
+    <string name="site_saved_failed_suffix">", %1$d falharam"</string>
+
+    <!-- Heatmap -->
+    <string name="site_heatmap_title">Mapa de calor</string>
+    <string name="site_heatmap_empty">Nenhum minerador tem localização de rack ainda. Rode o Mapa do site (ou defina uma Localização como B1-R1-T1-P1 no diálogo Editar de um minerador) e os racks aparecem aqui, coloridos pela temperatura dos chips ao vivo.</string>
+    <string name="site_heatmap_tier_hint">O nível 1 é a fileira de baixo; as posições vão da esquerda → direita. Toque em uma célula para abrir o minerador.</string>
+    <string name="site_unplaced">%1$d minerador(es) sem localização B/R/T/P não são mostrados.</string>
+    <string name="site_cell_off">OFF</string>
+    <string name="site_empty_slot">Slot vazio</string>
+    <string name="site_legend_offline">offline / sem dados</string>
+</resources>

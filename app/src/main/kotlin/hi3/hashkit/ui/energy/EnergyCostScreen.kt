@@ -1,5 +1,6 @@
 package hi3.hashkit.ui.energy
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +38,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
 import hi3.hashkit.data.repo.MinerRepository
@@ -71,10 +74,10 @@ data class EnergyRow(
     val online: Boolean,
 )
 
-enum class EnergySort(val label: String) {
-    COST("Cost"),
-    EFFICIENCY("J/TH"),
-    NET("Net/day"),
+enum class EnergySort(@StringRes val labelRes: Int) {
+    COST(R.string.energy_sort_cost),
+    EFFICIENCY(R.string.energy_sort_efficiency),
+    NET(R.string.energy_sort_net),
 }
 
 data class EnergyCostState(
@@ -192,10 +195,10 @@ fun EnergyCostScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Energy & profit", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.energy_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -207,7 +210,7 @@ fun EnergyCostScreen(
             OutlinedTextField(
                 value = state.query,
                 onValueChange = viewModel::setQuery,
-                label = { Text("Filter (name, IP, model)") },
+                label = { Text(stringResource(R.string.energy_filter_hint)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             )
@@ -219,13 +222,13 @@ fun EnergyCostScreen(
                     FilterChip(
                         selected = state.sort == s,
                         onClick = { viewModel.setSort(s) },
-                        label = { Text(s.label) },
+                        label = { Text(stringResource(s.labelRes)) },
                     )
                 }
             }
             if (state.ratePerKwh <= 0.0) {
                 Text(
-                    "Set your electricity rate in Settings to see cost estimates (energy use shows regardless).",
+                    stringResource(R.string.energy_rate_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -233,8 +236,7 @@ fun EnergyCostScreen(
             }
             if (!state.revenueAvailable) {
                 Text(
-                    "Revenue and net need network difficulty and a BTC price — enable auto-fetch " +
-                        "or set them in Settings. Estimates exclude pool and transaction fees.",
+                    stringResource(R.string.energy_revenue_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -247,20 +249,24 @@ fun EnergyCostScreen(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
             ) {
                 Row(Modifier.padding(14.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    Metric("Fleet Energy Est.", state.totalCostDay?.let { money(it, state.currency) + "/day" } ?: "—", valueColor = HiBrand.accent)
                     Metric(
-                        "Revenue Est.",
-                        state.totalRevenueDay?.let { money(it, state.currency) + "/day" } ?: "—",
+                        stringResource(R.string.energy_fleet_energy_est),
+                        state.totalCostDay?.let { stringResource(R.string.energy_per_day_fmt, money(it, state.currency)) } ?: "—",
+                        valueColor = HiBrand.accent,
+                    )
+                    Metric(
+                        stringResource(R.string.energy_revenue_est),
+                        state.totalRevenueDay?.let { stringResource(R.string.energy_per_day_fmt, money(it, state.currency)) } ?: "—",
                         source = state.totalRevenueDay?.let { ValueSource.ESTIMATED },
                     )
                     Metric(
-                        "Net Est.",
-                        state.totalNetDay?.let { money(it, state.currency) + "/day" } ?: "—",
+                        stringResource(R.string.energy_net_est),
+                        state.totalNetDay?.let { stringResource(R.string.energy_per_day_fmt, money(it, state.currency)) } ?: "—",
                         valueColor = netColor(state.totalNetDay),
                     )
-                    Metric("This month", state.totalCostDay?.let { money(it * DAYS_PER_MONTH, state.currency) } ?: "—")
-                    Metric("Energy", "%,.1f kWh/day".format(state.totalKwhDay))
-                    Metric("Machines", "${state.rows.size}")
+                    Metric(stringResource(R.string.energy_this_month), state.totalCostDay?.let { money(it * DAYS_PER_MONTH, state.currency) } ?: "—")
+                    Metric(stringResource(R.string.energy_energy), "%,.1f kWh/day".format(state.totalKwhDay))
+                    Metric(stringResource(R.string.energy_machines), "${state.rows.size}")
                 }
             }
             LazyColumn(
@@ -288,7 +294,7 @@ private fun EnergyRowCard(row: EnergyRow, rank: Int, currency: String, onClick: 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("#$rank  ${row.name}", style = MaterialTheme.typography.titleSmall, color = HiBrand.textPrimary)
                 Text(
-                    if (!row.online) "offline" else row.host,
+                    if (!row.online) stringResource(R.string.energy_offline) else row.host,
                     style = MaterialTheme.typography.labelSmall,
                     color = if (!row.online) HiBrand.statusOffline else HiBrand.textSecondary,
                 )
@@ -297,19 +303,29 @@ private fun EnergyRowCard(row: EnergyRow, rank: Int, currency: String, onClick: 
                 Modifier.fillMaxWidth().padding(top = 8.dp).horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                Metric("Power", row.powerW?.let { "%.0f W".format(it) } ?: "—", source = if (row.estimated) ValueSource.ESTIMATED else null)
-                Metric("Efficiency", row.efficiencyJTh?.let { hi3.hashkit.core.Units.formatEfficiency(it) } ?: "—")
-                Metric("Cost", row.costPerDay?.let { money(it, currency) + "/day" } ?: "—", valueColor = HiBrand.accent)
                 Metric(
-                    "Revenue", row.revenuePerDay?.let { money(it, currency) + "/day" } ?: "—",
+                    stringResource(R.string.energy_power),
+                    row.powerW?.let { "%.0f W".format(it) } ?: "—",
+                    source = if (row.estimated) ValueSource.ESTIMATED else null,
+                )
+                Metric(stringResource(R.string.energy_efficiency), row.efficiencyJTh?.let { hi3.hashkit.core.Units.formatEfficiency(it) } ?: "—")
+                Metric(
+                    stringResource(R.string.energy_cost),
+                    row.costPerDay?.let { stringResource(R.string.energy_per_day_fmt, money(it, currency)) } ?: "—",
+                    valueColor = HiBrand.accent,
+                )
+                Metric(
+                    stringResource(R.string.energy_revenue),
+                    row.revenuePerDay?.let { stringResource(R.string.energy_per_day_fmt, money(it, currency)) } ?: "—",
                     source = row.revenuePerDay?.let { ValueSource.ESTIMATED },
                 )
                 Metric(
-                    "Net", row.netPerDay?.let { money(it, currency) + "/day" } ?: "—",
+                    stringResource(R.string.energy_net),
+                    row.netPerDay?.let { stringResource(R.string.energy_per_day_fmt, money(it, currency)) } ?: "—",
                     valueColor = netColor(row.netPerDay),
                 )
-                Metric("Energy", row.kwhPerDay?.let { "%.2f kWh/day".format(it) } ?: "—")
-                Metric("Est. month", row.costPerMonth?.let { money(it, currency) } ?: "—")
+                Metric(stringResource(R.string.energy_energy), row.kwhPerDay?.let { "%.2f kWh/day".format(it) } ?: "—")
+                Metric(stringResource(R.string.energy_est_month), row.costPerMonth?.let { money(it, currency) } ?: "—")
             }
         }
     }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fleet table screen (ui/table) — French. -->
+<resources>
+    <string name="table_title">Tableau de la flotte</string>
+    <string name="table_filter_label">Filtrer (nom, IP, modèle, pool)</string>
+    <string name="table_print_qr">Imprimer les codes QR</string>
+    <string name="table_program_nfc">Programmer les tags NFC</string>
+    <string name="table_scan_tag_qr">Scanner tag / QR</string>
+    <string name="table_scan_nfc">Scanner NFC</string>
+    <string name="table_tag_hint">%1$d tag(s) · scannables dans la superposition AR du rack · appui long sur une ligne pour sélectionner</string>
+
+    <!-- Column headers -->
+    <string name="table_col_name">Nom</string>
+    <string name="table_col_ip">IP</string>
+    <string name="table_col_model">Modèle</string>
+    <string name="table_col_hashrate">Hashrate</string>
+    <string name="table_col_temp">Temp</string>
+    <string name="table_col_fan">Vent.</string>
+    <string name="table_col_pool">Pool</string>
+    <string name="table_col_uptime">Uptime</string>
+
+    <string name="table_cell_offline">hors ligne</string>
+
+    <!-- Print dialog -->
+    <string name="table_qr_sticker_size">Taille des stickers QR</string>
+    <string name="table_qr_size_hint">Quelle taille pour chaque sticker imprimé ? Plus petit = plus de stickers par page.</string>
+
+    <!-- Selection bar + dialogs -->
+    <string name="table_selected_count">%1$d sélectionné(s)</string>
+    <string name="table_assign_to_farm">Assigner à une ferme</string>
+    <string name="table_blink_led">Faire clignoter la LED</string>
+    <string name="table_stop_blink">Arrêter le clignotement</string>
+    <string name="table_select_all">Tout sélectionner (%1$d)</string>
+    <string name="table_clear">Effacer</string>
+    <string name="table_assign_title">Assigner %1$d mineur(s) à…</string>
+    <string name="table_no_farms">Aucune ferme — créez-en une d\'abord sous Avancé → Fermes.</string>
+    <string name="table_no_farm_unassign">Aucune ferme (désassigner)</string>
+    <string name="table_delete_title">Supprimer %1$d mineur(s) ?</string>
+    <string name="table_delete_body">Les retire, avec leur historique de télémétrie, de l\'appli. Les machines physiques ne sont pas touchées.</string>
+</resources>

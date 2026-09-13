@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Hashkit widget -->
+    <string name="widget_online_count">%1$d/%2$d en línea</string>
+
+    <!-- Compare widget -->
+    <string name="widget_hashrate_sources">FUENTES DE HASHRATE</string>
+    <string name="widget_source_local">Local</string>
+    <string name="widget_source_pool">Pool</string>
+    <string name="widget_source_off">off</string>
+
+    <!-- Fleet table widget -->
+    <string name="widget_fleet">FLOTA</string>
+    <string name="widget_no_miners_yet">Aún no hay mineros</string>
+    <string name="widget_more_count">+%1$d más</string>
+    <string name="widget_offline">fuera de línea</string>
+</resources>

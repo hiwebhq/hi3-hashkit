@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">自动化规则</string>
+    <string name="rules_add_rule">添加规则</string>
+    <string name="rules_intro">规则在每个轮询周期检查。条件须在规则的持续窗口内一直成立才会执行动作，且每条规则对每台矿机每个间隔至多触发一次。已静音的矿机会被跳过，不支持的控制动作会跳过并说明原因，每次触发都会发出看门狗通知。</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"若 %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" 持续 ≥%1$d 分钟"</string>
+    <string name="rules_row_group">"  ·  分组“%1$s”"</string>
+    <string name="rules_row_all_miners">"  ·  所有矿机"</string>
+    <string name="rules_row_interval">"  ·  每台矿机每 %1$d 分钟"</string>
+    <string name="rules_last_fired">上次触发 %1$s：%2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">新建规则</string>
+    <string name="rules_name">名称</string>
+    <string name="rules_when">当</string>
+    <string name="rules_then">则</string>
+    <string name="rules_threshold">阈值（%1$s）</string>
+    <string name="rules_target_group">目标分组（留空 = 全部）</string>
+    <string name="rules_sustained_label">持续时间（分钟，0 = 首次匹配即触发）</string>
+    <string name="rules_min_interval_label">每台矿机的最小触发间隔（分钟）</string>
+    <string name="rules_editor_hint">控制动作（暂停/恢复/重启）使用矿机已验证的控制通道，不支持时会跳过。插座动作需先配置智能插座。建议先用较大的间隔测试。</string>
+</resources>

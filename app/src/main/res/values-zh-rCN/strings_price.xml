@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Price curtailment screen (PriceCurtailmentScreen). -->
+<resources>
+    <string name="price_title">电价限载</string>
+    <string name="price_intro">利用免费的 Octopus Agile 半小时电价数据（英国），在价格飙升时暂停、电价便宜时挖矿。无需账户或密钥——只获取你所在地区的公开电价。</string>
+
+    <!-- Live price card -->
+    <string name="price_now_label">当前电价</string>
+    <string name="price_next6h">未来 6 小时：最低 %1$s · 最高 %2$s p/kWh</string>
+    <string name="price_reco_run">建议：电价便宜——恢复挖矿</string>
+    <string name="price_reco_curtail">建议：电价昂贵——限载挖矿</string>
+    <string name="price_reco_hold">建议：维持现状（处于缓冲区间内）</string>
+
+    <!-- Actions -->
+    <string name="price_refresh">刷新电价</string>
+    <string name="price_resume_fleet">恢复机队</string>
+    <string name="price_curtail_fleet">限载机队</string>
+
+    <!-- Sections & configuration -->
+    <string name="price_next_slots">后续时段</string>
+    <string name="price_configuration">配置</string>
+    <string name="price_region_label">地区字母（A–P）</string>
+    <string name="price_region_placeholder">伦敦为 C</string>
+    <string name="price_resume_label">恢复阈值 ≤ p/kWh</string>
+    <string name="price_curtail_label">限载阈值 ≥ p/kWh</string>
+    <string name="price_save_config">保存配置</string>
+</resources>

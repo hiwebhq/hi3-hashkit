@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
+import androidx.glance.LocalContext
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -25,6 +26,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.model.MinerStatus
@@ -87,23 +89,31 @@ class CompareWidget : GlanceAppWidget() {
         mmp: hi3.hashkit.integrations.hi3.MmpState,
         mmpGhs: Double?,
     ) {
+        val context = LocalContext.current
         Column(
             modifier = GlanceModifier.fillMaxSize()
                 .background(BG).padding(12.dp)
                 .clickable(actionStartActivity<hi3.hashkit.ui.MainActivity>()),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("HASHRATE SOURCES", style = TextStyle(color = ColorProvider(DIM), fontSize = 10.sp()))
-            CompareRow("Local", Units.formatHashrate(localGhs), ACCENT)
+            Text(
+                context.getString(R.string.widget_hashrate_sources),
+                style = TextStyle(color = ColorProvider(DIM), fontSize = 10.sp()),
+            )
+            CompareRow(context.getString(R.string.widget_source_local), Units.formatHashrate(localGhs), ACCENT)
             if (pool.enabled) {
                 CompareRow(
-                    "Pool",
+                    context.getString(R.string.widget_source_pool),
                     Units.formatHashrate(pool.totalPoolHashrateGhs) +
                         deltaPct(pool.totalPoolHashrateGhs, localGhs),
                     if (pool.error != null) WARN else GREEN,
                 )
             } else {
-                CompareRow("Pool", "off", DIM)
+                CompareRow(
+                    context.getString(R.string.widget_source_pool),
+                    context.getString(R.string.widget_source_off),
+                    DIM,
+                )
             }
             if (mmp.enabled) {
                 CompareRow(
@@ -112,7 +122,7 @@ class CompareWidget : GlanceAppWidget() {
                     if (mmp.error != null) WARN else GREEN,
                 )
             } else {
-                CompareRow("MMP", "off", DIM)
+                CompareRow("MMP", context.getString(R.string.widget_source_off), DIM)
             }
         }
     }

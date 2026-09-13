@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="table_title">Tabla de flota</string>
+    <string name="table_filter_label">Filtrar (nombre, IP, modelo, pool)</string>
+    <string name="table_print_qr">Imprimir códigos QR</string>
+    <string name="table_program_nfc">Programar etiquetas NFC</string>
+    <string name="table_scan_tag_qr">Escanear etiqueta / QR</string>
+    <string name="table_scan_nfc">Escanear NFC</string>
+    <string name="table_tag_hint">%1$d etiqueta(s) · escaneables en la vista AR del rack · mantén pulsada una fila para seleccionar</string>
+
+    <!-- Column headers -->
+    <string name="table_col_name">Nombre</string>
+    <string name="table_col_ip">IP</string>
+    <string name="table_col_model">Modelo</string>
+    <string name="table_col_hashrate">Hashrate</string>
+    <string name="table_col_temp">Temp</string>
+    <string name="table_col_fan">Vent.</string>
+    <string name="table_col_pool">Pool</string>
+    <string name="table_col_uptime">Tiempo activo</string>
+
+    <string name="table_cell_offline">offline</string>
+
+    <!-- Print dialog -->
+    <string name="table_qr_sticker_size">Tamaño de pegatina QR</string>
+    <string name="table_qr_size_hint">¿Cómo de grande debe ser cada pegatina impresa? Cuanto más pequeña, más caben por página.</string>
+
+    <!-- Selection bar + dialogs -->
+    <string name="table_selected_count">%1$d seleccionados</string>
+    <string name="table_assign_to_farm">Asignar a granja</string>
+    <string name="table_blink_led">Parpadear LED</string>
+    <string name="table_stop_blink">Parar parpadeo</string>
+    <string name="table_select_all">Seleccionar los %1$d</string>
+    <string name="table_clear">Limpiar</string>
+    <string name="table_assign_title">Asignar %1$d minero(s) a…</string>
+    <string name="table_no_farms">Aún no hay granjas — crea una primero en Avanzado → Granjas.</string>
+    <string name="table_no_farm_unassign">Sin granja (desasignar)</string>
+    <string name="table_delete_title">¿Eliminar %1$d minero(s)?</string>
+    <string name="table_delete_body">Los quita de la app junto con su historial de telemetría. Las máquinas físicas no se tocan.</string>
+</resources>

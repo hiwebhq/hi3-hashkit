@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_tagline">Deine Mining-Flotte, in deiner Tasche.</string>
+    <string name="onboarding_local_title">Local-first</string>
+    <string name="onboarding_local_body">Spricht nur mit den Minern in deinem Netzwerk — oder über dein Tailscale-VPN. Kein Konto, keine Cloud.</string>
+    <string name="onboarding_live_title">Live &amp; ehrlich</string>
+    <string name="onboarding_live_body">Echte Hashrate, Temperaturen, Leistung und Gesundheit — klar markiert, wenn ein Wert geschätzt oder nicht verfügbar ist.</string>
+    <string name="onboarding_safe_title">Sichere Steuerung</string>
+    <string name="onboarding_safe_body">Neustart, Pool, Lüfter und firmware-begrenztes Tuning mit Bestätigungen und Rollback — nur wo verifiziert.</string>
+    <string name="onboarding_private_title">Privat</string>
+    <string name="onboarding_private_body">Deine Daten bleiben auf diesem Gerät. Hi3-Pool- und MMP-Ansichten sind optional, schreibgeschützt und standardmäßig aus.</string>
+    <string name="onboarding_get_started">Los geht\'s</string>
+    <string name="onboarding_next_hint">Als Nächstes kannst du dein Netzwerk scannen, einen Miner per IP hinzufügen oder den Demo-Modus testen.</string>
+</resources>

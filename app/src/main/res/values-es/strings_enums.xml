@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="enum_theme_blue">Azul</string>
+    <string name="enum_theme_green">Verde</string>
+    <string name="enum_theme_orange">Naranja</string>
+    <string name="enum_theme_yellow">Amarillo</string>
+    <string name="enum_theme_red">Rojo</string>
+    <string name="enum_theme_purple">Morado</string>
+
+    <string name="enum_webhook_none">Off</string>
+    <string name="enum_webhook_ntfy">ntfy</string>
+    <string name="enum_webhook_gotify">Gotify</string>
+    <string name="enum_webhook_telegram">Telegram</string>
+    <string name="enum_webhook_generic">Genérico (POST JSON)</string>
+
+    <string name="enum_plug_tasmota">Tasmota</string>
+    <string name="enum_plug_shelly">Shelly</string>
+    <string name="enum_plug_kasa">Kasa / TP-Link</string>
+    <string name="enum_plug_webhook">Webhook genérico</string>
+
+    <string name="enum_tag_standard">Estándar — 38 mm</string>
+    <string name="enum_tag_small">Pequeña — 25 mm</string>
+
+    <string name="enum_cond_chip_temp_above">Temp del chip superior a</string>
+    <string name="enum_cond_vr_temp_above">Temp del VR superior a</string>
+    <string name="enum_cond_hashrate_below_pct" formatted="false">Hashrate por debajo del % esperado</string>
+    <string name="enum_cond_reject_rate_above">Tasa de rechazo superior a</string>
+    <string name="enum_cond_offline">Minero fuera de línea</string>
+
+    <string name="enum_action_pause">Pausar hashing</string>
+    <string name="enum_action_resume">Reanudar hashing</string>
+    <string name="enum_action_reboot">Reiniciar</string>
+    <string name="enum_action_plug_off">Enchufe inteligente OFF</string>
+    <string name="enum_action_plug_on">Enchufe inteligente ON</string>
+    <string name="enum_action_notify">Solo notificar</string>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fleet table screen (ui/table). -->
+<resources>
+    <string name="table_title">Tabela da fazenda</string>
+    <string name="table_filter_label">Filtrar (nome, IP, modelo, pool)</string>
+    <string name="table_print_qr">Imprimir códigos QR</string>
+    <string name="table_program_nfc">Programar tags NFC</string>
+    <string name="table_scan_tag_qr">Escanear tag / QR</string>
+    <string name="table_scan_nfc">Escanear NFC</string>
+    <string name="table_tag_hint">%1$d tag(s) · legível na sobreposição AR do rack · pressione e segure uma linha para selecionar</string>
+
+    <!-- Column headers -->
+    <string name="table_col_name">Nome</string>
+    <string name="table_col_ip">IP</string>
+    <string name="table_col_model">Modelo</string>
+    <string name="table_col_hashrate">Hashrate</string>
+    <string name="table_col_temp">Temp</string>
+    <string name="table_col_fan">Vent.</string>
+    <string name="table_col_pool">Pool</string>
+    <string name="table_col_uptime">Tempo ativo</string>
+
+    <string name="table_cell_offline">offline</string>
+
+    <!-- Print dialog -->
+    <string name="table_qr_sticker_size">Tamanho do adesivo QR</string>
+    <string name="table_qr_size_hint">Que tamanho cada adesivo impresso deve ter? Menor cabe mais por página.</string>
+
+    <!-- Selection bar + dialogs -->
+    <string name="table_selected_count">%1$d selecionado(s)</string>
+    <string name="table_assign_to_farm">Atribuir a fazenda</string>
+    <string name="table_blink_led">Piscar LED</string>
+    <string name="table_stop_blink">Parar de piscar</string>
+    <string name="table_select_all">Selecionar todos os %1$d</string>
+    <string name="table_clear">Limpar</string>
+    <string name="table_assign_title">Atribuir %1$d minerador(es) a…</string>
+    <string name="table_no_farms">Nenhuma fazenda ainda — crie uma primeiro em Avançado → Fazendas.</string>
+    <string name="table_no_farm_unassign">Sem fazenda (remover atribuição)</string>
+    <string name="table_delete_title">Excluir %1$d minerador(es)?</string>
+    <string name="table_delete_body">Remove os mineradores e o histórico de telemetria deles do app. As máquinas físicas não são tocadas.</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Price curtailment screen (PriceCurtailmentScreen). -->
+<resources>
+    <string name="price_title">Corte por preço</string>
+    <string name="price_intro">Pause nos picos de preço e minere quando a energia está barata, usando o feed gratuito de meia em meia hora do Octopus Agile (Reino Unido). Sem conta nem chave — só o preço público da sua região é buscado.</string>
+
+    <!-- Live price card -->
+    <string name="price_now_label">PREÇO AGORA</string>
+    <string name="price_next6h">Próximas 6h: mín %1$s · máx %2$s p/kWh</string>
+    <string name="price_reco_run">Recomendação: barato — retomar a mineração</string>
+    <string name="price_reco_curtail">Recomendação: caro — cortar a mineração</string>
+    <string name="price_reco_hold">Recomendação: manter (dentro da banda morta)</string>
+
+    <!-- Actions -->
+    <string name="price_refresh">Atualizar preços</string>
+    <string name="price_resume_fleet">Retomar fazenda</string>
+    <string name="price_curtail_fleet">Cortar fazenda</string>
+
+    <!-- Sections & configuration -->
+    <string name="price_next_slots">PRÓXIMOS INTERVALOS</string>
+    <string name="price_configuration">CONFIGURAÇÃO</string>
+    <string name="price_region_label">Letra da região (A–P)</string>
+    <string name="price_region_placeholder">C para Londres</string>
+    <string name="price_resume_label">Retomar ≤ p/kWh</string>
+    <string name="price_curtail_label">Cortar ≥ p/kWh</string>
+    <string name="price_save_config">Salvar configuração</string>
+</resources>

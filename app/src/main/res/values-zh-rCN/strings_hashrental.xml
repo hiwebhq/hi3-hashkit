@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hash rental screen (HashRentalScreen). -->
+<resources>
+    <string name="rental_title">算力租赁</string>
+    <string name="rental_edit_link">编辑租赁链接</string>
+    <string name="rental_intro">在 Braiins Hashpower 现货市场租用比特币算力。此处显示实时公开行情——租赁在 Braiins 上完成，而非本应用内。</string>
+    <string name="rental_show_in">显示单位</string>
+    <string name="rental_set_btc_price">在设置中填写或获取 BTC 价格即可查看 %1$s 计价。</string>
+
+    <!-- Error banner -->
+    <string name="rental_unavailable">Braiins Hashpower 暂时不可用。</string>
+    <string name="rental_showing_from">显示的是 %1$s 的价格。</string>
+    <string name="rental_details">详情</string>
+    <string name="rental_hide_details">隐藏详情</string>
+
+    <!-- Market card -->
+    <string name="rental_spot_market">现货市场</string>
+    <string name="rental_best_ask_caption">最优卖价（可租到的最便宜算力）</string>
+    <string name="rental_last_avg_price">最近均价</string>
+    <string name="rental_best_bid">最优买价</string>
+    <string name="rental_hashrate_available">可租算力</string>
+    <string name="rental_hashrate_matched">已成交算力</string>
+    <string name="rental_cheapest_offers">最低报价</string>
+    <string name="rental_ph_avail">%1$s PH/s 可租</string>
+
+    <!-- Rent button & footer -->
+    <string name="rental_rent_button">前往 Braiins Hashpower 租赁 ↗</string>
+    <string name="rental_footer">价格实时来自 Braiins Hashpower 的公开市场 API。租赁需使用你自己的账户在 hashpower.braiins.com 上完成。</string>
+
+    <!-- Rent-link dialog -->
+    <string name="rental_dialog_title">租赁链接</string>
+    <string name="rental_dialog_body">“租赁”按钮打开的 URL。如有 Braiins Hashpower 推荐链接可粘贴到这里——留空则恢复默认。</string>
+    <string name="rental_url_label">URL</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leaderboard screen (ui/leaderboard). -->
+<resources>
+    <string name="lead_title">Ranking</string>
+    <string name="lead_rank_efficiency">Eficiência</string>
+    <string name="lead_rank_attainment">Atingimento</string>
+    <string name="lead_rank_hashrate">Hashrate</string>
+    <string name="lead_desc_efficiency">Classificado por eficiência energética (J/TH) — menor é melhor. Requer dados de potência.</string>
+    <string name="lead_desc_attainment">Classificado por hashrate real vs esperado. Requer um hashrate esperado.</string>
+    <string name="lead_desc_hashrate">Classificado pelo hashrate atual.</string>
+    <string name="lead_empty">Nenhum minerador ativo com esta métrica ainda.</string>
+</resources>

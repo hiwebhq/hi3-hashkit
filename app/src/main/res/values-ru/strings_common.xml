@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: vocabulary shared across screens. -->
+<resources>
+    <!-- Language picker -->
+    <string name="language_title">Язык</string>
+    <string name="language_system">Язык системы</string>
+    <string name="language_settings_hint">Применяется сразу. «Язык системы» соответствует языку телефона.</string>
+
+    <!-- Common actions -->
+    <string name="common_back">Назад</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_save">Сохранить</string>
+    <string name="common_ok">OK</string>
+    <string name="common_delete">Удалить</string>
+    <string name="common_close">Закрыть</string>
+    <string name="common_apply">Применить</string>
+    <string name="common_add">Добавить</string>
+    <string name="common_edit">Изменить</string>
+    <string name="common_retry">Повторить</string>
+    <string name="common_done">Готово</string>
+    <string name="common_start">Старт</string>
+    <string name="common_stop">Стоп</string>
+    <string name="common_export">Экспорт</string>
+    <string name="common_share">Поделиться</string>
+    <string name="common_refresh">Обновить</string>
+    <string name="common_search">Поиск</string>
+    <string name="common_settings">Настройки</string>
+    <string name="common_enabled">Включено</string>
+    <string name="common_disabled">Выключено</string>
+    <string name="common_on">Вкл</string>
+    <string name="common_off">Выкл</string>
+    <string name="common_yes">Да</string>
+    <string name="common_no">Нет</string>
+    <string name="common_none">Нет</string>
+    <string name="common_all">Все</string>
+    <string name="common_unknown">Неизвестно</string>
+    <string name="common_loading">Загрузка…</string>
+    <string name="common_reboot">Перезагрузить</string>
+    <string name="common_confirm">Подтвердить</string>
+
+    <!-- Value-provenance tags (short abbreviations) -->
+    <string name="source_calc">расч.</string>
+    <string name="source_est">оцен.</string>
+
+    <!-- App lock -->
+    <string name="lock_unlock">Разблокировать</string>
+    <string name="lock_prompt_title">Разблокируйте Hi3 Hashkit</string>
+
+    <!-- Miner status vocabulary -->
+    <string name="status_online">Онлайн</string>
+    <string name="status_offline">Офлайн</string>
+    <string name="status_degraded">Деградация</string>
+    <string name="status_stale">Устарел</string>
+</resources>

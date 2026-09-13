@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ab_title">Pool address book</string>
+    <string name="ab_add_pool">Add pool</string>
+    <string name="ab_intro">Save the pools/wallets you use, then apply one across the fleet in a tap. The worker is the payout address (optionally address.workername). No pool password is stored — the firmware keeps its own.</string>
+
+    <!-- Apply-to-fleet confirm dialog -->
+    <string name="ab_apply_title">Apply \"%1$s\"?</string>
+    <string name="ab_apply_body">Sets the primary pool to %1$s:%2$d (worker %3$s) on all miners that support a pool change. Unsupported miners are skipped.</string>
+    <string name="ab_limit_group">Limit to group (blank = all miners)</string>
+    <string name="ab_apply_to_fleet">Apply to fleet</string>
+
+    <!-- Pool row -->
+    <string name="ab_active_count">"  ● ACTIVE (%1$d)"</string>
+    <string name="ab_speed_test">Speed test</string>
+
+    <!-- Editor dialog -->
+    <string name="ab_saved_pool">Saved pool</string>
+    <string name="ab_edit_pool">Edit pool</string>
+    <string name="ab_name">Name</string>
+    <string name="ab_stratum_url">Stratum URL</string>
+    <string name="ab_port">Port</string>
+    <string name="ab_worker_payout">Worker / payout address</string>
+</resources>

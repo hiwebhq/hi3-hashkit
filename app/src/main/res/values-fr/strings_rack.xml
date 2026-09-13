@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rack & site layout screen (ui/rack) — French. -->
+<resources>
+    <string name="rack_title">Disposition rack &amp; site</string>
+    <string name="rack_empty">Aucun mineur pour l\'instant. Ajoutez des mineurs et définissez l\'Emplacement de chacun (salle / rack / étagère) pour les voir disposés ici.</string>
+    <string name="rack_group_stats">%1$d/%2$d en ligne · %3$s</string>
+</resources>

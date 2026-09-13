@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: heat reuse screen (HeatReuseScreen). -->
+<resources>
+    <string name="heat_title">Утилизация тепла</string>
+    <string name="heat_intro">ASIC превращает практически всю потребляемую электроэнергию в тепло. В отопительный сезон это тепло замещает то, что вы иначе потратили бы на обогрев помещения, — то есть электричество не является чистыми затратами на майнинг. Цифры — оценки по текущей мощности парка.</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">Тепловая мощность сейчас</string>
+    <string name="heat_output_sub">%1$s kW тепла · онлайн майнеров: %2$d</string>
+    <string name="heat_thermal_per_day">Тепловая энергия за день</string>
+    <string name="heat_thermal_sub">При текущем потреблении, непрерывно 24 ч</string>
+    <string name="heat_rate_hint">Укажите тариф на электроэнергию в настройках, чтобы видеть денежную ценность тепла.</string>
+    <string name="heat_value_today">Ценность отопления сегодня</string>
+    <string name="heat_value_today_sub">против прямого электрообогрева (1:1) при %1$s/kWh</string>
+    <string name="heat_value_month">Ценность отопления за месяц</string>
+    <string name="heat_value_month_sub">≈ %1$s дней при текущем потреблении</string>
+    <string name="heat_pump_title">Если вы отапливаетесь тепловым насосом</string>
+    <string name="heat_pump_body">Тепловой насос (COP ≈ 3) даёт то же тепло примерно за треть электроэнергии, поэтому в сравнении с ним майнер компенсирует около %1$s/мес.</string>
+    <string name="heat_off_season">Вне отопительного сезона тепло не имеет ценности и добавляет нагрузку на охлаждение — используйте «Расписания», чтобы сбавлять обороты летом.</string>
+</resources>

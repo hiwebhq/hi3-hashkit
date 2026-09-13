@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строки уведомлений: названия каналов, заголовки оповещений и действия. -->
+<resources>
+    <!-- Названия каналов уведомлений -->
+    <string name="notif_channel_offline">Майнеры офлайн</string>
+    <string name="notif_channel_thermal">Температура</string>
+    <string name="notif_channel_fan">Вентиляторы</string>
+    <string name="notif_channel_shares">Отклонённые шары</string>
+    <string name="notif_channel_status">Изменения статуса</string>
+    <string name="notif_channel_recovery">Восстановления</string>
+    <string name="notif_channel_watchdog">Вотчдог и автоматизация</string>
+    <string name="notif_channel_digest">Ежедневная сводка</string>
+
+    <!-- Заголовки оповещений -->
+    <string name="notif_alert_title">Оповещение: %1$s</string>
+    <string name="notif_recovered_title">Восстановлен: %1$s</string>
+
+    <!-- Действия в уведомлениях -->
+    <string name="notif_action_acknowledge">Принято</string>
+</resources>

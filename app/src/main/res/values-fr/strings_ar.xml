@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ar_title_qr">Scanner tag / QR</string>
+    <string name="ar_title_nfc">Scanner NFC</string>
+    <string name="ar_camera_needed">L\'accès à la caméra est nécessaire pour lire les autocollants QR des mineurs.</string>
+    <string name="ar_nfc_still_works">" Les tags NFC fonctionnent toujours — touchez-en un."</string>
+    <string name="ar_grant_camera">Autoriser la caméra</string>
+    <string name="ar_no_match">Aucun mineur ne correspond à « %1$s ». Programmez le tag/QR avec le nom, l\'IP, la MAC ou l\'id du mineur.</string>
+    <string name="ar_point_qr">Visez l\'autocollant QR d\'un mineur</string>
+    <string name="ar_or_tap_nfc">" ou touchez son tag NFC"</string>
+    <string name="ar_guidance_suffix">" — nom, IP, MAC ou id. Les stats en direct s\'affichent ici."</string>
+    <string name="ar_turn_on_nfc_suffix">"  (Activez le NFC pour toucher les tags.)"</string>
+    <string name="ar_add_dialog_title">Ajouter ce mineur ?</string>
+    <string name="ar_a_miner">un mineur</string>
+    <string name="ar_add_body">Le tag pointe vers %1$s à %2$s, qui n\'est pas encore dans l\'appli.</string>
+    <string name="ar_add_location_line">\nEmplacement : %1$s</string>
+    <string name="ar_add_confirm_line">\n\nL\'ajouter maintenant en sondant cette adresse ?</string>
+    <string name="ar_no_nfc_hw">Cet appareil n\'a pas de NFC.</string>
+    <string name="ar_turn_on_nfc">Activez le NFC pour scanner les tags.</string>
+    <string name="ar_hold_tag">Approchez le tag NFC d\'un mineur du dos de votre téléphone.</string>
+    <string name="ar_nfc_body">Ouvre directement la télémétrie en direct de ce mineur — pas besoin de caméra.</string>
+    <string name="ar_stat_hash">HASH</string>
+    <string name="ar_stat_power">PUISSANCE</string>
+    <string name="ar_stat_temp">TEMP</string>
+    <string name="ar_tap_to_open">Touchez pour ouvrir · scannez un autre marqueur pour changer</string>
+</resources>

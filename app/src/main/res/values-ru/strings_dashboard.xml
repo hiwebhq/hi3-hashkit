@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Русские строки: дашборд, детали парка и массовые действия. -->
+<resources>
+    <!-- Top bar / overflow menu -->
+    <string name="dash_cd_notifications">Уведомления</string>
+    <string name="dash_cd_scan_tag">Сканировать метку майнера</string>
+    <string name="dash_cd_setup">Настройка</string>
+    <string name="dash_cd_exit_app">Выйти из приложения</string>
+    <string name="dash_cd_more">Ещё</string>
+    <string name="dash_menu_flow_view">Вид Flow</string>
+    <string name="dash_menu_network_scan">Сканирование сети</string>
+    <string name="dash_menu_leaderboard">Таблица лидеров</string>
+    <string name="dash_menu_fleet_table">Таблица парка</string>
+    <string name="dash_menu_wall_tv">Режим стены / ТВ</string>
+    <string name="dash_menu_advanced">Дополнительно</string>
+    <string name="dash_menu_store">Магазин</string>
+    <string name="dash_menu_about">О приложении</string>
+    <string name="dash_menu_privacy_policy">Политика конфиденциальности</string>
+    <string name="dash_cd_add_miner">Добавить майнер</string>
+
+    <!-- Exit confirmation -->
+    <string name="dash_exit_title">Выйти из Hi3 Hashkit?</string>
+    <string name="dash_exit_body">Приложение закроется, и опрос на переднем плане остановится. Фоновый мониторинг, если включён, продолжит работать.</string>
+    <string name="dash_exit_dont_ask">Больше не спрашивать — в следующий раз выходить сразу</string>
+    <string name="dash_exit_confirm">Выйти</string>
+
+    <!-- Panic (whole fleet) -->
+    <string name="dash_panic_title">Паника — весь парк</string>
+    <string name="dash_panic_body">Применить действие сразу ко всем майнерам. Вы увидите, какие из них поддерживаются, и получите финальное подтверждение перед отправкой.\n\n• Приостановить все — остановить хеширование на каждом майнере, который это поддерживает (обратимо).\n• Перезагрузить все — перезапустить каждый майнер с поддержкой перезагрузки.</string>
+    <string name="dash_pause_all">Приостановить все</string>
+    <string name="dash_reboot_all">Перезагрузить все</string>
+
+    <!-- Firmware banner / farm selector -->
+    <string name="dash_firmware_banner">Доступна AxeOS %1$s — обновить можно майнеров: %2$d. Нажмите для примечаний к выпуску.</string>
+    <string name="dash_all_farms">Все фермы</string>
+    <string name="dash_cd_farm">Ферма</string>
+
+    <!-- Miner list -->
+    <string name="dash_cd_rescan">Пересканировать сеть на новые майнеры</string>
+    <string name="dash_group_ungrouped">Без группы</string>
+    <string name="dash_demo_banner">Демо-режим показывает синтетические майнеры</string>
+    <string name="dash_demo_badge">ДЕМО</string>
+    <string name="dash_up_prefix">аптайм %1$s</string>
+    <string name="dash_no_telemetry">нет телеметрии</string>
+    <string name="dash_pct_of_expected">%1$d%% от ожид.</string>
+    <string name="dash_cd_card_style">Стиль карточки: %1$s. Нажмите, чтобы изменить.</string>
+    <string name="dash_cd_sparkline">Недавний тренд хешрейта</string>
+
+    <!-- Empty state -->
+    <string name="dash_empty_title">Пока нет майнеров</string>
+    <string name="dash_empty_body">Hi3 Miner Watch работает локально: приложение общается только с майнерами в вашей сети (или через ваш существующий Tailscale VPN) и не требует аккаунта.</string>
+    <string name="dash_empty_scan_add">Сканировать или добавить майнер</string>
+    <string name="dash_empty_try_demo">Попробовать демо-режим</string>
+
+    <!-- Fleet summary card -->
+    <string name="dash_fleet_header">ПАРК</string>
+    <string name="dash_fleet_title">Парк</string>
+    <string name="dash_no_refresh_yet">ещё не обновлялось</string>
+    <string name="dash_just_now">только что</string>
+    <string name="dash_ago_seconds">%1$d с назад</string>
+    <string name="dash_ago_minutes_stale">%1$d мин назад — устарело</string>
+    <string name="dash_counter_on">онлайн</string>
+    <string name="dash_counter_deg">дегр.</string>
+    <string name="dash_counter_off">офлайн</string>
+    <string name="dash_counter_stale">устар.</string>
+    <string name="dash_metric_power">Мощность</string>
+    <string name="dash_metric_efficiency">Эффективность</string>
+    <string name="dash_metric_hottest">Самый горячий</string>
+    <string name="dash_metric_energy_est">Энергия (оценка)</string>
+    <string name="dash_fleet_hashrate">Хешрейт парка</string>
+    <string name="dash_collecting_data">Сбор данных…</string>
+    <string name="dash_cd_fleet_trend_chart">График тренда хешрейта парка</string>
+
+    <!-- Miner card metrics -->
+    <string name="dash_metric_hashrate">Хешрейт</string>
+    <string name="dash_metric_chip">Чип</string>
+    <string name="dash_metric_eff">Эфф.</string>
+    <string name="dash_metric_uptime">Аптайм</string>
+
+    <!-- MMP card -->
+    <string name="dash_mmp_header">ПАРК HI3 MMP</string>
+    <string name="dash_updated_ago">обновлено %1$d с назад</string>
+    <string name="dash_metric_mmp_hashrate">Хешрейт MMP</string>
+    <string name="dash_metric_realization">Реализация</string>
+    <string name="dash_metric_attention">Внимание</string>
+    <string name="dash_metric_zero_hash">Нулевой хеш</string>
+    <string name="dash_mmp_local_vs">Локально = %1$s vs весь парк MMP = %2$s</string>
+
+    <!-- Pool card -->
+    <string name="dash_pool_updated_ago">вид пула · обновлено %1$d с назад</string>
+    <string name="dash_metric_pool_hashrate">Хешрейт на пуле</string>
+    <string name="dash_metric_workers">Воркеры</string>
+    <string name="dash_metric_height">Высота</string>
+    <string name="dash_pool_proxy_note">Майнеры подключаются к пулу через ваш Stratum-прокси, поэтому пул видит их как агрегированных воркеров: %1$d. Ниже — сравнение итога парка с итогом пула.</string>
+    <string name="dash_pool_fleet_vs_pool">ПАРК vs ПУЛ</string>
+    <string name="dash_pool_miner_vs_pool">МАЙНЕР vs ПУЛ (средние пула отстают от живых показаний)</string>
+    <string name="dash_pool_no_local_match">%1$s (нет локального соответствия)</string>
+    <string name="dash_pool_not_seen">Не видны этому пулу: %1$s</string>
+
+    <!-- Profitability card -->
+    <string name="dash_profit_header">ПРИБЫЛЬНОСТЬ И ЭНЕРГИЯ</string>
+    <string name="dash_metric_revenue_day">Доход/день</string>
+    <string name="dash_metric_power_cost_day">Эл-во/день</string>
+    <string name="dash_metric_net_day">Чистыми/день</string>
+    <string name="dash_metric_btc_day">BTC/день</string>
+    <string name="dash_metric_energy_day">Энергия/день</string>
+    <string name="dash_metric_heat">Тепло</string>
+    <string name="dash_profit_estimate_note">Оценка: BTC/день исходит из субсидии блока %1$s BTC (без комиссий транзакций и пула); для расчёта дохода нужны цена BTC и сложность сети, заданные или загруженные в настройках.</string>
+
+    <!-- Solo odds card -->
+    <string name="dash_solo_header">ШАНСЫ СОЛО</string>
+    <string name="dash_metric_day">День</string>
+    <string name="dash_metric_week">Неделя</string>
+    <string name="dash_metric_month">Месяц</string>
+    <string name="dash_metric_year">Год</string>
+    <string name="dash_solo_expected_time">Ожидаемое время до блока: %1$s</string>
+    <string name="dash_solo_best_diff_suffix">"  ·  Лучшая сложность парка: %1$s"</string>
+    <string name="dash_solo_disclaimer">Статистическое ожидание, а не прогноз — каждая шара как независимый лотерейный билет.</string>
+
+    <!-- Bitcoin network / halving card -->
+    <string name="dash_network_header">СЕТЬ BITCOIN</string>
+    <string name="dash_metric_block">Блок</string>
+    <string name="dash_metric_subsidy">Субсидия</string>
+    <string name="dash_next_adjustment">Следующий пересчёт сложности: %1$s блоков (~%2$s), оценка %3$s%4$s%%</string>
+    <string name="dash_next_halving">Следующий халвинг: блок %1$s — %2$s блоков (~%3$s)</string>
+    <string name="dash_halving_note">Оценки от mempool.space (по согласию). Блоки ~10 мин; фактическое время варьируется.</string>
+
+    <!-- Bulk selection bar -->
+    <string name="dash_bulk_selected">Выбрано: %1$d — массовые действия выполняются только на поддерживающих их устройствах</string>
+    <string name="dash_bulk_restart">Перезагрузка</string>
+    <string name="dash_bulk_pool">Пул</string>
+    <string name="dash_bulk_fan">Вентилятор</string>
+    <string name="dash_bulk_pause">Пауза</string>
+    <string name="dash_bulk_resume">Продолжить</string>
+    <string name="dash_bulk_clear">Сбросить</string>
+
+    <!-- Bulk dialogs -->
+    <string name="dash_bulk_pool_title">Массовая смена пула</string>
+    <string name="dash_field_stratum_url">Stratum URL</string>
+    <string name="dash_field_port">Порт</string>
+    <string name="dash_field_worker">Воркер / адрес</string>
+    <string name="dash_bulk_pool_note">Применяется к ОСНОВНОМУ пулу каждого выбранного майнера. Сохранённые пароли пулов не изменяются. Далее вы увидите предпросмотр по каждому устройству.</string>
+    <string name="dash_preview">Предпросмотр</string>
+    <string name="dash_bulk_fan_title">Массовая смена вентиляторов</string>
+    <string name="dash_fan_automatic">Автоматически (управляет прошивка)</string>
+    <string name="dash_fan_manual_speed">Ручная скорость: %1$d%%</string>
+    <string name="dash_plan_will_run">Будет выполнено на майнерах (%1$d):</string>
+    <string name="dash_plan_skipped">Пропущено %1$d (не поддерживается):</string>
+    <string name="dash_plan_reboot_warning">Каждый майнер прекращает хеширование на ~30–60 с во время перезапуска.</string>
+    <string name="dash_plan_executing">Выполняется последовательно…</string>
+    <string name="dash_plan_run_on">Выполнить на майнерах: %1$d</string>
+    <string name="dash_results_done">Готово: успешно %1$d</string>
+    <string name="dash_results_partial">Частично: успешно %1$d, с ошибкой %2$d</string>
+    <string name="dash_result_ok">ок</string>
+    <string name="dash_results_skipped">Пропущено неподдерживаемых майнеров: %1$d.</string>
+
+    <!-- Dashboard card labels (DashboardCard enum) -->
+    <string name="dash_card_fleet">Сводка парка</string>
+    <string name="dash_card_profit">Прибыльность</string>
+    <string name="dash_card_solo">Шансы соло</string>
+    <string name="dash_card_halving">Отсчёт до халвинга</string>
+    <string name="dash_card_pool">Статистика Hi3 Pool</string>
+    <string name="dash_card_mmp">Парк MMP</string>
+    <string name="dash_card_miners">Список майнеров</string>
+    <string name="dash_rescan_no_network">Локальная сеть для сканирования не обнаружена.</string>
+    <string name="dash_rescan_too_large">Локальный диапазон слишком велик для автосканирования; используйте «Добавить → Сканировать».</string>
+    <string name="dash_rescan_scanning">Сканирование %1$d хостов…</string>
+    <string name="dash_rescan_done">Пересканирование завершено — найдено майнеров: %1$d.</string>
+</resources>

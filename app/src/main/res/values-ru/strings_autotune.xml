@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран автотюнера (ui/autotune). -->
+<resources>
+    <string name="tune_title">Автотюнер</string>
+    <string name="tune_description">Перебирает одобренные прошивкой частоты при текущем напряжении, даёт каждой стабилизироваться, измеряет J/TH и температуру чипа, затем восстанавливает исходную настройку и рекомендует лучшую точку в пределах вашего температурного потолка. Подъём прекращается при достижении потолка. Применение — отдельное нажатие; держите приложение открытым во время перебора.</string>
+    <string name="tune_not_supported">Не поддерживается на этом майнере.</string>
+    <string name="tune_settle_per_step">Стабилизация на шаг</string>
+    <string name="tune_temp_ceiling">Потолок темп.</string>
+    <string name="tune_optimize_for">Оптимизировать по</string>
+    <string name="tune_efficiency">Эффективность</string>
+    <string name="tune_hashrate">Хешрейт</string>
+    <string name="tune_step_progress">Шаг %1$d/%2$d — %3$s</string>
+    <string name="tune_start_sweep">Запустить перебор</string>
+    <string name="tune_apply_best">Применить лучшее (%1$d MHz)</string>
+    <string name="tune_results_header">РЕЗУЛЬТАТЫ (лучшие сначала)</string>
+    <string name="tune_over_ceiling">"  ⚠ выше потолка"</string>
+    <string name="tune_optimizer_header">ОПТИМИЗАТОР — сохранённых точек: %1$d</string>
+    <string name="tune_clear">Очистить</string>
+    <string name="tune_most_efficient">Самая эффективная: %1$d MHz @ %2$d mV — %3$s J/TH</string>
+    <string name="tune_most_hashrate">Максимум хешрейта: %1$d MHz @ %2$d mV — %3$s</string>
+    <string name="tune_optimizer_hint">Строится по всем переборам на этом майнере — запускайте больше переборов, чтобы уточнить кривую.</string>
+    <string name="tune_efficiency_curve">КРИВАЯ ЭФФЕКТИВНОСТИ</string>
+    <string name="tune_observed_points">НАБЛЮДАВШИЕСЯ РАБОЧИЕ ТОЧКИ (7 ДНЕЙ)</string>
+    <string name="tune_mark_best_efficiency">" ⚡лучший J/TH"</string>
+    <string name="tune_mark_best_rate">" ▲макс. хешрейт"</string>
+    <string name="tune_observed_point">%1$.0f MHz / %2$.0f mV — %3$.2f TH/s · %4$s J/TH · макс %5$s · ≈%6$.1f ч%7$s</string>
+    <string name="tune_peer_gap">vs майнеры той же модели (%1$d): %2$s по хешрейту (сред. за 24 ч)</string>
+</resources>

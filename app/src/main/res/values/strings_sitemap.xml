@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Site Map: setup -->
+    <string name="site_title">Site Map</string>
+    <string name="site_setup_intro">Define the site, then walk the racks pressing each miner\'s IP Report button. Capture always starts at Building 1, Rack 1, Tier 1, Position 1 (left end), fills each tier left→right, then the next tier up, then the next rack.</string>
+    <string name="site_name_label">Site name (used for Save to farm)</string>
+    <string name="site_buildings">Buildings</string>
+    <string name="site_racks_per_building">Racks per building</string>
+    <string name="site_tiers_per_rack">Tiers per rack (shelves)</string>
+    <string name="site_positions_per_tier">Positions per tier (miners per row)</string>
+    <string name="site_setup_summary">%1$d slots total — %2$d per rack, %3$d per building.</string>
+    <string name="site_supported_models">Supported models</string>
+    <string name="site_supported_models_body">Capture listens for the IP Report button broadcast (UDP 14235): Bitmain Antminer (S9 through S21 era) on stock firmware, Braiins OS, and LuxOS. The app echoes an ack so the miner blinks green when its press is recorded. WhatsMiner, Canaan, and Bitaxe/ESP-Miner don\'t send this broadcast — fill their slots with Manual. The phone must be on the miners\' LAN wifi (broadcasts don\'t cross routers or Tailscale).</string>
+    <string name="site_start_capture">Start capture</string>
+
+    <!-- Site Map: capture -->
+    <string name="site_capture_finished">Capture finished</string>
+    <string name="site_listening">Listening on UDP 14235 — press the IP Report button on:</string>
+    <string name="site_paused">Paused — presses are ignored</string>
+    <string name="site_slot_label">Building %1$d · Rack %2$d · Tier %3$d · Position %4$d</string>
+    <string name="site_captured_count">%1$d of %2$d captured</string>
+    <string name="site_skipped_suffix">" · %1$d skipped"</string>
+    <string name="site_last_event">Last: %1$s</string>
+    <string name="site_pause">Pause</string>
+    <string name="site_resume">Resume</string>
+    <string name="site_undo">Undo</string>
+    <string name="site_skip_slot">Skip slot</string>
+    <string name="site_manual">Manual</string>
+    <string name="site_prev_rack">Previous rack</string>
+    <string name="site_next_rack">Next rack</string>
+    <string name="site_building_rack">Building %1$d · Rack %2$d</string>
+    <string name="site_tier_hint">Tier 1 is the bottom row; positions run left → right.</string>
+
+    <!-- Site Map: results -->
+    <string name="site_results">Results (%1$d)</string>
+    <string name="site_export_csv">Export CSV</string>
+    <string name="site_share_csv_title">Site map CSV</string>
+    <string name="site_new_session">New session</string>
+    <string name="site_scanning_progress">Scanning… %1$d/%2$d</string>
+    <string name="site_scan_miners">Scan miners (API): MAC · serial · pool · worker · hashrate</string>
+    <string name="site_farm_name">Farm name</string>
+    <string name="site_existing_farms">Existing: %1$s</string>
+    <string name="site_saving">Saving…</string>
+    <string name="site_save_to_farm">Save to farm</string>
+    <string name="site_col_location">Location</string>
+    <string name="site_col_ip">IP</string>
+    <string name="site_col_mac">MAC</string>
+    <string name="site_col_source">Source</string>
+    <string name="site_source_manual">manual</string>
+    <string name="site_source_button">button</string>
+    <string name="site_scan_failed">scan failed: %1$s</string>
+    <string name="site_sn_prefix">SN %1$s</string>
+    <string name="site_no_details">no details reported</string>
+    <string name="site_manual_fill_title">Manual fill</string>
+    <string name="site_manual_fill_body">Type the IP of the miner at the current slot — for gear without an IP Report button (WhatsMiner, Canaan, Bitaxe).</string>
+    <string name="site_ipv4_label">IPv4 address</string>
+    <string name="site_fill_slot">Fill slot</string>
+
+    <!-- Site Map: ViewModel messages -->
+    <string name="site_error_enter_numbers">Enter a number of buildings, racks, tiers and positions first.</string>
+    <string name="site_error_invalid_ipv4">\"%1$s\" is not a valid IPv4 address.</string>
+    <string name="site_listener_failed">Listener failed: %1$s</string>
+    <string name="site_undid">Undid %1$s (%2$s)</string>
+    <string name="site_saved_result">Saved to \"%1$s\": %2$d added, %3$d already known</string>
+    <string name="site_saved_failed_suffix">", %1$d failed"</string>
+
+    <!-- Heatmap -->
+    <string name="site_heatmap_title">Heatmap</string>
+    <string name="site_heatmap_empty">No miners have a rack location yet. Run Site Map (or set a Location like B1-R1-T1-P1 on a miner\'s Edit dialog) and the racks appear here, colored by live chip temperature.</string>
+    <string name="site_heatmap_tier_hint">Tier 1 is the bottom row; positions run left → right. Tap a cell to open the miner.</string>
+    <string name="site_unplaced">%1$d miner(s) without a B/R/T/P location are not shown.</string>
+    <string name="site_cell_off">OFF</string>
+    <string name="site_empty_slot">Empty slot</string>
+    <string name="site_legend_offline">offline / no data</string>
+</resources>

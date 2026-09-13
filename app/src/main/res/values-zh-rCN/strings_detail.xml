@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner detail screen (ui/detail): MinerDetailScreen, ControlsCard, MinerInsights,
+     MinerVisual, MinerDetailViewModel. -->
+<resources>
+    <!-- Top bar / scaffold -->
+    <string name="det_title_miner">矿机</string>
+    <string name="det_cd_edit_miner">编辑矿机</string>
+    <string name="det_cd_remove_miner">移除矿机</string>
+    <string name="det_miner_not_found">未找到矿机</string>
+    <string name="det_percent_of_expected">达预期的 %1$s</string>
+
+    <!-- Section titles -->
+    <string name="det_section_live_view">实时视图</string>
+    <string name="det_section_hashrate_history">算力历史</string>
+    <string name="det_section_efficiency">能效（J/TH）</string>
+    <string name="det_section_per_chip">单芯片健康</string>
+    <string name="det_section_live_telemetry">实时遥测</string>
+    <string name="det_section_shares_pool">份额与矿池</string>
+    <string name="det_section_live_logs">实时日志</string>
+    <string name="det_section_event_log">事件日志</string>
+    <string name="det_section_maintenance">维护记录</string>
+    <string name="det_section_identity">设备信息</string>
+    <string name="det_section_health">健康评分</string>
+    <string name="det_section_login">矿机登录（用于控制）</string>
+    <string name="det_section_controls">控制</string>
+    <string name="det_section_plug">安全断电（智能插座）</string>
+    <string name="det_section_alerts">近期告警</string>
+    <string name="det_section_raw">原始 API 响应</string>
+    <string name="det_tap_to_show">"  （点按显示）"</string>
+
+    <!-- Live view -->
+    <string name="det_live_view_hint">风格化实时渲染：风扇按上报 RPM 旋转，芯片按温度发光，LED 显示状态。</string>
+
+    <!-- Hashrate history -->
+    <string name="det_no_reading_yet">尚无成功读数</string>
+    <string name="det_last_reading_seconds">上次读数 %1$d 秒前</string>
+    <string name="det_last_reading_minutes">上次读数 %1$d 分钟前——已过期</string>
+    <string name="det_uptime_energy">"  ·  在线率 %1$d%%  ·  能耗约 %2$s"</string>
+    <string name="det_export_csv">导出 CSV</string>
+    <string name="det_export_csv_chooser">导出遥测 CSV</string>
+
+    <!-- Efficiency -->
+    <string name="det_eff_stats">"最低 %1$s  ·  当前 %2$s  ·  最高 %3$s J/TH   （越低越好）"</string>
+
+    <!-- Live telemetry metrics -->
+    <string name="det_metric_power">功耗</string>
+    <string name="det_metric_efficiency">能效</string>
+    <string name="det_metric_chip_temp">芯片温度</string>
+    <string name="det_metric_vr_temp">VR 温度</string>
+    <string name="det_metric_frequency">频率</string>
+    <string name="det_metric_core_v">核心电压</string>
+    <string name="det_metric_fan_n">风扇 %1$d</string>
+    <string name="det_metric_uptime">运行时间</string>
+
+    <!-- Shares & pool -->
+    <string name="det_metric_accepted">已接受</string>
+    <string name="det_metric_rejected">已拒绝</string>
+    <string name="det_metric_best_diff">最佳难度</string>
+    <string name="det_metric_session_best">本次最佳</string>
+    <string name="det_pool_prefix">矿池：%1$s</string>
+    <string name="det_fallback_active">"  （备用矿池已启用）"</string>
+
+    <!-- Logs -->
+    <string name="det_open_live_logs">打开实时日志流</string>
+    <string name="det_live_logs_hint">打开期间通过矿机的 WebSocket 传输固件日志。钱包地址已隐去。</string>
+    <string name="det_open_event_log">打开事件日志</string>
+    <string name="det_event_log_hint">此固件不提供日志流，因此 Hashkit 会记录每次轮询推导出的健康事件——重启、温度越限、断连、风扇停转、拒绝率飙升——并对其进行分析。</string>
+
+    <!-- Maintenance log -->
+    <string name="det_add_note_label">添加备注（如“重涂硅脂”“更换 2 号风扇”）</string>
+    <string name="det_add_note">添加备注</string>
+    <string name="det_gallery">相册</string>
+    <string name="det_camera">相机</string>
+    <string name="det_no_notes">还没有维护记录。可记录重涂硅脂、更换风扇、清灰等——数据只保存在本设备上，并包含在完整备份中。</string>
+    <string name="det_cd_delete_note">删除备注</string>
+    <string name="det_cd_note_photo">维护照片——点按查看原图</string>
+    <string name="det_cd_photo">维护照片</string>
+    <string name="det_share_photo">分享照片</string>
+    <string name="det_photo_missing">照片文件缺失</string>
+
+    <!-- Identity -->
+    <string name="det_id_model">型号</string>
+    <string name="det_id_asic">ASIC</string>
+    <string name="det_id_firmware">固件</string>
+    <string name="det_id_mac">MAC</string>
+    <string name="det_id_serial">序列号</string>
+    <string name="det_id_address">地址</string>
+
+    <!-- Miner login -->
+    <string name="det_login_label_totp">TOTP 密钥（base32）</string>
+    <string name="det_login_label_bitmain">Root 网页密码</string>
+    <string name="det_login_label_vnish">VNish 网页密码</string>
+    <string name="det_login_saved_hint">已保存一条凭据（加密）。输入新凭据以替换，或将其清除。</string>
+    <string name="det_login_totp_hint">仅在设备启用了 OTP 时需要：输入注册二维码中的 TOTP 密钥（otpauth://…secret=…）以启用调优/重启。仅加密保存在本设备上。</string>
+    <string name="det_login_password_hint">输入矿机的网页密码以启用控制功能。仅加密保存在本设备上。</string>
+    <string name="det_clear">清除</string>
+
+    <!-- Controls (card + autotuner entry) -->
+    <string name="det_autotuner">能效自动调优（扫描 J/TH）</string>
+    <string name="det_monitoring_only">此设备仅支持监控。</string>
+    <string name="det_restart">重启</string>
+    <string name="det_stop_blink">停止闪烁</string>
+    <string name="det_blink_led">闪烁 LED</string>
+    <string name="det_pool">矿池</string>
+    <string name="det_fan">风扇</string>
+    <string name="det_tune">调优</string>
+    <string name="det_power">电源</string>
+    <string name="det_working">正在执行：%1$s…</string>
+    <string name="det_restart_title">重启矿机？</string>
+    <string name="det_restart_body">重启期间挖矿会停止约 30–60 秒。传输中的份额可能丢失。不会更改任何设置。</string>
+    <string name="det_power_title">暂停或恢复挖矿</string>
+    <string name="det_power_body">“暂停”发送矿机的软关机命令（停止接受新任务，用于削峰或限载），无需重启；“恢复”发送软开机命令使其重新运行。应用后请观察算力，确认在你的固件上生效。</string>
+    <string name="det_pause">暂停</string>
+    <string name="det_resume">恢复</string>
+
+    <!-- Pool dialog -->
+    <string name="det_pool_title">更换主矿池</string>
+    <string name="det_pool_current">当前：%1$s:%2$d</string>
+    <string name="det_stratum_url">Stratum URL</string>
+    <string name="det_port">端口</string>
+    <string name="det_worker">矿工 / 地址</string>
+    <string name="det_pool_warning">已保存的矿池密码不受影响。URL 填错会导致停止挖矿，直至更正。较旧的固件可能需要重启才能生效。</string>
+
+    <!-- Fan dialog -->
+    <string name="det_fan_title">风扇控制</string>
+    <string name="det_fan_auto">自动（由固件管理）</string>
+    <string name="det_fan_manual_speed">手动转速：%1$d%%</string>
+    <string name="det_fan_warning" formatted="false">低于约 35% 时，满载矿机可能过热。无论如何，固件的过热保护始终有效。</string>
+
+    <!-- Tune dialog -->
+    <string name="det_tune_unavailable_title">调优不可用</string>
+    <string name="det_tune_unavailable_body">此固件不公布其许可的频率/电压列表（GET /api/system/asic），因此应用不会为其提供调优值。</string>
+    <string name="det_tune_title">调优（固件许可的值）</string>
+    <string name="det_tune_current">当前：%1$s MHz / %2$s mV</string>
+    <string name="det_tune_stock">"  ·  出厂值：%1$s MHz / %2$s mV"</string>
+    <string name="det_frequency_mhz">频率（MHz）</string>
+    <string name="det_core_voltage_mv">核心电压（mV）</string>
+    <string name="det_tune_warning">高于出厂值会增加发热和功耗，并可能缩短硬件寿命。应用后本应用会加快轮询；请留意温度，若芯片或 VR 温度升高请回滚。</string>
+    <string name="det_roll_back">回滚</string>
+
+    <!-- Smart plug -->
+    <string name="det_plug_hint">当芯片温度达到限值时，通过本地智能插座切断电源。通电始终需手动操作——应用绝不会自动恢复供电。仅限本地地址。</string>
+    <string name="det_plug">插座</string>
+    <string name="det_off_url">断电 URL</string>
+    <string name="det_on_url">通电 URL</string>
+    <string name="det_plug_host">插座 IP / 主机</string>
+    <string name="det_plug_cutoff">断电芯片温度（°C）</string>
+    <string name="det_test_off">测试断电</string>
+    <string name="det_test_on">测试通电</string>
+
+    <!-- Alerts -->
+    <string name="det_alert_active">活动</string>
+    <string name="det_alert_resolved">已恢复</string>
+
+    <!-- Raw response -->
+    <string name="det_no_raw">尚未捕获原始响应</string>
+    <string name="det_raw_redacted">凭据和 Wi-Fi 字段已隐去。</string>
+
+    <!-- Remove dialog -->
+    <string name="det_remove_title">移除矿机？</string>
+    <string name="det_remove_body">将移除 %1$s，且不保留遥测历史。</string>
+    <string name="det_this_miner">这台矿机</string>
+    <string name="det_remove">移除</string>
+
+    <!-- Edit miner dialog -->
+    <string name="det_edit_miner_title">编辑矿机</string>
+    <string name="det_name">名称</string>
+    <string name="det_group">分组</string>
+    <string name="det_location">位置（房间/机架/层位）</string>
+    <string name="det_farm_header">矿场</string>
+    <string name="det_tags">标签（英文逗号分隔）</string>
+    <string name="det_expected_hashrate">预期算力（GH/s，留空 = 使用设备上报值）</string>
+    <string name="det_notes">备注</string>
+    <string name="det_alert_overrides_header">告警覆盖（留空 = 使用全局默认）</string>
+    <string name="det_ov_hashrate" formatted="false">算力低于（%）时告警</string>
+    <string name="det_ov_chip">芯片温度告警（°C）</string>
+    <string name="det_ov_vr">VR 温度告警（°C）</string>
+    <string name="det_ov_reject" formatted="false">拒绝率告警（%）</string>
+    <string name="det_mute">静音此矿机的告警</string>
+    <string name="det_mute_hint">仍会轮询和记录图表；但不会触发告警。</string>
+
+    <!-- Per-chip health table -->
+    <string name="det_col_board">算力板</string>
+    <string name="det_col_hashrate">算力</string>
+    <string name="det_col_chips">芯片</string>
+    <string name="det_col_hw_err">硬件错误</string>
+    <string name="det_col_temp">温度</string>
+    <string name="det_chips_failed">⚠ 在 %2$d 块算力板上检测到 %1$d 颗故障芯片。</string>
+    <string name="det_chips_healthy">全部 %1$d 块算力板均正常。</string>
+
+    <!-- Miner visual (accessibility) -->
+    <string name="det_cd_visual">矿机实时渲染：状态 %1$s</string>
+    <string name="det_cd_visual_chip">，芯片 %1$d 度</string>
+    <string name="det_cd_visual_fan">，风扇 %1$d RPM</string>
+
+    <!-- ViewModel-surfaced status messages -->
+    <string name="det_msg_credential_cleared">凭据已清除。</string>
+    <string name="det_msg_credential_saved">凭据已保存（加密）。</string>
+    <string name="det_msg_plug_on_sent">已发送插座通电命令。</string>
+    <string name="det_msg_plug_off_sent">已发送插座断电命令。</string>
+    <string name="det_msg_plug_failed">插座命令失败——请检查地址/URL。</string>
+    <string name="det_msg_miner_not_found">未找到矿机。</string>
+    <string name="det_msg_done">完成：%1$s。</string>
+    <string name="det_msg_failed">失败：%1$s</string>
+    <string name="det_msg_unsupported">不支持：%1$s</string>
+    <string name="det_msg_unexpected_error">意外错误</string>
+
+    <!-- ViewModel action labels (shown as "Working: …" and "Done: …") -->
+    <string name="det_act_restarting">重启</string>
+    <string name="det_act_blinking_led">闪烁 LED</string>
+    <string name="det_act_stopping_blink">停止闪烁</string>
+    <string name="det_act_pausing">暂停挖矿</string>
+    <string name="det_act_resuming">恢复挖矿</string>
+    <string name="det_act_changing_pool">更换矿池</string>
+    <string name="det_act_fan_auto">将风扇设为自动</string>
+    <string name="det_act_fan_manual">将风扇设为 %1$d%%</string>
+    <string name="det_act_applying_tune">应用 %1$d MHz / %2$d mV</string>
+    <string name="det_act_rollback">回滚调优</string>
+</resources>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About screen -->
+    <string name="about_title">Über</string>
+    <string name="about_section_about">ÜBER</string>
+    <string name="about_section_supported">UNTERSTÜTZTE MINER</string>
+    <string name="about_section_howto">SO GEHT\'S</string>
+
+    <string name="about_app_version">"%1$s  ·  v%2$s"</string>
+    <string name="about_app_desc">Hi3 Hashkit ist ein Local-First-Android-Dashboard für Bitcoin-Miner: Es findet, überwacht und steuert deine Flotte sicher in deinem eigenen Netzwerk — kein Konto, keine Cloud, deine Daten bleiben auf deinem Gerät.</string>
+
+    <string name="about_link_guide_title">Handbuch</string>
+    <string name="about_link_guide_subtitle">So nutzt du Hi3 Hashkit (PDF, offline)</string>
+    <string name="about_link_guide_label">PDF öffnen</string>
+    <string name="about_link_hi3_subtitle">Die Hi3-Mining-Plattform</string>
+    <string name="about_link_pool_title">Bitcoin-Pool-Dienste</string>
+    <string name="about_link_pool_subtitle">Solo-, PPLNS- und TIDES-Auszahlungen im Hi3 Pool</string>
+    <string name="about_link_support_title">Hilfe &amp; Support</string>
+    <string name="about_link_support_subtitle">Unterstützung zu dieser App und zum Flottenmanagement</string>
+    <string name="about_link_share_title">App teilen</string>
+    <string name="about_link_share_subtitle">Schick einem Freund den Download-Link</string>
+    <string name="about_link_feedback_title">Funktionswunsch</string>
+    <string name="about_link_feedback_subtitle">Schlag eine Verbesserung vor oder melde ein Problem</string>
+
+    <string name="about_guide_error">Handbuch ließ sich nicht öffnen — kein PDF-Viewer installiert?</string>
+    <string name="about_share_subject">%1$s — Local-First-Dashboard für Bitcoin-Miner</string>
+    <string name="about_share_text">Schau dir %1$s an, eine Local-First-Android-App zum Überwachen und sicheren Steuern von Bitcoin-Minern: https://mmp.hi3.cc/hashkit</string>
+    <string name="about_share_chooser">%1$s teilen</string>
+
+    <string name="about_supported_intro">Die Unterstützung gilt pro Firmware-/API-Familie — jedes Modell einer Familie funktioniert, nicht jedes muss einzeln gelistet sein. \"Verifiziert\" = auf echter Hardware bestätigt; \"kompat.-gesperrt\" = gleiche Firmware-API, Bestätigung für dieses Modell steht aus (Basis-Telemetrie ist sicher). Nicht verifizierte Steuerungen werden nie geraten.</string>
+
+    <!-- Supported miner families -->
+    <string name="about_miner_bitaxe_family">Bitaxe / ESP-Miner (AxeOS)</string>
+    <string name="about_miner_bitaxe_models">Max (202), Ultra (204), Supra (400), Gamma (600), Gamma Turbo, Supra Hex</string>
+    <string name="about_miner_bitaxe_support">Volle Überwachung + sichere Steuerung: Neustart, Pool, Lüfter, firmware-begrenztes Tuning + Autotune.</string>
+    <string name="about_miner_nerdqaxe_family">NerdQAxe (ESP-Miner-Fork)</string>
+    <string name="about_miner_nerdqaxe_models">NerdQAxe++, NerdQAxe+, NerdQAxe+ Hydro, Forks im Lucky-Miner-Stil</string>
+    <string name="about_miner_nerdqaxe_support">Volle Überwachung; Steuerung bleibt aus, bis sie auf dieser Firmware verifiziert ist.</string>
+    <string name="about_miner_bmminer_family">Antminer — Bitmain-Original (BMMiner)</string>
+    <string name="about_miner_bmminer_models">S21 Pro (verifiziert); S21+, S21+ Hyd, S21 Hyd, S21 XP, S19-Serie, S17-Serie (kompat.-gesperrt)</string>
+    <string name="about_miner_bmminer_support">Hashrate, Chip-Temperaturen, Lüfter, Frequenz, Sollwert, ASIC-Anzahl, Shares, Laufzeit, Pool. Keine Steuerung; Leistung liefert diese API nicht.</string>
+    <string name="about_miner_vnish_family">Antminer — VNish-Firmware</string>
+    <string name="about_miner_vnish_models">S21 Pro (verifiziert) und andere Antminer mit VNish</string>
+    <string name="about_miner_vnish_support">Volle Überwachung inklusive Netzleistung und Effizienz (J/TH). Keine Steuerung.</string>
+    <string name="about_miner_luxos_family">Antminer — LuxOS-Firmware</string>
+    <string name="about_miner_luxos_models">Antminer mit LuxOS</string>
+    <string name="about_miner_luxos_support">Basis-Überwachung: Hashrate, Shares, Laufzeit, Pool.</string>
+    <string name="about_miner_avalon_family">Canaan Avalon</string>
+    <string name="about_miner_avalon_models">Nano 3 (verifiziert); Nano 3S, Avalon Q, Avalon Mini 3 (kompat.-gesperrt)</string>
+    <string name="about_miner_avalon_support">Nano 3: Überwachung + Pause/Fortsetzen/Neustart. Andere: Überwachung über die CGMiner-API.</string>
+    <string name="about_miner_braiins_family">Braiins OS (BOSer)</string>
+    <string name="about_miner_braiins_models">Braiins Mini Miner BMM 100 (verifiziert)</string>
+    <string name="about_miner_braiins_support">Volle Überwachung über die CGMiner-API. Kein Leistungssensor am Gerät → Leistung nicht verfügbar.</string>
+    <string name="about_miner_whatsminer_family">WhatsMiner (MicroBT)</string>
+    <string name="about_miner_whatsminer_models">Familien M2X / M3X / M5X / M6X (kompat.-gesperrt)</string>
+    <string name="about_miner_whatsminer_support">Hashrate, Shares, Laufzeit, Pool, Chip-Temp, Lüfter und Leistung, sofern gemeldet. Keine Steuerung.</string>
+    <string name="about_miner_demo_family">Demo</string>
+    <string name="about_miner_demo_models">Synthetische Miner</string>
+    <string name="about_miner_demo_support">Nur im Demo-Modus — nie mit echten Minern vermischt.</string>
+
+    <!-- How-to steps -->
+    <string name="about_howto_1_title">1 · Ins selbe Netzwerk kommen</string>
+    <string name="about_howto_1_body">Verbinde dieses Handy mit dem WLAN/LAN deiner Miner — oder starte Tailscale und bewirb die Subnetz-Route des Standorts, um sie aus der Ferne zu erreichen.</string>
+    <string name="about_howto_2_title">2 · Miner automatisch finden lassen</string>
+    <string name="about_howto_2_body">Hi3 Hashkit scannt dein lokales Subnetz beim Start automatisch — Miner erscheinen meist von selbst. Öffne das ⋮-Menü → Netzwerkscan, um deine IP zu sehen, den Bereich zu ändern oder einen Scan zu starten/stoppen. Hinzugefügt wird nur, was auf eine bekannte Miner-API antwortet.</string>
+    <string name="about_howto_3_title">3 · Oder manuell hinzufügen</string>
+    <string name="about_howto_3_body">Tippe auf dem Dashboard auf +, um einen Miner per IP/Hostname hinzuzufügen, oder scanne einen CIDR-Bereich. Nur private LAN- und Tailscale-Adressen sind erlaubt.</string>
+    <string name="about_howto_4_title">4 · In Farmen organisieren</string>
+    <string name="about_howto_4_body">Gruppiere Miner mit ⋮ → Farmen nach Standort, jede mit eigenem Scan-Subnetz. Markiere eine als Standard (sie öffnet beim Start) und wechsle das Dashboard über den Chip oben zwischen Farmen. Beim Anlegen einer Farm wird sofort ein Scan ihres Subnetzes angeboten.</string>
+    <string name="about_howto_5_title">5 · Das Dashboard ehrlich lesen</string>
+    <string name="about_howto_5_body">Jeder Wert ist nach Quelle markiert — gemessen, gemeldet, berechnet, geschätzt oder nicht verfügbar — eine Schätzung wird nie als Fakt gezeigt. Tippe auf einen Miner für Live-Telemetrie, Verlaufscharts und die Rohantwort.</string>
+    <string name="about_howto_6_title">6 · Sicher steuern (wo verifiziert)</string>
+    <string name="about_howto_6_body">Auf unterstützter Firmware kannst du neu starten, den Pool wechseln, Lüfter anpassen und firmware-begrenztes Tuning anwenden — jeweils mit Bestätigung und Rollback. Halte Karten gedrückt, um mehrere auszuwählen und Massenaktionen auszuführen; eine Vorschau zeigt, welche Geräte was unterstützen.</string>
+    <string name="about_howto_7_title">7 · Alarme aktivieren, wenn du bereit bist</string>
+    <string name="about_howto_7_body">Alarme sind standardmäßig aus. Aktiviere sie unter Setup → Alarme für Offline-, Temperatur-, Lüfter- und Ablehnungsraten-Benachrichtigungen mit Entwarnungen, und setze Overrides pro Miner.</string>
+    <string name="about_howto_8_title">8 · Privat bleiben</string>
+    <string name="about_howto_8_body">Alles bleibt auf diesem Gerät. Die Hi3-Pool- und MMP-Ansichten sind optional, schreibgeschützt und standardmäßig aus.</string>
+</resources>

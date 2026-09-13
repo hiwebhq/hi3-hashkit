@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pool speed test screen (ui/poolspeed). -->
+<resources>
+    <string name="ps_title">Teste de velocidade da pool</string>
+    <string name="ps_description">Mede a latência stratum — o handshake TCP e uma ida e volta real de mining.subscribe, sem captura de pacotes. Testa as pools que sua fazenda realmente usa (lidas da configuração de pool de cada minerador, então stratum PRIVADO/LAN funciona porque o celular compartilha a rede da fazenda) mais as pools ativadas na Agenda de pools. Medido a partir da rede DESTE celular.</string>
+    <string name="ps_run">Rodar teste de velocidade</string>
+    <string name="ps_testing">Testando…</string>
+    <string name="ps_pool_count">%1$d pool(s)</string>
+    <string name="ps_ranked">CLASSIFICAÇÃO (mais rápida primeiro)</string>
+    <string name="ps_unreachable">inacessível</string>
+    <string name="ps_connect">conexão %1$s ms</string>
+    <string name="ps_jitter">jitter ±%1$d ms</string>
+    <string name="ps_stratum">stratum %1$s</string>
+    <string name="ps_no_response">sem resposta</string>
+</resources>

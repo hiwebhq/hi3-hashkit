@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">Fazendas</string>
+    <string name="farms_add_farm">Adicionar fazenda</string>
+    <string name="farms_intro">Agrupe mineradores em fazendas/sites, cada uma com sua própria sub-rede de varredura. A fazenda padrão abre ao iniciar; a fazenda ativa é o que o painel mostra. Excluir uma fazenda mantém seus mineradores (eles ficam sem atribuição).</string>
+    <string name="farms_empty">Nenhuma fazenda ainda. Adicione uma para organizar mineradores por site — útil para descoberta de ASICs e auditorias de log por site depois.</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">Padrão</string>
+    <string name="farms_no_subnet">sem sub-rede</string>
+    <string name="farms_miner_count">" · %1$d minerador(es)"</string>
+    <string name="farms_viewing">Visualizando</string>
+    <string name="farms_view">Ver</string>
+    <string name="farms_set_default">Definir padrão</string>
+    <string name="farms_scan">Varrer</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">Varrer a nova fazenda?</string>
+    <string name="farms_scan_new_body">Varrer %1$s agora em busca de mineradores e adicioná-los a esta fazenda?</string>
+    <string name="farms_scan_now">Varrer agora</string>
+    <string name="farms_later">Depois</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">Excluir %1$s?</string>
+    <string name="farms_delete_body_also">Seus %1$d minerador(es) e o histórico deles são excluídos junto.</string>
+    <string name="farms_delete_body_keep">Seus %1$d minerador(es) continuam monitorados, mas ficam sem atribuição. O histórico é mantido.</string>
+    <string name="farms_delete_also_checkbox">Excluir também seus %1$d minerador(es)</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">Nome</string>
+    <string name="farms_name_placeholder">Lab de casa</string>
+    <string name="farms_subnet_label">Sub-rede de varredura (CIDR)</string>
+    <string name="farms_create">Criar</string>
+</resources>

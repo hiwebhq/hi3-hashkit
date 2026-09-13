@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fleet table screen (ui/table). -->
+<resources>
+    <string name="table_title">Таблица парка</string>
+    <string name="table_filter_label">Фильтр (имя, IP, модель, пул)</string>
+    <string name="table_print_qr">Печать QR-кодов</string>
+    <string name="table_program_nfc">Записать NFC-метки</string>
+    <string name="table_scan_tag_qr">Скан метки / QR</string>
+    <string name="table_scan_nfc">Скан NFC</string>
+    <string name="table_tag_hint">Меток: %1$d · сканируются в AR-оверлее стойки · долгое нажатие на строку — выбор</string>
+
+    <!-- Column headers -->
+    <string name="table_col_name">Имя</string>
+    <string name="table_col_ip">IP</string>
+    <string name="table_col_model">Модель</string>
+    <string name="table_col_hashrate">Хешрейт</string>
+    <string name="table_col_temp">Темп.</string>
+    <string name="table_col_fan">Вент.</string>
+    <string name="table_col_pool">Пул</string>
+    <string name="table_col_uptime">Аптайм</string>
+
+    <string name="table_cell_offline">офлайн</string>
+
+    <!-- Print dialog -->
+    <string name="table_qr_sticker_size">Размер QR-наклейки</string>
+    <string name="table_qr_size_hint">Каким печатать каждую наклейку? Чем меньше, тем больше помещается на страницу.</string>
+
+    <!-- Selection bar + dialogs -->
+    <string name="table_selected_count">Выбрано: %1$d</string>
+    <string name="table_assign_to_farm">Назначить в ферму</string>
+    <string name="table_blink_led">Мигать LED</string>
+    <string name="table_stop_blink">Остановить мигание</string>
+    <string name="table_select_all">Выбрать все %1$d</string>
+    <string name="table_clear">Сбросить</string>
+    <string name="table_assign_title">Назначить майнеров (%1$d) в…</string>
+    <string name="table_no_farms">Ферм пока нет — сначала создайте её в разделе Дополнительно → Фермы.</string>
+    <string name="table_no_farm_unassign">Без фермы (отвязать)</string>
+    <string name="table_delete_title">Удалить майнеров (%1$d)?</string>
+    <string name="table_delete_body">Удаляет их и историю телеметрии из приложения. Физические устройства не затрагиваются.</string>
+</resources>

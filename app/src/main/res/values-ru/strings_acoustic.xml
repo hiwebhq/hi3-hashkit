@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: acoustic fan check screen (AcousticScreen). -->
+<resources>
+    <string name="ac_title">Акустическая проверка вентиляторов</string>
+    <string name="ac_intro">Держите микрофон телефона в нескольких см от вентиляторов майнера, соблюдайте тишину в помещении и запишите клип на %1$d секунд. Звук анализируется на устройстве (FFT) и никогда не сохраняется и не отправляется. Это ориентировочная проверка, а не калиброванная диагностика.</string>
+    <string name="ac_record">Записать %1$d с</string>
+    <string name="ac_listening">Слушаю…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">Не удалось записать звук. Проверьте разрешение на микрофон и повторите попытку.</string>
+    <string name="ac_clip_too_short">Клип слишком короткий для анализа.</string>
+    <string name="ac_mic_permission">Для прослушивания вентиляторов нужно разрешение на микрофон.</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">Явных неисправностей нет</string>
+    <string name="ac_check_fans">Проверьте вентиляторы</string>
+    <string name="ac_measured">ИЗМЕРЕНО</string>
+    <string name="ac_dominant_tone">Доминирующий тон: %1$d Hz (≈ %2$d RPM, если это основная частота)</string>
+    <string name="ac_tonality">Тональность: %1$s× · ВЧ-энергия: %2$s%%</string>
+</resources>

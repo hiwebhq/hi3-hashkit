@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">Расписания</string>
+    <string name="sched_add_schedule">Добавить расписание</string>
+    <string name="sched_intro">Расписания выполняются при опросе приложением (на переднем плане) или в циклах фонового мониторинга (шаг ~15 мин) — не в точное время. Пропущенный день пропускается и не выполняется задним числом.</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s в %2$s, дни: %3$s · цели: %4$s</string>
+    <string name="sched_row_group">группа «%1$s»</string>
+    <string name="sched_row_all_miners">все майнеры</string>
+    <string name="sched_last_run">Последний запуск %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">Новое расписание</string>
+    <string name="sched_name">Название</string>
+    <string name="sched_action_restart">Перезапуск</string>
+    <string name="sched_action_pool">Пул</string>
+    <string name="sched_action_fan">Вентилятор</string>
+    <string name="sched_action_pause">Пауза</string>
+    <string name="sched_action_resume">Продолжить</string>
+    <string name="sched_action_plug_off">Розетка выкл</string>
+    <string name="sched_action_plug_on">Розетка вкл</string>
+    <string name="sched_action_tune_preset">Пресет тюнинга</string>
+    <string name="sched_stratum_url">Stratum URL</string>
+    <string name="sched_port">Порт</string>
+    <string name="sched_worker">Воркер</string>
+    <string name="sched_automatic">Автоматически</string>
+    <string name="sched_manual_percent">Вручную: %1$d%%</string>
+    <string name="sched_frequency_mhz">Частота (MHz)</string>
+    <string name="sched_core_voltage_mv">Напряжение ядра (mV)</string>
+    <string name="sched_time_label">Время (ЧЧ:ММ, часовой пояс устройства)</string>
+    <string name="sched_target_group">Целевая группа (пусто = все майнеры)</string>
+    <string name="sched_hint_plug">«Розетка вкл/выкл» переключает настроенную умную розетку каждого целевого майнера по LAN. Майнеры без настроенной розетки пропускаются. Сочетайте ночное «Розетка выкл» с утренним «Розетка вкл» для управления питанием по тарифным периодам; каждый запуск записывается.</string>
+    <string name="sched_hint_tune">Целевая мощность по тарифным периодам: применяет фиксированный пресет частоты/напряжения. Ставьте экономичный пресет на начало пикового тарифа и обычный — на его конец. Выполняется только на прошивках, принимающих эти значения (например, Bitaxe/AxeOS); остальные пропускаются. Используйте значения, которые принимает тюнер вашего майнера.</string>
+    <string name="sched_hint_default">Тарифные периоды: запланируйте «Паузу» на начало пикового тарифа и «Продолжить» на его конец (пауза требует устройства с её поддержкой). Неподдерживаемые устройства пропускаются с указанием причины; каждый запуск записывается в журнал аудита.</string>
+</resources>

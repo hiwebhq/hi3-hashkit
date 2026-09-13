@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Acoustic fan check screen (AcousticScreen). -->
+<resources>
+    <string name="ac_title">Acoustic fan check</string>
+    <string name="ac_intro">Hold the phone\'s mic within a few cm of the miner\'s fans, keep the room quiet, and record a %1$d-second clip. The audio is analysed on-device (FFT) and never saved or sent. This is a best-effort, indicative check — not a calibrated diagnostic.</string>
+    <string name="ac_record">Record %1$d s</string>
+    <string name="ac_listening">Listening…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">Couldn\'t capture audio. Check the microphone permission and try again.</string>
+    <string name="ac_clip_too_short">Clip too short to analyse.</string>
+    <string name="ac_mic_permission">Microphone permission is needed to listen to the fans.</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">No obvious fault</string>
+    <string name="ac_check_fans">Check the fans</string>
+    <string name="ac_measured">MEASURED</string>
+    <string name="ac_dominant_tone">Dominant tone: %1$d Hz (≈ %2$d RPM if fundamental)</string>
+    <string name="ac_tonality">Tonality: %1$s× · high-freq energy: %2$s%%</string>
+</resources>

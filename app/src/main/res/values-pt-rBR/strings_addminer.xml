@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="addm_title">Adicionar mineradores</string>
+    <string name="addm_manual_entry">ENTRADA MANUAL</string>
+    <string name="addm_manual_hint">Digite o IP ou hostname de um minerador — incluindo endereços Tailscale (100.x.y.z) quando este aparelho estiver na sua tailnet.</string>
+    <string name="addm_host_label">Endereço IP ou hostname</string>
+    <string name="addm_probing">Sondando…</string>
+    <string name="addm_probe_add">Sondar e adicionar</string>
+    <string name="addm_scan_local_network">VARRER REDE LOCAL</string>
+    <string name="addm_scan_hint">Sonda apenas endereços privados, apenas em portas de minerador, com limites rígidos. Intervalos maiores que /22 são recusados.</string>
+    <string name="addm_cidr_label">Intervalo CIDR</string>
+    <string name="addm_scan">Varrer</string>
+    <string name="addm_hosts_progress">%1$d / %2$d hosts</string>
+    <string name="addm_added">adicionados</string>
+    <string name="addm_known">conhecidos</string>
+</resources>

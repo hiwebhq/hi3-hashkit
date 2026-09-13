@@ -41,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +49,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.db.RuleDao
 import hi3.hashkit.data.db.RuleEntity
 import hi3.hashkit.domain.rules.RuleEngine
@@ -82,10 +84,13 @@ fun RulesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Automation rules", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.rules_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -93,7 +98,7 @@ fun RulesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { editing = true }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add rule")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.rules_add_rule))
             }
         },
         containerColor = HiBrand.background,
@@ -105,11 +110,7 @@ fun RulesScreen(
         ) {
             item {
                 Text(
-                    "Rules are checked each poll cycle. A condition must hold for the rule's " +
-                        "sustained window before the action runs, and each rule fires at most " +
-                        "once per interval per miner. Muted miners are skipped, unsupported " +
-                        "control actions are skipped with a reason, and every fire raises a " +
-                        "watchdog notification.",
+                    stringResource(R.string.rules_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -132,6 +133,7 @@ fun RulesScreen(
     }
 }
 
+@Suppress("LongMethod") // declarative row layout; stringResource extraction added lines, not logic
 @Composable
 private fun RuleRow(rule: RuleEntity, onToggle: (Boolean) -> Unit, onDelete: () -> Unit) {
     val condition = RuleEngine.ConditionType.fromName(rule.conditionType)
@@ -150,22 +152,43 @@ private fun RuleRow(rule: RuleEntity, onToggle: (Boolean) -> Unit, onDelete: () 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = rule.enabled, onCheckedChange = onToggle)
                     IconButton(onClick = onDelete) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = HiBrand.statusOffline)
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.common_delete),
+                            tint = HiBrand.statusOffline,
+                        )
                     }
                 }
             }
             val thr = rule.threshold?.let { " ${it.toInt()}${condition?.unit ?: ""}" } ?: ""
-            val sustained = if (rule.sustainedForMinutes > 0) " for ≥${rule.sustainedForMinutes}m" else ""
+            val sustained = if (rule.sustainedForMinutes > 0) {
+                stringResource(R.string.rules_row_sustained, rule.sustainedForMinutes)
+            } else {
+                ""
+            }
             Text(
-                "IF ${condition?.label ?: rule.conditionType}$thr$sustained  →  ${action?.label ?: rule.actionType}" +
-                    (rule.targetGroup?.let { "  ·  group \"$it\"" } ?: "  ·  all miners") +
-                    "  ·  every ${rule.minIntervalMinutes}m per miner",
+                stringResource(
+                    R.string.rules_row_if,
+                    condition?.let { stringResource(it.labelRes) } ?: rule.conditionType,
+                    thr,
+                    sustained,
+                    action?.let { stringResource(it.labelRes) } ?: rule.actionType,
+                ) +
+                    (
+                        rule.targetGroup?.let { stringResource(R.string.rules_row_group, it) }
+                            ?: stringResource(R.string.rules_row_all_miners)
+                        ) +
+                    stringResource(R.string.rules_row_interval, rule.minIntervalMinutes),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textSecondary,
             )
             rule.lastFiredAtEpochMs?.let {
                 Text(
-                    "Last fired ${java.text.DateFormat.getDateTimeInstance().format(Date(it))}: ${rule.lastResult}",
+                    stringResource(
+                        R.string.rules_last_fired,
+                        java.text.DateFormat.getDateTimeInstance().format(Date(it)),
+                        rule.lastResult.toString(),
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -190,48 +213,46 @@ private fun RuleEditorDialog(onSave: (RuleEntity) -> Unit, onDismiss: () -> Unit
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New rule") },
+        title = { Text(stringResource(R.string.rules_new_rule)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text("Name") }, singleLine = true)
-                Text("When", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                OutlinedTextField(value = label, onValueChange = { label = it }, label = { Text(stringResource(R.string.rules_name)) }, singleLine = true)
+                Text(stringResource(R.string.rules_when), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     RuleEngine.ConditionType.entries.forEach { c ->
-                        FilterChip(selected = condition == c, onClick = { condition = c }, label = { Text(c.label) })
+                        FilterChip(selected = condition == c, onClick = { condition = c }, label = { Text(stringResource(c.labelRes)) })
                     }
                 }
                 if (condition.needsThreshold) {
                     OutlinedTextField(
                         value = threshold,
                         onValueChange = { threshold = it },
-                        label = { Text("Threshold (${condition.unit})") },
+                        label = { Text(stringResource(R.string.rules_threshold, condition.unit)) },
                         singleLine = true,
                     )
                 }
-                Text("Then", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                Text(stringResource(R.string.rules_then), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     RuleEngine.ActionType.entries.forEach { a ->
-                        FilterChip(selected = action == a, onClick = { action = a }, label = { Text(a.label) })
+                        FilterChip(selected = action == a, onClick = { action = a }, label = { Text(stringResource(a.labelRes)) })
                     }
                 }
-                OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all)") }, singleLine = true)
+                OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text(stringResource(R.string.rules_target_group)) }, singleLine = true)
                 OutlinedTextField(
                     value = sustained,
                     onValueChange = { sustained = it },
-                    label = { Text("Sustained for (min, 0 = first match)") },
+                    label = { Text(stringResource(R.string.rules_sustained_label)) },
                     singleLine = true,
                 )
                 OutlinedTextField(
                     value = interval,
                     onValueChange = { interval = it },
-                    label = { Text("Min interval between fires per miner (min)") },
+                    label = { Text(stringResource(R.string.rules_min_interval_label)) },
                     singleLine = true,
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    "Control actions (pause/resume/reboot) use the miner's verified control " +
-                        "path and are skipped where unsupported. Plug actions need a configured " +
-                        "smart plug. Test with a high interval first.",
+                    stringResource(R.string.rules_editor_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
@@ -256,8 +277,8 @@ private fun RuleEditorDialog(onSave: (RuleEntity) -> Unit, onDismiss: () -> Unit
                         )
                     )
                 },
-            ) { Text("Save") }
+            ) { Text(stringResource(R.string.common_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

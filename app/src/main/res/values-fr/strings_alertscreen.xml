@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alerts_title">Alertes</string>
+    <string name="alerts_ack_all">Tout acquitter</string>
+    <string name="alerts_empty">Aucune alerte enregistrée. Les alertes se déclenchent quand l\'app est ouverte, et toutes les 15 minutes ou plus quand la surveillance en arrière-plan est activée dans les Paramètres.</string>
+    <string name="alerts_active">Actives</string>
+    <string name="alerts_resolved">Résolues</string>
+    <string name="alerts_acknowledge">Acquitter</string>
+</resources>

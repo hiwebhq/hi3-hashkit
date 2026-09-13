@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pool speed test screen (ui/poolspeed). -->
+<resources>
+    <string name="ps_title">Test de vitesse des pools</string>
+    <string name="ps_description">Mesure la latence Stratum — la négociation TCP et un aller-retour mining.subscribe réel, sans capture de paquets. Le test porte sur les pools que votre flotte utilise réellement (lus depuis la config pool de chaque mineur, donc le Stratum PRIVÉ/LAN fonctionne puisque le téléphone partage le réseau de la flotte) plus les pools activés dans le carnet d\'adresses de pools. Mesuré depuis le réseau de CE téléphone.</string>
+    <string name="ps_run">Lancer le test de vitesse</string>
+    <string name="ps_testing">Test en cours…</string>
+    <string name="ps_pool_count">%1$d pool(s)</string>
+    <string name="ps_ranked">CLASSEMENT (plus rapide d\'abord)</string>
+    <string name="ps_unreachable">injoignable</string>
+    <string name="ps_connect">connexion %1$s ms</string>
+    <string name="ps_jitter">gigue ±%1$d ms</string>
+    <string name="ps_stratum">stratum %1$s</string>
+    <string name="ps_no_response">pas de réponse</string>
+</resources>

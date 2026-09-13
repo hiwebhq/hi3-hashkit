@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +35,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.db.AlertDao
 import hi3.hashkit.data.db.AlertEventEntity
 import hi3.hashkit.ui.theme.HiBrand
@@ -71,15 +73,15 @@ fun AlertsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Alerts", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.alerts_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 actions = {
                     if (alerts.any { !it.acknowledged }) {
-                        TextButton(onClick = viewModel::acknowledgeAll) { Text("Ack all") }
+                        TextButton(onClick = viewModel::acknowledgeAll) { Text(stringResource(R.string.alerts_ack_all)) }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -89,8 +91,7 @@ fun AlertsScreen(
     ) { padding ->
         if (alerts.isEmpty()) {
             Text(
-                "No alerts recorded. Alerts fire while the app is open, and every " +
-                    "15+ minutes when background monitoring is enabled in Settings.",
+                stringResource(R.string.alerts_empty),
                 modifier = Modifier.padding(padding).padding(16.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = HiBrand.textSecondary,
@@ -142,12 +143,12 @@ private fun AlertRow(alert: AlertEventEntity, onAcknowledge: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    if (active) "Active" else "Resolved",
+                    if (active) stringResource(R.string.alerts_active) else stringResource(R.string.alerts_resolved),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (active) HiBrand.statusDegraded else HiBrand.statusOnline,
                 )
                 if (!alert.acknowledged) {
-                    TextButton(onClick = onAcknowledge) { Text("Acknowledge") }
+                    TextButton(onClick = onAcknowledge) { Text(stringResource(R.string.alerts_acknowledge)) }
                 }
             }
         }

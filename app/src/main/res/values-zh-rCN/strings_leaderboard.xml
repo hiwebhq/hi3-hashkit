@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leaderboard screen (ui/leaderboard). -->
+<resources>
+    <string name="lead_title">排行榜</string>
+    <string name="lead_rank_efficiency">能效</string>
+    <string name="lead_rank_attainment">达成率</string>
+    <string name="lead_rank_hashrate">算力</string>
+    <string name="lead_desc_efficiency">按能效（J/TH）排名——越低越好。需要功耗数据。</string>
+    <string name="lead_desc_attainment">按实际与预期算力之比排名。需要设置预期算力。</string>
+    <string name="lead_desc_hashrate">按当前算力排名。</string>
+    <string name="lead_empty">暂无具备此指标的在线矿机。</string>
+</resources>

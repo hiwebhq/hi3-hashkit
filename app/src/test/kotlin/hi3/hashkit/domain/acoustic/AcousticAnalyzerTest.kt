@@ -30,7 +30,7 @@ class AcousticAnalyzerTest {
     @Test fun lowStrongToneFlagsImbalance() {
         val sr = 8192
         val r = AcousticAnalyzer.analyze(sine(45.0, sr, 8192), sr)!!
-        assertTrue(r.findings.any { it.contains("imbalance", ignoreCase = true) })
+        assertTrue(r.findings.any { it.messageRes == hi3.hashkit.R.string.acou_imbalance })
         assertTrue(!r.healthy)
     }
 
@@ -38,7 +38,7 @@ class AcousticAnalyzerTest {
         val sr = 8192
         val r = AcousticAnalyzer.analyze(sine(3000.0, sr, 8192), sr)!!
         assertTrue("highFreqRatio ${r.highFreqRatio}", r.highFreqRatio > 0.35)
-        assertTrue(r.findings.any { it.contains("bearing", ignoreCase = true) })
+        assertTrue(r.findings.any { it.messageRes == hi3.hashkit.R.string.acou_bearing })
     }
 
     @Test fun tooShortReturnsNull() {

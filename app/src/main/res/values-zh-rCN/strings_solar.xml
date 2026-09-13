@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solar-surplus mining screen (SolarSurplusScreen). -->
+<resources>
+    <string name="solar_title">光伏余电挖矿</string>
+    <string name="solar_intro">根据光伏上网余量对机队进行限载。通过 REST API 从你本地的 Home Assistant 读取电网馈出/余电传感器（单位：瓦）——令牌加密保存，且只发送到你自己网络内的 HA 主机。</string>
+
+    <!-- Live signal card -->
+    <string name="solar_export_label">光伏馈出</string>
+    <string name="solar_fleet_draw">机队功耗 %1$s W · %2$d 台在线</string>
+    <string name="solar_reco_run">建议：有余电——恢复挖矿</string>
+    <string name="solar_reco_curtail">建议：无余电——限载挖矿</string>
+    <string name="solar_reco_hold">建议：维持现状（处于缓冲区间内）</string>
+
+    <!-- Actions -->
+    <string name="solar_check_now">立即检查</string>
+    <string name="solar_checking">检查中…</string>
+    <string name="solar_resume_fleet">恢复机队</string>
+    <string name="solar_curtail_fleet">限载机队</string>
+
+    <!-- Configuration -->
+    <string name="solar_base_url_label">HA 基础 URL（私有/Tailscale）</string>
+    <string name="solar_entity_label">传感器 entity_id（瓦）</string>
+    <string name="solar_token_label">长期令牌</string>
+    <string name="solar_token_saved_label">长期令牌（已保存——留空则保持不变）</string>
+    <string name="solar_resume_label">恢复阈值 ≥ W</string>
+    <string name="solar_curtail_label">限载阈值 ≤ W</string>
+    <string name="solar_save_config">保存配置</string>
+</resources>

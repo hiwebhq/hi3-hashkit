@@ -3,6 +3,7 @@ package hi3.hashkit.ui.ar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.nfc.NfcRouter
 import hi3.hashkit.data.poll.PollingEngine
 import hi3.hashkit.data.prefs.SettingsRepository
@@ -34,6 +35,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ArOverlayViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val pollingEngine: PollingEngine,
     private val nfcRouter: NfcRouter,
@@ -99,8 +101,8 @@ class ArOverlayViewModel @Inject constructor(
             // Discrete NFC taps deserve feedback even when the tag isn't ours.
             if (announce) {
                 _scanToast.tryEmit(
-                    if (code.isBlank()) "Blank NFC tag — write it from a miner's Make tag"
-                    else "Not a Hi3 Hashkit tag",
+                    if (code.isBlank()) appContext.getString(R.string.vm_ar_blank_tag)
+                    else appContext.getString(R.string.vm_ar_not_hashkit_tag),
                 )
             }
             return
@@ -119,18 +121,18 @@ class ArOverlayViewModel @Inject constructor(
                     tagLocation.value = tag.location
                     unmatched.value = null
                     pendingAdd.value = null
-                    if (announce) _scanToast.tryEmit("Scanned ✓ ${hit.name ?: "miner"}")
+                    if (announce) _scanToast.tryEmit(appContext.getString(R.string.vm_ar_scanned, hit.name ?: appContext.getString(R.string.vm_ar_miner_fallback)))
                 }
                 // Not known yet, but the tag gives a private IP → offer to add it.
                 tag.ip != null && MinerHostValidator.resolvesToAllowed(tag.ip) -> {
                     pendingAdd.value = tag
                     unmatched.value = null
-                    if (announce) _scanToast.tryEmit("Scanned tag — ${tag.name ?: tag.ip} not added yet")
+                    if (announce) _scanToast.tryEmit(appContext.getString(R.string.vm_ar_not_added_yet, tag.name ?: tag.ip))
                 }
                 else -> {
                     unmatched.value = tag.rawValue ?: tag.name ?: tag.mac ?: tag.ip ?: dedupe
                     pendingAdd.value = null
-                    if (announce) _scanToast.tryEmit("Scanned tag — no matching miner")
+                    if (announce) _scanToast.tryEmit(appContext.getString(R.string.vm_ar_no_match))
                 }
             }
         }
@@ -141,17 +143,17 @@ class ArOverlayViewModel @Inject constructor(
         val tag = pendingAdd.value ?: return
         val ip = tag.ip ?: return
         viewModelScope.launch {
-            message.value = "Adding $ip…"
+            message.value = appContext.getString(R.string.vm_ar_adding, ip)
             when (val r = repository.addByHost(ip)) {
                 is AddMinerResult.Added -> {
                     matchedId.value = r.minerId; tagLocation.value = tag.location
-                    pendingAdd.value = null; message.value = "Added ${tag.name ?: ip}."
+                    pendingAdd.value = null; message.value = appContext.getString(R.string.vm_ar_added, tag.name ?: ip)
                 }
                 is AddMinerResult.AlreadyKnown -> {
                     matchedId.value = r.minerId; tagLocation.value = tag.location
                     pendingAdd.value = null; message.value = null
                 }
-                is AddMinerResult.Unreachable -> message.value = "Couldn't reach $ip: ${r.message}"
+                is AddMinerResult.Unreachable -> message.value = appContext.getString(R.string.vm_ar_unreachable, ip, r.message)
                 is AddMinerResult.NotSupported -> message.value = r.message
             }
         }

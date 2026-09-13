@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">Zeitpläne</string>
+    <string name="sched_add_schedule">Zeitplan hinzufügen</string>
+    <string name="sched_intro">Zeitpläne laufen, wenn die App pollt (Vordergrund) oder in Hintergrundüberwachungszyklen (~15-min-Raster) — nicht zu exakten Zeiten. Ein verpasster Tag wird übersprungen, nie nachgeholt.</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s um %2$s an %3$s · Ziele: %4$s</string>
+    <string name="sched_row_group">Gruppe \"%1$s\"</string>
+    <string name="sched_row_all_miners">alle Miner</string>
+    <string name="sched_last_run">Letzter Lauf %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">Neuer Zeitplan</string>
+    <string name="sched_name">Name</string>
+    <string name="sched_action_restart">Neustart</string>
+    <string name="sched_action_pool">Pool</string>
+    <string name="sched_action_fan">Lüfter</string>
+    <string name="sched_action_pause">Pause</string>
+    <string name="sched_action_resume">Fortsetzen</string>
+    <string name="sched_action_plug_off">Steckdose aus</string>
+    <string name="sched_action_plug_on">Steckdose an</string>
+    <string name="sched_action_tune_preset">Tuning-Preset</string>
+    <string name="sched_stratum_url">Stratum-URL</string>
+    <string name="sched_port">Port</string>
+    <string name="sched_worker">Worker</string>
+    <string name="sched_automatic">Automatisch</string>
+    <string name="sched_manual_percent">Manuell: %1$d%%</string>
+    <string name="sched_frequency_mhz">Frequenz (MHz)</string>
+    <string name="sched_core_voltage_mv">Kernspannung (mV)</string>
+    <string name="sched_time_label">Uhrzeit (HH:MM, Gerätezeitzone)</string>
+    <string name="sched_target_group">Zielgruppe (leer = alle Miner)</string>
+    <string name="sched_hint_plug">Steckdose an/aus schaltet die eingerichtete Smart-Steckdose jedes Ziel-Miners über das LAN. Miner ohne eingerichtete Steckdose werden übersprungen. Kombiniere ein nächtliches „Steckdose aus“ mit einem „Steckdose an“ am Morgen für tarifgesteuerte Stromkontrolle; jeder Lauf wird protokolliert.</string>
+    <string name="sched_hint_tune">Tarifzeit-Leistungsziel: Wendet ein festes Frequenz-/Spannungs-Preset an. Nutze ein Sparpreset zum Beginn der Hochtarifzeit und dein normales Preset am Ende. Nur Firmware, die diese Werte akzeptiert (z. B. Bitaxe/AxeOS), führt es aus; andere werden übersprungen. Verwende Werte, die der Tuner deines Miners akzeptiert.</string>
+    <string name="sched_hint_default">Tarifzeiten: Plane Pause zum Beginn deiner Hochtarifzeit und Fortsetzen am Ende (Pause braucht ein Gerät, das sie unterstützt). Nicht unterstützte Geräte werden mit Begründung übersprungen; jeder Lauf landet im Audit-Log.</string>
+</resources>

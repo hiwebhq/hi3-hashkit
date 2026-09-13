@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner detail screen (ui/detail): MinerDetailScreen, ControlsCard, MinerInsights,
+     MinerVisual, MinerDetailViewModel. -->
+<resources>
+    <!-- Top bar / scaffold -->
+    <string name="det_title_miner">Miner</string>
+    <string name="det_cd_edit_miner">Edit miner</string>
+    <string name="det_cd_remove_miner">Remove miner</string>
+    <string name="det_miner_not_found">Miner not found</string>
+    <string name="det_percent_of_expected">%1$s of expected</string>
+
+    <!-- Section titles -->
+    <string name="det_section_live_view">LIVE VIEW</string>
+    <string name="det_section_hashrate_history">HASHRATE HISTORY</string>
+    <string name="det_section_efficiency">EFFICIENCY (J/TH)</string>
+    <string name="det_section_per_chip">PER-CHIP HEALTH</string>
+    <string name="det_section_live_telemetry">LIVE TELEMETRY</string>
+    <string name="det_section_shares_pool">SHARES &amp; POOL</string>
+    <string name="det_section_live_logs">LIVE LOGS</string>
+    <string name="det_section_event_log">EVENT LOG</string>
+    <string name="det_section_maintenance">MAINTENANCE LOG</string>
+    <string name="det_section_identity">IDENTITY</string>
+    <string name="det_section_health">HEALTH SCORE</string>
+    <string name="det_section_login">MINER LOGIN (FOR CONTROLS)</string>
+    <string name="det_section_controls">CONTROLS</string>
+    <string name="det_section_plug">SAFETY CUTOFF (SMART PLUG)</string>
+    <string name="det_section_alerts">RECENT ALERTS</string>
+    <string name="det_section_raw">RAW API RESPONSE</string>
+    <string name="det_tap_to_show">"  (tap to show)"</string>
+
+    <!-- Live view -->
+    <string name="det_live_view_hint">Stylized live render: fan spins with reported RPM, chips glow by temperature, LED shows status.</string>
+
+    <!-- Hashrate history -->
+    <string name="det_no_reading_yet">No successful reading yet</string>
+    <string name="det_last_reading_seconds">Last reading %1$ds ago</string>
+    <string name="det_last_reading_minutes">Last reading %1$dm ago — stale</string>
+    <string name="det_uptime_energy">"  ·  uptime %1$d%%  ·  ~%2$s energy"</string>
+    <string name="det_export_csv">Export CSV</string>
+    <string name="det_export_csv_chooser">Export telemetry CSV</string>
+
+    <!-- Efficiency -->
+    <string name="det_eff_stats">"min %1$s  ·  now %2$s  ·  max %3$s J/TH   (lower is better)"</string>
+
+    <!-- Live telemetry metrics -->
+    <string name="det_metric_power">Power</string>
+    <string name="det_metric_efficiency">Efficiency</string>
+    <string name="det_metric_chip_temp">Chip temp</string>
+    <string name="det_metric_vr_temp">VR temp</string>
+    <string name="det_metric_frequency">Frequency</string>
+    <string name="det_metric_core_v">Core V</string>
+    <string name="det_metric_fan_n">Fan %1$d</string>
+    <string name="det_metric_uptime">Uptime</string>
+
+    <!-- Shares & pool -->
+    <string name="det_metric_accepted">Accepted</string>
+    <string name="det_metric_rejected">Rejected</string>
+    <string name="det_metric_best_diff">Best diff</string>
+    <string name="det_metric_session_best">Session best</string>
+    <string name="det_pool_prefix">Pool: %1$s</string>
+    <string name="det_fallback_active">"  (fallback active)"</string>
+
+    <!-- Logs -->
+    <string name="det_open_live_logs">Open live log stream</string>
+    <string name="det_live_logs_hint">Streams firmware logs over the miner\'s WebSocket while open. Wallet addresses are redacted.</string>
+    <string name="det_open_event_log">Open event log</string>
+    <string name="det_event_log_hint">This firmware exposes no log stream, so Hashkit records health events derived from each poll — reboots, temp-limit crossings, disconnects, fan stops, reject spikes — and analyzes those.</string>
+
+    <!-- Maintenance log -->
+    <string name="det_add_note_label">Add a note (e.g. \"repasted\", \"replaced fan 2\")</string>
+    <string name="det_add_note">Add note</string>
+    <string name="det_gallery">Gallery</string>
+    <string name="det_camera">Camera</string>
+    <string name="det_no_notes">No maintenance notes yet. Log repastes, fan swaps, cleanings — they stay on this device and are included in a full backup.</string>
+    <string name="det_cd_delete_note">Delete note</string>
+    <string name="det_cd_note_photo">Maintenance photo — tap to view full size</string>
+    <string name="det_cd_photo">Maintenance photo</string>
+    <string name="det_share_photo">Share photo</string>
+    <string name="det_photo_missing">Photo file is missing</string>
+
+    <!-- Identity -->
+    <string name="det_id_model">Model</string>
+    <string name="det_id_asic">ASIC</string>
+    <string name="det_id_firmware">Firmware</string>
+    <string name="det_id_mac">MAC</string>
+    <string name="det_id_serial">Serial</string>
+    <string name="det_id_address">Address</string>
+
+    <!-- Miner login -->
+    <string name="det_login_label_totp">TOTP secret (base32)</string>
+    <string name="det_login_label_bitmain">Root web password</string>
+    <string name="det_login_label_vnish">VNish web password</string>
+    <string name="det_login_saved_hint">A credential is saved (encrypted). Enter a new one to replace it, or clear it.</string>
+    <string name="det_login_totp_hint">Only needed if OTP is enabled on the device: enter the TOTP secret from its enrollment QR (otpauth://…secret=…) to enable tune/reboot. Stored encrypted on this device only.</string>
+    <string name="det_login_password_hint">Enter the miner\'s web password to enable controls. Stored encrypted on this device only.</string>
+    <string name="det_clear">Clear</string>
+
+    <!-- Controls (card + autotuner entry) -->
+    <string name="det_autotuner">Efficiency autotuner (sweep J/TH)</string>
+    <string name="det_monitoring_only">This device is monitoring-only.</string>
+    <string name="det_restart">Restart</string>
+    <string name="det_stop_blink">Stop blink</string>
+    <string name="det_blink_led">Blink LED</string>
+    <string name="det_pool">Pool</string>
+    <string name="det_fan">Fan</string>
+    <string name="det_tune">Tune</string>
+    <string name="det_power">Power</string>
+    <string name="det_working">Working: %1$s…</string>
+    <string name="det_restart_title">Restart miner?</string>
+    <string name="det_restart_body">Hashing stops for ~30–60 seconds while the miner reboots. Shares in flight may be lost. No settings are changed.</string>
+    <string name="det_power_title">Pause or resume hashing</string>
+    <string name="det_power_body">Pause sends the miner\'s soft-off command (stops it taking new work, for load-shedding or curtailment) without a reboot; Resume sends soft-on to restart it. Watch the hashrate after applying to confirm the effect on your firmware.</string>
+    <string name="det_pause">Pause</string>
+    <string name="det_resume">Resume</string>
+
+    <!-- Pool dialog -->
+    <string name="det_pool_title">Change primary pool</string>
+    <string name="det_pool_current">Current: %1$s:%2$d</string>
+    <string name="det_stratum_url">Stratum URL</string>
+    <string name="det_port">Port</string>
+    <string name="det_worker">Worker / address</string>
+    <string name="det_pool_warning">The stored pool password is preserved. A wrong URL stops mining until corrected. Older firmware may need a restart to pick up the change.</string>
+
+    <!-- Fan dialog -->
+    <string name="det_fan_title">Fan control</string>
+    <string name="det_fan_auto">Automatic (firmware-managed)</string>
+    <string name="det_fan_manual_speed">Manual speed: %1$d%%</string>
+    <string name="det_fan_warning" formatted="false">Below ~35% a loaded miner can overheat. The firmware\'s overheat protection remains active either way.</string>
+
+    <!-- Tune dialog -->
+    <string name="det_tune_unavailable_title">Tuning unavailable</string>
+    <string name="det_tune_unavailable_body">This firmware does not publish its approved frequency/voltage lists (GET /api/system/asic), so the app will not offer tuning values for it.</string>
+    <string name="det_tune_title">Tune (firmware-approved values)</string>
+    <string name="det_tune_current">Current: %1$s MHz / %2$s mV</string>
+    <string name="det_tune_stock">"  ·  Stock: %1$s MHz / %2$s mV"</string>
+    <string name="det_frequency_mhz">Frequency (MHz)</string>
+    <string name="det_core_voltage_mv">Core voltage (mV)</string>
+    <string name="det_tune_warning">Values above stock raise heat and power draw and can shorten hardware life. The app polls faster after applying; watch temperatures and roll back if chip or VR temps climb.</string>
+    <string name="det_roll_back">Roll back</string>
+
+    <!-- Smart plug -->
+    <string name="det_plug_hint">Cut power via a local smart plug when chip temp reaches the limit. On is always manual — the app never auto-restores power. Local addresses only.</string>
+    <string name="det_plug">Plug</string>
+    <string name="det_off_url">OFF URL</string>
+    <string name="det_on_url">ON URL</string>
+    <string name="det_plug_host">Plug IP / host</string>
+    <string name="det_plug_cutoff">Cut power at chip temp (°C)</string>
+    <string name="det_test_off">Test off</string>
+    <string name="det_test_on">Test on</string>
+
+    <!-- Alerts -->
+    <string name="det_alert_active">active</string>
+    <string name="det_alert_resolved">resolved</string>
+
+    <!-- Raw response -->
+    <string name="det_no_raw">No raw response captured yet</string>
+    <string name="det_raw_redacted">Credential and Wi-Fi fields are redacted.</string>
+
+    <!-- Remove dialog -->
+    <string name="det_remove_title">Remove miner?</string>
+    <string name="det_remove_body">This removes %1$s and keeps no telemetry history.</string>
+    <string name="det_this_miner">this miner</string>
+    <string name="det_remove">Remove</string>
+
+    <!-- Edit miner dialog -->
+    <string name="det_edit_miner_title">Edit miner</string>
+    <string name="det_name">Name</string>
+    <string name="det_group">Group</string>
+    <string name="det_location">Location (room/rack/shelf)</string>
+    <string name="det_farm_header">FARM</string>
+    <string name="det_tags">Tags (comma-separated)</string>
+    <string name="det_expected_hashrate">Expected hashrate (GH/s, blank = device-reported)</string>
+    <string name="det_notes">Notes</string>
+    <string name="det_alert_overrides_header">ALERT OVERRIDES (blank = global default)</string>
+    <string name="det_ov_hashrate" formatted="false">Hashrate alert below (%)</string>
+    <string name="det_ov_chip">Chip temp alert (°C)</string>
+    <string name="det_ov_vr">VR temp alert (°C)</string>
+    <string name="det_ov_reject" formatted="false">Reject-rate alert (%)</string>
+    <string name="det_mute">Mute alerts for this miner</string>
+    <string name="det_mute_hint">Still polled and charted; raises no alerts.</string>
+
+    <!-- Per-chip health table -->
+    <string name="det_col_board">Board</string>
+    <string name="det_col_hashrate">Hashrate</string>
+    <string name="det_col_chips">Chips</string>
+    <string name="det_col_hw_err">HW err</string>
+    <string name="det_col_temp">Temp</string>
+    <string name="det_chips_failed">⚠ %1$d failed chip(s) detected across %2$d board(s).</string>
+    <string name="det_chips_healthy">All %1$d board(s) reporting healthy.</string>
+
+    <!-- Miner visual (accessibility) -->
+    <string name="det_cd_visual">Live miner render: status %1$s</string>
+    <string name="det_cd_visual_chip">, chip %1$d degrees</string>
+    <string name="det_cd_visual_fan">, fan %1$d RPM</string>
+
+    <!-- ViewModel-surfaced status messages -->
+    <string name="det_msg_credential_cleared">Credential cleared.</string>
+    <string name="det_msg_credential_saved">Credential saved (encrypted).</string>
+    <string name="det_msg_plug_on_sent">Plug on command sent.</string>
+    <string name="det_msg_plug_off_sent">Plug off command sent.</string>
+    <string name="det_msg_plug_failed">Plug command failed — check the address/URL.</string>
+    <string name="det_msg_miner_not_found">Miner not found.</string>
+    <string name="det_msg_done">Done: %1$s.</string>
+    <string name="det_msg_failed">Failed: %1$s</string>
+    <string name="det_msg_unsupported">Unsupported: %1$s</string>
+    <string name="det_msg_unexpected_error">Unexpected error</string>
+
+    <!-- ViewModel action labels (shown as "Working: …" and "Done: …") -->
+    <string name="det_act_restarting">restarting</string>
+    <string name="det_act_blinking_led">blinking LED</string>
+    <string name="det_act_stopping_blink">stopping blink</string>
+    <string name="det_act_pausing">pausing hashing</string>
+    <string name="det_act_resuming">resuming hashing</string>
+    <string name="det_act_changing_pool">changing pool</string>
+    <string name="det_act_fan_auto">setting fan to automatic</string>
+    <string name="det_act_fan_manual">setting fan to %1$d%%</string>
+    <string name="det_act_applying_tune">applying %1$d MHz / %2$d mV</string>
+    <string name="det_act_rollback">rolling back tune</string>
+</resources>

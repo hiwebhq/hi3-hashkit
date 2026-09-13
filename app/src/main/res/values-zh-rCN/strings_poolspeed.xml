@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pool speed test screen (ui/poolspeed). -->
+<resources>
+    <string name="ps_title">矿池测速</string>
+    <string name="ps_description">测量 Stratum 延迟——TCP 握手加一次真实的 mining.subscribe 往返，不做抓包。测试对象是机队实际使用的矿池（从每台矿机自身的矿池配置读取，手机与机队同网，因此私有/局域网 Stratum 也能测）以及你在矿池地址簿中启用的矿池。从本手机所在网络测量。</string>
+    <string name="ps_run">开始测速</string>
+    <string name="ps_testing">测试中…</string>
+    <string name="ps_pool_count">%1$d 个矿池</string>
+    <string name="ps_ranked">排名（最快在前）</string>
+    <string name="ps_unreachable">无法连接</string>
+    <string name="ps_connect">连接 %1$s ms</string>
+    <string name="ps_jitter">抖动 ±%1$d ms</string>
+    <string name="ps_stratum">stratum %1$s</string>
+    <string name="ps_no_response">无响应</string>
+</resources>

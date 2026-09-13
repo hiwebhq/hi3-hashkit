@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home-screen widget strings (Glance widgets) — French. -->
+<resources>
+    <!-- Hashkit widget -->
+    <string name="widget_online_count">%1$d/%2$d en ligne</string>
+
+    <!-- Compare widget -->
+    <string name="widget_hashrate_sources">SOURCES DE HASHRATE</string>
+    <string name="widget_source_local">Local</string>
+    <string name="widget_source_pool">Pool</string>
+    <string name="widget_source_off">désactivé</string>
+
+    <!-- Fleet table widget -->
+    <string name="widget_fleet">FLOTTE</string>
+    <string name="widget_no_miners_yet">Aucun mineur pour l\'instant</string>
+    <string name="widget_more_count">+%1$d de plus</string>
+    <string name="widget_offline">hors ligne</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leaderboard screen (ui/leaderboard). -->
+<resources>
+    <string name="lead_title">Leaderboard</string>
+    <string name="lead_rank_efficiency">Efficiency</string>
+    <string name="lead_rank_attainment">Attainment</string>
+    <string name="lead_rank_hashrate">Hashrate</string>
+    <string name="lead_desc_efficiency">Ranked by energy efficiency (J/TH) — lower is better. Needs power data.</string>
+    <string name="lead_desc_attainment">Ranked by actual vs expected hashrate. Needs an expected hashrate.</string>
+    <string name="lead_desc_hashrate">Ranked by current hashrate.</string>
+    <string name="lead_empty">No live miners with this metric yet.</string>
+</resources>

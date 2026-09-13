@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alerts_title">Alarme</string>
+    <string name="alerts_ack_all">Alle quittieren</string>
+    <string name="alerts_empty">Keine Alarme aufgezeichnet. Alarme feuern bei geöffneter App und alle 15+ Minuten, wenn die Hintergrundüberwachung in den Einstellungen aktiviert ist.</string>
+    <string name="alerts_active">Aktiv</string>
+    <string name="alerts_resolved">Behoben</string>
+    <string name="alerts_acknowledge">Quittieren</string>
+</resources>

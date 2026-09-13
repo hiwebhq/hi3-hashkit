@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Locales offered by the in-app language picker; lets Android 13+ show Hashkit under
+     System settings > Languages > App languages. Keep in sync with AppLanguage.kt. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="es" />
+    <locale android:name="zh-CN" />
+    <locale android:name="ru" />
+    <locale android:name="de" />
+    <locale android:name="fr" />
+    <locale android:name="pt-BR" />
+</locale-config>

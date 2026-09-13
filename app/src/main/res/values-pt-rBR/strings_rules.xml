@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">Regras de automação</string>
+    <string name="rules_add_rule">Adicionar regra</string>
+    <string name="rules_intro">As regras são verificadas a cada ciclo de consulta. A condição precisa se manter pela janela sustentada da regra antes de a ação rodar, e cada regra dispara no máximo uma vez por intervalo por minerador. Mineradores silenciados são ignorados, ações de controle sem suporte são puladas com um motivo, e todo disparo gera uma notificação do watchdog.</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"SE %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" por ≥%1$dmin"</string>
+    <string name="rules_row_group">"  ·  grupo \"%1$s\""</string>
+    <string name="rules_row_all_miners">"  ·  todos os mineradores"</string>
+    <string name="rules_row_interval">"  ·  a cada %1$dmin por minerador"</string>
+    <string name="rules_last_fired">Último disparo %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">Nova regra</string>
+    <string name="rules_name">Nome</string>
+    <string name="rules_when">Quando</string>
+    <string name="rules_then">Então</string>
+    <string name="rules_threshold">Limite (%1$s)</string>
+    <string name="rules_target_group">Grupo-alvo (vazio = todos)</string>
+    <string name="rules_sustained_label">Sustentada por (min, 0 = primeira ocorrência)</string>
+    <string name="rules_min_interval_label">Intervalo mín. entre disparos por minerador (min)</string>
+    <string name="rules_editor_hint">Ações de controle (pausar/retomar/reiniciar) usam o caminho de controle verificado do minerador e são puladas onde não há suporte. Ações de tomada exigem uma tomada inteligente configurada. Teste primeiro com um intervalo alto.</string>
+</resources>

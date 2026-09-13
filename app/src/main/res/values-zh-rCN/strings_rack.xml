@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rack & site layout screen (ui/rack). -->
+<resources>
+    <string name="rack_title">机架与站点布局</string>
+    <string name="rack_empty">还没有矿机。添加矿机并设置每台的“位置”（房间 / 机架 / 层位），即可在此查看排布。</string>
+    <string name="rack_group_stats">%1$d/%2$d 在线 · %3$s</string>
+</resources>

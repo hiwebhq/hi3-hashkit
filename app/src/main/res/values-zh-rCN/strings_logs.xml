@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner logs screen chrome (ui/logs). Log CONTENT from miners is never localized. -->
+<resources>
+    <string name="logs_title">%1$s 日志</string>
+    <string name="logs_status_redacted">"%1$s  ·  钱包地址已隐去"</string>
+    <string name="logs_status_connecting">连接中…</string>
+    <string name="logs_status_live">实时</string>
+    <string name="logs_status_disconnected">已断开：%1$s</string>
+    <string name="logs_status_event_log">事件日志——由轮询推导（无固件日志流）</string>
+    <string name="logs_show_raw">显示原始日志</string>
+    <string name="logs_analyze">分析日志</string>
+    <string name="logs_resume">继续</string>
+    <string name="logs_pause">暂停</string>
+    <string name="logs_clear">清除</string>
+    <string name="logs_reconnect">重新连接</string>
+    <string name="logs_window_live">实时</string>
+    <string name="logs_analysis_summary">"日志分析  ·  %1$d 行  ·  %2$d 个错误  ·  %3$d 个警告"</string>
+    <string name="logs_findings">分析结果</string>
+    <string name="logs_export">导出已捕获日志</string>
+    <string name="logs_export_chooser">导出日志</string>
+    <string name="logs_analysis_footer">启发式本机分析——不经云端。“实时”分析当前流；1h/24h/7d 分析已捕获的历史（按矿机保留约 7 天）。钱包地址已隐去。</string>
+</resources>

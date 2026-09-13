@@ -93,6 +93,7 @@ data class DashboardUiState(
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val pollingEngine: PollingEngine,
     private val settingsRepository: SettingsRepository,
@@ -316,15 +317,15 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             val cidr = networkInspector.defaultScanCidr()
             if (cidr == null) {
-                _rescanMessage.value = "No local network detected to scan."
+                _rescanMessage.value = appContext.getString(hi3.hashkit.R.string.dash_rescan_no_network)
                 return@launch
             }
             val hosts = hi3.hashkit.discovery.SubnetUtils.expand(cidr)
             if (hosts == null) {
-                _rescanMessage.value = "Local range too large to auto-scan; use Add → Scan."
+                _rescanMessage.value = appContext.getString(hi3.hashkit.R.string.dash_rescan_too_large)
                 return@launch
             }
-            _rescanMessage.value = "Scanning ${hosts.size} hosts…"
+            _rescanMessage.value = appContext.getString(hi3.hashkit.R.string.dash_rescan_scanning, hosts.size)
             var found = 0
             scanner.scan(hosts).collect { event ->
                 when (event) {
@@ -336,7 +337,7 @@ class DashboardViewModel @Inject constructor(
                         found++
                     }
                     is hi3.hashkit.discovery.ScanEvent.Finished -> {
-                        _rescanMessage.value = "Rescan done — $found miner(s) found."
+                        _rescanMessage.value = appContext.getString(hi3.hashkit.R.string.dash_rescan_done, found)
                         pollingEngine.pollAllOnce()
                     }
                     else -> Unit

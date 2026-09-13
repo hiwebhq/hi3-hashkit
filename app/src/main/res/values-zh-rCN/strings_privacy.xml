@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Privacy Policy screen -->
+    <string name="priv_title">隐私政策</string>
+    <string name="priv_intro">%1$s 将你的数据保存在你的设备上。本摘要说明存储了哪些内容，以及仅在你主动开启时才会离开设备的少数几项。</string>
+
+    <string name="priv_local_title">设计上本地优先</string>
+    <string name="priv_local_body">Hi3 Hashkit 完全运行在你的设备和你自己的网络上。没有 Hi3 Hashkit 账户、没有分析统计、没有广告，也不会向我们或任何第三方发送遥测数据。你的矿机数据绝不会被上传到任何地方。</string>
+    <string name="priv_storage_title">哪些数据保存在本设备</string>
+    <string name="priv_storage_body">矿机地址、设备信息、遥测历史、矿场、告警设置和应用偏好只保存在本应用的私有存储中。可选的密钥（MMP API 密钥）使用 Android Keystore 加密。除非你主动导出备份文件并选择保存位置，否则任何数据都不会备份到云端。</string>
+    <string name="priv_talks_title">应用会与谁通信</string>
+    <string name="priv_talks_body">默认情况下，应用只通过你的局域网或 Tailscale VPN 连接你添加或发现的矿机 IP 地址。它绝不会自行联系我们的服务器。</string>
+    <string name="priv_optional_title">可选且默认关闭的连接</string>
+    <string name="priv_optional_body">只有在你开启时，以下三项集成才会访问互联网：比特币全网难度获取（mempool.space）；Hi3 Pool 统计，会把你的收款地址发送到你设置的矿池 URL；以及 Hi3 MMP 机队视图，使用你提供的 API 密钥认证。每项都会明确说明其传输的内容，关闭后相关请求立即停止。</string>
+    <string name="priv_camera_title">相机（QR 扫描）</string>
+    <string name="priv_camera_body">仅当你点按 QR 图标扫描收款地址时才会使用相机。扫描在本机完成；不会存储或传输任何图像或视频。你也可以拒绝相机权限，改为手动输入地址。</string>
+    <string name="priv_notifications_title">通知</string>
+    <string name="priv_notifications_body">告警默认关闭。启用后，通知基于矿机读数在本机生成；任何通知内容都不会离开设备。</string>
+    <string name="priv_control_title">你的控制权</string>
+    <string name="priv_control_body">你可以在应用内删除任何矿机、矿场或全部历史数据，调整保留期限，并随时在 Android 设置中撤销权限。卸载应用即删除其本地数据。</string>
+    <string name="priv_contact_title">联系我们</string>
+    <string name="priv_contact_body">对隐私或本应用有疑问？请访问 hi3.cc/contact 或 mmp.hi3.cc。</string>
+</resources>

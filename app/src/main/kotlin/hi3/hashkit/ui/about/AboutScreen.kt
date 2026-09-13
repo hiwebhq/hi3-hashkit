@@ -1,5 +1,6 @@
 package hi3.hashkit.ui.about
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,113 +29,82 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 import hi3.hashkit.ui.util.launchChooser
 import hi3.hashkit.ui.util.openUrl
 import hi3.hashkit.ui.util.viewFile
 
 /** How-to steps shown on the About screen. */
-private data class HowToStep(val title: String, val body: String)
+private data class HowToStep(@StringRes val title: Int, @StringRes val body: Int)
 
 /** A supported-miner family row: the family, the models it covers, and support level. */
-private data class SupportedMiner(val family: String, val models: String, val support: String)
+private data class SupportedMiner(
+    @StringRes val family: Int,
+    @StringRes val models: Int,
+    @StringRes val support: Int,
+)
 
 private val SUPPORTED_MINERS = listOf(
     SupportedMiner(
-        "Bitaxe / ESP-Miner (AxeOS)",
-        "Max (202), Ultra (204), Supra (400), Gamma (600), Gamma Turbo, Supra Hex",
-        "Full monitoring + safe controls: reboot, pool, fan, firmware-bounded tuning + autotune.",
+        R.string.about_miner_bitaxe_family,
+        R.string.about_miner_bitaxe_models,
+        R.string.about_miner_bitaxe_support,
     ),
     SupportedMiner(
-        "NerdQAxe (ESP-Miner fork)",
-        "NerdQAxe++, NerdQAxe+, NerdQAxe+ Hydro, Lucky-Miner-style forks",
-        "Full monitoring; controls stay off until verified on that firmware.",
+        R.string.about_miner_nerdqaxe_family,
+        R.string.about_miner_nerdqaxe_models,
+        R.string.about_miner_nerdqaxe_support,
     ),
     SupportedMiner(
-        "Antminer — stock Bitmain (BMMiner)",
-        "S21 Pro (verified); S21+, S21+ Hyd, S21 Hyd, S21 XP, S19 series, S17 series (compat-gated)",
-        "Hashrate, chip temps, fans, frequency, expected, ASIC count, shares, uptime, pool. No controls; power isn't in this API.",
+        R.string.about_miner_bmminer_family,
+        R.string.about_miner_bmminer_models,
+        R.string.about_miner_bmminer_support,
     ),
     SupportedMiner(
-        "Antminer — VNish firmware",
-        "S21 Pro (verified) and other VNish-flashed Antminers",
-        "Full monitoring including wall power and efficiency (J/TH). No controls.",
+        R.string.about_miner_vnish_family,
+        R.string.about_miner_vnish_models,
+        R.string.about_miner_vnish_support,
     ),
     SupportedMiner(
-        "Antminer — LuxOS firmware",
-        "LuxOS-flashed Antminers",
-        "Basic monitoring: hashrate, shares, uptime, pool.",
+        R.string.about_miner_luxos_family,
+        R.string.about_miner_luxos_models,
+        R.string.about_miner_luxos_support,
     ),
     SupportedMiner(
-        "Canaan Avalon",
-        "Nano 3 (verified); Nano 3S, Avalon Q, Avalon Mini 3 (compat-gated)",
-        "Nano 3: monitoring + Pause/Resume/Reboot. Others: monitoring over the CGMiner API.",
+        R.string.about_miner_avalon_family,
+        R.string.about_miner_avalon_models,
+        R.string.about_miner_avalon_support,
     ),
     SupportedMiner(
-        "Braiins OS (BOSer)",
-        "Braiins Mini Miner BMM 100 (verified)",
-        "Full monitoring over the CGMiner API. No power sensor on the unit → power unavailable.",
+        R.string.about_miner_braiins_family,
+        R.string.about_miner_braiins_models,
+        R.string.about_miner_braiins_support,
     ),
     SupportedMiner(
-        "WhatsMiner (MicroBT)",
-        "M2X / M3X / M5X / M6X families (compat-gated)",
-        "Hashrate, shares, uptime, pool, chip temp, fans, and power where reported. No controls.",
+        R.string.about_miner_whatsminer_family,
+        R.string.about_miner_whatsminer_models,
+        R.string.about_miner_whatsminer_support,
     ),
     SupportedMiner(
-        "Demo",
-        "Synthetic miners",
-        "Demo mode only — never mixed with real miners.",
+        R.string.about_miner_demo_family,
+        R.string.about_miner_demo_models,
+        R.string.about_miner_demo_support,
     ),
 )
 
 private val HOW_TO = listOf(
-    HowToStep(
-        "1 · Get on the same network",
-        "Connect this phone to the Wi-Fi/LAN your miners are on — or bring up Tailscale " +
-            "and advertise the site's subnet route to reach them remotely.",
-    ),
-    HowToStep(
-        "2 · Let it discover your miners",
-        "Hi3 Hashkit scans your local subnet automatically at launch, so miners usually " +
-            "appear on their own. Open the ⋮ menu → Network scan to see your IP, change the " +
-            "range, or start/stop a scan. Nothing is added but devices that answer a known " +
-            "miner API.",
-    ),
-    HowToStep(
-        "3 · Or add one by hand",
-        "Tap + on the dashboard to add a miner by IP/hostname, or run a scan of a CIDR. " +
-            "Only private LAN and Tailscale addresses are allowed.",
-    ),
-    HowToStep(
-        "4 · Organize into farms",
-        "Use ⋮ → Farms to group miners by site, each with its own scan subnet. Mark one as " +
-            "the default (it opens on launch) and switch the dashboard between farms with the " +
-            "chip at the top. Adding a farm offers an immediate scan of its subnet.",
-    ),
-    HowToStep(
-        "5 · Read the dashboard honestly",
-        "Every value is tagged by source — measured, reported, calculated, estimated or " +
-            "unavailable — so an estimate is never shown as fact. Tap a miner for live " +
-            "telemetry, history charts and the raw response.",
-    ),
-    HowToStep(
-        "6 · Control safely (where verified)",
-        "On supported firmware you can reboot, change the pool, adjust fans and apply " +
-            "firmware-bounded tuning — each with a confirmation and rollback. Long-press cards " +
-            "to select several and run bulk actions; a preview shows which devices support each.",
-    ),
-    HowToStep(
-        "7 · Turn on alerts when ready",
-        "Alerts are off by default. Enable them in Setup → Alerts to get offline, temperature, " +
-            "fan and reject-rate notifications with recovery notices, and set per-miner overrides.",
-    ),
-    HowToStep(
-        "8 · Stay private",
-        "Everything stays on this device. The Hi3 Pool and MMP views are optional, read-only, " +
-            "and off by default.",
-    ),
+    HowToStep(R.string.about_howto_1_title, R.string.about_howto_1_body),
+    HowToStep(R.string.about_howto_2_title, R.string.about_howto_2_body),
+    HowToStep(R.string.about_howto_3_title, R.string.about_howto_3_body),
+    HowToStep(R.string.about_howto_4_title, R.string.about_howto_4_body),
+    HowToStep(R.string.about_howto_5_title, R.string.about_howto_5_body),
+    HowToStep(R.string.about_howto_6_title, R.string.about_howto_6_body),
+    HowToStep(R.string.about_howto_7_title, R.string.about_howto_7_body),
+    HowToStep(R.string.about_howto_8_title, R.string.about_howto_8_body),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,7 +129,7 @@ fun AboutScreen(onBack: () -> Unit) {
             context.viewFile(out, "application/pdf")
         }.onFailure {
             android.widget.Toast.makeText(
-                context, "Couldn't open the guide — no PDF viewer installed?",
+                context, context.getString(R.string.about_guide_error),
                 android.widget.Toast.LENGTH_LONG,
             ).show()
         }
@@ -167,23 +137,28 @@ fun AboutScreen(onBack: () -> Unit) {
     fun shareApp() {
         val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(android.content.Intent.EXTRA_SUBJECT, "${HiBrand.appName} — local-first Bitcoin miner dashboard")
+            putExtra(
+                android.content.Intent.EXTRA_SUBJECT,
+                context.getString(R.string.about_share_subject, HiBrand.appName),
+            )
             putExtra(
                 android.content.Intent.EXTRA_TEXT,
-                "Check out ${HiBrand.appName}, a local-first Android app for monitoring and " +
-                    "safely controlling Bitcoin miners: https://mmp.hi3.cc/hashkit",
+                context.getString(R.string.about_share_text, HiBrand.appName),
             )
         }
-        context.launchChooser(send, "Share ${HiBrand.appName}")
+        context.launchChooser(send, context.getString(R.string.about_share_chooser, HiBrand.appName))
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.about_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -197,64 +172,59 @@ fun AboutScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
-                Section("ABOUT") {
+                Section(stringResource(R.string.about_section_about)) {
                     Text(
-                        "${HiBrand.appName}  ·  v$version",
+                        stringResource(R.string.about_app_version, HiBrand.appName, version),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        "Hi3 Hashkit is a local-first Android dashboard for Bitcoin miners: it " +
-                            "discovers, monitors, and safely controls your fleet on your own " +
-                            "network — no account, no cloud, your data stays on your device.",
+                        stringResource(R.string.about_app_desc),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
                     LinkRow(
-                        title = "User guide",
-                        subtitle = "How to use Hi3 Hashkit (PDF, offline)",
-                        linkLabel = "Open PDF",
+                        title = stringResource(R.string.about_link_guide_title),
+                        subtitle = stringResource(R.string.about_link_guide_subtitle),
+                        linkLabel = stringResource(R.string.about_link_guide_label),
                         highlight = true,
                     ) { openGuide() }
                     LinkRow(
                         title = "Hi3",
-                        subtitle = "The Hi3 mining platform",
+                        subtitle = stringResource(R.string.about_link_hi3_subtitle),
                         linkLabel = "hi3.cc",
                         highlight = false,
                     ) { open("https://www.hi3.cc") }
                     LinkRow(
-                        title = "Bitcoin pool services",
-                        subtitle = "Solo, PPLNS and TIDES payouts on Hi3 Pool",
+                        title = stringResource(R.string.about_link_pool_title),
+                        subtitle = stringResource(R.string.about_link_pool_subtitle),
                         linkLabel = "pool.hi3.cc",
                         highlight = true,
                     ) { open("https://pool.hi3.cc") }
                     LinkRow(
-                        title = "Help & support",
-                        subtitle = "Assistance with this app and fleet management",
+                        title = stringResource(R.string.about_link_support_title),
+                        subtitle = stringResource(R.string.about_link_support_subtitle),
                         linkLabel = "mmp.hi3.cc",
                         highlight = false,
                     ) { open("https://mmp.hi3.cc") }
                     LinkRow(
-                        title = "Share app",
-                        subtitle = "Send a friend the download link",
-                        linkLabel = "Share",
+                        title = stringResource(R.string.about_link_share_title),
+                        subtitle = stringResource(R.string.about_link_share_subtitle),
+                        linkLabel = stringResource(R.string.common_share),
                         highlight = false,
                     ) { shareApp() }
                     LinkRow(
-                        title = "Feature request",
-                        subtitle = "Suggest an improvement or report an issue",
+                        title = stringResource(R.string.about_link_feedback_title),
+                        subtitle = stringResource(R.string.about_link_feedback_subtitle),
                         linkLabel = "hi3.cc/contact",
                         highlight = false,
                     ) { open("https://hi3.cc/contact") }
                 }
             }
             item {
-                Section("SUPPORTED MINERS") {
+                Section(stringResource(R.string.about_section_supported)) {
                     Text(
-                        "Support is by firmware/API family, so every model in a family works — " +
-                            "you don't need each one. \"Verified\" = confirmed on real hardware; " +
-                            "\"compat-gated\" = same firmware API, pending confirmation on that model " +
-                            "(basic telemetry is safe). Unverified controls are never guessed.",
+                        stringResource(R.string.about_supported_intro),
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )
@@ -262,7 +232,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 }
             }
             item {
-                Section("HOW TO USE") {
+                Section(stringResource(R.string.about_section_howto)) {
                     HOW_TO.forEach { step -> HowToRow(step) }
                 }
             }
@@ -273,17 +243,17 @@ fun AboutScreen(onBack: () -> Unit) {
 @Composable
 private fun SupportedMinerRow(m: SupportedMiner) {
     Column(Modifier.fillMaxWidth()) {
-        Text(m.family, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
-        Text(m.models, style = MaterialTheme.typography.labelSmall, color = HiBrand.accent)
-        Text(m.support, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+        Text(stringResource(m.family), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
+        Text(stringResource(m.models), style = MaterialTheme.typography.labelSmall, color = HiBrand.accent)
+        Text(stringResource(m.support), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
     }
 }
 
 @Composable
 private fun HowToRow(step: HowToStep) {
     Column(Modifier.fillMaxWidth()) {
-        Text(step.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
-        Text(step.body, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+        Text(stringResource(step.title), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = HiBrand.textPrimary)
+        Text(stringResource(step.body), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
     }
 }
 

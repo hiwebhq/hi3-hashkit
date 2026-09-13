@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="heat_title">Reutilización de calor</string>
+    <string name="heat_intro">Un ASIC convierte en calor prácticamente toda la electricidad que consume. En temporada de calefacción, ese calor compensa lo que gastarías en calentar el espacio — así que el consumo no es un coste puro de minería. Las cifras son estimaciones a partir del consumo en vivo de la flota.</string>
+
+    <!-- Cards -->
+    <string name="heat_output_now">Calor generado ahora</string>
+    <string name="heat_output_sub">%1$s kW térmicos · %2$d minero(s) en línea</string>
+    <string name="heat_thermal_per_day">Energía térmica por día</string>
+    <string name="heat_thermal_sub">Al consumo actual, sostenido durante 24 h</string>
+    <string name="heat_rate_hint">Configura tu tarifa eléctrica en Ajustes para ver el valor en dinero del calor.</string>
+    <string name="heat_value_today">Valor de calefacción hoy</string>
+    <string name="heat_value_today_sub">vs. calefacción eléctrica resistiva (1:1) a %1$s/kWh</string>
+    <string name="heat_value_month">Valor de calefacción este mes</string>
+    <string name="heat_value_month_sub">≈ %1$s días al ritmo de consumo actual</string>
+    <string name="heat_pump_title">Si en cambio calientas con bomba de calor</string>
+    <string name="heat_pump_body">Una bomba de calor (COP ≈ 3) genera el mismo calor con cerca de un tercio de la electricidad, así que el minero compensa aproximadamente %1$s/mes frente a una.</string>
+    <string name="heat_off_season">Fuera de temporada de calefacción el calor no tiene valor y añade carga de refrigeración — combínalo con Horarios para reducir la marcha en verano.</string>
+</resources>

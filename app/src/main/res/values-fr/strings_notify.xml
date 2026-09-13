@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notification strings — French. -->
+<resources>
+    <!-- Notification channel names -->
+    <string name="notif_channel_offline">Mineurs hors ligne</string>
+    <string name="notif_channel_thermal">Température</string>
+    <string name="notif_channel_fan">Ventilateurs</string>
+    <string name="notif_channel_shares">Shares rejetées</string>
+    <string name="notif_channel_status">Changements de statut</string>
+    <string name="notif_channel_recovery">Rétablissements</string>
+    <string name="notif_channel_watchdog">Surveillance &amp; automatisation</string>
+    <string name="notif_channel_digest">Résumé quotidien</string>
+
+    <!-- Alert notification titles -->
+    <string name="notif_alert_title">Alerte : %1$s</string>
+    <string name="notif_recovered_title">Rétabli : %1$s</string>
+
+    <!-- Notification actions -->
+    <string name="notif_action_acknowledge">Acquitter</string>
+</resources>

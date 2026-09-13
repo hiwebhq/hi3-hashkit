@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alerts_title">告警</string>
+    <string name="alerts_ack_all">全部确认</string>
+    <string name="alerts_empty">暂无告警记录。应用打开时告警会实时触发；在设置中启用后台监控后，每隔 15 分钟以上也会检查一次。</string>
+    <string name="alerts_active">活动</string>
+    <string name="alerts_resolved">已恢复</string>
+    <string name="alerts_acknowledge">确认</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Acoustic fan check screen (AcousticScreen). -->
+<resources>
+    <string name="ac_title">Contrôle acoustique des ventilateurs</string>
+    <string name="ac_intro">Tenez le micro du téléphone à quelques cm des ventilateurs du mineur, gardez la pièce silencieuse et enregistrez un clip de %1$d secondes. L\'audio est analysé sur l\'appareil (FFT), jamais enregistré ni envoyé. C\'est un contrôle indicatif, au mieux — pas un diagnostic étalonné.</string>
+    <string name="ac_record">Enregistrer %1$d s</string>
+    <string name="ac_listening">Écoute…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">Impossible de capturer l\'audio. Vérifiez l\'autorisation du microphone et réessayez.</string>
+    <string name="ac_clip_too_short">Clip trop court pour être analysé.</string>
+    <string name="ac_mic_permission">L\'autorisation du microphone est nécessaire pour écouter les ventilateurs.</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">Aucun défaut évident</string>
+    <string name="ac_check_fans">Vérifiez les ventilateurs</string>
+    <string name="ac_measured">MESURÉ</string>
+    <string name="ac_dominant_tone">Tonalité dominante : %1$d Hz (≈ %2$d RPM si fondamentale)</string>
+    <string name="ac_tonality">Tonalité : %1$s× · énergie haute fréquence : %2$s%%</string>
+</resources>

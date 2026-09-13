@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +36,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.db.SavedPoolDao
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.integrations.poolspeed.PoolSpeedResult
@@ -58,6 +60,7 @@ data class PoolSpeedState(
 
 @HiltViewModel
 class PoolSpeedViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val savedPoolDao: SavedPoolDao,
     private val tester: PoolSpeedTester,
@@ -96,7 +99,7 @@ class PoolSpeedViewModel @Inject constructor(
         viewModelScope.launch {
             val candidates = collect()
             if (candidates.isEmpty()) {
-                _state.value = _state.value.copy(message = "No pools found. Configure a pool on a miner or in the address book.")
+                _state.value = _state.value.copy(message = appContext.getString(R.string.vm_ps_no_pools))
                 return@launch
             }
             _state.value = _state.value.copy(candidates = candidates.size, running = true, results = emptyList(), message = null)
@@ -106,7 +109,7 @@ class PoolSpeedViewModel @Inject constructor(
                 results += r
                 _state.value = _state.value.copy(results = rank(results))
             }
-            _state.value = _state.value.copy(running = false, message = "Tested ${candidates.size} pool(s).")
+            _state.value = _state.value.copy(running = false, message = appContext.getString(R.string.vm_ps_tested, candidates.size))
         }
     }
 
@@ -120,6 +123,7 @@ class PoolSpeedViewModel @Inject constructor(
         )
 }
 
+@Suppress("LongMethod") // declarative screen layout; stringResource extraction added lines, not logic
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PoolSpeedScreen(
@@ -131,10 +135,13 @@ fun PoolSpeedScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pool speed test", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.ps_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -149,11 +156,7 @@ fun PoolSpeedScreen(
         ) {
             item {
                 Text(
-                    "Measures stratum latency — the TCP handshake and a real mining.subscribe " +
-                        "round-trip, no packet sniffing. It tests the pools your fleet actually " +
-                        "uses (read from each miner's own pool config, so PRIVATE/LAN stratum " +
-                        "works because the phone shares the fleet network) plus the pools you've " +
-                        "enabled in the Pool address book. Measured from THIS phone's network.",
+                    stringResource(R.string.ps_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -161,14 +164,24 @@ fun PoolSpeedScreen(
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(onClick = viewModel::runTest, enabled = !state.running) {
-                        Text(if (state.running) "Testing…" else "Run speed test")
+                        Text(stringResource(if (state.running) R.string.ps_testing else R.string.ps_run))
                     }
                     if (state.running) CircularProgressIndicator(modifier = Modifier.padding(2.dp))
-                    Text("${state.candidates} pool(s)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    Text(
+                        stringResource(R.string.ps_pool_count, state.candidates),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
                 }
             }
             if (state.results.isNotEmpty()) {
-                item { Text("RANKED (fastest first)", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary) }
+                item {
+                    Text(
+                        stringResource(R.string.ps_ranked),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                }
                 items(state.results, key = { "${it.host}:${it.port}" }) { r ->
                     ResultCard(r, isBest = r == state.results.firstOrNull { it.reachable })
                 }
@@ -197,7 +210,7 @@ private fun ResultCard(r: PoolSpeedResult, isBest: Boolean) {
                     color = if (isBest) HiBrand.accent else HiBrand.textPrimary,
                 )
                 Text(
-                    if (!r.reachable) "unreachable"
+                    if (!r.reachable) stringResource(R.string.ps_unreachable)
                     else (r.subscribeMs ?: r.connectMinMs)?.let { "$it ms" } ?: "—",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
@@ -206,12 +219,18 @@ private fun ResultCard(r: PoolSpeedResult, isBest: Boolean) {
             }
             Text("${r.host}:${r.port}", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
             if (r.reachable) {
+                val connectPart = stringResource(R.string.ps_connect, "${r.connectMinMs ?: "—"}")
+                val jitterPart = r.jitterMs?.let { stringResource(R.string.ps_jitter, it) }
+                val stratumPart = stringResource(
+                    R.string.ps_stratum,
+                    r.subscribeMs?.let { "$it ms" } ?: stringResource(R.string.ps_no_response),
+                )
                 Text(
                     buildString {
-                        append("connect ${r.connectMinMs ?: "—"} ms")
-                        r.jitterMs?.let { append(" · jitter ±$it ms") }
-                        append("  ·  stratum ")
-                        append(r.subscribeMs?.let { "$it ms" } ?: "no response")
+                        append(connectPart)
+                        jitterPart?.let { append(" · $it") }
+                        append("  ·  ")
+                        append(stratumPart)
                     },
                     style = MaterialTheme.typography.labelSmall,
                     color = if (r.speaksStratum) HiBrand.textSecondary else HiBrand.statusDegraded,

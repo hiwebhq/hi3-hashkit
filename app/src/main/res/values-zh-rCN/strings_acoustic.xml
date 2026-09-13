@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Acoustic fan check screen (AcousticScreen). -->
+<resources>
+    <string name="ac_title">声学风扇检测</string>
+    <string name="ac_intro">将手机麦克风靠近矿机风扇几厘米处，保持环境安静，录制一段 %1$d 秒的音频。音频在本机分析（FFT），不会保存或上传。这只是尽力而为的参考性检测，并非经过校准的诊断。</string>
+    <string name="ac_record">录制 %1$d 秒</string>
+    <string name="ac_listening">正在聆听…</string>
+
+    <!-- Messages -->
+    <string name="ac_capture_failed">无法采集音频。请检查麦克风权限后重试。</string>
+    <string name="ac_clip_too_short">音频太短，无法分析。</string>
+    <string name="ac_mic_permission">需要麦克风权限才能听取风扇声音。</string>
+
+    <!-- Result cards -->
+    <string name="ac_no_fault">未发现明显故障</string>
+    <string name="ac_check_fans">请检查风扇</string>
+    <string name="ac_measured">实测</string>
+    <string name="ac_dominant_tone">主音调：%1$d Hz（若为基频，约合 %2$d RPM）</string>
+    <string name="ac_tonality">音调性：%1$s× · 高频能量：%2$s%%</string>
+</resources>

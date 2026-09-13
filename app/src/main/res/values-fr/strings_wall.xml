@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wall / TV kiosk dashboard (ui/wall) — French. -->
+<resources>
+    <string name="wall_size_small">Petit</string>
+    <string name="wall_size_medium">Moyen</string>
+    <string name="wall_size_large">Grand</string>
+    <string name="wall_counts">%1$d en ligne · %2$d hors ligne · %3$d mineurs</string>
+    <string name="wall_display_options">Options d\'affichage</string>
+    <string name="wall_card_size">TAILLE DES CARTES</string>
+    <string name="wall_grid_columns">COLONNES DE LA GRILLE</string>
+    <string name="wall_fewer_columns">Moins de colonnes</string>
+    <string name="wall_more_columns">Plus de colonnes</string>
+    <string name="wall_columns_auto">Auto</string>
+    <string name="wall_exit">Quitter le mode mur</string>
+    <string name="wall_no_miners">Aucun mineur à afficher.</string>
+</resources>

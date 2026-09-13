@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран ограничения мощности по цене (PriceCurtailmentScreen). -->
+<resources>
+    <string name="price_title">Ограничение по цене</string>
+    <string name="price_intro">Приостанавливайте работу при скачках цен и майните, когда электроэнергия дешёвая, — по бесплатному получасовому фиду Octopus Agile (Великобритания). Аккаунт и ключ не нужны — загружается только публичная цена для вашего региона.</string>
+
+    <!-- Карточка текущей цены -->
+    <string name="price_now_label">ЦЕНА СЕЙЧАС</string>
+    <string name="price_next6h">Следующие 6 ч: мин %1$s · макс %2$s p/kWh</string>
+    <string name="price_reco_run">Рекомендация: дёшево — возобновить майнинг</string>
+    <string name="price_reco_curtail">Рекомендация: дорого — ограничить майнинг</string>
+    <string name="price_reco_hold">Рекомендация: удерживать (в пределах мёртвой зоны)</string>
+
+    <!-- Действия -->
+    <string name="price_refresh">Обновить цены</string>
+    <string name="price_resume_fleet">Возобновить парк</string>
+    <string name="price_curtail_fleet">Ограничить парк</string>
+
+    <!-- Разделы и конфигурация -->
+    <string name="price_next_slots">БЛИЖАЙШИЕ СЛОТЫ</string>
+    <string name="price_configuration">КОНФИГУРАЦИЯ</string>
+    <string name="price_region_label">Буква региона (A–P)</string>
+    <string name="price_region_placeholder">C — Лондон</string>
+    <string name="price_resume_label">Возобновлять ≤ p/kWh</string>
+    <string name="price_curtail_label">Ограничивать ≥ p/kWh</string>
+    <string name="price_save_config">Сохранить конфигурацию</string>
+</resources>

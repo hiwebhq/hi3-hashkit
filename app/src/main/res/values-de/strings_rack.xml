@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rack & site layout screen (ui/rack). -->
+<resources>
+    <string name="rack_title">Rack- &amp; Standort-Layout</string>
+    <string name="rack_empty">Noch keine Miner. Füge Miner hinzu und setze bei jedem den Standort (Raum / Rack / Regal), um sie hier angeordnet zu sehen.</string>
+    <string name="rack_group_stats">%1$d/%2$d aktiv · %3$s</string>
+</resources>

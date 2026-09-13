@@ -38,9 +38,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import hi3.hashkit.R
 import hi3.hashkit.domain.acoustic.AcousticAnalyzer
 import hi3.hashkit.ui.theme.HiBrand
 import kotlinx.coroutines.Dispatchers
@@ -69,11 +71,11 @@ fun AcousticScreen(onBack: () -> Unit) {
             val samples = withContext(Dispatchers.IO) { recordSamples() }
             recording = false
             if (samples == null || samples.isEmpty()) {
-                message = "Couldn't capture audio. Check the microphone permission and try again."
+                message = context.getString(R.string.ac_capture_failed)
                 return@launch
             }
             val analysis = AcousticAnalyzer.analyze(samples, SAMPLE_RATE)
-            if (analysis == null) message = "Clip too short to analyse." else result = analysis
+            if (analysis == null) message = context.getString(R.string.ac_clip_too_short) else result = analysis
         }
     }
 
@@ -81,7 +83,7 @@ fun AcousticScreen(onBack: () -> Unit) {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) startRecording()
-        else message = "Microphone permission is needed to listen to the fans."
+        else message = context.getString(R.string.ac_mic_permission)
     }
 
     fun onRecordClick() {
@@ -93,10 +95,10 @@ fun AcousticScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Acoustic fan check", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.ac_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -111,17 +113,14 @@ fun AcousticScreen(onBack: () -> Unit) {
         ) {
             item {
                 Text(
-                    "Hold the phone's mic within a few cm of the miner's fans, keep the room quiet, " +
-                        "and record a $RECORD_SECONDS-second clip. The audio is analysed on-device " +
-                        "(FFT) and never saved or sent. This is a best-effort, indicative check — " +
-                        "not a calibrated diagnostic.",
+                    stringResource(R.string.ac_intro, RECORD_SECONDS),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
             }
             item {
                 Button(onClick = ::onRecordClick, enabled = !recording, modifier = Modifier.fillMaxWidth()) {
-                    Text(if (recording) "Listening…" else "Record $RECORD_SECONDS s")
+                    Text(if (recording) stringResource(R.string.ac_listening) else stringResource(R.string.ac_record, RECORD_SECONDS))
                 }
             }
             if (recording) {
@@ -140,13 +139,13 @@ fun AcousticScreen(onBack: () -> Unit) {
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Text(
-                                if (r.healthy) "No obvious fault" else "Check the fans",
+                                if (r.healthy) stringResource(R.string.ac_no_fault) else stringResource(R.string.ac_check_fans),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = if (r.healthy) HiBrand.statusOnline else HiBrand.statusDegraded,
                             )
                             r.findings.forEach { f ->
-                                Text("• $f", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary,
+                                Text("• ${stringResource(f.messageRes, *f.args.toTypedArray())}", style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary,
                                     modifier = Modifier.padding(top = 4.dp))
                             }
                         }
@@ -159,10 +158,10 @@ fun AcousticScreen(onBack: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Column(Modifier.padding(14.dp)) {
-                            Text("MEASURED", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
-                            Text("Dominant tone: ${r.dominantHz.toInt()} Hz (≈ ${r.rpmEstimate} RPM if fundamental)",
+                            Text(stringResource(R.string.ac_measured), style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                            Text(stringResource(R.string.ac_dominant_tone, r.dominantHz.toInt(), r.rpmEstimate),
                                 style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
-                            Text("Tonality: ${"%.1f".format(r.tonalRatio)}× · high-freq energy: ${"%.0f".format(r.highFreqRatio * 100)}%",
+                            Text(stringResource(R.string.ac_tonality, "%.1f".format(r.tonalRatio), "%.0f".format(r.highFreqRatio * 100)),
                                 style = MaterialTheme.typography.bodyMedium, color = HiBrand.textPrimary)
                         }
                     }

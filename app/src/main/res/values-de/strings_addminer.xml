@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="addm_title">Miner hinzufügen</string>
+    <string name="addm_manual_entry">MANUELLE EINGABE</string>
+    <string name="addm_manual_hint">Gib die IP oder den Hostnamen eines Miners ein — auch Tailscale-Adressen (100.x.y.z), wenn dieses Gerät in deinem Tailnet ist.</string>
+    <string name="addm_host_label">IP-Adresse oder Hostname</string>
+    <string name="addm_probing">Prüfe…</string>
+    <string name="addm_probe_add">Prüfen &amp; hinzufügen</string>
+    <string name="addm_scan_local_network">LOKALES NETZWERK SCANNEN</string>
+    <string name="addm_scan_hint">Prüft nur private Adressen, nur auf Miner-Ports, mit strikten Limits. Bereiche größer als /22 werden abgelehnt.</string>
+    <string name="addm_cidr_label">CIDR-Bereich</string>
+    <string name="addm_scan">Scannen</string>
+    <string name="addm_hosts_progress">%1$d / %2$d Hosts</string>
+    <string name="addm_added">hinzugefügt</string>
+    <string name="addm_known">bekannt</string>
+</resources>

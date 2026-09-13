@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: strings surfaced from ViewModels / shared domain classes. -->
+<resources>
+
+    <!-- AutotuneViewModel -->
+    <string name="vm_tune_miner_not_found">Майнер не найден.</string>
+    <string name="vm_tune_not_tunable">У этого майнера нет параметров для тюнинга.</string>
+    <string name="vm_tune_no_voltage">Нет напряжения ядра, которое можно зафиксировать.</string>
+    <string name="vm_tune_sweeping">Перебор %1$d частот при %2$d mV, потолок %3$d°C…</string>
+    <string name="vm_tune_step_label">%1$d MHz @ %2$d mV — применение &amp; стабилизация %3$d с</string>
+    <string name="vm_tune_stopped_early">"Остановлено раньше: достигнут потолок %1$d°C. "</string>
+    <string name="vm_tune_no_safe_point">Ни одна безопасная точка не дала корректного замера.</string>
+    <string name="vm_tune_best_hashrate">Лучший хешрейт: %1$d MHz (%2$s).</string>
+    <string name="vm_tune_best_efficiency">Лучшая эффективность: %1$d MHz при %2$s J/TH.</string>
+    <string name="vm_tune_restored">" Исходная уставка восстановлена."</string>
+    <string name="vm_tune_applied">Применено: %1$d MHz @ %2$d mV.</string>
+    <string name="vm_tune_apply_failed">Не удалось применить: %1$s</string>
+    <string name="vm_tune_cancelled">Перебор отменён — исходная уставка восстановлена.</string>
+
+    <!-- PoolSpeedViewModel -->
+    <string name="vm_ps_no_pools">Пулы не найдены. Настройте пул на майнере или в адресной книге.</string>
+    <string name="vm_ps_tested">Протестировано пулов: %1$d.</string>
+
+    <!-- AddressBookViewModel -->
+    <string name="vm_ab_applied">Применено «%1$s»: %2$d ок, %3$d с ошибкой, %4$d не поддерживается.</string>
+
+    <!-- Shared by PriceCurtailmentViewModel + SolarSurplusViewModel -->
+    <string name="vm_saved">Сохранено.</string>
+    <string name="vm_curtailed">Приостановлено</string>
+    <string name="vm_resumed">Возобновлено</string>
+    <string name="vm_curtail_result">%1$s: %2$d/%3$d майнеров.</string>
+    <string name="vm_curtail_result_skipped">%1$s: %2$d/%3$d майнеров, пропущено: %4$d.</string>
+
+    <!-- PriceCurtailmentViewModel -->
+    <string name="vm_price_no_rate">Для текущего получаса тариф пока недоступен.</string>
+
+    <!-- SolarSurplusViewModel -->
+    <string name="vm_solar_read">Считано %1$s из Home Assistant.</string>
+
+    <!-- SettingsScreen refresh-interval presets -->
+    <string name="vm_interval_5s">5 сек</string>
+    <string name="vm_interval_10s">10 сек</string>
+    <string name="vm_interval_15s">15 сек</string>
+    <string name="vm_interval_30s">30 сек</string>
+    <string name="vm_interval_1m">1 мин</string>
+    <string name="vm_interval_2m">2 мин</string>
+    <string name="vm_interval_5m">5 мин</string>
+    <string name="vm_interval_15m">15 мин</string>
+    <string name="vm_interval_30m">30 мин</string>
+    <string name="vm_interval_1h">1 час</string>
+    <string name="vm_interval_6h">6 часов</string>
+    <string name="vm_interval_12h">12 часов</string>
+    <string name="vm_interval_1d">1 день</string>
+    <string name="vm_interval_days">%1$d дн.</string>
+    <string name="vm_interval_hours">%1$d ч</string>
+    <string name="vm_interval_mins">%1$d мин</string>
+    <string name="vm_interval_secs">%1$d сек</string>
+
+    <!-- ArOverlayViewModel -->
+    <string name="vm_ar_blank_tag">Пустая NFC-метка — запишите её кнопкой «Создать метку» у майнера</string>
+    <string name="vm_ar_not_hashkit_tag">Это не метка Hi3 Hashkit</string>
+    <string name="vm_ar_scanned">Сканировано ✓ %1$s</string>
+    <string name="vm_ar_miner_fallback">майнер</string>
+    <string name="vm_ar_not_added_yet">Метка считана — %1$s ещё не добавлен</string>
+    <string name="vm_ar_no_match">Метка считана — подходящий майнер не найден</string>
+    <string name="vm_ar_adding">Добавление %1$s…</string>
+    <string name="vm_ar_added">Добавлено: %1$s.</string>
+    <string name="vm_ar_unreachable">Не удалось связаться с %1$s: %2$s</string>
+
+    <!-- AddMinerViewModel -->
+    <string name="vm_add_private_only">Допустимы только адреса частной LAN или Tailscale (100.x).</string>
+    <string name="vm_add_added">Добавлено — получаем первую телеметрию…</string>
+    <string name="vm_add_already_tracked">Уже отслеживается; адрес обновлён.</string>
+    <string name="vm_add_unreachable">Недоступен: %1$s</string>
+    <string name="vm_add_cidr_hint">Введите частный CIDR, например 192.168.1.0/24.</string>
+    <string name="vm_add_range_too_large">Диапазон шире /%1$d — сузьте его перед сканированием.</string>
+    <string name="vm_add_scan_done">Просканировано хостов: %1$d, найдено майнеров: %2$d.</string>
+    <string name="vm_add_scan_cancelled">Сканирование отменено.</string>
+    <string name="vm_add_mdns_searching">Поиск через mDNS…</string>
+    <string name="vm_add_mdns_done">Поиск mDNS завершён, найдено майнеров: %1$d.</string>
+
+    <!-- NfcProgramViewModel -->
+    <string name="vm_nfc_wrote">Записано: %1$s.</string>
+    <string name="vm_nfc_tag_fallback">метка</string>
+    <string name="vm_nfc_all_done">" Готово: все %1$d."</string>
+    <string name="vm_nfc_none">Нет майнеров для программирования.</string>
+
+    <!-- LogClassifier categories -->
+    <string name="logan_cat_pool">Пул</string>
+    <string name="logan_cat_shares">Шары</string>
+    <string name="logan_cat_asic">ASIC</string>
+    <string name="logan_cat_thermal">Температура</string>
+    <string name="logan_cat_network">Сеть</string>
+    <string name="logan_cat_system">Система</string>
+    <string name="logan_cat_other">Другое</string>
+
+    <!-- LogAnalyzer findings -->
+    <string name="logan_disconnects_title">Разрывов пула/сети в недавнем логе: %1$d</string>
+    <string name="logan_disconnects_suggestion">Проверьте URL/порт пула и сигнал Wi-Fi; нестабильная связь ведёт к потере шар.</string>
+    <string name="logan_restarts_title">Признаки перезапусков/сбросов: %1$d</string>
+    <string name="logan_restarts_suggestion">Повторные перезапуски обычно означают проблемы с питанием (БП/USB) или перегрев — проверьте питание и охлаждение.</string>
+    <string name="logan_thermal_title">Термопредупреждений/ошибок: %1$d</string>
+    <string name="logan_thermal_suggestion">Улучшите обдув или снизьте тюнинг; постоянный перегрев снижает хешрейт и сокращает срок службы железа.</string>
+    <string name="logan_asic_title">Ошибок ASIC: %1$d</string>
+    <string name="logan_asic_suggestion">Постоянные ошибки ASIC могут указывать на деградацию чипа/платы — сравните состояние чипов и рассмотрите перепрошивку.</string>
+    <string name="logan_rejects_title">Сообщений об отклонённых шарах: %1$d</string>
+    <string name="logan_rejects_suggestion">Высокий процент отказов часто означает устаревшие задания (задержки сети) или слишком агрессивный тюнинг.</string>
+    <string name="logan_clean_title">В недавнем логе проблем не обнаружено.</string>
+    <string name="logan_errors_no_pattern_title">Строк с ошибками: %1$d, но известных проблемных паттернов нет.</string>
+    <string name="logan_none_suggestion">Ничего требующего действий не выявлено. Держите поток открытым, чтобы поймать периодические сбои.</string>
+
+    <!-- AcousticAnalyzer findings -->
+    <string name="acou_bearing">Повышенный высокочастотный шум — возможен износ или сухой подшипник.</string>
+    <string name="acou_imbalance">Сильный низкий тон на %1$d Hz — возможен дисбаланс или мусор.</string>
+    <string name="acou_broadband">Звук широкополосный, без явного тона вентилятора — проверьте, что микрофон у вентилятора и в помещении тихо.</string>
+    <string name="acou_no_fault">Явных неисправностей вентилятора в этой записи нет (оценка ориентировочная).</string>
+
+    <!-- FleetControl BulkAction labels (dialog titles) -->
+    <string name="bulk_restart">Перезагрузить</string>
+    <string name="bulk_set_pool">Сменить основной пул на %1$s:%2$d</string>
+    <string name="bulk_fan_auto">Перевести вентилятор в авто</string>
+    <string name="bulk_fan_manual">Установить вентилятор на %1$d%%</string>
+    <string name="bulk_pause">Приостановить хеширование</string>
+    <string name="bulk_resume">Возобновить хеширование</string>
+    <string name="bulk_tune">Тюнинг на %1$d MHz @ %2$d mV</string>
+
+</resources>

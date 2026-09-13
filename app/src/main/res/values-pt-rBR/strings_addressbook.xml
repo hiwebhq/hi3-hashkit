@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ab_title">Agenda de pools</string>
+    <string name="ab_add_pool">Adicionar pool</string>
+    <string name="ab_intro">Salve as pools/carteiras que você usa e aplique uma na fazenda inteira com um toque. O worker é o endereço de pagamento (opcionalmente endereço.nomedoworker). Nenhuma senha de pool é armazenada — o firmware guarda a dele.</string>
+
+    <!-- Apply-to-fleet confirm dialog -->
+    <string name="ab_apply_title">Aplicar \"%1$s\"?</string>
+    <string name="ab_apply_body">Define a pool primária como %1$s:%2$d (worker %3$s) em todos os mineradores que suportam troca de pool. Mineradores sem suporte são ignorados.</string>
+    <string name="ab_limit_group">Limitar ao grupo (vazio = todos os mineradores)</string>
+    <string name="ab_apply_to_fleet">Aplicar à fazenda</string>
+
+    <!-- Pool row -->
+    <string name="ab_active_count">"  ● ATIVA (%1$d)"</string>
+    <string name="ab_speed_test">Teste de velocidade</string>
+
+    <!-- Editor dialog -->
+    <string name="ab_saved_pool">Pool salva</string>
+    <string name="ab_edit_pool">Editar pool</string>
+    <string name="ab_name">Nome</string>
+    <string name="ab_stratum_url">URL Stratum</string>
+    <string name="ab_port">Porta</string>
+    <string name="ab_worker_payout">Worker / endereço de pagamento</string>
+</resources>

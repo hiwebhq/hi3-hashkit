@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wall_size_small">Pequeño</string>
+    <string name="wall_size_medium">Mediano</string>
+    <string name="wall_size_large">Grande</string>
+    <string name="wall_counts">%1$d en línea · %2$d fuera de línea · %3$d mineros</string>
+    <string name="wall_display_options">Opciones de pantalla</string>
+    <string name="wall_card_size">TAMAÑO DE TARJETA</string>
+    <string name="wall_grid_columns">COLUMNAS DE LA CUADRÍCULA</string>
+    <string name="wall_fewer_columns">Menos columnas</string>
+    <string name="wall_more_columns">Más columnas</string>
+    <string name="wall_columns_auto">Auto</string>
+    <string name="wall_exit">Salir del modo pared</string>
+    <string name="wall_no_miners">No hay mineros que mostrar.</string>
+</resources>

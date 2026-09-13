@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_tagline">Votre flotte de minage, dans votre poche.</string>
+    <string name="onboarding_local_title">Local d\'abord</string>
+    <string name="onboarding_local_body">Ne parle qu\'aux mineurs de votre réseau — ou via votre VPN Tailscale. Pas de compte, pas de cloud.</string>
+    <string name="onboarding_live_title">En direct &amp; honnête</string>
+    <string name="onboarding_live_body">Hashrate, températures, puissance et santé réels — clairement signalés quand une valeur est estimée ou indisponible.</string>
+    <string name="onboarding_safe_title">Contrôles sûrs</string>
+    <string name="onboarding_safe_body">Redémarrage, pool, ventilateur et réglage borné par le firmware, avec confirmations et retour arrière, uniquement là où c\'est vérifié.</string>
+    <string name="onboarding_private_title">Privé</string>
+    <string name="onboarding_private_body">Vos données restent sur cet appareil. Les vues Hi3 Pool et MMP sont optionnelles, en lecture seule et désactivées par défaut.</string>
+    <string name="onboarding_get_started">Commencer</string>
+    <string name="onboarding_next_hint">Ensuite, scannez votre réseau, ajoutez un mineur par IP ou essayez le mode démo.</string>
+</resources>

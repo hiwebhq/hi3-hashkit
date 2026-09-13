@@ -1,6 +1,7 @@
 package hi3.hashkit.ui.wall
 
 import android.app.Activity
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerStatus
@@ -53,8 +56,10 @@ import hi3.hashkit.ui.rack.RackViewModel
 import hi3.hashkit.ui.theme.HiBrand
 
 /** Selectable Wall / TV tile+font size, chosen on the wall page. */
-enum class WallSize(val label: String) {
-    SMALL("Small"), MEDIUM("Medium"), LARGE("Large");
+enum class WallSize(@StringRes val labelRes: Int) {
+    SMALL(R.string.wall_size_small),
+    MEDIUM(R.string.wall_size_medium),
+    LARGE(R.string.wall_size_large);
 
     companion object {
         fun fromName(name: String?): WallSize = entries.firstOrNull { it.name == name } ?: MEDIUM
@@ -152,7 +157,7 @@ fun WallScreen(
                             color = HiBrand.textPrimary,
                         )
                         Text(
-                            "$online online · $offline offline · ${allMiners.size} miners",
+                            stringResource(R.string.wall_counts, online, offline, allMiners.size),
                             fontSize = dims.countsSp,
                             color = HiBrand.textSecondary,
                         )
@@ -163,43 +168,55 @@ fun WallScreen(
                             IconButton(onClick = { optionsOpen = true }, modifier = Modifier.size(56.dp)) {
                                 Icon(
                                     Icons.Filled.Tune,
-                                    contentDescription = "Display options",
+                                    contentDescription = stringResource(R.string.wall_display_options),
                                     tint = HiBrand.textSecondary,
                                     modifier = Modifier.size(32.dp),
                                 )
                             }
                             DropdownMenu(expanded = optionsOpen, onDismissRequest = { optionsOpen = false }) {
                                 Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                                    Text("CARD SIZE", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                                    Text(
+                                        stringResource(R.string.wall_card_size),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = HiBrand.textSecondary,
+                                    )
                                     Row(Modifier.padding(top = 4.dp)) {
                                         WallSize.entries.forEach { s ->
                                             FilterChip(
                                                 selected = s == wallSize,
                                                 onClick = { viewModel.setWallSize(s) },
-                                                label = { Text(s.label) },
+                                                label = { Text(stringResource(s.labelRes)) },
                                                 modifier = Modifier.padding(end = 6.dp),
                                             )
                                         }
                                     }
                                     Text(
-                                        "GRID COLUMNS",
+                                        stringResource(R.string.wall_grid_columns),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = HiBrand.textSecondary,
                                         modifier = Modifier.padding(top = 12.dp),
                                     )
                                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
                                         IconButton(onClick = { viewModel.setWallColumns((wallColumns - 1).coerceAtLeast(0)) }) {
-                                            Icon(Icons.Filled.Remove, contentDescription = "Fewer columns", tint = HiBrand.textPrimary)
+                                            Icon(
+                                                Icons.Filled.Remove,
+                                                contentDescription = stringResource(R.string.wall_fewer_columns),
+                                                tint = HiBrand.textPrimary,
+                                            )
                                         }
                                         Text(
-                                            if (wallColumns == 0) "Auto" else "$wallColumns",
+                                            if (wallColumns == 0) stringResource(R.string.wall_columns_auto) else "$wallColumns",
                                             style = MaterialTheme.typography.titleMedium,
                                             color = HiBrand.textPrimary,
                                             modifier = Modifier.width(56.dp),
                                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                         )
                                         IconButton(onClick = { viewModel.setWallColumns((wallColumns + 1).coerceAtMost(8)) }) {
-                                            Icon(Icons.Filled.Add, contentDescription = "More columns", tint = HiBrand.textPrimary)
+                                            Icon(
+                                                Icons.Filled.Add,
+                                                contentDescription = stringResource(R.string.wall_more_columns),
+                                                tint = HiBrand.textPrimary,
+                                            )
                                         }
                                     }
                                 }
@@ -208,7 +225,7 @@ fun WallScreen(
                         IconButton(onClick = onExit, modifier = Modifier.size(56.dp)) {
                             Icon(
                                 Icons.Filled.Close,
-                                contentDescription = "Exit wall mode",
+                                contentDescription = stringResource(R.string.wall_exit),
                                 tint = HiBrand.textSecondary,
                                 modifier = Modifier.size(36.dp),
                             )
@@ -219,7 +236,7 @@ fun WallScreen(
             if (allMiners.isEmpty()) {
                 item {
                     Text(
-                        "No miners to display.",
+                        stringResource(R.string.wall_no_miners),
                         style = MaterialTheme.typography.titleLarge,
                         color = HiBrand.textSecondary,
                     )
@@ -278,7 +295,7 @@ private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims, tileWidt
         }
         val hr = miner.lastTelemetry?.hashrateGhs?.value
         Text(
-            if (miner.status == MinerStatus.OFFLINE) "Offline" else Units.formatHashrate(hr),
+            if (miner.status == MinerStatus.OFFLINE) stringResource(R.string.status_offline) else Units.formatHashrate(hr),
             fontSize = dims.hashSp,
             fontWeight = FontWeight.Bold,
             color = if (miner.status == MinerStatus.OFFLINE) HiBrand.statusOffline else HiBrand.textPrimary,

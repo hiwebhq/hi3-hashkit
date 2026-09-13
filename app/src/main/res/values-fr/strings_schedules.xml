@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">Programmations</string>
+    <string name="sched_add_schedule">Ajouter une programmation</string>
+    <string name="sched_intro">Les programmations s\'exécutent quand l\'appli interroge (au premier plan) ou pendant les cycles de surveillance en arrière-plan (granularité ~15 min) — pas à des heures exactes. Un jour manqué est ignoré, jamais rejoué.</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s à %2$s le %3$s · cibles : %4$s</string>
+    <string name="sched_row_group">groupe « %1$s »</string>
+    <string name="sched_row_all_miners">tous les mineurs</string>
+    <string name="sched_last_run">Dernière exécution %1$s : %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">Nouvelle programmation</string>
+    <string name="sched_name">Nom</string>
+    <string name="sched_action_restart">Redémarrer</string>
+    <string name="sched_action_pool">Pool</string>
+    <string name="sched_action_fan">Ventilateur</string>
+    <string name="sched_action_pause">Pause</string>
+    <string name="sched_action_resume">Reprendre</string>
+    <string name="sched_action_plug_off">Prise off</string>
+    <string name="sched_action_plug_on">Prise on</string>
+    <string name="sched_action_tune_preset">Préréglage de tuning</string>
+    <string name="sched_stratum_url">URL Stratum</string>
+    <string name="sched_port">Port</string>
+    <string name="sched_worker">Worker</string>
+    <string name="sched_automatic">Automatique</string>
+    <string name="sched_manual_percent">Manuel : %1$d%%</string>
+    <string name="sched_frequency_mhz">Fréquence (MHz)</string>
+    <string name="sched_core_voltage_mv">Tension du cœur (mV)</string>
+    <string name="sched_time_label">Heure (HH:MM, fuseau de l\'appareil)</string>
+    <string name="sched_target_group">Groupe cible (vide = tous les mineurs)</string>
+    <string name="sched_hint_plug">Prise on/off commute la prise connectée configurée de chaque mineur cible via le LAN. Les mineurs sans prise configurée sont ignorés. Associez une Prise off le soir à une Prise on le matin pour piloter la consommation en heures creuses ; chaque exécution est consignée.</string>
+    <string name="sched_hint_tune">Cible de puissance en heures pleines : applique un préréglage fixe fréquence/tension. Utilisez un préréglage basse consommation au début du tarif de pointe et votre préréglage normal à la fin. Seuls les firmwares qui acceptent ces valeurs (p. ex. Bitaxe/AxeOS) l\'exécutent ; les autres sont ignorés. Utilisez des valeurs acceptées par le tuner de votre mineur.</string>
+    <string name="sched_hint_default">Heures pleines : programmez Pause au début de votre tarif de pointe et Reprendre à la fin (la pause requiert un appareil compatible). Les appareils non compatibles sont ignorés avec un motif ; chaque exécution est consignée dans le journal d\'audit.</string>
+</resources>

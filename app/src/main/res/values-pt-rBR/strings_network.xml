@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">Varredura de rede</string>
+    <string name="net_refresh_network_info">Atualizar informações de rede</string>
+    <string name="net_intro">Varre sua sub-rede local em busca de mineradores nas portas conhecidas (HTTP 80, CGMiner 4028). Apenas endereços de LAN privada e Tailscale são sondados. Roda automaticamente ao abrir, então os aparelhos aparecem antes de você abrir Adicionar Minerador.</string>
+    <string name="net_this_device">Este aparelho</string>
+    <string name="net_not_on_network">Fora de uma rede Wi-Fi / LAN</string>
+    <string name="net_scan_range_label">Intervalo de varredura (CIDR)</string>
+    <string name="net_scanning_progress">Varrendo %1$d / %2$d — %3$d encontrado(s)</string>
+    <string name="net_last_scan">Última varredura %1$s.</string>
+    <string name="net_restart">Reiniciar</string>
+    <string name="net_start_scan">Iniciar varredura</string>
+    <string name="net_discovering">Descobrindo…</string>
+    <string name="net_mdns_discover">Descoberta mDNS</string>
+    <string name="net_auto_scan_title">Varrer automaticamente ao abrir</string>
+    <string name="net_auto_scan_subtitle">Inicia uma varredura da sub-rede quando o app abre.</string>
+    <string name="net_just_now">agora mesmo</string>
+    <string name="net_minutes_ago">há %1$dmin</string>
+    <string name="net_hours_ago">há %1$dh</string>
+</resources>

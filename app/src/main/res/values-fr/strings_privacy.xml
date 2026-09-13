@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Privacy Policy screen -->
+    <string name="priv_title">Politique de confidentialité</string>
+    <string name="priv_intro">%1$s garde vos données sur votre appareil. Ce résumé explique ce qui est stocké et les rares éléments qui ne quittent l\'appareil que si vous l\'acceptez.</string>
+
+    <string name="priv_local_title">Local d\'abord, par conception</string>
+    <string name="priv_local_body">Hi3 Hashkit fonctionne entièrement sur votre appareil et votre propre réseau. Il n\'y a pas de compte Hi3 Hashkit, pas d\'analytique, pas de publicité et aucune télémétrie envoyée à nous ou à un tiers. Les données de vos mineurs ne sont jamais téléversées où que ce soit.</string>
+    <string name="priv_storage_title">Ce qui reste sur votre appareil</string>
+    <string name="priv_storage_body">Les adresses des mineurs, les identités, l\'historique de télémétrie, les fermes, les réglages d\'alertes et les préférences de l\'app sont stockés uniquement dans le stockage privé de cette app. Les secrets facultatifs (une clé API MMP) sont chiffrés avec le Keystore Android. Rien n\'est sauvegardé dans un cloud, sauf si vous exportez explicitement un fichier de sauvegarde et choisissez sa destination.</string>
+    <string name="priv_talks_title">À qui l\'app parle</string>
+    <string name="priv_talks_body">Par défaut, l\'app se connecte uniquement aux adresses IP des mineurs que vous ajoutez ou découvrez, via votre LAN ou votre VPN Tailscale. Elle ne contacte jamais nos serveurs d\'elle-même.</string>
+    <string name="priv_optional_title">Connexions facultatives, désactivées par défaut</string>
+    <string name="priv_optional_body">Trois intégrations n\'accèdent à Internet que si vous les activez : la récupération de la difficulté du réseau Bitcoin (mempool.space) ; les stats Hi3 Pool, qui envoient votre adresse de paiement à l\'URL de pool que vous définissez ; et la vue de flotte Hi3 MMP, authentifiée par une clé API que vous fournissez. Chacune indique exactement ce qu\'elle transmet, et la désactiver stoppe ces requêtes immédiatement.</string>
+    <string name="priv_camera_title">Caméra (scan de QR)</string>
+    <string name="priv_camera_body">La caméra n\'est utilisée que lorsque vous touchez l\'icône QR pour scanner une adresse de paiement. Le scan se fait sur l\'appareil ; aucune image ni vidéo n\'est stockée ou transmise. Vous pouvez refuser la permission caméra et saisir l\'adresse à la place.</string>
+    <string name="priv_notifications_title">Notifications</string>
+    <string name="priv_notifications_body">Les alertes sont désactivées par défaut. Si vous les activez, les notifications sont générées sur l\'appareil à partir des mesures de vos mineurs ; aucun contenu de notification ne quitte l\'appareil.</string>
+    <string name="priv_control_title">Votre contrôle</string>
+    <string name="priv_control_body">Vous pouvez supprimer n\'importe quel mineur, ferme ou tout l\'historique stocké depuis l\'app, ajuster la rétention et révoquer les permissions dans les paramètres Android à tout moment. Désinstaller l\'app supprime ses données locales.</string>
+    <string name="priv_contact_title">Contact</string>
+    <string name="priv_contact_body">Des questions sur la confidentialité ou l\'app ? Contactez-nous sur hi3.cc/contact ou mmp.hi3.cc.</string>
+</resources>

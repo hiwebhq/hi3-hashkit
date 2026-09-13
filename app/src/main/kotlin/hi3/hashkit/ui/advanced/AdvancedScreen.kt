@@ -42,8 +42,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 
 /**
@@ -85,83 +87,83 @@ fun AdvancedScreen(
 ) {
     val items = listOf(
         AdvancedItem(
-            "Energy & profit",
-            "Per-miner energy cost, J/TH ranking and estimated revenue vs cost",
+            stringResource(R.string.adv_energy_title),
+            stringResource(R.string.adv_energy_subtitle),
             Icons.Filled.Bolt, onEnergyCost,
         ),
         AdvancedItem(
-            "Heat-reuse dashboard",
-            "What your miners' waste heat is worth as space heating",
+            stringResource(R.string.adv_heat_reuse_title),
+            stringResource(R.string.adv_heat_reuse_subtitle),
             Icons.Filled.Thermostat, onHeatReuse,
         ),
         AdvancedItem(
-            "Solar-surplus mining",
-            "Curtail the fleet to your solar export from Home Assistant",
+            stringResource(R.string.adv_solar_title),
+            stringResource(R.string.adv_solar_subtitle),
             Icons.Filled.WbSunny, onSolar,
         ),
         AdvancedItem(
-            "Electricity-price curtailment",
-            "Pause on price spikes using the Octopus Agile half-hourly feed",
+            stringResource(R.string.adv_price_curtailment_title),
+            stringResource(R.string.adv_price_curtailment_subtitle),
             Icons.Filled.PriceChange, onPriceCurtailment,
         ),
         AdvancedItem(
-            "Hash rental",
-            "Live Braiins Hashpower spot market — rent hashrate",
+            stringResource(R.string.adv_hash_rental_title),
+            stringResource(R.string.adv_hash_rental_subtitle),
             Icons.Filled.ShoppingCart, onHashRental,
         ),
         AdvancedItem(
-            "Acoustic fan health check",
-            "Record a miner's fans and flag bearing wear on-device",
+            stringResource(R.string.adv_acoustic_title),
+            stringResource(R.string.adv_acoustic_subtitle),
             Icons.Filled.Hearing, onAcoustic,
         ),
         AdvancedItem(
-            "AR rack overlay",
-            "Scan a miner's QR sticker or tap its NFC tag to float its live stats",
+            stringResource(R.string.adv_ar_overlay_title),
+            stringResource(R.string.adv_ar_overlay_subtitle),
             Icons.Filled.CameraAlt, onArOverlay,
         ),
         AdvancedItem(
-            "NFC tag programmer",
-            "Write miner NFC tags (and QR) — whole fleet, or filtered from the Fleet table",
+            stringResource(R.string.adv_nfc_title),
+            stringResource(R.string.adv_nfc_subtitle),
             Icons.Filled.Nfc, onNfcProgram,
         ),
         AdvancedItem(
-            "Automation rules",
-            "Condition → action rules across the fleet",
+            stringResource(R.string.adv_rules_title),
+            stringResource(R.string.adv_rules_subtitle),
             Icons.Filled.Bolt, onRules,
         ),
         AdvancedItem(
-            "Schedules",
-            "Time-of-use and quiet-hours plans for miners and plugs",
+            stringResource(R.string.adv_schedules_title),
+            stringResource(R.string.adv_schedules_subtitle),
             Icons.Filled.Schedule, onSchedules,
         ),
         AdvancedItem(
-            "Pool address book",
-            "Saved stratum endpoints for quick re-pointing",
+            stringResource(R.string.adv_address_book_title),
+            stringResource(R.string.adv_address_book_subtitle),
             Icons.Filled.Bookmark, onAddressBook,
         ),
         AdvancedItem(
-            "Site Map",
-            "Map buildings/racks/tiers, then capture miners by IP Report button walk",
+            stringResource(R.string.adv_site_map_title),
+            stringResource(R.string.adv_site_map_subtitle),
             Icons.Filled.Map, onSiteMap,
         ),
         AdvancedItem(
-            "Heatmap",
-            "Rack layout colored by live chip temperature — spot the hot corner",
+            stringResource(R.string.adv_heatmap_title),
+            stringResource(R.string.adv_heatmap_subtitle),
             Icons.Filled.Thermostat, onSiteHeatmap,
         ),
         AdvancedItem(
-            "Rack & site",
-            "Physical rack layout, grouped by each miner's Location",
+            stringResource(R.string.adv_rack_title),
+            stringResource(R.string.adv_rack_subtitle),
             Icons.Filled.GridView, onRack,
         ),
         AdvancedItem(
-            "Pool speed test",
-            "Measure stratum latency from this phone's network",
+            stringResource(R.string.adv_pool_speed_title),
+            stringResource(R.string.adv_pool_speed_subtitle),
             Icons.Filled.Speed, onPoolSpeed,
         ),
         AdvancedItem(
-            "Live Bitcoin",
-            "Open the Hi3 live Bitcoin dashboard",
+            stringResource(R.string.adv_live_bitcoin_title),
+            stringResource(R.string.adv_live_bitcoin_subtitle),
             Icons.Filled.CurrencyBitcoin, onLiveBitcoin,
         ),
     )
@@ -169,10 +171,13 @@ fun AdvancedScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Advanced", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.adv_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -187,8 +192,7 @@ fun AdvancedScreen(
         ) {
             item {
                 Text(
-                    "Power-user tools. Everything here runs on your own network and data — " +
-                        "no cloud account required.",
+                    stringResource(R.string.adv_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )

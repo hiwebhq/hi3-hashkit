@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="addm_title">Añadir mineros</string>
+    <string name="addm_manual_entry">ENTRADA MANUAL</string>
+    <string name="addm_manual_hint">Introduce la IP o el hostname de un minero — incluidas direcciones Tailscale (100.x.y.z) cuando este dispositivo esté en tu tailnet.</string>
+    <string name="addm_host_label">Dirección IP o hostname</string>
+    <string name="addm_probing">Sondeando…</string>
+    <string name="addm_probe_add">Sondear y añadir</string>
+    <string name="addm_scan_local_network">ESCANEAR RED LOCAL</string>
+    <string name="addm_scan_hint">Sondea solo direcciones privadas, solo en puertos de mineros, con límites estrictos. Se rechazan rangos mayores que /22.</string>
+    <string name="addm_cidr_label">Rango CIDR</string>
+    <string name="addm_scan">Escanear</string>
+    <string name="addm_hosts_progress">%1$d / %2$d hosts</string>
+    <string name="addm_added">añadido</string>
+    <string name="addm_known">conocido</string>
+</resources>

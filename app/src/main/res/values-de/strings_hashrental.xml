@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hash rental screen (HashRentalScreen). -->
+<resources>
+    <string name="rental_title">Hash-Miete</string>
+    <string name="rental_edit_link">Miet-Link bearbeiten</string>
+    <string name="rental_intro">Miete Bitcoin-Hashrate am Spotmarkt von Braiins Hashpower. Hier siehst du den öffentlichen Live-Markt — gemietet wird bei Braiins, nicht in dieser App.</string>
+    <string name="rental_show_in">Anzeigen in</string>
+    <string name="rental_set_btc_price">Setze oder hole den BTC-Preis in den Einstellungen, um %1$s-Werte zu sehen.</string>
+
+    <!-- Error banner -->
+    <string name="rental_unavailable">Braiins Hashpower ist vorübergehend nicht erreichbar.</string>
+    <string name="rental_showing_from">Zeige Preise von %1$s.</string>
+    <string name="rental_details">Details</string>
+    <string name="rental_hide_details">Details ausblenden</string>
+
+    <!-- Market card -->
+    <string name="rental_spot_market">SPOTMARKT</string>
+    <string name="rental_best_ask_caption">Bester Ask (günstigste Hashrate zum Mieten)</string>
+    <string name="rental_last_avg_price">Letzter Ø-Preis</string>
+    <string name="rental_best_bid">Bester Bid</string>
+    <string name="rental_hashrate_available">Verfügbare Hashrate</string>
+    <string name="rental_hashrate_matched">Vermittelte Hashrate</string>
+    <string name="rental_cheapest_offers">GÜNSTIGSTE ANGEBOTE</string>
+    <string name="rental_ph_avail">%1$s PH/s verfügbar</string>
+
+    <!-- Rent button & footer -->
+    <string name="rental_rent_button">Auf Braiins Hashpower mieten ↗</string>
+    <string name="rental_footer">Preise kommen live aus der öffentlichen Markt-API von Braiins Hashpower. Die Miete schließt du auf hashpower.braiins.com mit deinem eigenen Konto ab.</string>
+
+    <!-- Rent-link dialog -->
+    <string name="rental_dialog_title">Miet-Link</string>
+    <string name="rental_dialog_body">Die URL, die der \"Mieten\"-Button öffnet. Füge hier deinen Braiins-Hashpower-Empfehlungslink ein, falls du einen hast — leer lassen für den Standard.</string>
+    <string name="rental_url_label">URL</string>
+</resources>

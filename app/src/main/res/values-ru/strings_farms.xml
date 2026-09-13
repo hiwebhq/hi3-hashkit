@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">Фермы</string>
+    <string name="farms_add_farm">Добавить ферму</string>
+    <string name="farms_intro">Группируйте майнеры в фермы/площадки, каждая со своей подсетью для сканирования. Ферма по умолчанию открывается при запуске; активная ферма — то, что показывает дашборд. При удалении фермы её майнеры сохраняются (становятся неназначенными).</string>
+    <string name="farms_empty">Ферм пока нет. Добавьте ферму, чтобы группировать майнеры по площадкам — пригодится для обнаружения ASIC и аудита логов по площадкам.</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">По умолчанию</string>
+    <string name="farms_no_subnet">без подсети</string>
+    <string name="farms_miner_count">" · майнеров: %1$d"</string>
+    <string name="farms_viewing">Открыта</string>
+    <string name="farms_view">Открыть</string>
+    <string name="farms_set_default">Сделать по умолчанию</string>
+    <string name="farms_scan">Сканировать</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">Сканировать новую ферму?</string>
+    <string name="farms_scan_new_body">Просканировать %1$s сейчас и добавить найденные майнеры в эту ферму?</string>
+    <string name="farms_scan_now">Сканировать</string>
+    <string name="farms_later">Позже</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">Удалить %1$s?</string>
+    <string name="farms_delete_body_also">Её майнеры (%1$d) и их история будут удалены вместе с ней.</string>
+    <string name="farms_delete_body_keep">Её майнеры (%1$d) останутся отслеживаемыми, но станут неназначенными. История сохранится.</string>
+    <string name="farms_delete_also_checkbox">Также удалить её майнеры (%1$d)</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">Название</string>
+    <string name="farms_name_placeholder">Домашняя лаборатория</string>
+    <string name="farms_subnet_label">Подсеть сканирования (CIDR)</string>
+    <string name="farms_create">Создать</string>
+</resources>

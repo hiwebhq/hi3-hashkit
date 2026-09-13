@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rental_title">Alquiler de hash</string>
+    <string name="rental_edit_link">Editar enlace de alquiler</string>
+    <string name="rental_intro">Alquila hashrate de Bitcoin en el mercado spot de Braiins Hashpower. Esto muestra el mercado público en vivo — el alquiler se hace en Braiins, no en esta app.</string>
+    <string name="rental_show_in">Mostrar en</string>
+    <string name="rental_set_btc_price">Configura u obtén el precio de BTC en Ajustes para ver valores en %1$s.</string>
+
+    <!-- Error banner -->
+    <string name="rental_unavailable">Braiins Hashpower no está disponible temporalmente.</string>
+    <string name="rental_showing_from">Mostrando precios de %1$s.</string>
+    <string name="rental_details">Detalles</string>
+    <string name="rental_hide_details">Ocultar detalles</string>
+
+    <!-- Market card -->
+    <string name="rental_spot_market">MERCADO SPOT</string>
+    <string name="rental_best_ask_caption">Mejor ask (el hashrate más barato de alquilar)</string>
+    <string name="rental_last_avg_price">Último precio medio</string>
+    <string name="rental_best_bid">Mejor bid</string>
+    <string name="rental_hashrate_available">Hashrate disponible</string>
+    <string name="rental_hashrate_matched">Hashrate casado</string>
+    <string name="rental_cheapest_offers">OFERTAS MÁS BARATAS</string>
+    <string name="rental_ph_avail">%1$s PH/s disp.</string>
+
+    <!-- Rent button & footer -->
+    <string name="rental_rent_button">Alquilar en Braiins Hashpower ↗</string>
+    <string name="rental_footer">Los precios llegan en vivo de la API pública del mercado de Braiins Hashpower. El alquiler se completa en hashpower.braiins.com con tu propia cuenta.</string>
+
+    <!-- Rent-link dialog -->
+    <string name="rental_dialog_title">Enlace de alquiler</string>
+    <string name="rental_dialog_body">La URL que abre el botón \"Alquilar\". Pega aquí tu enlace de referido de Braiins Hashpower si tienes uno — deja en blanco para restaurar el predeterminado.</string>
+    <string name="rental_url_label">URL</string>
+</resources>

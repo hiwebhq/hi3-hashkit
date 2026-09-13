@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Price curtailment screen (PriceCurtailmentScreen). -->
+<resources>
+    <string name="price_title">Preis-Drosselung</string>
+    <string name="price_intro">Pausiere bei Preisspitzen und mine, wenn der Strom günstig ist — über den kostenlosen halbstündlichen Octopus-Agile-Feed (UK). Kein Konto oder Schlüssel nötig — es wird nur der öffentliche Preis für deine Region abgerufen.</string>
+
+    <!-- Live price card -->
+    <string name="price_now_label">PREIS JETZT</string>
+    <string name="price_next6h">Nächste 6 h: Tief %1$s · Hoch %2$s p/kWh</string>
+    <string name="price_reco_run">Empfehlung: günstig — Mining fortsetzen</string>
+    <string name="price_reco_curtail">Empfehlung: teuer — Mining drosseln</string>
+    <string name="price_reco_hold">Empfehlung: halten (innerhalb des Totbands)</string>
+
+    <!-- Actions -->
+    <string name="price_refresh">Preise aktualisieren</string>
+    <string name="price_resume_fleet">Flotte fortsetzen</string>
+    <string name="price_curtail_fleet">Flotte drosseln</string>
+
+    <!-- Sections & configuration -->
+    <string name="price_next_slots">NÄCHSTE SLOTS</string>
+    <string name="price_configuration">KONFIGURATION</string>
+    <string name="price_region_label">Regionsbuchstabe (A–P)</string>
+    <string name="price_region_placeholder">C für London</string>
+    <string name="price_resume_label">Fortsetzen ≤ p/kWh</string>
+    <string name="price_curtail_label">Drosseln ≥ p/kWh</string>
+    <string name="price_save_config">Konfiguration speichern</string>
+</resources>

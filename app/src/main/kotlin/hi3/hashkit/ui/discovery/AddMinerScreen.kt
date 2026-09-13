@@ -31,10 +31,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,10 +50,10 @@ fun AddMinerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add miners", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.addm_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -72,11 +74,14 @@ fun AddMinerScreen(
                 shape = RoundedCornerShape(14.dp),
             ) {
                 Column(Modifier.padding(14.dp)) {
-                    Text("MANUAL ENTRY", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    Text(
+                        stringResource(R.string.addm_manual_entry),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Enter a miner's IP or hostname — including Tailscale addresses " +
-                            "(100.x.y.z) when this device is on your tailnet.",
+                        stringResource(R.string.addm_manual_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = HiBrand.textSecondary,
                     )
@@ -84,13 +89,16 @@ fun AddMinerScreen(
                     OutlinedTextField(
                         value = state.manualHost,
                         onValueChange = viewModel::onManualHostChange,
-                        label = { Text("IP address or hostname") },
+                        label = { Text(stringResource(R.string.addm_host_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(Modifier.height(10.dp))
                     Button(onClick = viewModel::addManual, enabled = !state.manualBusy) {
-                        Text(if (state.manualBusy) "Probing…" else "Probe & add")
+                        Text(
+                            if (state.manualBusy) stringResource(R.string.addm_probing)
+                            else stringResource(R.string.addm_probe_add)
+                        )
                     }
                     state.manualMessage?.let {
                         Spacer(Modifier.height(8.dp))
@@ -104,11 +112,14 @@ fun AddMinerScreen(
                 shape = RoundedCornerShape(14.dp),
             ) {
                 Column(Modifier.padding(14.dp)) {
-                    Text("SCAN LOCAL NETWORK", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    Text(
+                        stringResource(R.string.addm_scan_local_network),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Probes private addresses only, on miner ports only, with strict " +
-                            "limits. Ranges wider than /22 are refused.",
+                        stringResource(R.string.addm_scan_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = HiBrand.textSecondary,
                     )
@@ -116,7 +127,7 @@ fun AddMinerScreen(
                     OutlinedTextField(
                         value = state.scanCidr,
                         onValueChange = viewModel::onScanCidrChange,
-                        label = { Text("CIDR range") },
+                        label = { Text(stringResource(R.string.addm_cidr_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -135,13 +146,13 @@ fun AddMinerScreen(
                     Spacer(Modifier.height(10.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         Button(onClick = viewModel::startScan, enabled = !state.scanning) {
-                            Text("Scan")
+                            Text(stringResource(R.string.addm_scan))
                         }
                         OutlinedButton(onClick = viewModel::startMdnsSearch, enabled = !state.scanning) {
                             Text("mDNS")
                         }
                         if (state.scanning) {
-                            OutlinedButton(onClick = viewModel::cancelScan) { Text("Cancel") }
+                            OutlinedButton(onClick = viewModel::cancelScan) { Text(stringResource(R.string.common_cancel)) }
                         }
                     }
                     state.scanProgress?.let { (done, total) ->
@@ -152,7 +163,7 @@ fun AddMinerScreen(
                                 modifier = Modifier.fillMaxWidth(),
                             )
                             Text(
-                                "$done / $total hosts",
+                                stringResource(R.string.addm_hosts_progress, done, total),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = HiBrand.textSecondary,
                             )
@@ -171,7 +182,8 @@ fun AddMinerScreen(
                         ) {
                             Text("${found.label}  ·  ${found.host}", style = MaterialTheme.typography.bodyMedium)
                             Text(
-                                if (found.added) "added" else "known",
+                                if (found.added) stringResource(R.string.addm_added)
+                                else stringResource(R.string.addm_known),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = if (found.added) HiBrand.accent else HiBrand.textSecondary,
                             )

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vocabulary shared across screens. Screen-specific strings live in strings_<area>.xml. -->
+<resources>
+    <!-- Language picker -->
+    <string name="language_title">Sprache</string>
+    <string name="language_system">Systemstandard</string>
+    <string name="language_settings_hint">Gilt sofort. \"Systemstandard\" folgt der Sprache deines Handys.</string>
+
+    <!-- Common actions -->
+    <string name="common_back">Zurück</string>
+    <string name="common_cancel">Abbrechen</string>
+    <string name="common_save">Speichern</string>
+    <string name="common_ok">OK</string>
+    <string name="common_delete">Löschen</string>
+    <string name="common_close">Schließen</string>
+    <string name="common_apply">Anwenden</string>
+    <string name="common_add">Hinzufügen</string>
+    <string name="common_edit">Bearbeiten</string>
+    <string name="common_retry">Erneut</string>
+    <string name="common_done">Fertig</string>
+    <string name="common_start">Starten</string>
+    <string name="common_stop">Stoppen</string>
+    <string name="common_export">Exportieren</string>
+    <string name="common_share">Teilen</string>
+    <string name="common_refresh">Aktualisieren</string>
+    <string name="common_search">Suchen</string>
+    <string name="common_settings">Einstellungen</string>
+    <string name="common_enabled">Aktiviert</string>
+    <string name="common_disabled">Deaktiviert</string>
+    <string name="common_on">An</string>
+    <string name="common_off">Aus</string>
+    <string name="common_yes">Ja</string>
+    <string name="common_no">Nein</string>
+    <string name="common_none">Keine</string>
+    <string name="common_all">Alle</string>
+    <string name="common_unknown">Unbekannt</string>
+    <string name="common_loading">Lädt…</string>
+    <string name="common_reboot">Neustart</string>
+    <string name="common_confirm">Bestätigen</string>
+
+    <!-- Value-provenance tags (short abbreviations) -->
+    <string name="source_calc">ber.</string>
+    <string name="source_est">gesch.</string>
+
+    <!-- App lock -->
+    <string name="lock_unlock">Entsperren</string>
+    <string name="lock_prompt_title">Hi3 Hashkit entsperren</string>
+
+    <!-- Miner status vocabulary -->
+    <string name="status_online">Online</string>
+    <string name="status_offline">Offline</string>
+    <string name="status_degraded">Beeinträchtigt</string>
+    <string name="status_stale">Veraltet</string>
+</resources>

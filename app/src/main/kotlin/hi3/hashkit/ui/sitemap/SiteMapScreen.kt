@@ -26,11 +26,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 
 /**
@@ -44,10 +46,10 @@ fun SiteMapScreen(onBack: () -> Unit, vm: SiteMapViewModel = hiltViewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Site Map", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.site_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -72,28 +74,26 @@ private fun SetupContent(vm: SiteMapViewModel, state: SiteMapState, modifier: Mo
     ) {
         item {
             Text(
-                "Define the site, then walk the racks pressing each miner's IP Report button. " +
-                    "Capture always starts at Building 1, Rack 1, Tier 1, Position 1 (left end), " +
-                    "fills each tier left→right, then the next tier up, then the next rack.",
+                stringResource(R.string.site_setup_intro),
                 style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary,
             )
         }
         item {
             OutlinedTextField(
                 value = state.siteName, onValueChange = vm::setSiteName,
-                label = { Text("Site name (used for Save to farm)") },
+                label = { Text(stringResource(R.string.site_name_label)) },
                 singleLine = true, modifier = Modifier.fillMaxWidth(),
             )
         }
-        item { NumberField(state.buildingsText, vm::setBuildings, "Buildings") }
-        item { NumberField(state.racksText, vm::setRacks, "Racks per building") }
-        item { NumberField(state.tiersText, vm::setTiers, "Tiers per rack (shelves)") }
-        item { NumberField(state.positionsText, vm::setPositions, "Positions per tier (miners per row)") }
+        item { NumberField(state.buildingsText, vm::setBuildings, stringResource(R.string.site_buildings)) }
+        item { NumberField(state.racksText, vm::setRacks, stringResource(R.string.site_racks_per_building)) }
+        item { NumberField(state.tiersText, vm::setTiers, stringResource(R.string.site_tiers_per_rack)) }
+        item { NumberField(state.positionsText, vm::setPositions, stringResource(R.string.site_positions_per_tier)) }
         item { SetupSummary(vm) }
         item { SupportedModelsCard() }
         item {
             Button(onClick = vm::start, modifier = Modifier.fillMaxWidth(), enabled = vm.parsedConfig() != null) {
-                Text("Start capture")
+                Text(stringResource(R.string.site_start_capture))
             }
         }
         state.error?.let { err ->
@@ -116,7 +116,7 @@ private fun NumberField(value: String, onChange: (String) -> Unit, label: String
 private fun SetupSummary(vm: SiteMapViewModel) {
     val cfg = vm.parsedConfig() ?: return
     Text(
-        "${cfg.totalSlots} slots total — ${cfg.slotsPerRack} per rack, ${cfg.slotsPerBuilding} per building.",
+        stringResource(R.string.site_setup_summary, cfg.totalSlots, cfg.slotsPerRack, cfg.slotsPerBuilding),
         style = MaterialTheme.typography.bodySmall, color = HiBrand.textPrimary,
     )
 }
@@ -125,14 +125,13 @@ private fun SetupSummary(vm: SiteMapViewModel) {
 private fun SupportedModelsCard() {
     Card(colors = CardDefaults.cardColors(containerColor = HiBrand.surface), shape = RoundedCornerShape(12.dp)) {
         Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("Supported models", style = MaterialTheme.typography.titleSmall, color = HiBrand.textPrimary)
             Text(
-                "Capture listens for the IP Report button broadcast (UDP 14235): " +
-                    "Bitmain Antminer (S9 through S21 era) on stock firmware, Braiins OS, and LuxOS. " +
-                    "The app echoes an ack so the miner blinks green when its press is recorded. " +
-                    "WhatsMiner, Canaan, and Bitaxe/ESP-Miner don't send this broadcast — fill their " +
-                    "slots with Manual. The phone must be on the miners' LAN wifi (broadcasts don't " +
-                    "cross routers or Tailscale).",
+                stringResource(R.string.site_supported_models),
+                style = MaterialTheme.typography.titleSmall,
+                color = HiBrand.textPrimary,
+            )
+            Text(
+                stringResource(R.string.site_supported_models_body),
                 style = MaterialTheme.typography.bodySmall, color = HiBrand.textSecondary,
             )
         }

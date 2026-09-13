@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">Farms</string>
+    <string name="farms_add_farm">Add farm</string>
+    <string name="farms_intro">Group miners into farms/sites, each with its own scan subnet. The default farm opens on launch; the active farm is what the dashboard shows. Deleting a farm keeps its miners (they become unassigned).</string>
+    <string name="farms_empty">No farms yet. Add one to organize miners by site — handy for ASIC discovery and per-site log audits later.</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">Default</string>
+    <string name="farms_no_subnet">no subnet</string>
+    <string name="farms_miner_count">" · %1$d miner(s)"</string>
+    <string name="farms_viewing">Viewing</string>
+    <string name="farms_view">View</string>
+    <string name="farms_set_default">Set default</string>
+    <string name="farms_scan">Scan</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">Scan the new farm?</string>
+    <string name="farms_scan_new_body">Scan %1$s now for miners and add them to this farm?</string>
+    <string name="farms_scan_now">Scan now</string>
+    <string name="farms_later">Later</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">Delete %1$s?</string>
+    <string name="farms_delete_body_also">Its %1$d miner(s) and their history are deleted with it.</string>
+    <string name="farms_delete_body_keep">Its %1$d miner(s) stay tracked but become unassigned. History is kept.</string>
+    <string name="farms_delete_also_checkbox">Also delete its %1$d miner(s)</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">Name</string>
+    <string name="farms_name_placeholder">Home lab</string>
+    <string name="farms_subnet_label">Scan subnet (CIDR)</string>
+    <string name="farms_create">Create</string>
+</resources>

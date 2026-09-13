@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">Network scan</string>
+    <string name="net_refresh_network_info">Refresh network info</string>
+    <string name="net_intro">Scans your local subnet for miners on their known ports (HTTP 80, CGMiner 4028). Only private LAN and Tailscale addresses are probed. Runs automatically at launch so devices appear before you open Add Miner.</string>
+    <string name="net_this_device">This device</string>
+    <string name="net_not_on_network">Not on a Wi-Fi / LAN network</string>
+    <string name="net_scan_range_label">Scan range (CIDR)</string>
+    <string name="net_scanning_progress">Scanning %1$d / %2$d — %3$d found</string>
+    <string name="net_last_scan">Last scan %1$s.</string>
+    <string name="net_restart">Restart</string>
+    <string name="net_start_scan">Start scan</string>
+    <string name="net_discovering">Discovering…</string>
+    <string name="net_mdns_discover">mDNS discover</string>
+    <string name="net_auto_scan_title">Scan automatically at launch</string>
+    <string name="net_auto_scan_subtitle">Kick off a subnet scan when the app opens.</string>
+    <string name="net_just_now">just now</string>
+    <string name="net_minutes_ago">%1$dm ago</string>
+    <string name="net_hours_ago">%1$dh ago</string>
+</resources>

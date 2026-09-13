@@ -26,14 +26,14 @@ class AlertNotifier @Inject constructor(
         val manager = context.getSystemService(NotificationManager::class.java)
         // Per-category channels so users can tune (or silence) each type in system settings.
         listOf(
-            CHANNEL_OFFLINE to "Offline miners",
-            CHANNEL_THERMAL to "Temperature",
-            CHANNEL_FAN to "Fans",
-            CHANNEL_SHARES to "Rejected shares",
-            CHANNEL_STATUS to "Status changes",
-            CHANNEL_RECOVERY to "Recoveries",
-            CHANNEL_WATCHDOG to "Watchdog & automation",
-            CHANNEL_DIGEST to "Daily digest",
+            CHANNEL_OFFLINE to context.getString(R.string.notif_channel_offline),
+            CHANNEL_THERMAL to context.getString(R.string.notif_channel_thermal),
+            CHANNEL_FAN to context.getString(R.string.notif_channel_fan),
+            CHANNEL_SHARES to context.getString(R.string.notif_channel_shares),
+            CHANNEL_STATUS to context.getString(R.string.notif_channel_status),
+            CHANNEL_RECOVERY to context.getString(R.string.notif_channel_recovery),
+            CHANNEL_WATCHDOG to context.getString(R.string.notif_channel_watchdog),
+            CHANNEL_DIGEST to context.getString(R.string.notif_channel_digest),
         ).forEach { (id, name) ->
             manager.createNotificationChannel(
                 NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
@@ -67,7 +67,11 @@ class AlertNotifier @Inject constructor(
             Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-        val title = if (signal.active) "Alert: ${signal.minerName}" else "Recovered: ${signal.minerName}"
+        val title = if (signal.active) {
+            context.getString(R.string.notif_alert_title, signal.minerName)
+        } else {
+            context.getString(R.string.notif_recovered_title, signal.minerName)
+        }
         // Stable id per miner+type so a recovery replaces its alert instead of stacking.
         val id = (signal.minerId * 31 + signal.type.ordinal).toInt()
         val builder = NotificationCompat.Builder(context, channelFor(signal))
@@ -79,8 +83,16 @@ class AlertNotifier @Inject constructor(
             .setAutoCancel(true)
         // Quick-actions on active alerts: reboot the miner or acknowledge, straight from here.
         if (signal.active) {
-            builder.addAction(0, "Reboot", actionIntent(signal, id, AlertActionReceiver.ACTION_REBOOT))
-            builder.addAction(0, "Acknowledge", actionIntent(signal, id, AlertActionReceiver.ACTION_ACK))
+            builder.addAction(
+                0,
+                context.getString(R.string.common_reboot),
+                actionIntent(signal, id, AlertActionReceiver.ACTION_REBOOT),
+            )
+            builder.addAction(
+                0,
+                context.getString(R.string.notif_action_acknowledge),
+                actionIntent(signal, id, AlertActionReceiver.ACTION_ACK),
+            )
         }
         NotificationManagerCompat.from(context).notify(id, builder.build())
     }

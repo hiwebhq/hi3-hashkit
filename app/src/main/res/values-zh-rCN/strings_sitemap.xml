@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Site Map: setup -->
+    <string name="site_title">站点地图</string>
+    <string name="site_setup_intro">先定义站点，然后沿机架巡走并按下每台矿机的 IP Report 按钮。录入始终从 1 号建筑、1 号机架、第 1 层、1 号位（最左端）开始，每层从左到右填满，再上一层，再下一个机架。</string>
+    <string name="site_name_label">站点名称（用于“保存到矿场”）</string>
+    <string name="site_buildings">建筑数</string>
+    <string name="site_racks_per_building">每栋建筑的机架数</string>
+    <string name="site_tiers_per_rack">每个机架的层数（隔板）</string>
+    <string name="site_positions_per_tier">每层的位数（每行矿机数）</string>
+    <string name="site_setup_summary">共 %1$d 个槽位——每机架 %2$d 个，每栋建筑 %3$d 个。</string>
+    <string name="site_supported_models">支持的机型</string>
+    <string name="site_supported_models_body">录入监听 IP Report 按钮的广播（UDP 14235）：原厂固件的 Bitmain Antminer（S9 至 S21 时代）、Braiins OS 和 LuxOS。应用会回送确认，矿机在按键被记录时会闪绿灯。WhatsMiner、Canaan 和 Bitaxe/ESP-Miner 不发送此广播——请用“手动”填充它们的槽位。手机必须连接矿机所在局域网的 Wi-Fi（广播不会跨路由器或 Tailscale）。</string>
+    <string name="site_start_capture">开始录入</string>
+
+    <!-- Site Map: capture -->
+    <string name="site_capture_finished">录入完成</string>
+    <string name="site_listening">正在监听 UDP 14235——请按下此矿机的 IP Report 按钮：</string>
+    <string name="site_paused">已暂停——按键将被忽略</string>
+    <string name="site_slot_label">建筑 %1$d · 机架 %2$d · 第 %3$d 层 · %4$d 号位</string>
+    <string name="site_captured_count">已录入 %1$d / %2$d</string>
+    <string name="site_skipped_suffix">" · 已跳过 %1$d"</string>
+    <string name="site_last_event">最近：%1$s</string>
+    <string name="site_pause">暂停</string>
+    <string name="site_resume">继续</string>
+    <string name="site_undo">撤销</string>
+    <string name="site_skip_slot">跳过槽位</string>
+    <string name="site_manual">手动</string>
+    <string name="site_prev_rack">上一机架</string>
+    <string name="site_next_rack">下一机架</string>
+    <string name="site_building_rack">建筑 %1$d · 机架 %2$d</string>
+    <string name="site_tier_hint">第 1 层是最底行；位号从左到右排列。</string>
+
+    <!-- Site Map: results -->
+    <string name="site_results">结果（%1$d）</string>
+    <string name="site_export_csv">导出 CSV</string>
+    <string name="site_share_csv_title">站点地图 CSV</string>
+    <string name="site_new_session">新会话</string>
+    <string name="site_scanning_progress">扫描中… %1$d/%2$d</string>
+    <string name="site_scan_miners">扫描矿机（API）：MAC · 序列号 · 矿池 · 矿工 · 算力</string>
+    <string name="site_farm_name">矿场名称</string>
+    <string name="site_existing_farms">已有：%1$s</string>
+    <string name="site_saving">保存中…</string>
+    <string name="site_save_to_farm">保存到矿场</string>
+    <string name="site_col_location">位置</string>
+    <string name="site_col_ip">IP</string>
+    <string name="site_col_mac">MAC</string>
+    <string name="site_col_source">来源</string>
+    <string name="site_source_manual">手动</string>
+    <string name="site_source_button">按钮</string>
+    <string name="site_scan_failed">扫描失败：%1$s</string>
+    <string name="site_sn_prefix">SN %1$s</string>
+    <string name="site_no_details">未上报详细信息</string>
+    <string name="site_manual_fill_title">手动填充</string>
+    <string name="site_manual_fill_body">输入当前槽位矿机的 IP——适用于没有 IP Report 按钮的设备（WhatsMiner、Canaan、Bitaxe）。</string>
+    <string name="site_ipv4_label">IPv4 地址</string>
+    <string name="site_fill_slot">填入槽位</string>
+
+    <!-- Site Map: ViewModel messages -->
+    <string name="site_error_enter_numbers">请先填写建筑、机架、层和位的数量。</string>
+    <string name="site_error_invalid_ipv4">“%1$s”不是有效的 IPv4 地址。</string>
+    <string name="site_listener_failed">监听失败：%1$s</string>
+    <string name="site_undid">已撤销 %1$s（%2$s）</string>
+    <string name="site_saved_result">已保存到“%1$s”：新增 %2$d，已知 %3$d</string>
+    <string name="site_saved_failed_suffix">"，失败 %1$d"</string>
+
+    <!-- Heatmap -->
+    <string name="site_heatmap_title">热力图</string>
+    <string name="site_heatmap_empty">还没有矿机设置机架位置。运行站点地图（或在矿机的编辑对话框中设置类似 B1-R1-T1-P1 的位置），机架就会显示在这里，并按实时芯片温度着色。</string>
+    <string name="site_heatmap_tier_hint">第 1 层是最底行；位号从左到右排列。点按单元格打开矿机。</string>
+    <string name="site_unplaced">%1$d 台没有建筑/机架/层/位信息的矿机未显示。</string>
+    <string name="site_cell_off">离线</string>
+    <string name="site_empty_slot">空槽位</string>
+    <string name="site_legend_offline">离线 / 无数据</string>
+</resources>

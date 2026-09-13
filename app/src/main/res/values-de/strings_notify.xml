@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notification strings: channel names, alert titles, and notification actions. -->
+<resources>
+    <!-- Notification channel names -->
+    <string name="notif_channel_offline">Offline-Miner</string>
+    <string name="notif_channel_thermal">Temperatur</string>
+    <string name="notif_channel_fan">Lüfter</string>
+    <string name="notif_channel_shares">Abgelehnte Shares</string>
+    <string name="notif_channel_status">Statusänderungen</string>
+    <string name="notif_channel_recovery">Entwarnungen</string>
+    <string name="notif_channel_watchdog">Watchdog &amp; Automatisierung</string>
+    <string name="notif_channel_digest">Tagesübersicht</string>
+
+    <!-- Alert notification titles -->
+    <string name="notif_alert_title">Alarm: %1$s</string>
+    <string name="notif_recovered_title">Erholt: %1$s</string>
+
+    <!-- Notification actions -->
+    <string name="notif_action_acknowledge">Quittieren</string>
+</resources>

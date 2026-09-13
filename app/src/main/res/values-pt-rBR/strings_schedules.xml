@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">Agendamentos</string>
+    <string name="sched_add_schedule">Adicionar agendamento</string>
+    <string name="sched_intro">Os agendamentos rodam quando o app consulta (primeiro plano) ou durante os ciclos de monitoramento em segundo plano (granularidade de ~15 min) — não em horários exatos. Um dia perdido é pulado, nunca reexecutado.</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s às %2$s em %3$s · alvos: %4$s</string>
+    <string name="sched_row_group">grupo \"%1$s\"</string>
+    <string name="sched_row_all_miners">todos os mineradores</string>
+    <string name="sched_last_run">Última execução %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">Novo agendamento</string>
+    <string name="sched_name">Nome</string>
+    <string name="sched_action_restart">Reiniciar</string>
+    <string name="sched_action_pool">Pool</string>
+    <string name="sched_action_fan">Ventoinha</string>
+    <string name="sched_action_pause">Pausar</string>
+    <string name="sched_action_resume">Retomar</string>
+    <string name="sched_action_plug_off">Desligar tomada</string>
+    <string name="sched_action_plug_on">Ligar tomada</string>
+    <string name="sched_action_tune_preset">Preset de ajuste</string>
+    <string name="sched_stratum_url">URL Stratum</string>
+    <string name="sched_port">Porta</string>
+    <string name="sched_worker">Worker</string>
+    <string name="sched_automatic">Automática</string>
+    <string name="sched_manual_percent">Manual: %1$d%%</string>
+    <string name="sched_frequency_mhz">Frequência (MHz)</string>
+    <string name="sched_core_voltage_mv">Tensão do core (mV)</string>
+    <string name="sched_time_label">Horário (HH:MM, fuso do aparelho)</string>
+    <string name="sched_target_group">Grupo-alvo (vazio = todos os mineradores)</string>
+    <string name="sched_hint_plug">Ligar/desligar tomada aciona a tomada inteligente configurada de cada minerador-alvo pela LAN. Mineradores sem tomada configurada são pulados. Combine Desligar tomada à noite com Ligar tomada de manhã para controle de energia por tarifa horária; cada execução é registrada.</string>
+    <string name="sched_hint_tune">Meta de potência por tarifa horária: aplica um preset fixo de frequência/tensão. Use um preset de baixa potência no início da tarifa de pico e seu preset normal no fim. Só roda em firmware que aceita esses valores (ex.: Bitaxe/AxeOS); os demais são pulados. Use valores que o tuner do seu minerador aceita.</string>
+    <string name="sched_hint_default">Tarifa horária: agende Pausar no início da tarifa de pico e Retomar no fim (pausar exige um aparelho com suporte). Aparelhos sem suporte são pulados com um motivo; cada execução é registrada no log de auditoria.</string>
+</resources>

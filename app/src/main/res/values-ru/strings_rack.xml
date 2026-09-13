@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран стоек и плана площадки (ui/rack). -->
+<resources>
+    <string name="rack_title">Стойки и план площадки</string>
+    <string name="rack_empty">Майнеров пока нет. Добавьте майнеры и задайте каждому «Расположение» (комната / стойка / полка), чтобы увидеть их здесь.</string>
+    <string name="rack_group_stats">%1$d/%2$d онлайн · %3$s</string>
+</resources>

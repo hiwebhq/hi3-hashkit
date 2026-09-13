@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rules_title">Règles d\'automatisation</string>
+    <string name="rules_add_rule">Ajouter une règle</string>
+    <string name="rules_intro">Les règles sont vérifiées à chaque cycle de sondage. Une condition doit tenir pendant la fenêtre de maintien de la règle avant que l\'action ne s\'exécute, et chaque règle se déclenche au plus une fois par intervalle et par mineur. Les mineurs mis en sourdine sont ignorés, les actions de contrôle non prises en charge sont ignorées avec un motif, et chaque déclenchement émet une notification de surveillance.</string>
+
+    <!-- Rule row summary line, assembled by concatenation: rules_row_if + (rules_row_group | rules_row_all_miners) + rules_row_interval -->
+    <string name="rules_row_if">"SI %1$s%2$s%3$s  →  %4$s"</string>
+    <string name="rules_row_sustained">" pendant ≥%1$d min"</string>
+    <string name="rules_row_group">"  ·  groupe \"%1$s\""</string>
+    <string name="rules_row_all_miners">"  ·  tous les mineurs"</string>
+    <string name="rules_row_interval">"  ·  toutes les %1$d min par mineur"</string>
+    <string name="rules_last_fired">Dernier déclenchement %1$s : %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="rules_new_rule">Nouvelle règle</string>
+    <string name="rules_name">Nom</string>
+    <string name="rules_when">Quand</string>
+    <string name="rules_then">Alors</string>
+    <string name="rules_threshold">Seuil (%1$s)</string>
+    <string name="rules_target_group">Groupe cible (vide = tous)</string>
+    <string name="rules_sustained_label">Maintenu pendant (min, 0 = première occurrence)</string>
+    <string name="rules_min_interval_label">Intervalle min entre déclenchements par mineur (min)</string>
+    <string name="rules_editor_hint">Les actions de contrôle (pause/reprise/redémarrage) utilisent le chemin de contrôle vérifié du mineur et sont ignorées si non prises en charge. Les actions de prise nécessitent une prise connectée configurée. Testez d\'abord avec un intervalle élevé.</string>
+</resources>

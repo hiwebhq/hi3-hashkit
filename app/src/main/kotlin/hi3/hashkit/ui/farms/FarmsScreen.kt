@@ -40,10 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,10 +64,13 @@ fun FarmsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Farms", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.farms_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -73,7 +78,7 @@ fun FarmsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAdd = true }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add farm")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.farms_add_farm))
             }
         },
         containerColor = HiBrand.background,
@@ -85,9 +90,7 @@ fun FarmsScreen(
         ) {
             item {
                 Text(
-                    "Group miners into farms/sites, each with its own scan subnet. The " +
-                        "default farm opens on launch; the active farm is what the dashboard " +
-                        "shows. Deleting a farm keeps its miners (they become unassigned).",
+                    stringResource(R.string.farms_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -95,8 +98,7 @@ fun FarmsScreen(
             if (rows.isEmpty()) {
                 item {
                     Text(
-                        "No farms yet. Add one to organize miners by site — handy for ASIC " +
-                            "discovery and per-site log audits later.",
+                        stringResource(R.string.farms_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = HiBrand.textSecondary,
                         modifier = Modifier.padding(top = 8.dp),
@@ -132,16 +134,16 @@ fun FarmsScreen(
     rescanPrompt?.let { (id, subnet) ->
         AlertDialog(
             onDismissRequest = { rescanPrompt = null },
-            title = { Text("Scan the new farm?") },
-            text = { Text("Scan $subnet now for miners and add them to this farm?") },
+            title = { Text(stringResource(R.string.farms_scan_new_title)) },
+            text = { Text(stringResource(R.string.farms_scan_new_body, subnet)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.scanFarm(id)
                     rescanPrompt = null
-                }) { Text("Scan now") }
+                }) { Text(stringResource(R.string.farms_scan_now)) }
             },
             dismissButton = {
-                TextButton(onClick = { rescanPrompt = null }) { Text("Later") }
+                TextButton(onClick = { rescanPrompt = null }) { Text(stringResource(R.string.farms_later)) }
             },
         )
     }
@@ -171,34 +173,35 @@ private fun FarmCard(
                     modifier = Modifier.weight(1f),
                 )
                 if (row.farm.isDefault) {
-                    AssistChip(onClick = {}, enabled = false, label = { Text("Default") },
+                    AssistChip(onClick = {}, enabled = false, label = { Text(stringResource(R.string.farms_default)) },
                         leadingIcon = { Icon(Icons.Filled.Star, contentDescription = null) })
                 }
             }
             Text(
-                (row.farm.subnetsCsv.ifBlank { "no subnet" }) + " · ${row.minerCount} miner(s)",
+                (row.farm.subnetsCsv.ifBlank { stringResource(R.string.farms_no_subnet) }) +
+                    stringResource(R.string.farms_miner_count, row.minerCount),
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textSecondary,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (isActive) {
-                    AssistChip(onClick = {}, enabled = false, label = { Text("Viewing") },
+                    AssistChip(onClick = {}, enabled = false, label = { Text(stringResource(R.string.farms_viewing)) },
                         leadingIcon = { Icon(Icons.Filled.Check, contentDescription = null) })
                 } else {
-                    TextButton(onClick = onSetActive) { Text("View") }
+                    TextButton(onClick = onSetActive) { Text(stringResource(R.string.farms_view)) }
                 }
                 if (!row.farm.isDefault) {
-                    TextButton(onClick = onSetDefault) { Text("Set default") }
+                    TextButton(onClick = onSetDefault) { Text(stringResource(R.string.farms_set_default)) }
                 }
                 TextButton(onClick = onScan) {
                     Icon(Icons.Filled.Wifi, contentDescription = null, modifier = Modifier.height(16.dp))
                     Spacer(Modifier.height(4.dp))
-                    Text("Scan")
+                    Text(stringResource(R.string.farms_scan))
                 }
                 TextButton(onClick = { confirmDelete = true }) {
                     Icon(Icons.Filled.Delete, contentDescription = null, tint = HiBrand.statusOffline,
                         modifier = Modifier.height(16.dp))
-                    Text("Delete", color = HiBrand.statusOffline)
+                    Text(stringResource(R.string.common_delete), color = HiBrand.statusOffline)
                 }
             }
         }
@@ -221,14 +224,14 @@ private fun DeleteFarmDialog(
     var alsoMiners by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete ${row.farm.name}?") },
+        title = { Text(stringResource(R.string.farms_delete_title, row.farm.name)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     if (alsoMiners) {
-                        "Its ${row.minerCount} miner(s) and their history are deleted with it."
+                        stringResource(R.string.farms_delete_body_also, row.minerCount)
                     } else {
-                        "Its ${row.minerCount} miner(s) stay tracked but become unassigned. History is kept."
+                        stringResource(R.string.farms_delete_body_keep, row.minerCount)
                     },
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -236,16 +239,16 @@ private fun DeleteFarmDialog(
                         checked = alsoMiners,
                         onCheckedChange = { alsoMiners = it },
                     )
-                    Text("Also delete its ${row.minerCount} miner(s)")
+                    Text(stringResource(R.string.farms_delete_also_checkbox, row.minerCount))
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(alsoMiners) }) {
-                Text("Delete", color = HiBrand.statusOffline)
+                Text(stringResource(R.string.common_delete), color = HiBrand.statusOffline)
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 
@@ -259,21 +262,21 @@ private fun AddFarmDialog(
     var subnet by remember { mutableStateOf(prefillSubnet) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add farm") },
+        title = { Text(stringResource(R.string.farms_add_farm)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
-                    placeholder = { Text("Home lab") },
+                    label = { Text(stringResource(R.string.farms_name)) },
+                    placeholder = { Text(stringResource(R.string.farms_name_placeholder)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
                     value = subnet,
                     onValueChange = { subnet = it },
-                    label = { Text("Scan subnet (CIDR)") },
+                    label = { Text(stringResource(R.string.farms_subnet_label)) },
                     placeholder = { Text("192.168.1.0/24") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -284,8 +287,8 @@ private fun AddFarmDialog(
             TextButton(
                 onClick = { onCreate(name, subnet) },
                 enabled = name.isNotBlank(),
-            ) { Text("Create") }
+            ) { Text(stringResource(R.string.farms_create)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

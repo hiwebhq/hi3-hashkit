@@ -47,12 +47,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import hi3.hashkit.R
 import hi3.hashkit.integrations.print.QrCode
 import hi3.hashkit.ui.theme.HiBrand
 
@@ -73,17 +75,18 @@ fun NfcProgramScreen(
         val target = viewModel.state.value.current ?: return@NfcWriteMode
         when (val r = writeTag(tag, target.payload)) {
             is WriteOutcome.Ok -> viewModel.markWritten(target.id)
-            is WriteOutcome.Err -> viewModel.setMessage("Write failed: ${r.message}")
+            is WriteOutcome.Err ->
+                viewModel.setMessage(context.getString(R.string.nfcp_write_failed, r.message))
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Program NFC tags", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.nfcp_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -93,21 +96,26 @@ fun NfcProgramScreen(
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             if (state.loading) {
-                Text("Loading…", Modifier.padding(16.dp), color = HiBrand.textSecondary)
+                Text(stringResource(R.string.common_loading), Modifier.padding(16.dp), color = HiBrand.textSecondary)
                 return@Column
             }
             if (state.targets.isEmpty()) {
                 Text(
-                    state.message ?: "No miners to program.",
+                    state.message ?: stringResource(R.string.nfcp_no_miners),
                     Modifier.padding(16.dp), color = HiBrand.textSecondary,
                 )
                 return@Column
             }
 
             // Progress + NFC status.
+            val nfcStatus = if (nfcAdapter == null) {
+                stringResource(R.string.nfcp_no_nfc_device)
+            } else {
+                stringResource(R.string.nfcp_turn_on_nfc)
+            }
             Text(
-                "${state.writtenCount} of ${state.total} written" +
-                    if (!nfcReady) "  ·  ${if (nfcAdapter == null) "no NFC on this device" else "turn on NFC to write"}" else "",
+                stringResource(R.string.nfcp_written_progress, state.writtenCount, state.total) +
+                    if (!nfcReady) "  ·  $nfcStatus" else "",
                 style = MaterialTheme.typography.labelMedium,
                 color = if (nfcReady) HiBrand.textSecondary else HiBrand.statusDegraded,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -124,30 +132,34 @@ fun NfcProgramScreen(
                 ) {
                     Column(Modifier.padding(16.dp)) {
                         Text(
-                            "Programming ${state.index + 1} of ${state.total}",
+                            stringResource(R.string.nfcp_programming, state.index + 1, state.total),
                             style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
                         )
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                             Text(t.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = HiBrand.textPrimary)
                             if (t.id in state.written) {
-                                Icon(Icons.Filled.CheckCircle, contentDescription = "written", tint = HiBrand.statusOnline)
+                                Icon(
+                                    Icons.Filled.CheckCircle,
+                                    contentDescription = stringResource(R.string.nfcp_written),
+                                    tint = HiBrand.statusOnline,
+                                )
                             }
                         }
                         Spacer8()
-                        PayloadLine("MAC", t.mac)
-                        PayloadLine("IP", t.ip)
-                        PayloadLine("Location", t.location)
+                        PayloadLine(stringResource(R.string.nfcp_label_mac), t.mac)
+                        PayloadLine(stringResource(R.string.nfcp_label_ip), t.ip)
+                        PayloadLine(stringResource(R.string.nfcp_label_location), t.location)
                         Spacer8()
                         Text(
-                            if (nfcReady) "Hold a blank NFC tag to the back of the phone to write it."
-                            else "Enable NFC to write, or use Show QR to print a sticker instead.",
+                            if (nfcReady) stringResource(R.string.nfcp_hold_tag)
+                            else stringResource(R.string.nfcp_enable_nfc),
                             style = MaterialTheme.typography.bodyMedium, color = HiBrand.textSecondary,
                         )
                         Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = viewModel::prev, enabled = state.index > 0) { Text("Prev") }
-                            OutlinedButton(onClick = viewModel::skip, enabled = state.index < state.total - 1) { Text("Skip") }
-                            OutlinedButton(onClick = viewModel::next, enabled = state.index < state.total - 1) { Text("Next") }
-                            OutlinedButton(onClick = viewModel::toggleQr) { Text("Show QR") }
+                            OutlinedButton(onClick = viewModel::prev, enabled = state.index > 0) { Text(stringResource(R.string.nfcp_prev)) }
+                            OutlinedButton(onClick = viewModel::skip, enabled = state.index < state.total - 1) { Text(stringResource(R.string.nfcp_skip)) }
+                            OutlinedButton(onClick = viewModel::next, enabled = state.index < state.total - 1) { Text(stringResource(R.string.nfcp_next)) }
+                            OutlinedButton(onClick = viewModel::toggleQr) { Text(stringResource(R.string.nfcp_show_qr)) }
                         }
                     }
                 }
@@ -172,7 +184,12 @@ fun NfcProgramScreen(
                             color = if (i == state.index) HiBrand.accent else HiBrand.textPrimary,
                         )
                         if (t.id in state.written) {
-                            Icon(Icons.Filled.CheckCircle, contentDescription = "written", tint = HiBrand.statusOnline, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Filled.CheckCircle,
+                                contentDescription = stringResource(R.string.nfcp_written),
+                                tint = HiBrand.statusOnline,
+                                modifier = Modifier.size(18.dp),
+                            )
                         } else {
                             Text(t.ip ?: "", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
                         }
@@ -205,19 +222,19 @@ private fun QrDialog(payload: String, title: String, onDismiss: () -> Unit) {
     val bmp = remember(payload) { QrCode.bitmap(payload, 640) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) } },
         title = { Text(title) },
         text = {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                 if (bmp != null) {
                     Image(
                         bitmap = bmp.asImageBitmap(),
-                        contentDescription = "QR for $title",
+                        contentDescription = stringResource(R.string.nfcp_qr_for, title),
                         modifier = Modifier.size(240.dp).background(androidx.compose.ui.graphics.Color.White).padding(8.dp),
                     )
                 }
                 Text(
-                    "Screenshot to print as a sticker — scans in the AR rack overlay.",
+                    stringResource(R.string.nfcp_qr_hint),
                     style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary,
                     modifier = Modifier.padding(top = 8.dp),
                 )

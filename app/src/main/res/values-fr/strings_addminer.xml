@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="addm_title">Ajouter des mineurs</string>
+    <string name="addm_manual_entry">SAISIE MANUELLE</string>
+    <string name="addm_manual_hint">Saisissez l\'IP ou le nom d\'hôte d\'un mineur — y compris les adresses Tailscale (100.x.y.z) quand cet appareil est sur votre tailnet.</string>
+    <string name="addm_host_label">Adresse IP ou nom d\'hôte</string>
+    <string name="addm_probing">Sondage…</string>
+    <string name="addm_probe_add">Sonder &amp; ajouter</string>
+    <string name="addm_scan_local_network">SCANNER LE RÉSEAU LOCAL</string>
+    <string name="addm_scan_hint">Sonde uniquement les adresses privées, sur les ports de mineurs uniquement, avec des limites strictes. Les plages plus larges que /22 sont refusées.</string>
+    <string name="addm_cidr_label">Plage CIDR</string>
+    <string name="addm_scan">Scanner</string>
+    <string name="addm_hosts_progress">%1$d / %2$d hôtes</string>
+    <string name="addm_added">ajoutés</string>
+    <string name="addm_known">connus</string>
+</resources>

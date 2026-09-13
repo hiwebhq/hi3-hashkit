@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.data.db.AlertEventEntity
 import hi3.hashkit.data.db.AlertDao
 import hi3.hashkit.data.poll.PollingEngine
@@ -138,7 +139,8 @@ class MinerDetailViewModel @Inject constructor(
     fun setCredential(secret: String) {
         viewModelScope.launch {
             repository.setCredential(minerId, secret)
-            lastActionMessage.value = if (secret.isBlank()) "Credential cleared." else "Credential saved (encrypted)."
+            lastActionMessage.value = if (secret.isBlank()) appContext.getString(R.string.det_msg_credential_cleared)
+            else appContext.getString(R.string.det_msg_credential_saved)
         }
     }
 
@@ -154,8 +156,10 @@ class MinerDetailViewModel @Inject constructor(
             val type = p.type ?: return@launch
             val plugCfg = hi3.hashkit.integrations.plug.SmartPlugClient.Plug(type, p.host, p.onUrl, p.offUrl)
             val ok = if (turnOn) smartPlugClient.turnOn(plugCfg) else smartPlugClient.turnOff(plugCfg)
-            lastActionMessage.value = if (ok) "Plug ${if (turnOn) "on" else "off"} command sent."
-                else "Plug command failed — check the address/URL."
+            lastActionMessage.value = if (ok) {
+                if (turnOn) appContext.getString(R.string.det_msg_plug_on_sent)
+                else appContext.getString(R.string.det_msg_plug_off_sent)
+            } else appContext.getString(R.string.det_msg_plug_failed)
         }
     }
     private val windowMs = MutableStateFlow(HISTORY_WINDOW_MS)
@@ -270,38 +274,41 @@ class MinerDetailViewModel @Inject constructor(
         }
     }
 
-    fun reboot() = runAction("restarting") { controlRepository.reboot(it) }
+    fun reboot() = runAction(appContext.getString(R.string.det_act_restarting)) { controlRepository.reboot(it) }
 
-    fun locate(on: Boolean) = runAction(if (on) "blinking LED" else "stopping blink") {
+    fun locate(on: Boolean) = runAction(
+        if (on) appContext.getString(R.string.det_act_blinking_led)
+        else appContext.getString(R.string.det_act_stopping_blink)
+    ) {
         controlRepository.locate(it, on)
     }
 
-    fun pauseHashing() = runAction("pausing hashing") {
+    fun pauseHashing() = runAction(appContext.getString(R.string.det_act_pausing)) {
         controlRepository.powerControl(it, hi3.hashkit.domain.adapter.PowerAction.PAUSE)
     }
 
-    fun resumeHashing() = runAction("resuming hashing") {
+    fun resumeHashing() = runAction(appContext.getString(R.string.det_act_resuming)) {
         controlRepository.powerControl(it, hi3.hashkit.domain.adapter.PowerAction.RESUME)
     }
 
     fun setPool(url: String, port: Int, worker: String) =
-        runAction("changing pool") { controlRepository.setPrimaryPool(it, url, port, worker) }
+        runAction(appContext.getString(R.string.det_act_changing_pool)) { controlRepository.setPrimaryPool(it, url, port, worker) }
 
-    fun setFanAuto() = runAction("setting fan to automatic") {
+    fun setFanAuto() = runAction(appContext.getString(R.string.det_act_fan_auto)) {
         controlRepository.setFan(it, FanControl.Automatic())
     }
 
-    fun setFanManual(percent: Int) = runAction("setting fan to $percent%") {
+    fun setFanManual(percent: Int) = runAction(appContext.getString(R.string.det_act_fan_manual, percent)) {
         controlRepository.setFan(it, FanControl.Manual(percent))
     }
 
-    fun applyTune(freq: Int, volt: Int) = runAction("applying $freq MHz / $volt mV") {
+    fun applyTune(freq: Int, volt: Int) = runAction(appContext.getString(R.string.det_act_applying_tune, freq, volt)) {
         controlRepository.applyTune(it, freq, volt).also { r ->
             if (r is ActionResult.Success) hasRollback.value = true
         }
     }
 
-    fun rollbackTune() = runAction("rolling back tune") { controlRepository.rollbackTune(it) }
+    fun rollbackTune() = runAction(appContext.getString(R.string.det_act_rollback)) { controlRepository.rollbackTune(it) }
 
     fun deleteMiner(onDeleted: () -> Unit) {
         viewModelScope.launch {
@@ -318,17 +325,17 @@ class MinerDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val entity = repository.observeMinerEntity(minerId).first()
             if (entity == null) {
-                lastActionMessage.value = "Miner not found."
+                lastActionMessage.value = appContext.getString(R.string.det_msg_miner_not_found)
                 return@launch
             }
             busyAction.value = label
             lastActionMessage.value = null
             val result = runCatching { block(entity) }
-                .getOrElse { ActionResult.Failure(it.message ?: "Unexpected error") }
+                .getOrElse { ActionResult.Failure(it.message ?: appContext.getString(R.string.det_msg_unexpected_error)) }
             lastActionMessage.value = when (result) {
-                is ActionResult.Success -> "Done: $label."
-                is ActionResult.Failure -> "Failed: ${result.message}"
-                is ActionResult.Unsupported -> "Unsupported: ${result.reason}"
+                is ActionResult.Success -> appContext.getString(R.string.det_msg_done, label)
+                is ActionResult.Failure -> appContext.getString(R.string.det_msg_failed, result.message)
+                is ActionResult.Unsupported -> appContext.getString(R.string.det_msg_unsupported, result.reason)
             }
             busyAction.value = null
             // Post-change monitoring: poll promptly so the effect (or trouble) is visible.

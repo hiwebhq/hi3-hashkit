@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rack & site layout screen (ui/rack). -->
+<resources>
+    <string name="rack_title">Layout de rack e site</string>
+    <string name="rack_empty">Nenhum minerador ainda. Adicione mineradores e defina a Localização de cada um (sala / rack / prateleira) para vê-los organizados aqui.</string>
+    <string name="rack_group_stats">%1$d/%2$d ativos · %3$s</string>
+</resources>

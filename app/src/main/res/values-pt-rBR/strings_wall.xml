@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wall / TV kiosk dashboard (ui/wall). -->
+<resources>
+    <string name="wall_size_small">Pequeno</string>
+    <string name="wall_size_medium">Médio</string>
+    <string name="wall_size_large">Grande</string>
+    <string name="wall_counts">%1$d online · %2$d offline · %3$d mineradores</string>
+    <string name="wall_display_options">Opções de exibição</string>
+    <string name="wall_card_size">TAMANHO DO CARD</string>
+    <string name="wall_grid_columns">COLUNAS DA GRADE</string>
+    <string name="wall_fewer_columns">Menos colunas</string>
+    <string name="wall_more_columns">Mais colunas</string>
+    <string name="wall_columns_auto">Auto</string>
+    <string name="wall_exit">Sair do modo parede</string>
+    <string name="wall_no_miners">Nenhum minerador para exibir.</string>
+</resources>

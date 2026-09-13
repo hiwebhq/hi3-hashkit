@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings surfaced from ViewModels / shared domain classes (no Composable Context at the
+     point of composition). vm_ = ViewModel messages, logan_ = LogAnalyzer/LogClassifier,
+     acou_ = AcousticAnalyzer, bulk_ = FleetControl BulkAction labels. -->
+<resources>
+
+    <!-- AutotuneViewModel -->
+    <string name="vm_tune_miner_not_found">Miner not found.</string>
+    <string name="vm_tune_not_tunable">This miner does not expose tunable options.</string>
+    <string name="vm_tune_no_voltage">No core voltage to hold constant.</string>
+    <string name="vm_tune_sweeping">Sweeping %1$d frequencies at %2$d mV, ceiling %3$d°C…</string>
+    <string name="vm_tune_step_label">%1$d MHz @ %2$d mV — applying &amp; settling %3$ds</string>
+    <string name="vm_tune_stopped_early">"Stopped early: hit the %1$d°C ceiling. "</string>
+    <string name="vm_tune_no_safe_point">No safe point produced a valid reading.</string>
+    <string name="vm_tune_best_hashrate">Best hashrate: %1$d MHz (%2$s).</string>
+    <string name="vm_tune_best_efficiency">Best efficiency: %1$d MHz at %2$s J/TH.</string>
+    <string name="vm_tune_restored">" Restored your original setpoint."</string>
+    <string name="vm_tune_applied">Applied %1$d MHz @ %2$d mV.</string>
+    <string name="vm_tune_apply_failed">Apply failed: %1$s</string>
+    <string name="vm_tune_cancelled">Sweep cancelled — original setpoint restored.</string>
+
+    <!-- PoolSpeedViewModel -->
+    <string name="vm_ps_no_pools">No pools found. Configure a pool on a miner or in the address book.</string>
+    <string name="vm_ps_tested">Tested %1$d pool(s).</string>
+
+    <!-- AddressBookViewModel -->
+    <string name="vm_ab_applied">Applied \"%1$s\": %2$d ok, %3$d failed, %4$d unsupported.</string>
+
+    <!-- Shared by PriceCurtailmentViewModel + SolarSurplusViewModel -->
+    <string name="vm_saved">Saved.</string>
+    <string name="vm_curtailed">Curtailed</string>
+    <string name="vm_resumed">Resumed</string>
+    <string name="vm_curtail_result">%1$s %2$d/%3$d miner(s).</string>
+    <string name="vm_curtail_result_skipped">%1$s %2$d/%3$d miner(s), %4$d skipped.</string>
+
+    <!-- PriceCurtailmentViewModel -->
+    <string name="vm_price_no_rate">No rate covers the current half-hour yet.</string>
+
+    <!-- SolarSurplusViewModel -->
+    <string name="vm_solar_read">Read %1$s from Home Assistant.</string>
+
+    <!-- SettingsScreen refresh-interval presets -->
+    <string name="vm_interval_5s">5 sec</string>
+    <string name="vm_interval_10s">10 sec</string>
+    <string name="vm_interval_15s">15 sec</string>
+    <string name="vm_interval_30s">30 sec</string>
+    <string name="vm_interval_1m">1 min</string>
+    <string name="vm_interval_2m">2 min</string>
+    <string name="vm_interval_5m">5 min</string>
+    <string name="vm_interval_15m">15 min</string>
+    <string name="vm_interval_30m">30 min</string>
+    <string name="vm_interval_1h">1 hour</string>
+    <string name="vm_interval_6h">6 hours</string>
+    <string name="vm_interval_12h">12 hours</string>
+    <string name="vm_interval_1d">1 day</string>
+    <string name="vm_interval_days">%1$d day</string>
+    <string name="vm_interval_hours">%1$d hour</string>
+    <string name="vm_interval_mins">%1$d min</string>
+    <string name="vm_interval_secs">%1$d sec</string>
+
+    <!-- ArOverlayViewModel -->
+    <string name="vm_ar_blank_tag">Blank NFC tag — write it from a miner\'s Make tag</string>
+    <string name="vm_ar_not_hashkit_tag">Not a Hi3 Hashkit tag</string>
+    <string name="vm_ar_scanned">Scanned ✓ %1$s</string>
+    <string name="vm_ar_miner_fallback">miner</string>
+    <string name="vm_ar_not_added_yet">Scanned tag — %1$s not added yet</string>
+    <string name="vm_ar_no_match">Scanned tag — no matching miner</string>
+    <string name="vm_ar_adding">Adding %1$s…</string>
+    <string name="vm_ar_added">Added %1$s.</string>
+    <string name="vm_ar_unreachable">Couldn\'t reach %1$s: %2$s</string>
+
+    <!-- AddMinerViewModel -->
+    <string name="vm_add_private_only">Only private LAN or Tailscale (100.x) addresses are allowed.</string>
+    <string name="vm_add_added">Added — pulling first telemetry…</string>
+    <string name="vm_add_already_tracked">Already tracked; address updated.</string>
+    <string name="vm_add_unreachable">Unreachable: %1$s</string>
+    <string name="vm_add_cidr_hint">Enter a private CIDR like 192.168.1.0/24.</string>
+    <string name="vm_add_range_too_large">Range larger than /%1$d — narrow it before scanning.</string>
+    <string name="vm_add_scan_done">Scanned %1$d hosts, found %2$d miner(s).</string>
+    <string name="vm_add_scan_cancelled">Scan cancelled.</string>
+    <string name="vm_add_mdns_searching">Searching via mDNS…</string>
+    <string name="vm_add_mdns_done">mDNS search finished: %1$d miner(s).</string>
+
+    <!-- NfcProgramViewModel -->
+    <string name="vm_nfc_wrote">Wrote %1$s.</string>
+    <string name="vm_nfc_tag_fallback">tag</string>
+    <string name="vm_nfc_all_done">" All %1$d done."</string>
+    <string name="vm_nfc_none">No miners to program.</string>
+
+    <!-- LogClassifier categories -->
+    <string name="logan_cat_pool">Pool</string>
+    <string name="logan_cat_shares">Shares</string>
+    <string name="logan_cat_asic">ASIC</string>
+    <string name="logan_cat_thermal">Thermal</string>
+    <string name="logan_cat_network">Network</string>
+    <string name="logan_cat_system">System</string>
+    <string name="logan_cat_other">Other</string>
+
+    <!-- LogAnalyzer findings -->
+    <string name="logan_disconnects_title">%1$d pool/network disconnects in the recent log</string>
+    <string name="logan_disconnects_suggestion">Check the pool URL/port and your Wi-Fi signal; a flaky link causes lost shares.</string>
+    <string name="logan_restarts_title">Signs of %1$d restart(s) / resets</string>
+    <string name="logan_restarts_suggestion">Repeated restarts usually mean a power (PSU/USB) or thermal problem — check the supply and cooling.</string>
+    <string name="logan_thermal_title">%1$d thermal warning(s)/error(s)</string>
+    <string name="logan_thermal_suggestion">Improve airflow or lower the tune; sustained heat throttles hashrate and shortens hardware life.</string>
+    <string name="logan_asic_title">%1$d ASIC error(s)</string>
+    <string name="logan_asic_suggestion">Persistent ASIC errors can indicate a failing chip/board — compare per-chip health and consider a reflash.</string>
+    <string name="logan_rejects_title">%1$d rejected-share message(s)</string>
+    <string name="logan_rejects_suggestion">High rejects often mean stale work (network latency) or an over-aggressive tune.</string>
+    <string name="logan_clean_title">No problems detected in the recent log.</string>
+    <string name="logan_errors_no_pattern_title">%1$d error line(s), but no known problem pattern.</string>
+    <string name="logan_none_suggestion">Nothing actionable stood out. Keep the stream open to catch intermittent issues.</string>
+
+    <!-- AcousticAnalyzer findings -->
+    <string name="acou_bearing">Elevated high-frequency noise — possible bearing wear or a dry bearing.</string>
+    <string name="acou_imbalance">Strong low tone at %1$d Hz — possible imbalance or debris.</string>
+    <string name="acou_broadband">Sound is broadband with no clear fan tone — check the mic is near the fan and the room is quiet.</string>
+    <string name="acou_no_fault">No obvious fan fault in this clip (indicative only).</string>
+
+    <!-- FleetControl BulkAction labels (dialog titles) -->
+    <string name="bulk_restart">Restart</string>
+    <string name="bulk_set_pool">Change primary pool to %1$s:%2$d</string>
+    <string name="bulk_fan_auto">Set fan to automatic</string>
+    <string name="bulk_fan_manual">Set fan to %1$d%%</string>
+    <string name="bulk_pause">Pause hashing</string>
+    <string name="bulk_resume">Resume hashing</string>
+    <string name="bulk_tune">Tune to %1$d MHz @ %2$d mV</string>
+
+</resources>

@@ -22,10 +22,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
+import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 import hi3.hashkit.ui.util.shareFile
 
@@ -41,7 +43,7 @@ internal fun LazyListScope.doneItems(vm: SiteMapViewModel, state: SiteMapState) 
     item { DoneActions(vm, state) }
     item {
         Text(
-            "Results (${rows.size})", style = MaterialTheme.typography.titleSmall,
+            stringResource(R.string.site_results, rows.size), style = MaterialTheme.typography.titleSmall,
             color = HiBrand.textPrimary, fontWeight = FontWeight.Bold,
         )
     }
@@ -57,34 +59,43 @@ private fun DoneActions(vm: SiteMapViewModel, state: SiteMapState) {
     var farmName by rememberSaveable(state.siteName) { mutableStateOf(state.siteName) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            val shareTitle = stringResource(R.string.site_share_csv_title)
             OutlinedButton(
                 onClick = {
-                    vm.exportCsv()?.let { context.shareFile(it, "text/csv", "Site map CSV") }
+                    vm.exportCsv()?.let { context.shareFile(it, "text/csv", shareTitle) }
                 },
                 modifier = Modifier.weight(1f), enabled = state.captured.isNotEmpty(),
-            ) { Text("Export CSV") }
-            TextButton(onClick = vm::newSession, modifier = Modifier.weight(1f)) { Text("New session") }
+            ) { Text(stringResource(R.string.site_export_csv)) }
+            TextButton(onClick = vm::newSession, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.site_new_session)) }
         }
         OutlinedButton(
             onClick = vm::enrich, modifier = Modifier.fillMaxWidth(),
             enabled = !state.enriching && state.captured.isNotEmpty(),
         ) {
             Text(
-                if (state.enriching) "Scanning… ${state.enrichProgress}/${state.captured.size}"
-                else "Scan miners (API): MAC · serial · pool · worker · hashrate",
+                if (state.enriching) {
+                    stringResource(R.string.site_scanning_progress, state.enrichProgress, state.captured.size)
+                } else {
+                    stringResource(R.string.site_scan_miners)
+                },
             )
         }
         OutlinedTextField(
             value = farmName, onValueChange = { farmName = it },
-            label = { Text("Farm name") }, singleLine = true, modifier = Modifier.fillMaxWidth(),
+            label = { Text(stringResource(R.string.site_farm_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth(),
             supportingText = state.farms.takeIf { it.isNotEmpty() }?.let { farms ->
-                { Text("Existing: " + farms.joinToString { it.name }) }
+                { Text(stringResource(R.string.site_existing_farms, farms.joinToString { it.name })) }
             },
         )
         Button(
             onClick = { vm.saveToFarm(farmName) }, modifier = Modifier.fillMaxWidth(),
             enabled = !state.saving && state.captured.isNotEmpty() && farmName.isNotBlank(),
-        ) { Text(if (state.saving) "Saving…" else "Save to farm") }
+        ) {
+            Text(
+                if (state.saving) stringResource(R.string.site_saving)
+                else stringResource(R.string.site_save_to_farm)
+            )
+        }
         state.saveResult?.let {
             Text(it, style = MaterialTheme.typography.bodySmall, color = HiBrand.statusOnline)
         }
@@ -95,10 +106,10 @@ private fun DoneActions(vm: SiteMapViewModel, state: SiteMapState) {
 private fun ResultHeader() {
     val style = MaterialTheme.typography.labelSmall
     Row(modifier = Modifier.fillMaxWidth()) {
-        Text("Location", Modifier.weight(W_LOCATION), style = style, color = HiBrand.textSecondary)
-        Text("IP", Modifier.weight(W_IP), style = style, color = HiBrand.textSecondary)
-        Text("MAC", Modifier.weight(W_MAC), style = style, color = HiBrand.textSecondary)
-        Text("Source", Modifier.weight(W_SOURCE), style = style, color = HiBrand.textSecondary)
+        Text(stringResource(R.string.site_col_location), Modifier.weight(W_LOCATION), style = style, color = HiBrand.textSecondary)
+        Text(stringResource(R.string.site_col_ip), Modifier.weight(W_IP), style = style, color = HiBrand.textSecondary)
+        Text(stringResource(R.string.site_col_mac), Modifier.weight(W_MAC), style = style, color = HiBrand.textSecondary)
+        Text(stringResource(R.string.site_col_source), Modifier.weight(W_SOURCE), style = style, color = HiBrand.textSecondary)
     }
 }
 
@@ -110,17 +121,22 @@ private fun ResultRow(row: CapturedSlot, info: EnrichedMiner?) {
             Text(row.slot.code, Modifier.weight(W_LOCATION), style = style, color = HiBrand.textPrimary)
             Text(row.ip, Modifier.weight(W_IP), style = style, color = HiBrand.textPrimary)
             Text(row.mac ?: "—", Modifier.weight(W_MAC), style = style, color = HiBrand.textSecondary)
-            val source = if (row.manual) "manual" else "button"
+            val source = if (row.manual) {
+                stringResource(R.string.site_source_manual)
+            } else {
+                stringResource(R.string.site_source_button)
+            }
             Text(source, Modifier.weight(W_SOURCE), style = style, color = HiBrand.textSecondary)
         }
         if (info != null) {
+            val snPrefix = info.serial?.let { stringResource(R.string.site_sn_prefix, it) }
             val line = if (info.error != null) {
-                "scan failed: ${info.error}"
+                stringResource(R.string.site_scan_failed, info.error)
             } else {
                 listOfNotNull(
-                    info.model, info.serial?.let { "SN $it" }, info.pool, info.worker,
+                    info.model, snPrefix, info.pool, info.worker,
                     info.hashrateGhs?.let { hi3.hashkit.core.Units.formatHashrate(it) },
-                ).joinToString(" · ").ifBlank { "no details reported" }
+                ).joinToString(" · ").ifBlank { stringResource(R.string.site_no_details) }
             }
             Text(
                 line, style = MaterialTheme.typography.labelSmall,
@@ -137,22 +153,23 @@ internal fun ManualFillDialog(onFill: (String) -> Unit, onDismiss: () -> Unit) {
     var ip by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Manual fill") },
+        title = { Text(stringResource(R.string.site_manual_fill_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    "Type the IP of the miner at the current slot — for gear without an " +
-                        "IP Report button (WhatsMiner, Canaan, Bitaxe).",
+                    stringResource(R.string.site_manual_fill_body),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 OutlinedTextField(
-                    value = ip, onValueChange = { ip = it }, label = { Text("IPv4 address") },
+                    value = ip, onValueChange = { ip = it }, label = { Text(stringResource(R.string.site_ipv4_label)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 )
             }
         },
-        confirmButton = { TextButton(onClick = { onFill(ip) }, enabled = ip.isNotBlank()) { Text("Fill slot") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = {
+            TextButton(onClick = { onFill(ip) }, enabled = ip.isNotBlank()) { Text(stringResource(R.string.site_fill_slot)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="net_title">Scan du réseau</string>
+    <string name="net_refresh_network_info">Actualiser les infos réseau</string>
+    <string name="net_intro">Analyse votre sous-réseau local à la recherche de mineurs sur leurs ports connus (HTTP 80, CGMiner 4028). Seules les adresses LAN privées et Tailscale sont sondées. S\'exécute automatiquement au lancement pour que les appareils apparaissent avant d\'ouvrir Ajouter un mineur.</string>
+    <string name="net_this_device">Cet appareil</string>
+    <string name="net_not_on_network">Pas sur un réseau Wi-Fi / LAN</string>
+    <string name="net_scan_range_label">Plage de scan (CIDR)</string>
+    <string name="net_scanning_progress">Scan %1$d / %2$d — %3$d trouvés</string>
+    <string name="net_last_scan">Dernier scan %1$s.</string>
+    <string name="net_restart">Relancer</string>
+    <string name="net_start_scan">Lancer le scan</string>
+    <string name="net_discovering">Découverte…</string>
+    <string name="net_mdns_discover">Découverte mDNS</string>
+    <string name="net_auto_scan_title">Scanner automatiquement au lancement</string>
+    <string name="net_auto_scan_subtitle">Lance un scan du sous-réseau à l\'ouverture de l\'app.</string>
+    <string name="net_just_now">à l\'instant</string>
+    <string name="net_minutes_ago">il y a %1$d min</string>
+    <string name="net_hours_ago">il y a %1$d h</string>
+</resources>

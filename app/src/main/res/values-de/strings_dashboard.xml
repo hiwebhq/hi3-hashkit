@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dashboard, fleet detail and bulk-action strings. Shared vocabulary lives in strings_common.xml. -->
+<resources>
+    <!-- Top bar / overflow menu -->
+    <string name="dash_cd_notifications">Benachrichtigungen</string>
+    <string name="dash_cd_scan_tag">Miner-Tag scannen</string>
+    <string name="dash_cd_setup">Setup</string>
+    <string name="dash_cd_exit_app">App beenden</string>
+    <string name="dash_cd_more">Mehr</string>
+    <string name="dash_menu_flow_view">Flow-Ansicht</string>
+    <string name="dash_menu_network_scan">Netzwerkscan</string>
+    <string name="dash_menu_leaderboard">Rangliste</string>
+    <string name="dash_menu_fleet_table">Flottentabelle</string>
+    <string name="dash_menu_wall_tv">Wand- / TV-Modus</string>
+    <string name="dash_menu_advanced">Erweitert</string>
+    <string name="dash_menu_store">Store</string>
+    <string name="dash_menu_about">Über</string>
+    <string name="dash_menu_privacy_policy">Datenschutzerklärung</string>
+    <string name="dash_cd_add_miner">Miner hinzufügen</string>
+
+    <!-- Exit confirmation -->
+    <string name="dash_exit_title">Hi3 Hashkit beenden?</string>
+    <string name="dash_exit_body">Schließt die App und stoppt das Vordergrund-Polling. Die Hintergrundüberwachung läuft, falls aktiviert, weiter.</string>
+    <string name="dash_exit_dont_ask">Nicht mehr fragen — nächstes Mal direkt beenden</string>
+    <string name="dash_exit_confirm">Beenden</string>
+
+    <!-- Panic (whole fleet) -->
+    <string name="dash_panic_title">Panik — ganze Flotte</string>
+    <string name="dash_panic_body">Wendet eine Aktion auf alle Miner gleichzeitig an. Du siehst, welche unterstützt werden, und bestätigst final, bevor etwas gesendet wird.\n\n• Alle pausieren — stoppt das Hashing auf jedem Miner, der es unterstützt (umkehrbar).\n• Alle neu starten — startet jeden Miner neu, der Neustart unterstützt.</string>
+    <string name="dash_pause_all">Alle pausieren</string>
+    <string name="dash_reboot_all">Alle neu starten</string>
+
+    <!-- Firmware banner / farm selector -->
+    <string name="dash_firmware_banner">AxeOS %1$s verfügbar — %2$d Miner können aktualisieren. Tippen für Release Notes.</string>
+    <string name="dash_all_farms">Alle Farmen</string>
+    <string name="dash_cd_farm">Farm</string>
+
+    <!-- Miner list -->
+    <string name="dash_cd_rescan">Netzwerk erneut nach neuen Minern scannen</string>
+    <string name="dash_group_ungrouped">Ohne Gruppe</string>
+    <string name="dash_demo_banner">Demo-Modus zeigt synthetische Miner</string>
+    <string name="dash_demo_badge">DEMO</string>
+    <string name="dash_up_prefix">seit %1$s</string>
+    <string name="dash_no_telemetry">keine Telemetrie</string>
+    <string name="dash_pct_of_expected">%1$d%% vom Soll</string>
+    <string name="dash_cd_card_style">Kartenstil: %1$s. Zum Ändern tippen.</string>
+    <string name="dash_cd_sparkline">Aktueller Hashrate-Trend</string>
+
+    <!-- Empty state -->
+    <string name="dash_empty_title">Noch keine Miner</string>
+    <string name="dash_empty_body">Hi3 Miner Watch ist local-first: Die App spricht nur mit Minern in deinem Netzwerk (oder über dein bestehendes Tailscale-VPN) und braucht kein Konto.</string>
+    <string name="dash_empty_scan_add">Miner scannen oder hinzufügen</string>
+    <string name="dash_empty_try_demo">Demo-Modus testen</string>
+
+    <!-- Fleet summary card -->
+    <string name="dash_fleet_header">FLOTTE</string>
+    <string name="dash_fleet_title">Flotte</string>
+    <string name="dash_no_refresh_yet">noch keine Aktualisierung</string>
+    <string name="dash_just_now">gerade eben</string>
+    <string name="dash_ago_seconds">vor %1$ds</string>
+    <string name="dash_ago_minutes_stale">vor %1$dm — veraltet</string>
+    <string name="dash_counter_on">an</string>
+    <string name="dash_counter_deg">beeintr.</string>
+    <string name="dash_counter_off">aus</string>
+    <string name="dash_counter_stale">veraltet</string>
+    <string name="dash_metric_power">Leistung</string>
+    <string name="dash_metric_efficiency">Effizienz</string>
+    <string name="dash_metric_hottest">Heißester</string>
+    <string name="dash_metric_energy_est">Energie gesch.</string>
+    <string name="dash_fleet_hashrate">Flotten-Hashrate</string>
+    <string name="dash_collecting_data">Sammle Daten…</string>
+    <string name="dash_cd_fleet_trend_chart">Trend-Chart der Flotten-Hashrate</string>
+
+    <!-- Miner card metrics -->
+    <string name="dash_metric_hashrate">Hashrate</string>
+    <string name="dash_metric_chip">Chip</string>
+    <string name="dash_metric_eff">Eff.</string>
+    <string name="dash_metric_uptime">Laufzeit</string>
+
+    <!-- MMP card -->
+    <string name="dash_mmp_header">HI3-MMP-FLOTTE</string>
+    <string name="dash_updated_ago">aktualisiert vor %1$ds</string>
+    <string name="dash_metric_mmp_hashrate">MMP-Hashrate</string>
+    <string name="dash_metric_realization">Realisierung</string>
+    <string name="dash_metric_attention">Achtung</string>
+    <string name="dash_metric_zero_hash">Null-Hash</string>
+    <string name="dash_mmp_local_vs">Lokal = %1$s vs. MMP flottenweit = %2$s</string>
+
+    <!-- Pool card -->
+    <string name="dash_pool_updated_ago">Pool-Ansicht · aktualisiert vor %1$ds</string>
+    <string name="dash_metric_pool_hashrate">Pool-seitige Hashrate</string>
+    <string name="dash_metric_workers">Worker</string>
+    <string name="dash_metric_height">Höhe</string>
+    <string name="dash_pool_proxy_note">Die Miner erreichen den Pool über deinen Stratum-Proxy, daher meldet der Pool sie als %1$d aggregierte(n) Worker. Unten: Flotten-Gesamt vs. Pool-Gesamt.</string>
+    <string name="dash_pool_fleet_vs_pool">FLOTTE vs. POOL</string>
+    <string name="dash_pool_miner_vs_pool">MINER vs. POOL (Pool-Mittelwerte hinken Live-Werten hinterher)</string>
+    <string name="dash_pool_no_local_match">%1$s (kein lokaler Treffer)</string>
+    <string name="dash_pool_not_seen">Von diesem Pool nicht gesehen: %1$s</string>
+
+    <!-- Profitability card -->
+    <string name="dash_profit_header">RENTABILITÄT &amp; ENERGIE</string>
+    <string name="dash_metric_revenue_day">Ertrag/Tag</string>
+    <string name="dash_metric_power_cost_day">Stromkosten/Tag</string>
+    <string name="dash_metric_net_day">Netto/Tag</string>
+    <string name="dash_metric_btc_day">BTC/Tag</string>
+    <string name="dash_metric_energy_day">Energie/Tag</string>
+    <string name="dash_metric_heat">Wärme</string>
+    <string name="dash_profit_estimate_note">Schätzung: BTC/Tag nimmt die %1$s-BTC-Blocksubvention an (ohne Tx- &amp; Pool-Gebühren); für den Ertrag müssen BTC-Preis und Netzwerk-Difficulty in den Einstellungen gesetzt/abgerufen sein.</string>
+
+    <!-- Solo odds card -->
+    <string name="dash_solo_header">SOLO-CHANCEN</string>
+    <string name="dash_metric_day">Tag</string>
+    <string name="dash_metric_week">Woche</string>
+    <string name="dash_metric_month">Monat</string>
+    <string name="dash_metric_year">Jahr</string>
+    <string name="dash_solo_expected_time">Erwartete Zeit bis zu einem Block: %1$s</string>
+    <string name="dash_solo_best_diff_suffix">"  ·  Beste Diff der Flotte: %1$s"</string>
+    <string name="dash_solo_disclaimer">Statistischer Erwartungswert, keine Vorhersage — jede Share ist ein unabhängiges Lotterielos.</string>
+
+    <!-- Bitcoin network / halving card -->
+    <string name="dash_network_header">BITCOIN-NETZWERK</string>
+    <string name="dash_metric_block">Block</string>
+    <string name="dash_metric_subsidy">Subvention</string>
+    <string name="dash_next_adjustment">Nächste Difficulty-Anpassung: %1$s Blöcke (~%2$s), gesch. %3$s%4$s%%</string>
+    <string name="dash_next_halving">Nächstes Halving: Block %1$s — %2$s Blöcke (~%3$s)</string>
+    <string name="dash_halving_note">Schätzungen von mempool.space (Opt-in). ~10-Min-Blöcke; tatsächliches Timing variiert.</string>
+
+    <!-- Bulk selection bar -->
+    <string name="dash_bulk_selected">%1$d ausgewählt — Massenaktionen laufen nur auf Geräten, die sie unterstützen</string>
+    <string name="dash_bulk_restart">Neustart</string>
+    <string name="dash_bulk_pool">Pool</string>
+    <string name="dash_bulk_fan">Lüfter</string>
+    <string name="dash_bulk_pause">Pause</string>
+    <string name="dash_bulk_resume">Fortsetzen</string>
+    <string name="dash_bulk_clear">Aufheben</string>
+
+    <!-- Bulk dialogs -->
+    <string name="dash_bulk_pool_title">Massen-Pool-Wechsel</string>
+    <string name="dash_field_stratum_url">Stratum-URL</string>
+    <string name="dash_field_port">Port</string>
+    <string name="dash_field_worker">Worker / Adresse</string>
+    <string name="dash_bulk_pool_note">Wird auf den PRIMÄREN Pool jedes ausgewählten Miners angewendet. Gespeicherte Pool-Passwörter bleiben erhalten. Als Nächstes siehst du eine Vorschau pro Gerät.</string>
+    <string name="dash_preview">Vorschau</string>
+    <string name="dash_bulk_fan_title">Massen-Lüfteränderung</string>
+    <string name="dash_fan_automatic">Automatisch (Firmware-geregelt)</string>
+    <string name="dash_fan_manual_speed">Manuelle Drehzahl: %1$d%%</string>
+    <string name="dash_plan_will_run">Läuft auf %1$d Miner(n):</string>
+    <string name="dash_plan_skipped">%1$d übersprungen (nicht unterstützt):</string>
+    <string name="dash_plan_reboot_warning">Jeder Miner stoppt das Hashing für ~30–60 s während des Neustarts.</string>
+    <string name="dash_plan_executing">Führe nacheinander aus…</string>
+    <string name="dash_plan_run_on">Auf %1$d Miner(n) ausführen</string>
+    <string name="dash_results_done">Fertig: %1$d erfolgreich</string>
+    <string name="dash_results_partial">Teilweise: %1$d erfolgreich, %2$d fehlgeschlagen</string>
+    <string name="dash_result_ok">ok</string>
+    <string name="dash_results_skipped">%1$d nicht unterstützte Miner wurden übersprungen.</string>
+
+    <!-- Dashboard card labels (DashboardCard enum) -->
+    <string name="dash_card_fleet">Flottenübersicht</string>
+    <string name="dash_card_profit">Rentabilität</string>
+    <string name="dash_card_solo">Solo-Chancen</string>
+    <string name="dash_card_halving">Halving-Countdown</string>
+    <string name="dash_card_pool">Hi3-Pool-Statistiken</string>
+    <string name="dash_card_mmp">MMP-Flotte</string>
+    <string name="dash_card_miners">Miner-Liste</string>
+    <string name="dash_rescan_no_network">Kein lokales Netzwerk zum Scannen gefunden.</string>
+    <string name="dash_rescan_too_large">Lokaler Bereich zu groß für Auto-Scan; nutze Hinzufügen → Scannen.</string>
+    <string name="dash_rescan_scanning">Scanne %1$d Hosts…</string>
+    <string name="dash_rescan_done">Rescan fertig — %1$d Miner gefunden.</string>
+</resources>

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
+import androidx.glance.LocalContext
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -24,6 +25,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.domain.model.Miner
@@ -68,7 +70,10 @@ class FleetTableWidget : GlanceAppWidget() {
                     .clickable(actionStartActivity<hi3.hashkit.ui.MainActivity>()),
             ) {
                 Row(modifier = GlanceModifier.fillMaxWidth()) {
-                    Text("FLEET", style = TextStyle(color = ColorProvider(DIM), fontSize = 10.sp()))
+                    Text(
+                        LocalContext.current.getString(R.string.widget_fleet),
+                        style = TextStyle(color = ColorProvider(DIM), fontSize = 10.sp()),
+                    )
                     Text(
                         "  " + Units.formatHashrate(totalGhs),
                         style = TextStyle(
@@ -78,12 +83,15 @@ class FleetTableWidget : GlanceAppWidget() {
                     )
                 }
                 if (shown.isEmpty()) {
-                    Text("No miners yet", style = TextStyle(color = ColorProvider(DIM), fontSize = 12.sp()))
+                    Text(
+                        LocalContext.current.getString(R.string.widget_no_miners_yet),
+                        style = TextStyle(color = ColorProvider(DIM), fontSize = 12.sp()),
+                    )
                 }
                 shown.forEach { MinerRow(it) }
                 if (miners.size > shown.size) {
                     Text(
-                        "+${miners.size - shown.size} more",
+                        LocalContext.current.getString(R.string.widget_more_count, miners.size - shown.size),
                         style = TextStyle(color = ColorProvider(DIM), fontSize = 10.sp()),
                     )
                 }
@@ -109,7 +117,7 @@ class FleetTableWidget : GlanceAppWidget() {
                 modifier = GlanceModifier.defaultWeight(),
             )
             Text(
-                if (miner.status == MinerStatus.OFFLINE) "offline"
+                if (miner.status == MinerStatus.OFFLINE) LocalContext.current.getString(R.string.widget_offline)
                 else Units.formatHashrate(t?.hashrateGhs?.value),
                 style = TextStyle(color = ColorProvider(ACCENT), fontSize = 11.sp()),
             )

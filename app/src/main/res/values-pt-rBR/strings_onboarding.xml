@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_tagline">Sua fazenda de mineração, no seu bolso.</string>
+    <string name="onboarding_local_title">Local-first</string>
+    <string name="onboarding_local_body">Fala apenas com os mineradores da sua rede — ou pela sua VPN Tailscale. Sem conta, sem nuvem.</string>
+    <string name="onboarding_live_title">Ao vivo e honesto</string>
+    <string name="onboarding_live_body">Hashrate, temperaturas, potência e saúde reais — com marcação clara quando um valor é estimado ou indisponível.</string>
+    <string name="onboarding_safe_title">Controles seguros</string>
+    <string name="onboarding_safe_body">Reiniciar, pool, ventoinha e ajuste dentro dos limites do firmware, com confirmações e reversão, só onde verificado.</string>
+    <string name="onboarding_private_title">Privado</string>
+    <string name="onboarding_private_body">Seus dados ficam neste aparelho. As telas da Hi3 Pool e do MMP são opcionais, somente leitura e vêm desativadas.</string>
+    <string name="onboarding_get_started">Começar</string>
+    <string name="onboarding_next_hint">A seguir você pode varrer sua rede, adicionar um minerador por IP ou testar o modo demo.</string>
+</resources>

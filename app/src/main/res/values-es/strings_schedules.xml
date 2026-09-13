@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sched_title">Horarios</string>
+    <string name="sched_add_schedule">Añadir horario</string>
+    <string name="sched_intro">Los horarios se ejecutan cuando la app sondea (primer plano) o durante los ciclos de supervisión en segundo plano (granularidad de ~15 min) — no a horas exactas. Un día perdido se omite, nunca se repite después.</string>
+
+    <!-- Row summary: %1 action type key, %2 HH:MM time, %3 day list, %4 target (sched_row_group or sched_row_all_miners) -->
+    <string name="sched_row_summary">%1$s a las %2$s los %3$s · objetivo: %4$s</string>
+    <string name="sched_row_group">grupo \"%1$s\"</string>
+    <string name="sched_row_all_miners">todos los mineros</string>
+    <string name="sched_last_run">Última ejecución %1$s: %2$s</string>
+
+    <!-- Editor dialog -->
+    <string name="sched_new_schedule">Nuevo horario</string>
+    <string name="sched_name">Nombre</string>
+    <string name="sched_action_restart">Reiniciar</string>
+    <string name="sched_action_pool">Pool</string>
+    <string name="sched_action_fan">Ventilador</string>
+    <string name="sched_action_pause">Pausar</string>
+    <string name="sched_action_resume">Reanudar</string>
+    <string name="sched_action_plug_off">Enchufe off</string>
+    <string name="sched_action_plug_on">Enchufe on</string>
+    <string name="sched_action_tune_preset">Preajuste de tuning</string>
+    <string name="sched_stratum_url">URL de Stratum</string>
+    <string name="sched_port">Puerto</string>
+    <string name="sched_worker">Worker</string>
+    <string name="sched_automatic">Automático</string>
+    <string name="sched_manual_percent">Manual: %1$d%%</string>
+    <string name="sched_frequency_mhz">Frecuencia (MHz)</string>
+    <string name="sched_core_voltage_mv">Voltaje del núcleo (mV)</string>
+    <string name="sched_time_label">Hora (HH:MM, zona horaria del dispositivo)</string>
+    <string name="sched_target_group">Grupo objetivo (vacío = todos los mineros)</string>
+    <string name="sched_hint_plug">Enchufe on/off conmuta por LAN el enchufe inteligente configurado de cada minero objetivo. Los mineros sin enchufe configurado se omiten. Combina un Enchufe off nocturno con un Enchufe on matutino para control por tramos horarios; cada ejecución queda registrada.</string>
+    <string name="sched_hint_tune">Objetivo de consumo por tramos: aplica un preajuste fijo de frecuencia/voltaje. Usa un preajuste de bajo consumo al empezar la tarifa punta y tu preajuste normal al terminar. Solo lo ejecuta el firmware que acepta estos valores (p. ej. Bitaxe/AxeOS); el resto se omite. Usa valores que el tuner de tu minero acepte.</string>
+    <string name="sched_hint_default">Tramos horarios: programa Pausar al inicio de tu tarifa punta y Reanudar al final (pausar requiere un dispositivo compatible). Los dispositivos no compatibles se omiten con un motivo; cada ejecución queda en el registro de auditoría.</string>
+</resources>

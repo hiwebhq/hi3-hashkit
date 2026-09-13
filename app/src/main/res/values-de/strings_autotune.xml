@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-tuner screen (ui/autotune). -->
+<resources>
+    <string name="tune_title">Auto-Tuner</string>
+    <string name="tune_description">Durchläuft die von der Firmware freigegebenen Frequenzen bei deiner aktuellen Spannung, lässt jede einpendeln, misst J/TH und Chip-Temp, stellt dann deinen ursprünglichen Sollwert wieder her und empfiehlt den besten Punkt unter deinem Temperaturlimit. Beim Erreichen des Limits wird nicht weiter erhöht. Anwenden ist ein separater Tipp — lass die App während des Sweeps offen.</string>
+    <string name="tune_not_supported">Auf diesem Miner nicht unterstützt.</string>
+    <string name="tune_settle_per_step">Einpendelzeit pro Schritt</string>
+    <string name="tune_temp_ceiling">Temperaturlimit</string>
+    <string name="tune_optimize_for">Optimieren auf</string>
+    <string name="tune_efficiency">Effizienz</string>
+    <string name="tune_hashrate">Hashrate</string>
+    <string name="tune_step_progress">Schritt %1$d/%2$d — %3$s</string>
+    <string name="tune_start_sweep">Sweep starten</string>
+    <string name="tune_apply_best">Besten anwenden (%1$d MHz)</string>
+    <string name="tune_results_header">ERGEBNISSE (beste zuerst)</string>
+    <string name="tune_over_ceiling">"  ⚠ über Limit"</string>
+    <string name="tune_optimizer_header">OPTIMIERER — %1$d gespeicherte Punkte</string>
+    <string name="tune_clear">Leeren</string>
+    <string name="tune_most_efficient">Am effizientesten: %1$d MHz @ %2$d mV — %3$s J/TH</string>
+    <string name="tune_most_hashrate">Höchste Hashrate: %1$d MHz @ %2$d mV — %3$s</string>
+    <string name="tune_optimizer_hint">Aus allen Sweeps dieses Miners erstellt — mehr Sweeps schärfen die Kurve.</string>
+    <string name="tune_efficiency_curve">EFFIZIENZKURVE</string>
+    <string name="tune_observed_points">BEOBACHTETE BETRIEBSPUNKTE (7 TAGE)</string>
+    <string name="tune_mark_best_efficiency">" ⚡bestes J/TH"</string>
+    <string name="tune_mark_best_rate">" ▲beste Rate"</string>
+    <string name="tune_observed_point">%1$.0f MHz / %2$.0f mV — %3$.2f TH/s · %4$s J/TH · max %5$s · ≈%6$.1f h%7$s</string>
+    <string name="tune_peer_gap">vs. gleiche Modelle (%1$d): %2$s Hashrate (24-h-Schnitt)</string>
+</resources>

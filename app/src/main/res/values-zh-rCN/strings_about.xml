@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About screen -->
+    <string name="about_title">关于</string>
+    <string name="about_section_about">关于</string>
+    <string name="about_section_supported">支持的矿机</string>
+    <string name="about_section_howto">使用方法</string>
+
+    <string name="about_app_version">"%1$s  ·  v%2$s"</string>
+    <string name="about_app_desc">Hi3 Hashkit 是一款本地优先的 Android 比特币矿机仪表盘：在你自己的网络中发现、监控并安全控制机队——无需账户、无需云端，数据只保存在本机。</string>
+
+    <string name="about_link_guide_title">用户指南</string>
+    <string name="about_link_guide_subtitle">Hi3 Hashkit 使用说明（PDF，离线可用）</string>
+    <string name="about_link_guide_label">打开 PDF</string>
+    <string name="about_link_hi3_subtitle">Hi3 挖矿平台</string>
+    <string name="about_link_pool_title">比特币矿池服务</string>
+    <string name="about_link_pool_subtitle">Hi3 Pool 上的 Solo、PPLNS 与 TIDES 收益结算</string>
+    <string name="about_link_support_title">帮助与支持</string>
+    <string name="about_link_support_subtitle">获取本应用及机队管理方面的协助</string>
+    <string name="about_link_share_title">分享应用</string>
+    <string name="about_link_share_subtitle">把下载链接发给朋友</string>
+    <string name="about_link_feedback_title">功能建议</string>
+    <string name="about_link_feedback_subtitle">提出改进建议或反馈问题</string>
+
+    <string name="about_guide_error">无法打开指南——可能未安装 PDF 阅读器？</string>
+    <string name="about_share_subject">%1$s——本地优先的比特币矿机仪表盘</string>
+    <string name="about_share_text">来看看 %1$s，一款在本地监控并安全控制比特币矿机的 Android 应用：https://mmp.hi3.cc/hashkit</string>
+    <string name="about_share_chooser">分享 %1$s</string>
+
+    <string name="about_supported_intro">支持按固件/API 系列划分，同一系列中的所有型号都能用——无需逐一适配。“已验证”= 已在真实硬件上确认；“兼容待验证”= 固件 API 相同，尚待在该型号上确认（基础遥测是安全的）。未经验证的控制功能绝不凭猜测启用。</string>
+
+    <!-- Supported miner families -->
+    <string name="about_miner_bitaxe_family">Bitaxe / ESP-Miner (AxeOS)</string>
+    <string name="about_miner_bitaxe_models">Max (202)、Ultra (204)、Supra (400)、Gamma (600)、Gamma Turbo、Supra Hex</string>
+    <string name="about_miner_bitaxe_support">完整监控 + 安全控制：重启、矿池、风扇、固件限定范围内的调优 + 自动调优。</string>
+    <string name="about_miner_nerdqaxe_family">NerdQAxe（ESP-Miner 分支）</string>
+    <string name="about_miner_nerdqaxe_models">NerdQAxe++、NerdQAxe+、NerdQAxe+ Hydro、Lucky-Miner 类分支</string>
+    <string name="about_miner_nerdqaxe_support">完整监控；控制功能在该固件验证通过前保持关闭。</string>
+    <string name="about_miner_bmminer_family">Antminer——原厂 Bitmain（BMMiner）</string>
+    <string name="about_miner_bmminer_models">S21 Pro（已验证）；S21+、S21+ Hyd、S21 Hyd、S21 XP、S19 系列、S17 系列（兼容待验证）</string>
+    <string name="about_miner_bmminer_support">算力、芯片温度、风扇、频率、预期算力、ASIC 数量、份额、运行时间、矿池。无控制功能；该 API 不提供功耗。</string>
+    <string name="about_miner_vnish_family">Antminer——VNish 固件</string>
+    <string name="about_miner_vnish_models">S21 Pro（已验证）及其他刷入 VNish 的 Antminer</string>
+    <string name="about_miner_vnish_support">完整监控，包括墙上功耗与能效（J/TH）。无控制功能。</string>
+    <string name="about_miner_luxos_family">Antminer——LuxOS 固件</string>
+    <string name="about_miner_luxos_models">刷入 LuxOS 的 Antminer</string>
+    <string name="about_miner_luxos_support">基础监控：算力、份额、运行时间、矿池。</string>
+    <string name="about_miner_avalon_family">Canaan Avalon</string>
+    <string name="about_miner_avalon_models">Nano 3（已验证）；Nano 3S、Avalon Q、Avalon Mini 3（兼容待验证）</string>
+    <string name="about_miner_avalon_support">Nano 3：监控 + 暂停/恢复/重启。其余型号：通过 CGMiner API 监控。</string>
+    <string name="about_miner_braiins_family">Braiins OS (BOSer)</string>
+    <string name="about_miner_braiins_models">Braiins Mini Miner BMM 100（已验证）</string>
+    <string name="about_miner_braiins_support">通过 CGMiner API 完整监控。设备上无功率传感器 → 功耗不可用。</string>
+    <string name="about_miner_whatsminer_family">WhatsMiner (MicroBT)</string>
+    <string name="about_miner_whatsminer_models">M2X / M3X / M5X / M6X 系列（兼容待验证）</string>
+    <string name="about_miner_whatsminer_support">算力、份额、运行时间、矿池、芯片温度、风扇，以及有上报时的功耗。无控制功能。</string>
+    <string name="about_miner_demo_family">演示</string>
+    <string name="about_miner_demo_models">模拟矿机</string>
+    <string name="about_miner_demo_support">仅限演示模式——绝不与真实矿机混用。</string>
+
+    <!-- How-to steps -->
+    <string name="about_howto_1_title">1 · 接入同一网络</string>
+    <string name="about_howto_1_body">让本手机连接矿机所在的 Wi-Fi/局域网——或启用 Tailscale 并通告站点子网路由，以便远程访问。</string>
+    <string name="about_howto_2_title">2 · 自动发现矿机</string>
+    <string name="about_howto_2_body">Hi3 Hashkit 启动时会自动扫描本地子网，矿机通常会自动出现。打开 ⋮ 菜单 → 网络扫描，可查看本机 IP、修改范围或启动/停止扫描。只有响应已知矿机 API 的设备才会被添加。</string>
+    <string name="about_howto_3_title">3 · 或手动添加</string>
+    <string name="about_howto_3_body">在仪表盘点按 + 可按 IP/主机名添加矿机，或扫描一个 CIDR 网段。仅允许私有局域网和 Tailscale 地址。</string>
+    <string name="about_howto_4_title">4 · 按矿场分组</string>
+    <string name="about_howto_4_body">使用 ⋮ → 矿场，按站点将矿机分组，每个矿场有自己的扫描子网。可将其中一个设为默认（启动时打开），并通过顶部的标签在矿场之间切换仪表盘。新增矿场时会提示立即扫描其子网。</string>
+    <string name="about_howto_5_title">5 · 如实解读仪表盘</string>
+    <string name="about_howto_5_body">每个数值都标注了来源——实测、上报、计算、估算或不可用——因此估算值绝不会被当作事实展示。点按矿机可查看实时遥测、历史图表和原始响应。</string>
+    <string name="about_howto_6_title">6 · 安全控制（已验证的机型）</string>
+    <string name="about_howto_6_body">在受支持的固件上可以重启、更换矿池、调节风扇并进行固件限定范围内的调优——每项操作都有确认和回滚。长按卡片可多选并执行批量操作；预览会显示每台设备支持哪些操作。</string>
+    <string name="about_howto_7_title">7 · 需要时开启告警</string>
+    <string name="about_howto_7_body">告警默认关闭。在设置 → 告警中启用后，可接收离线、温度、风扇和拒绝率通知（含恢复通知），并可按矿机单独覆盖设置。</string>
+    <string name="about_howto_8_title">8 · 保持隐私</string>
+    <string name="about_howto_8_body">一切数据都保存在本设备上。Hi3 Pool 和 MMP 视图为可选、只读且默认关闭。</string>
+</resources>

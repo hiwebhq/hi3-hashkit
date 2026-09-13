@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings surfaced from ViewModels / shared domain classes (no Composable Context at the
+     point of composition). vm_ = ViewModel messages, logan_ = LogAnalyzer/LogClassifier,
+     acou_ = AcousticAnalyzer, bulk_ = FleetControl BulkAction labels. -->
+<resources>
+
+    <!-- AutotuneViewModel -->
+    <string name="vm_tune_miner_not_found">Miner nicht gefunden.</string>
+    <string name="vm_tune_not_tunable">Dieser Miner bietet keine Tuning-Optionen an.</string>
+    <string name="vm_tune_no_voltage">Keine Kernspannung zum Konstanthalten.</string>
+    <string name="vm_tune_sweeping">Durchlaufe %1$d Frequenzen bei %2$d mV, Limit %3$d°C…</string>
+    <string name="vm_tune_step_label">%1$d MHz @ %2$d mV — anwenden &amp; einpendeln %3$ds</string>
+    <string name="vm_tune_stopped_early">"Früh gestoppt: %1$d°C-Limit erreicht. "</string>
+    <string name="vm_tune_no_safe_point">Kein sicherer Punkt lieferte eine gültige Messung.</string>
+    <string name="vm_tune_best_hashrate">Beste Hashrate: %1$d MHz (%2$s).</string>
+    <string name="vm_tune_best_efficiency">Beste Effizienz: %1$d MHz bei %2$s J/TH.</string>
+    <string name="vm_tune_restored">" Dein ursprünglicher Sollwert wurde wiederhergestellt."</string>
+    <string name="vm_tune_applied">%1$d MHz @ %2$d mV angewendet.</string>
+    <string name="vm_tune_apply_failed">Anwenden fehlgeschlagen: %1$s</string>
+    <string name="vm_tune_cancelled">Sweep abgebrochen — ursprünglicher Sollwert wiederhergestellt.</string>
+
+    <!-- PoolSpeedViewModel -->
+    <string name="vm_ps_no_pools">Keine Pools gefunden. Richte einen Pool auf einem Miner oder im Adressbuch ein.</string>
+    <string name="vm_ps_tested">%1$d Pool(s) getestet.</string>
+
+    <!-- AddressBookViewModel -->
+    <string name="vm_ab_applied">\"%1$s\" angewendet: %2$d ok, %3$d fehlgeschlagen, %4$d nicht unterstützt.</string>
+
+    <!-- Shared by PriceCurtailmentViewModel + SolarSurplusViewModel -->
+    <string name="vm_saved">Gespeichert.</string>
+    <string name="vm_curtailed">Gedrosselt:</string>
+    <string name="vm_resumed">Fortgesetzt:</string>
+    <string name="vm_curtail_result">%1$s %2$d/%3$d Miner.</string>
+    <string name="vm_curtail_result_skipped">%1$s %2$d/%3$d Miner, %4$d übersprungen.</string>
+
+    <!-- PriceCurtailmentViewModel -->
+    <string name="vm_price_no_rate">Noch kein Tarif deckt die aktuelle halbe Stunde ab.</string>
+
+    <!-- SolarSurplusViewModel -->
+    <string name="vm_solar_read">%1$s von Home Assistant gelesen.</string>
+
+    <!-- SettingsScreen refresh-interval presets -->
+    <string name="vm_interval_5s">5 Sek.</string>
+    <string name="vm_interval_10s">10 Sek.</string>
+    <string name="vm_interval_15s">15 Sek.</string>
+    <string name="vm_interval_30s">30 Sek.</string>
+    <string name="vm_interval_1m">1 Min.</string>
+    <string name="vm_interval_2m">2 Min.</string>
+    <string name="vm_interval_5m">5 Min.</string>
+    <string name="vm_interval_15m">15 Min.</string>
+    <string name="vm_interval_30m">30 Min.</string>
+    <string name="vm_interval_1h">1 Stunde</string>
+    <string name="vm_interval_6h">6 Stunden</string>
+    <string name="vm_interval_12h">12 Stunden</string>
+    <string name="vm_interval_1d">1 Tag</string>
+    <string name="vm_interval_days">%1$d Tag</string>
+    <string name="vm_interval_hours">%1$d Stunde</string>
+    <string name="vm_interval_mins">%1$d Min.</string>
+    <string name="vm_interval_secs">%1$d Sek.</string>
+
+    <!-- ArOverlayViewModel -->
+    <string name="vm_ar_blank_tag">Leeres NFC-Tag — beschreibe es über „Tag erstellen“ eines Miners</string>
+    <string name="vm_ar_not_hashkit_tag">Kein Hi3-Hashkit-Tag</string>
+    <string name="vm_ar_scanned">Gescannt ✓ %1$s</string>
+    <string name="vm_ar_miner_fallback">Miner</string>
+    <string name="vm_ar_not_added_yet">Tag gescannt — %1$s noch nicht hinzugefügt</string>
+    <string name="vm_ar_no_match">Tag gescannt — kein passender Miner</string>
+    <string name="vm_ar_adding">Füge %1$s hinzu…</string>
+    <string name="vm_ar_added">%1$s hinzugefügt.</string>
+    <string name="vm_ar_unreachable">%1$s nicht erreichbar: %2$s</string>
+
+    <!-- AddMinerViewModel -->
+    <string name="vm_add_private_only">Nur private LAN- oder Tailscale-Adressen (100.x) sind erlaubt.</string>
+    <string name="vm_add_added">Hinzugefügt — hole erste Telemetrie…</string>
+    <string name="vm_add_already_tracked">Bereits erfasst; Adresse aktualisiert.</string>
+    <string name="vm_add_unreachable">Nicht erreichbar: %1$s</string>
+    <string name="vm_add_cidr_hint">Gib ein privates CIDR wie 192.168.1.0/24 ein.</string>
+    <string name="vm_add_range_too_large">Bereich größer als /%1$d — grenze ihn vor dem Scannen ein.</string>
+    <string name="vm_add_scan_done">%1$d Hosts gescannt, %2$d Miner gefunden.</string>
+    <string name="vm_add_scan_cancelled">Scan abgebrochen.</string>
+    <string name="vm_add_mdns_searching">Suche per mDNS…</string>
+    <string name="vm_add_mdns_done">mDNS-Suche abgeschlossen: %1$d Miner.</string>
+
+    <!-- NfcProgramViewModel -->
+    <string name="vm_nfc_wrote">%1$s geschrieben.</string>
+    <string name="vm_nfc_tag_fallback">Tag</string>
+    <string name="vm_nfc_all_done">" Alle %1$d fertig."</string>
+    <string name="vm_nfc_none">Keine Miner zu programmieren.</string>
+
+    <!-- LogClassifier categories -->
+    <string name="logan_cat_pool">Pool</string>
+    <string name="logan_cat_shares">Shares</string>
+    <string name="logan_cat_asic">ASIC</string>
+    <string name="logan_cat_thermal">Thermik</string>
+    <string name="logan_cat_network">Netzwerk</string>
+    <string name="logan_cat_system">System</string>
+    <string name="logan_cat_other">Sonstiges</string>
+
+    <!-- LogAnalyzer findings -->
+    <string name="logan_disconnects_title">%1$d Pool-/Netzwerk-Abbrüche im aktuellen Log</string>
+    <string name="logan_disconnects_suggestion">Prüfe Pool-URL/Port und dein WLAN-Signal; eine wacklige Verbindung kostet Shares.</string>
+    <string name="logan_restarts_title">Anzeichen für %1$d Neustart(s) / Resets</string>
+    <string name="logan_restarts_suggestion">Wiederholte Neustarts deuten meist auf ein Strom- (Netzteil/USB) oder Wärmeproblem — prüfe Versorgung und Kühlung.</string>
+    <string name="logan_thermal_title">%1$d Wärme-Warnung(en)/-Fehler</string>
+    <string name="logan_thermal_suggestion">Verbessere den Luftstrom oder senke das Tuning; anhaltende Hitze drosselt die Hashrate und verkürzt die Lebensdauer.</string>
+    <string name="logan_asic_title">%1$d ASIC-Fehler</string>
+    <string name="logan_asic_suggestion">Anhaltende ASIC-Fehler können auf einen defekten Chip / ein defektes Board hindeuten — vergleiche die Chip-Gesundheit und erwäge ein Reflash.</string>
+    <string name="logan_rejects_title">%1$d Meldung(en) über abgelehnte Shares</string>
+    <string name="logan_rejects_suggestion">Viele Ablehnungen bedeuten oft veraltete Arbeit (Netzwerklatenz) oder ein zu aggressives Tuning.</string>
+    <string name="logan_clean_title">Keine Probleme im aktuellen Log erkannt.</string>
+    <string name="logan_errors_no_pattern_title">%1$d Fehlerzeile(n), aber kein bekanntes Problemmuster.</string>
+    <string name="logan_none_suggestion">Nichts Handlungsrelevantes gefunden. Lass den Stream offen, um sporadische Probleme zu erwischen.</string>
+
+    <!-- AcousticAnalyzer findings -->
+    <string name="acou_bearing">Erhöhtes Hochfrequenzrauschen — möglicher Lagerverschleiß oder trockenes Lager.</string>
+    <string name="acou_imbalance">Starker tiefer Ton bei %1$d Hz — mögliche Unwucht oder Fremdkörper.</string>
+    <string name="acou_broadband">Geräusch ist breitbandig ohne klaren Lüfterton — prüfe, ob das Mikro nah am Lüfter und der Raum ruhig ist.</string>
+    <string name="acou_no_fault">Kein offensichtlicher Lüfterdefekt in diesem Clip (nur ein Hinweis).</string>
+
+    <!-- FleetControl BulkAction labels (dialog titles) -->
+    <string name="bulk_restart">Neustart</string>
+    <string name="bulk_set_pool">Primären Pool ändern auf %1$s:%2$d</string>
+    <string name="bulk_fan_auto">Lüfter auf automatisch stellen</string>
+    <string name="bulk_fan_manual">Lüfter auf %1$d%% stellen</string>
+    <string name="bulk_pause">Hashing pausieren</string>
+    <string name="bulk_resume">Hashing fortsetzen</string>
+    <string name="bulk_tune">Tunen auf %1$d MHz @ %2$d mV</string>
+
+</resources>

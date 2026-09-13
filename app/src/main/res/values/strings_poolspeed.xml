@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pool speed test screen (ui/poolspeed). -->
+<resources>
+    <string name="ps_title">Pool speed test</string>
+    <string name="ps_description">Measures stratum latency — the TCP handshake and a real mining.subscribe round-trip, no packet sniffing. It tests the pools your fleet actually uses (read from each miner\'s own pool config, so PRIVATE/LAN stratum works because the phone shares the fleet network) plus the pools you\'ve enabled in the Pool address book. Measured from THIS phone\'s network.</string>
+    <string name="ps_run">Run speed test</string>
+    <string name="ps_testing">Testing…</string>
+    <string name="ps_pool_count">%1$d pool(s)</string>
+    <string name="ps_ranked">RANKED (fastest first)</string>
+    <string name="ps_unreachable">unreachable</string>
+    <string name="ps_connect">connect %1$s ms</string>
+    <string name="ps_jitter">jitter ±%1$d ms</string>
+    <string name="ps_stratum">stratum %1$s</string>
+    <string name="ps_no_response">no response</string>
+</resources>

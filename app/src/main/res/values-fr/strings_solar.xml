@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solar-surplus mining screen (SolarSurplusScreen). -->
+<resources>
+    <string name="solar_title">Minage sur surplus solaire</string>
+    <string name="solar_intro">Ajustez la flotte à votre export solaire. Lit un capteur d\'export/surplus réseau (en watts) depuis votre Home Assistant local via son API REST — le token est stocké chiffré et envoyé uniquement à votre propre hôte HA sur votre réseau.</string>
+
+    <!-- Live signal card -->
+    <string name="solar_export_label">EXPORT SOLAIRE</string>
+    <string name="solar_fleet_draw">Consommation de la flotte %1$s W · %2$d en ligne</string>
+    <string name="solar_reco_run">Recommandation : surplus disponible — reprendre le minage</string>
+    <string name="solar_reco_curtail">Recommandation : pas de surplus — réduire le minage</string>
+    <string name="solar_reco_hold">Recommandation : maintenir (dans la zone morte)</string>
+
+    <!-- Actions -->
+    <string name="solar_check_now">Vérifier maintenant</string>
+    <string name="solar_checking">Vérification…</string>
+    <string name="solar_resume_fleet">Reprendre la flotte</string>
+    <string name="solar_curtail_fleet">Réduire la flotte</string>
+
+    <!-- Configuration -->
+    <string name="solar_base_url_label">URL de base HA (privée/Tailscale)</string>
+    <string name="solar_entity_label">entity_id du capteur (watts)</string>
+    <string name="solar_token_label">Token longue durée</string>
+    <string name="solar_token_saved_label">Token longue durée (enregistré — laisser vide pour conserver)</string>
+    <string name="solar_resume_label">Reprendre ≥ W</string>
+    <string name="solar_curtail_label">Réduire ≤ W</string>
+    <string name="solar_save_config">Enregistrer la configuration</string>
+</resources>

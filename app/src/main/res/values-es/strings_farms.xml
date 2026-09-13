@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="farms_title">Granjas</string>
+    <string name="farms_add_farm">Añadir granja</string>
+    <string name="farms_intro">Agrupa mineros en granjas/sitios, cada una con su propia subred de escaneo. La granja por defecto se abre al iniciar; la granja activa es la que muestra el panel. Al borrar una granja sus mineros se conservan (quedan sin asignar).</string>
+    <string name="farms_empty">Aún no hay granjas. Añade una para organizar los mineros por sitio — útil para descubrir ASIC y auditar logs por sitio más adelante.</string>
+
+    <!-- Farm card -->
+    <string name="farms_default">Por defecto</string>
+    <string name="farms_no_subnet">sin subred</string>
+    <string name="farms_miner_count">" · %1$d minero(s)"</string>
+    <string name="farms_viewing">Viendo</string>
+    <string name="farms_view">Ver</string>
+    <string name="farms_set_default">Hacer por defecto</string>
+    <string name="farms_scan">Escanear</string>
+
+    <!-- Post-create scan prompt -->
+    <string name="farms_scan_new_title">¿Escanear la granja nueva?</string>
+    <string name="farms_scan_new_body">¿Escanear %1$s ahora en busca de mineros y añadirlos a esta granja?</string>
+    <string name="farms_scan_now">Escanear ahora</string>
+    <string name="farms_later">Más tarde</string>
+
+    <!-- Delete dialog -->
+    <string name="farms_delete_title">¿Eliminar %1$s?</string>
+    <string name="farms_delete_body_also">Sus %1$d minero(s) y su historial se eliminan con ella.</string>
+    <string name="farms_delete_body_keep">Sus %1$d minero(s) siguen monitorizados pero quedan sin asignar. El historial se conserva.</string>
+    <string name="farms_delete_also_checkbox">Eliminar también sus %1$d minero(s)</string>
+
+    <!-- Add dialog -->
+    <string name="farms_name">Nombre</string>
+    <string name="farms_name_placeholder">Lab en casa</string>
+    <string name="farms_subnet_label">Subred de escaneo (CIDR)</string>
+    <string name="farms_create">Crear</string>
+</resources>

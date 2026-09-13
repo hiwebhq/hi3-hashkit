@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Miner logs screen chrome (ui/logs). Log CONTENT from miners is never localized. -->
+<resources>
+    <string name="logs_title">Logs de %1$s</string>
+    <string name="logs_status_redacted">"%1$s  ·  carteiras ocultadas"</string>
+    <string name="logs_status_connecting">Conectando…</string>
+    <string name="logs_status_live">Ao vivo</string>
+    <string name="logs_status_disconnected">Desconectado: %1$s</string>
+    <string name="logs_status_event_log">Log de eventos — derivado das consultas (sem stream de log do firmware)</string>
+    <string name="logs_show_raw">Mostrar log bruto</string>
+    <string name="logs_analyze">Analisar log</string>
+    <string name="logs_resume">Retomar</string>
+    <string name="logs_pause">Pausar</string>
+    <string name="logs_clear">Limpar</string>
+    <string name="logs_reconnect">Reconectar</string>
+    <string name="logs_window_live">Ao vivo</string>
+    <string name="logs_analysis_summary">"ANÁLISE DO LOG  ·  %1$d linhas  ·  %2$d erros  ·  %3$d avisos"</string>
+    <string name="logs_findings">ACHADOS</string>
+    <string name="logs_export">Exportar logs capturados</string>
+    <string name="logs_export_chooser">Exportar logs</string>
+    <string name="logs_analysis_footer">Análise heurística no aparelho — sem nuvem. Ao vivo analisa o stream atual; 1h/24h/7d analisam o histórico capturado (mantido por minerador, ~7 dias). Carteiras ocultadas.</string>
+</resources>

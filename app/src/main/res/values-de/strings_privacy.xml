@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Privacy Policy screen -->
+    <string name="priv_title">Datenschutzerklärung</string>
+    <string name="priv_intro">%1$s behält deine Daten auf deinem Gerät. Diese Übersicht erklärt, was gespeichert wird und welche wenigen Dinge das Gerät nur nach deinem Opt-in verlassen.</string>
+
+    <string name="priv_local_title">Local-first von Grund auf</string>
+    <string name="priv_local_body">Hi3 Hashkit läuft vollständig auf deinem Gerät und in deinem eigenen Netzwerk. Es gibt kein Hi3-Hashkit-Konto, keine Analytics, keine Werbung und keine Telemetrie an uns oder Dritte. Deine Miner-Daten werden nirgendwohin hochgeladen.</string>
+    <string name="priv_storage_title">Was auf deinem Gerät bleibt</string>
+    <string name="priv_storage_body">Miner-Adressen, Identitäten, Telemetrie-Verlauf, Farmen, Alarmeinstellungen und App-Einstellungen liegen nur im privaten Speicher dieser App. Optionale Geheimnisse (ein MMP-API-Schlüssel) werden mit dem Android Keystore verschlüsselt. Nichts wird in eine Cloud gesichert, außer du exportierst ausdrücklich ein Backup und wählst, wohin es geht.</string>
+    <string name="priv_talks_title">Mit wem die App spricht</string>
+    <string name="priv_talks_body">Standardmäßig verbindet sich die App nur mit den Miner-IP-Adressen, die du hinzufügst oder findest — über dein LAN oder dein Tailscale-VPN. Sie kontaktiert unsere Server nie von selbst.</string>
+    <string name="priv_optional_title">Optionale, standardmäßig deaktivierte Verbindungen</string>
+    <string name="priv_optional_body">Drei Integrationen erreichen das Internet nur, wenn du sie einschaltest: ein Abruf der Bitcoin-Netzwerk-Difficulty (mempool.space); Hi3-Pool-Statistiken, die deine Auszahlungsadresse an die von dir gesetzte Pool-URL senden; und die Hi3-MMP-Flottenansicht, authentifiziert per API-Schlüssel von dir. Jede nennt genau, was sie überträgt, und beim Ausschalten stoppen diese Anfragen sofort.</string>
+    <string name="priv_camera_title">Kamera (QR-Scan)</string>
+    <string name="priv_camera_body">Die Kamera wird nur genutzt, wenn du auf das QR-Symbol tippst, um eine Auszahlungsadresse zu scannen. Das Scannen passiert auf dem Gerät; kein Bild oder Video wird gespeichert oder übertragen. Du kannst die Kamera-Berechtigung ablehnen und die Adresse eintippen.</string>
+    <string name="priv_notifications_title">Benachrichtigungen</string>
+    <string name="priv_notifications_body">Alarme sind standardmäßig aus. Wenn du sie aktivierst, entstehen Benachrichtigungen auf dem Gerät aus den Messwerten deiner Miner; kein Benachrichtigungsinhalt verlässt das Gerät.</string>
+    <string name="priv_control_title">Deine Kontrolle</string>
+    <string name="priv_control_body">Du kannst jeden Miner, jede Farm oder den gesamten gespeicherten Verlauf in der App löschen, die Aufbewahrung anpassen und Berechtigungen jederzeit in den Android-Einstellungen widerrufen. Beim Deinstallieren der App werden ihre lokalen Daten entfernt.</string>
+    <string name="priv_contact_title">Kontakt</string>
+    <string name="priv_contact_body">Fragen zum Datenschutz oder zur App? Erreiche uns unter hi3.cc/contact oder mmp.hi3.cc.</string>
+</resources>

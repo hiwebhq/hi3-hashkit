@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ab_title">矿池地址簿</string>
+    <string name="ab_add_pool">添加矿池</string>
+    <string name="ab_intro">保存你常用的矿池/钱包，然后一键应用到整个机队。矿工名即收款地址（可选格式：地址.矿工名）。不会保存矿池密码——由固件自行保管。</string>
+
+    <!-- Apply-to-fleet confirm dialog -->
+    <string name="ab_apply_title">应用“%1$s”？</string>
+    <string name="ab_apply_body">将所有支持更换矿池的矿机的主矿池设为 %1$s:%2$d（矿工 %3$s）。不支持的矿机将被跳过。</string>
+    <string name="ab_limit_group">限定分组（留空 = 所有矿机）</string>
+    <string name="ab_apply_to_fleet">应用到机队</string>
+
+    <!-- Pool row -->
+    <string name="ab_active_count">"  ● 使用中（%1$d）"</string>
+    <string name="ab_speed_test">测速</string>
+
+    <!-- Editor dialog -->
+    <string name="ab_saved_pool">已存矿池</string>
+    <string name="ab_edit_pool">编辑矿池</string>
+    <string name="ab_name">名称</string>
+    <string name="ab_stratum_url">Stratum URL</string>
+    <string name="ab_port">端口</string>
+    <string name="ab_worker_payout">矿工 / 收款地址</string>
+</resources>

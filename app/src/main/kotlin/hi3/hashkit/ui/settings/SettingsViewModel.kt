@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import hi3.hashkit.R
 import hi3.hashkit.data.poll.MonitorWorker
 import hi3.hashkit.data.prefs.AppSettings
 import hi3.hashkit.data.prefs.SettingsRepository
@@ -70,7 +71,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val info = appUpdater.check()
             updateStatus.value = when {
-                info == null -> UpdateStatus.Error("Couldn't reach the update server.")
+                info == null -> UpdateStatus.Error(context.getString(R.string.set_update_error_unreachable))
                 info.isNewer -> UpdateStatus.Available(info)
                 else -> UpdateStatus.UpToDate
             }
@@ -99,7 +100,7 @@ class SettingsViewModel @Inject constructor(
                 updateStatus.value = UpdateStatus.Downloading(p)
             }
             if (file == null) {
-                updateStatus.value = UpdateStatus.Error("Download failed.")
+                updateStatus.value = UpdateStatus.Error(context.getString(R.string.set_update_download_failed))
             } else {
                 updateStatus.value = UpdateStatus.Installing()
                 appUpdater.startInstall(file)
@@ -178,7 +179,7 @@ class SettingsViewModel @Inject constructor(
             context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
         }.getOrNull()
         if (content == null) {
-            restoreMessage.value = "Could not read the selected file."
+            restoreMessage.value = context.getString(R.string.set_restore_read_error)
             return@launch
         }
         val result = exporter.restore(content, passphrase)

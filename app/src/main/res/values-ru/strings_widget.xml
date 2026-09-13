@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Строки виджетов домашнего экрана (Glance). -->
+<resources>
+    <!-- Hashkit widget -->
+    <string name="widget_online_count">%1$d/%2$d онлайн</string>
+
+    <!-- Compare widget -->
+    <string name="widget_hashrate_sources">ИСТОЧНИКИ ХЕШРЕЙТА</string>
+    <string name="widget_source_local">Локально</string>
+    <string name="widget_source_pool">Пул</string>
+    <string name="widget_source_off">выкл</string>
+
+    <!-- Fleet table widget -->
+    <string name="widget_fleet">ПАРК</string>
+    <string name="widget_no_miners_yet">Пока нет майнеров</string>
+    <string name="widget_more_count">+ещё %1$d</string>
+    <string name="widget_offline">офлайн</string>
+</resources>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian: About screen. -->
+<resources>
+    <string name="about_title">О приложении</string>
+    <string name="about_section_about">О ПРИЛОЖЕНИИ</string>
+    <string name="about_section_supported">ПОДДЕРЖИВАЕМЫЕ МАЙНЕРЫ</string>
+    <string name="about_section_howto">КАК ПОЛЬЗОВАТЬСЯ</string>
+
+    <string name="about_app_version">"%1$s  ·  v%2$s"</string>
+    <string name="about_app_desc">Hi3 Hashkit — локальный Android-дашборд для Bitcoin-майнеров: он обнаруживает, отслеживает и безопасно управляет вашим парком в вашей собственной сети — без аккаунта, без облака, данные остаются на вашем устройстве.</string>
+
+    <string name="about_link_guide_title">Руководство пользователя</string>
+    <string name="about_link_guide_subtitle">Как пользоваться Hi3 Hashkit (PDF, офлайн)</string>
+    <string name="about_link_guide_label">Открыть PDF</string>
+    <string name="about_link_hi3_subtitle">Майнинговая платформа Hi3</string>
+    <string name="about_link_pool_title">Пулы Bitcoin</string>
+    <string name="about_link_pool_subtitle">Выплаты Solo, PPLNS и TIDES на Hi3 Pool</string>
+    <string name="about_link_support_title">Помощь и поддержка</string>
+    <string name="about_link_support_subtitle">Помощь с приложением и управлением парком</string>
+    <string name="about_link_share_title">Поделиться приложением</string>
+    <string name="about_link_share_subtitle">Отправьте другу ссылку на загрузку</string>
+    <string name="about_link_feedback_title">Предложить функцию</string>
+    <string name="about_link_feedback_subtitle">Предложите улучшение или сообщите о проблеме</string>
+
+    <string name="about_guide_error">Не удалось открыть руководство — нет программы для просмотра PDF?</string>
+    <string name="about_share_subject">%1$s — локальный дашборд для Bitcoin-майнеров</string>
+    <string name="about_share_text">Попробуйте %1$s — локальное Android-приложение для мониторинга и безопасного управления Bitcoin-майнерами: https://mmp.hi3.cc/hashkit</string>
+    <string name="about_share_chooser">Поделиться %1$s</string>
+
+    <string name="about_supported_intro">Поддержка ведётся по семействам прошивок/API, поэтому работает каждая модель семейства — проверять каждую не нужно. «Проверено» — подтверждено на реальном оборудовании; «усл. совместимо» — тот же API прошивки, подтверждение на этой модели ожидается (базовая телеметрия безопасна). Непроверенные элементы управления никогда не включаются наугад.</string>
+
+    <!-- Supported miner families -->
+    <string name="about_miner_bitaxe_family">Bitaxe / ESP-Miner (AxeOS)</string>
+    <string name="about_miner_bitaxe_models">Max (202), Ultra (204), Supra (400), Gamma (600), Gamma Turbo, Supra Hex</string>
+    <string name="about_miner_bitaxe_support">Полный мониторинг + безопасное управление: перезагрузка, пул, вентилятор, тюнинг в пределах прошивки + автотюнинг.</string>
+    <string name="about_miner_nerdqaxe_family">NerdQAxe (форк ESP-Miner)</string>
+    <string name="about_miner_nerdqaxe_models">NerdQAxe++, NerdQAxe+, NerdQAxe+ Hydro, форки в стиле Lucky-Miner</string>
+    <string name="about_miner_nerdqaxe_support">Полный мониторинг; управление выключено, пока не проверено на этой прошивке.</string>
+    <string name="about_miner_bmminer_family">Antminer — стоковый Bitmain (BMMiner)</string>
+    <string name="about_miner_bmminer_models">S21 Pro (проверено); S21+, S21+ Hyd, S21 Hyd, S21 XP, серии S19 и S17 (усл. совместимо)</string>
+    <string name="about_miner_bmminer_support">Хешрейт, температуры чипов, вентиляторы, частота, ожидаемый хешрейт, число ASIC, шары, аптайм, пул. Без управления; мощности в этом API нет.</string>
+    <string name="about_miner_vnish_family">Antminer — прошивка VNish</string>
+    <string name="about_miner_vnish_models">S21 Pro (проверено) и другие Antminer с прошивкой VNish</string>
+    <string name="about_miner_vnish_support">Полный мониторинг, включая мощность от розетки и эффективность (J/TH). Без управления.</string>
+    <string name="about_miner_luxos_family">Antminer — прошивка LuxOS</string>
+    <string name="about_miner_luxos_models">Antminer с прошивкой LuxOS</string>
+    <string name="about_miner_luxos_support">Базовый мониторинг: хешрейт, шары, аптайм, пул.</string>
+    <string name="about_miner_avalon_family">Canaan Avalon</string>
+    <string name="about_miner_avalon_models">Nano 3 (проверено); Nano 3S, Avalon Q, Avalon Mini 3 (усл. совместимо)</string>
+    <string name="about_miner_avalon_support">Nano 3: мониторинг + Пауза/Возобновление/Перезагрузка. Остальные: мониторинг через API CGMiner.</string>
+    <string name="about_miner_braiins_family">Braiins OS (BOSer)</string>
+    <string name="about_miner_braiins_models">Braiins Mini Miner BMM 100 (проверено)</string>
+    <string name="about_miner_braiins_support">Полный мониторинг через API CGMiner. На устройстве нет датчика мощности → мощность недоступна.</string>
+    <string name="about_miner_whatsminer_family">WhatsMiner (MicroBT)</string>
+    <string name="about_miner_whatsminer_models">Семейства M2X / M3X / M5X / M6X (усл. совместимо)</string>
+    <string name="about_miner_whatsminer_support">Хешрейт, шары, аптайм, пул, температура чипов, вентиляторы и мощность, если сообщается. Без управления.</string>
+    <string name="about_miner_demo_family">Демо</string>
+    <string name="about_miner_demo_models">Синтетические майнеры</string>
+    <string name="about_miner_demo_support">Только демо-режим — никогда не смешивается с реальными майнерами.</string>
+
+    <!-- How-to steps -->
+    <string name="about_howto_1_title">1 · Подключитесь к той же сети</string>
+    <string name="about_howto_1_body">Подключите этот телефон к Wi-Fi/LAN, где находятся майнеры, — или поднимите Tailscale и анонсируйте маршрут подсети площадки для удалённого доступа.</string>
+    <string name="about_howto_2_title">2 · Дайте приложению найти майнеры</string>
+    <string name="about_howto_2_body">Hi3 Hashkit автоматически сканирует локальную подсеть при запуске, поэтому майнеры обычно появляются сами. Откройте меню ⋮ → Сканирование сети, чтобы увидеть свой IP, изменить диапазон или запустить/остановить сканирование. Добавляются только устройства, отвечающие по известному API майнеров.</string>
+    <string name="about_howto_3_title">3 · Или добавьте вручную</string>
+    <string name="about_howto_3_body">Нажмите + на дашборде, чтобы добавить майнер по IP/имени хоста, или запустите сканирование CIDR-диапазона. Разрешены только частные LAN- и Tailscale-адреса.</string>
+    <string name="about_howto_4_title">4 · Организуйте в фермы</string>
+    <string name="about_howto_4_body">Через ⋮ → Фермы группируйте майнеры по площадкам, у каждой — своя подсеть сканирования. Отметьте одну как ферму по умолчанию (она открывается при запуске) и переключайте дашборд между фермами чипом сверху. При добавлении фермы сразу предлагается просканировать её подсеть.</string>
+    <string name="about_howto_5_title">5 · Читайте дашборд честно</string>
+    <string name="about_howto_5_body">Каждое значение помечено источником — измерено, сообщено, рассчитано, оценено или недоступно, — поэтому оценка никогда не выдаётся за факт. Нажмите на майнер, чтобы увидеть живую телеметрию, графики истории и сырой ответ.</string>
+    <string name="about_howto_6_title">6 · Управляйте безопасно (где проверено)</string>
+    <string name="about_howto_6_body">На поддерживаемых прошивках можно перезагружать, менять пул, настраивать вентиляторы и применять тюнинг в пределах прошивки — всё с подтверждением и откатом. Долгим нажатием на карточки выберите несколько майнеров для массовых действий; предпросмотр покажет, какие устройства поддерживают каждое.</string>
+    <string name="about_howto_7_title">7 · Включите оповещения, когда будете готовы</string>
+    <string name="about_howto_7_body">Оповещения по умолчанию выключены. Включите их в разделе «Настройка → Оповещения», чтобы получать уведомления об офлайне, температуре, вентиляторах и проценте отказов с уведомлениями о восстановлении, и задавайте переопределения для отдельных майнеров.</string>
+    <string name="about_howto_8_title">8 · Сохраняйте приватность</string>
+    <string name="about_howto_8_body">Всё остаётся на этом устройстве. Разделы Hi3 Pool и MMP — опциональные, только для чтения и по умолчанию выключены.</string>
+</resources>

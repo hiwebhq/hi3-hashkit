@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hi3.hashkit.R
 import hi3.hashkit.core.Units
 import hi3.hashkit.data.db.TuneSweepDao
 import hi3.hashkit.data.db.TuneSweepEntity
@@ -60,6 +61,7 @@ data class AutotuneUiState(
 @HiltViewModel
 class AutotuneViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val repository: MinerRepository,
     private val controlRepository: ControlRepository,
     private val tuneSweepDao: TuneSweepDao,
@@ -150,10 +152,10 @@ class AutotuneViewModel @Inject constructor(
         if (_state.value.running) return
         job = viewModelScope.launch {
             val entity = repository.observeMinerEntity(minerId).first()
-            if (entity == null) { _state.value = _state.value.copy(message = "Miner not found."); return@launch }
+            if (entity == null) { _state.value = _state.value.copy(message = appContext.getString(R.string.vm_tune_miner_not_found)); return@launch }
             val options = controlRepository.tuneOptions(entity)
             if (options == null || options.frequencyOptionsMhz.isEmpty()) {
-                _state.value = _state.value.copy(supported = false, message = "This miner does not expose tunable options.")
+                _state.value = _state.value.copy(supported = false, message = appContext.getString(R.string.vm_tune_not_tunable))
                 return@launch
             }
             val telemetry = repository.latestTelemetry(entity.id)
@@ -162,7 +164,7 @@ class AutotuneViewModel @Inject constructor(
             // to the nearest allowed option so applyTune isn't rejected every step.
             val rawVoltage = telemetry?.coreVoltageMv?.value?.toInt()
                 ?: options.defaultVoltageMv ?: options.voltageOptionsMv.firstOrNull()
-                ?: run { _state.value = _state.value.copy(message = "No core voltage to hold constant."); return@launch }
+                ?: run { _state.value = _state.value.copy(message = appContext.getString(R.string.vm_tune_no_voltage)); return@launch }
             val voltage = nearestOption(rawVoltage, options.voltageOptionsMv)
             // Snap the original frequency to an approved option too, so the restore never fails.
             val rawFreq = telemetry?.frequencyMhz?.value?.toInt() ?: options.defaultFrequencyMhz
@@ -173,7 +175,7 @@ class AutotuneViewModel @Inject constructor(
                 running = true, stepTotal = candidates.size,
                 originalFrequencyMhz = origFreq, originalVoltageMv = voltage,
                 optimizeForHashrate = optimizeForHashrate,
-                message = "Sweeping ${candidates.size} frequencies at ${voltage} mV, ceiling ${maxChipTempC}°C…",
+                message = appContext.getString(R.string.vm_tune_sweeping, candidates.size, voltage, maxChipTempC),
             )
             val results = mutableListOf<TuneResult>()
             val sweepStart = System.currentTimeMillis()
@@ -183,7 +185,7 @@ class AutotuneViewModel @Inject constructor(
                     if (!isActive) break
                     _state.value = _state.value.copy(
                         stepIndex = i + 1,
-                        currentLabel = "$freq MHz @ ${voltage} mV — applying & settling ${settleSeconds}s",
+                        currentLabel = appContext.getString(R.string.vm_tune_step_label, freq, voltage, settleSeconds),
                     )
                     val applied = controlRepository.applyTune(entity, freq, voltage)
                     if (applied !is ActionResult.Success) {
@@ -233,15 +235,15 @@ class AutotuneViewModel @Inject constructor(
                 bestFrequencyMhz = best?.frequencyMhz,
                 currentLabel = "",
                 message = buildString {
-                    if (stoppedForHeat) append("Stopped early: hit the ${maxChipTempC}°C ceiling. ")
+                    if (stoppedForHeat) append(appContext.getString(R.string.vm_tune_stopped_early, maxChipTempC))
                     append(
                         when {
-                            best == null -> "No safe point produced a valid reading."
-                            optimizeForHashrate -> "Best hashrate: ${best.frequencyMhz} MHz (${Units.formatHashrate(best.hashrateGhs)})."
-                            else -> "Best efficiency: ${best.frequencyMhz} MHz at %.1f J/TH.".format(best.efficiencyJTh)
+                            best == null -> appContext.getString(R.string.vm_tune_no_safe_point)
+                            optimizeForHashrate -> appContext.getString(R.string.vm_tune_best_hashrate, best.frequencyMhz, Units.formatHashrate(best.hashrateGhs))
+                            else -> appContext.getString(R.string.vm_tune_best_efficiency, best.frequencyMhz, "%.1f".format(best.efficiencyJTh))
                         }
                     )
-                    append(" Restored your original setpoint.")
+                    append(appContext.getString(R.string.vm_tune_restored))
                 },
             )
         }
@@ -254,8 +256,8 @@ class AutotuneViewModel @Inject constructor(
             val entity = repository.observeMinerEntity(minerId).first() ?: return@launch
             val result = controlRepository.applyTune(entity, best, voltage)
             _state.value = _state.value.copy(
-                message = if (result is ActionResult.Success) "Applied $best MHz @ ${voltage} mV."
-                else "Apply failed: ${(result as? ActionResult.Failure)?.message ?: "unsupported"}",
+                message = if (result is ActionResult.Success) appContext.getString(R.string.vm_tune_applied, best, voltage)
+                else appContext.getString(R.string.vm_tune_apply_failed, (result as? ActionResult.Failure)?.message ?: "unsupported"),
             )
         }
     }
@@ -278,7 +280,7 @@ class AutotuneViewModel @Inject constructor(
     fun cancel() {
         job?.cancel()
         job = null
-        _state.value = _state.value.copy(running = false, message = "Sweep cancelled — original setpoint restored.")
+        _state.value = _state.value.copy(running = false, message = appContext.getString(R.string.vm_tune_cancelled))
         // Restore original on cancel.
         val f = _state.value.originalFrequencyMhz; val v = _state.value.originalVoltageMv
         if (f != null && v != null) viewModelScope.launch {

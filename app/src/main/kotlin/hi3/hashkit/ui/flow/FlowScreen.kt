@@ -60,6 +60,7 @@ private fun minerLayout(w: Float, h: Float, count: Int): List<Offset> =
         Offset(x, h * 0.78f)
     }
 
+@Suppress("LongMethod") // declarative screen layout: scaffold + canvas wiring
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlowScreen(

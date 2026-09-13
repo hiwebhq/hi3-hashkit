@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home-screen widget strings (Glance widgets). -->
+<resources>
+    <!-- Hashkit widget -->
+    <string name="widget_online_count">%1$d/%2$d online</string>
+
+    <!-- Compare widget -->
+    <string name="widget_hashrate_sources">HASHRATE-QUELLEN</string>
+    <string name="widget_source_local">Lokal</string>
+    <string name="widget_source_pool">Pool</string>
+    <string name="widget_source_off">aus</string>
+
+    <!-- Fleet table widget -->
+    <string name="widget_fleet">FLOTTE</string>
+    <string name="widget_no_miners_yet">Noch keine Miner</string>
+    <string name="widget_more_count">+%1$d weitere</string>
+    <string name="widget_offline">offline</string>
+</resources>

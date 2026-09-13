@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-tuner screen (ui/autotune). -->
+<resources>
+    <string name="tune_title">Autotune</string>
+    <string name="tune_description">Balaye les fréquences approuvées par le firmware à votre tension actuelle, laisse chacune se stabiliser, mesure J/TH et température des puces, puis restaure votre réglage d\'origine et recommande le meilleur point sous votre plafond de température. La montée s\'arrête dès que le plafond est atteint. L\'application est un geste séparé — gardez l\'appli ouverte pendant le balayage.</string>
+    <string name="tune_not_supported">Non pris en charge sur ce mineur.</string>
+    <string name="tune_settle_per_step">Stabilisation par palier</string>
+    <string name="tune_temp_ceiling">Plafond de temp.</string>
+    <string name="tune_optimize_for">Optimiser pour</string>
+    <string name="tune_efficiency">Efficacité</string>
+    <string name="tune_hashrate">Hashrate</string>
+    <string name="tune_step_progress">Palier %1$d/%2$d — %3$s</string>
+    <string name="tune_start_sweep">Lancer le balayage</string>
+    <string name="tune_apply_best">Appliquer le meilleur (%1$d MHz)</string>
+    <string name="tune_results_header">RÉSULTATS (meilleur en premier)</string>
+    <string name="tune_over_ceiling">"  ⚠ au-dessus du plafond"</string>
+    <string name="tune_optimizer_header">OPTIMISEUR — %1$d point(s) enregistré(s)</string>
+    <string name="tune_clear">Effacer</string>
+    <string name="tune_most_efficient">Plus efficace : %1$d MHz @ %2$d mV — %3$s J/TH</string>
+    <string name="tune_most_hashrate">Hashrate max : %1$d MHz @ %2$d mV — %3$s</string>
+    <string name="tune_optimizer_hint">Construit à partir de tous les balayages sur ce mineur — lancez-en d\'autres pour affiner la courbe.</string>
+    <string name="tune_efficiency_curve">COURBE D\'EFFICACITÉ</string>
+    <string name="tune_observed_points">POINTS DE FONCTIONNEMENT OBSERVÉS (7 JOURS)</string>
+    <string name="tune_mark_best_efficiency">" ⚡meilleur J/TH"</string>
+    <string name="tune_mark_best_rate">" ▲meilleur débit"</string>
+    <string name="tune_observed_point">%1$.0f MHz / %2$.0f mV — %3$.2f TH/s · %4$s J/TH · max %5$s · ≈%6$.1f h%7$s</string>
+    <string name="tune_peer_gap">vs pairs du même modèle (%1$d) : %2$s hashrate (moy. 24 h)</string>
+</resources>
