@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,7 +88,25 @@ fun FlowScreen(
         },
         containerColor = HiBrand.background,
     ) { padding ->
+        var show3d by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
         Column(Modifier.fillMaxSize().padding(padding)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.padding(horizontal = 10.dp),
+            ) {
+                androidx.compose.material3.FilterChip(
+                    selected = !show3d, onClick = { show3d = false },
+                    label = { Text("Flow") },
+                )
+                androidx.compose.material3.FilterChip(
+                    selected = show3d, onClick = { show3d = true },
+                    label = { Text("3D") },
+                )
+            }
+            if (show3d) {
+                Fleet3DView()
+                return@Column
+            }
             SummaryCards(state)
             Canvas(
                 Modifier
