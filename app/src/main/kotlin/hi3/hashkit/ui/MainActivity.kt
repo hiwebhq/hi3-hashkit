@@ -346,7 +346,6 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
             hi3.hashkit.ui.advanced.AdvancedScreen(
                 onBack = { nav.popBackStack() },
                 onSchedules = { nav.navigate("schedules") },
-                onFarms = { nav.navigate("farms") },
                 onAddressBook = { nav.navigate("addressbook") },
                 onRack = { nav.navigate("rack") },
                 onPoolSpeed = { nav.navigate("poolspeed") },
@@ -462,7 +461,10 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
             hi3.hashkit.ui.alerts.AlertsScreen(onBack = { nav.popBackStack() })
         }
         composable("settings") {
-            hi3.hashkit.ui.settings.SettingsScreen(onBack = { nav.popBackStack() })
+            hi3.hashkit.ui.settings.SettingsScreen(
+                onBack = { nav.popBackStack() },
+                onFarms = { nav.navigate("farms") },
+            )
         }
         composable(
             route = "miner/{minerId}?focus={focus}",

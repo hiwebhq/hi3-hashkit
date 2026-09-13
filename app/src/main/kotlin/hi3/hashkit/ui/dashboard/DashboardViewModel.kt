@@ -87,6 +87,8 @@ data class DashboardUiState(
     val farms: List<hi3.hashkit.data.db.FarmEntity> = emptyList(),
     /** Currently viewed farm; -1 = All farms. */
     val activeFarmId: Long = -1,
+    /** True when Settings pins a default farm — the dashboard hides the farm selector. */
+    val farmPinned: Boolean = false,
 )
 
 @HiltViewModel
@@ -177,8 +179,11 @@ class DashboardViewModel @Inject constructor(
                 farmRepository.observeFarms(),
             ) { entities, refresh, settings, unresolved, farms ->
                 val now = Instant.now()
+                // A default farm pinned in Settings wins over the last selector choice and
+                // hides the selector; if that farm was deleted, fall back to normal behavior.
+                val pinned = settings.pinnedFarmId.takeIf { id -> farms.any { it.id == id } }
                 // When a farm is active, show only its miners (demo miners always show in demo mode).
-                val activeFarm = settings.activeFarmId
+                val activeFarm = pinned ?: settings.activeFarmId
                 val miners = entities
                     .filter { e ->
                         val demoOk = settings.demoModeEnabled || !e.isDemo
@@ -196,6 +201,7 @@ class DashboardViewModel @Inject constructor(
                     settings = settings,
                     farms = farms,
                     activeFarmId = activeFarm,
+                    farmPinned = pinned != null,
                 )
             },
             searchQuery,

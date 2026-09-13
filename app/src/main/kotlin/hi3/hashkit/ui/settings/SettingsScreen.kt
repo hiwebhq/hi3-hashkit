@@ -57,10 +57,12 @@ import hi3.hashkit.ui.theme.ThemeColor
 
 // Section order: alphabetical, with DATA & EXPORTS second-to-last and DEMO last
 // (user preference).
+@Suppress("LongMethod", "CyclomaticComplexMethod") // a declarative settings form: one block per section
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    onFarms: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -256,6 +258,35 @@ fun SettingsScreen(
                     "Show the \"Exit Hi3 Hashkit?\" confirmation when tapping the exit button.",
                     settings.confirmBeforeExit,
                 ) { viewModel.setConfirmBeforeExit(it) }
+            }
+
+            Section("FARMS") {
+                ActionRow("Manage farms…") { onFarms() }
+                val farms by viewModel.farms.collectAsStateWithLifecycle()
+                if (farms.isNotEmpty()) {
+                    Text("Default farm", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        "Pin the dashboard to one farm: the farm selector row disappears and " +
+                            "only that farm's miners show — tighter layout when you run one site.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        androidx.compose.material3.FilterChip(
+                            selected = settings.pinnedFarmId <= 0 ||
+                                farms.none { it.id == settings.pinnedFarmId },
+                            onClick = { viewModel.setPinnedFarm(-1) },
+                            label = { Text("All farms") },
+                        )
+                        farms.forEach { farm ->
+                            androidx.compose.material3.FilterChip(
+                                selected = settings.pinnedFarmId == farm.id,
+                                onClick = { viewModel.setPinnedFarm(farm.id) },
+                                label = { Text(farm.name) },
+                            )
+                        }
+                    }
+                }
             }
 
             Section("HI3 MMP") {

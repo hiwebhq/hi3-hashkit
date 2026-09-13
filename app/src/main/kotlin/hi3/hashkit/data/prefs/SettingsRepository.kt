@@ -81,6 +81,8 @@ data class AppSettings(
     val hashRentalUrl: String = DEFAULT_HASH_RENTAL_URL,
     /** Dashboard block order as a CSV of DashboardCard names; blank = default order. */
     val dashboardCardOrder: String = "",
+    /** Farm the dashboard is pinned to (hides the farm selector); -1 = not pinned. */
+    val pinnedFarmId: Long = -1,
     /** SAF tree URI weekly auto-backups are written to; blank = auto-backup off. */
     val autoBackupFolderUri: String = "",
     /** When the last auto-backup was written (epoch ms); 0 = never. */
@@ -204,6 +206,7 @@ class SettingsRepository @Inject constructor(
         val publicPoolsSeeded = booleanPreferencesKey("public_pools_seeded")
         val hashRentalUrl = stringPreferencesKey("hash_rental_url")
         val dashboardCardOrder = stringPreferencesKey("dashboard_card_order")
+        val pinnedFarmId = longPreferencesKey("pinned_farm_id")
         val autoBackupFolderUri = stringPreferencesKey("auto_backup_folder_uri")
         val autoBackupLastMs = longPreferencesKey("auto_backup_last_ms")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
@@ -310,6 +313,7 @@ class SettingsRepository @Inject constructor(
             publicPoolsSeeded = p[Keys.publicPoolsSeeded] ?: false,
             hashRentalUrl = p[Keys.hashRentalUrl]?.takeIf { it.isNotBlank() } ?: DEFAULT_HASH_RENTAL_URL,
             dashboardCardOrder = p[Keys.dashboardCardOrder] ?: "",
+            pinnedFarmId = p[Keys.pinnedFarmId] ?: -1,
             autoBackupFolderUri = p[Keys.autoBackupFolderUri] ?: "",
             autoBackupLastMs = p[Keys.autoBackupLastMs] ?: 0,
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
@@ -396,6 +400,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setInventoryTagType(value: InventoryTagType) = edit { it[Keys.inventoryTagType] = value.name }
     suspend fun setHashRentalUrl(value: String) = edit { it[Keys.hashRentalUrl] = value.trim() }
     suspend fun setDashboardCardOrder(value: String) = edit { it[Keys.dashboardCardOrder] = value.trim() }
+    suspend fun setPinnedFarmId(value: Long) = edit { it[Keys.pinnedFarmId] = value }
     suspend fun setAutoBackupFolderUri(value: String) = edit { it[Keys.autoBackupFolderUri] = value.trim() }
     suspend fun setAutoBackupLastMs(value: Long) = edit { it[Keys.autoBackupLastMs] = value }
     suspend fun setConfirmBeforeExit(value: Boolean) = edit { it[Keys.confirmBeforeExit] = value }
@@ -547,6 +552,6 @@ private const val CURRENCY_CODE_MAX = 6
 
 private val BACKUP_EXCLUDED_KEYS = setOf(
     "mmp_api_key_encrypted", "mqtt_password_enc", "ha_token_enc", // device-bound Keystore blobs
-    "active_farm_id", // DB row id, not portable
+    "active_farm_id", "pinned_farm_id", // DB row ids, not portable
     "auto_backup_folder_uri", "auto_backup_last_ms", // SAF grant is device-bound
 )

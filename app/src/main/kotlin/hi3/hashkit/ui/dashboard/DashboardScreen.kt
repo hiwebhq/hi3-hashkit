@@ -297,7 +297,9 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            if (state.farms.isNotEmpty()) {
+            // Pinned to a default farm (Settings → Farms): no selector row — the space
+            // goes to the miners.
+            if (state.farms.isNotEmpty() && !state.farmPinned) {
                 item { FarmSelector(state, viewModel::setActiveFarm) }
             }
             firmwareLatest?.takeIf { firmwareOutdated > 0 }?.let { latest ->

@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Thermostat
-import androidx.compose.material.icons.filled.Warehouse
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -68,7 +67,6 @@ private data class AdvancedItem(
 fun AdvancedScreen(
     onBack: () -> Unit,
     onSchedules: () -> Unit,
-    onFarms: () -> Unit,
     onAddressBook: () -> Unit,
     onRack: () -> Unit,
     onPoolSpeed: () -> Unit,
@@ -134,11 +132,6 @@ fun AdvancedScreen(
             "Schedules",
             "Time-of-use and quiet-hours plans for miners and plugs",
             Icons.Filled.Schedule, onSchedules,
-        ),
-        AdvancedItem(
-            "Farms",
-            "Group miners into sites with per-farm rollups",
-            Icons.Filled.Warehouse, onFarms,
         ),
         AdvancedItem(
             "Pool address book",

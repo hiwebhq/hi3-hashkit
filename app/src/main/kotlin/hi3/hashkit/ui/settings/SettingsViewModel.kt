@@ -163,6 +163,7 @@ class SettingsViewModel @Inject constructor(
     fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
     fun setAutoBackupFolder(v: String) = viewModelScope.launch { repo.setAutoBackupFolderUri(v) }
     fun setDashboardCardOrder(v: String) = viewModelScope.launch { repo.setDashboardCardOrder(v) }
+    fun setPinnedFarm(id: Long) = viewModelScope.launch { repo.setPinnedFarmId(id) }
     fun setHi3PoolPayoutAddress(v: String) = viewModelScope.launch { repo.setHi3PoolPayoutAddress(v) }
     fun setPoolApiToken(v: String) = viewModelScope.launch { repo.setPoolApiToken(v) }
 
