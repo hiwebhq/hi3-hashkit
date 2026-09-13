@@ -65,6 +65,7 @@ import hi3.hashkit.ui.theme.ThemeColor
 fun SettingsScreen(
     onBack: () -> Unit,
     onFarms: () -> Unit = {},
+    onNetworkScan: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -299,6 +300,16 @@ fun SettingsScreen(
                         }
                     }
                 }
+            }
+
+            Section("HASHKIT WIFI") {
+                val wifiFarms by viewModel.farms.collectAsStateWithLifecycle()
+                HashkitWifiSection(
+                    passphrase = settings.hashkitApPassphrase,
+                    farmSubnets = wifiFarms.map { it.subnetsCsv },
+                    onSavePassphrase = viewModel::setHashkitApPassphrase,
+                    onNetworkScan = onNetworkScan,
+                )
             }
 
             Section(stringResource(R.string.set_section_mmp)) {

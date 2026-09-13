@@ -476,6 +476,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
             hi3.hashkit.ui.settings.SettingsScreen(
                 onBack = { nav.popBackStack() },
                 onFarms = { nav.navigate("farms") },
+                onNetworkScan = { nav.navigate("network") },
             )
         }
         composable(

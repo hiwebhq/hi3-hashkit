@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Required to read the Wi-Fi interface address used to compute the scan range. -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- Hashkit WiFi kit: read the current SSID (Android gates it behind location) and
+         offer the one-tap network suggestion. Location is requested only from that
+         Settings section and never used for anything else. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- Required for the Site Map capture's multicast lock: some wifi drivers drop the
          miners' IP Report UDP broadcasts unless one is held. Only held while capturing. -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
