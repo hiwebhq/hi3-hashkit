@@ -384,7 +384,7 @@ private fun DrawScope.drawEndFace(
         )
     }
     drawCircle(bladeColor, (r * 0.16f).coerceAtLeast(1.5f), center)
-    drawEndTelemetry(corners, unit, flir, quad, bottom, edge, fx, fy)
+    drawEndTelemetry(corners, unit, flir, bottom, edge, fx, fy)
 }
 
 /** Hashrate + chip temp painted under the fan, aligned to the face's bottom edge. */
@@ -393,7 +393,6 @@ private fun DrawScope.drawEndTelemetry(
     corners: List<Fleet3D.Projected>,
     unit: Unit3DUi,
     flir: Boolean,
-    quad: IntArray,
     bottom: IntArray,
     edge: Float,
     fx: Float,
