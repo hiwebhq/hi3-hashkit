@@ -1,6 +1,6 @@
 # Hi3 Hashkit
 
-**Current version: 0.64.0**
+**Current version: 0.77.6**
 
 Hi3 Hashkit is a privacy-first, local-first Android app for monitoring and safely
 controlling your Bitcoin miners. It talks only to the miners on your own network — over
@@ -10,6 +10,20 @@ estimate is never dressed up as a fact.
 
 See `docs/` for architecture, device support, build, and security details, and
 `CHANGELOG.md` for release-by-release notes.
+
+## Screenshots
+
+All captures below use the app's built-in demo mode (synthetic miners).
+
+| Dashboard | Miner detail | Flow view | Fleet table |
+|---|---|---|---|
+| <img src="docs/screenshots/01-dashboard.png" width="200" alt="Fleet dashboard with hashrate, power, efficiency and per-miner cards"> | <img src="docs/screenshots/03-miner-detail.png" width="200" alt="Miner detail with stylized live render and hashrate history"> | <img src="docs/screenshots/04-flow.png" width="200" alt="Animated Flow view: Bitcoin network, pool and miners pipeline"> | <img src="docs/screenshots/02-fleet-table.png" width="200" alt="Sortable fleet table"> |
+
+| Energy & profit | Site heatmap | Watchdog rules |
+|---|---|---|
+| <img src="docs/screenshots/05-energy-profit.png" width="200" alt="Per-miner energy cost, efficiency ranking and revenue vs cost"> | <img src="docs/screenshots/06-heatmap.png" width="200" alt="Rack layout colored by live chip temperature"> | <img src="docs/screenshots/07-watchdog-rules.png" width="200" alt="Watchdog automation rule with sustained condition window"> |
+
+🎬 [Watch the 40-second app tour](docs/media/hashkit-tour.mp4)
 
 ## Key features
 
