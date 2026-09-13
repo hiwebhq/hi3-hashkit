@@ -48,6 +48,9 @@ data class FlowUiState(
     val internetUp: Boolean = true,
     val networkDifficulty: Double? = null,
     val blockHeight: Long? = null,
+    val blockTimeEpochSec: Long? = null,
+    /** Miner tile columns: 0 = classic single row, else 2..8 (NxN grid). */
+    val gridCols: Int = 0,
     val stratums: List<StratumNode> = emptyList(),
     val miners: List<MinerNode> = emptyList(),
     val totalHashrateGhs: Double = 0.0,
@@ -63,18 +66,20 @@ class FlowViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val connectivity: ConnectivityProbe,
     private val okHttpClient: OkHttpClient,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val probeResults = kotlinx.coroutines.flow.MutableStateFlow(ProbeSnapshot())
 
-    /** Last successfully fetched tip height, kept across transient fetch failures. */
+    /** Last successfully fetched tip height + timestamp, kept across transient fetch failures. */
     private var lastBlockHeight: Long? = null
+    private var lastBlockTimeEpochSec: Long? = null
 
     private data class ProbeSnapshot(
         val internetUp: Boolean = true,
         val latencyByStratum: Map<String, Long?> = emptyMap(),
         val blockHeight: Long? = null,
+        val blockTimeEpochSec: Long? = null,
         val at: Instant? = null,
     )
 
@@ -87,8 +92,12 @@ class FlowViewModel @Inject constructor(
         val miners = entities
             .filter { settings.demoModeEnabled || !it.isDemo }
             .map { repository.toDomain(it, now) }
-        buildState(miners, probe)
+        buildState(miners, probe).copy(gridCols = settings.flowGridCols)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FlowUiState())
+
+    fun setGridCols(cols: Int) {
+        viewModelScope.launch { settingsRepository.setFlowGridCols(cols) }
+    }
 
     /** Called by the screen's lifecycle: probe uplink + stratum latency every 10s while open. */
     fun startProbing() {
@@ -109,24 +118,38 @@ class FlowViewModel @Inject constructor(
             stratumKey(s.host, s.port) to connectivity.tcpLatencyMs(s.host, s.port)
         }
         val up = connectivity.internetValidated()
-        // Current tip height from mempool.space (public, keyless) — only while the uplink is up;
-        // keep the last known value across transient failures.
-        if (up) fetchTipHeight()?.let { lastBlockHeight = it }
+        // Current tip block from mempool.space (public, keyless) — only while the uplink is up;
+        // keep the last known values across transient failures.
+        if (up) fetchTipBlock()?.let { (height, timeSec) ->
+            lastBlockHeight = height
+            timeSec?.let { lastBlockTimeEpochSec = it }
+        }
         probeResults.value = ProbeSnapshot(
             internetUp = up,
             latencyByStratum = latencies,
             blockHeight = lastBlockHeight,
+            blockTimeEpochSec = lastBlockTimeEpochSec,
             at = Instant.now(),
         )
     }
 
-    /** GET mempool.space/api/blocks/tip/height — the plain-integer current block height. */
-    private suspend fun fetchTipHeight(): Long? = withContext(Dispatchers.IO) {
+    /** GET mempool.space/api/v1/blocks — newest-first block list; tip height + found time. */
+    private suspend fun fetchTipBlock(): Pair<Long, Long?>? = withContext(Dispatchers.IO) {
         runCatching {
             val req = Request.Builder()
-                .url("https://mempool.space/api/blocks/tip/height").get().build()
+                .url("https://mempool.space/api/v1/blocks").get().build()
             okHttpClient.newCall(req).execute().use { resp ->
-                if (resp.isSuccessful) resp.body?.string()?.trim()?.toLongOrNull() else null
+                if (!resp.isSuccessful) return@use null
+                val body = resp.body?.string() ?: return@use null
+                val tip = kotlinx.serialization.json.Json.parseToJsonElement(body)
+                    .let { it as? kotlinx.serialization.json.JsonArray }
+                    ?.firstOrNull()?.let { it as? kotlinx.serialization.json.JsonObject }
+                    ?: return@use null
+                val height = tip["height"]?.let { it as? kotlinx.serialization.json.JsonPrimitive }
+                    ?.content?.toLongOrNull() ?: return@use null
+                val timeSec = tip["timestamp"]?.let { it as? kotlinx.serialization.json.JsonPrimitive }
+                    ?.content?.toLongOrNull()
+                height to timeSec
             }
         }.getOrNull()
     }
@@ -179,6 +202,7 @@ class FlowViewModel @Inject constructor(
             internetUp = probe.internetUp,
             networkDifficulty = miners.mapNotNull { it.lastTelemetry?.networkDifficulty }.maxOrNull(),
             blockHeight = probe.blockHeight,
+            blockTimeEpochSec = probe.blockTimeEpochSec,
             stratums = stratums,
             miners = minerNodes,
             totalHashrateGhs = live.sumOf { it.lastTelemetry?.hashrateGhs?.value ?: 0.0 },

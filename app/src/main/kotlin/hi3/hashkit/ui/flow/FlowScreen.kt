@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber") // a Canvas renderer: the geometry/layout literals ARE the drawing
+
 package hi3.hashkit.ui.flow
 
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
@@ -53,12 +55,30 @@ import hi3.hashkit.ui.theme.HiBrand
 import kotlin.math.hypot
 import kotlin.math.sin
 
-/** Miner node screen positions — shared by the renderer and tap hit-testing. */
-private fun minerLayout(w: Float, h: Float, count: Int): List<Offset> =
-    (0 until count).map { i ->
-        val x = if (count <= 1) w / 2f else w * (0.08f + 0.84f * i / (count - 1).coerceAtLeast(1))
-        Offset(x, h * 0.78f)
+/** Miner node slots: screen positions plus the per-miner cell size, shared by the
+ *  renderer and tap hit-testing. */
+private data class MinerSlots(val positions: List<Offset>, val slotW: Float, val slotH: Float)
+
+/** [cols] > 0 tiles the miners into a grid that many columns wide (the "2×2 … 8×8" option);
+ *  0 keeps the classic single row along the bottom. */
+private fun minerLayout(w: Float, h: Float, count: Int, cols: Int): MinerSlots {
+    if (cols <= 0 || count <= 1) {
+        val positions = (0 until count).map { i ->
+            val x = if (count <= 1) w / 2f else w * (0.08f + 0.84f * i / (count - 1).coerceAtLeast(1))
+            Offset(x, h * 0.78f)
+        }
+        val slotW = if (count > 1) w * 0.84f / (count - 1) else w * 0.6f
+        return MinerSlots(positions, slotW, h * 0.22f)
     }
+    val rows = (count + cols - 1) / cols
+    val top = h * 0.56f
+    val slotH = (h * 0.98f - top) / rows
+    val slotW = w / cols
+    val positions = (0 until count).map { i ->
+        Offset(slotW * (i % cols + 0.5f), top + slotH * (i / cols + 0.5f))
+    }
+    return MinerSlots(positions, slotW, slotH)
+}
 
 @Suppress("LongMethod") // declarative screen layout: scaffold + canvas wiring
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,6 +126,44 @@ fun FlowScreen(
                     selected = show3d, onClick = { show3d = true },
                     label = { Text("3D") },
                 )
+                if (!show3d) {
+                    // Miner tile layout: one button showing the current choice; tap for
+                    // the Row / 2×2 … 8×8 menu.
+                    var gridMenu by androidx.compose.runtime.remember {
+                        androidx.compose.runtime.mutableStateOf(false)
+                    }
+                    Box {
+                        androidx.compose.material3.FilterChip(
+                            selected = gridMenu,
+                            onClick = { gridMenu = true },
+                            label = {
+                                val g = state.gridCols
+                                Text(if (g <= 0) "Tiles: Row ▾" else "Tiles $g×$g ▾")
+                            },
+                        )
+                        androidx.compose.material3.DropdownMenu(
+                            expanded = gridMenu,
+                            onDismissRequest = { gridMenu = false },
+                        ) {
+                            androidx.compose.material3.DropdownMenuItem(
+                                text = { Text(if (state.gridCols <= 0) "Row ✓" else "Row") },
+                                onClick = {
+                                    gridMenu = false
+                                    viewModel.setGridCols(0)
+                                },
+                            )
+                            for (n in 2..8) {
+                                androidx.compose.material3.DropdownMenuItem(
+                                    text = { Text(if (n == state.gridCols) "$n×$n ✓" else "$n×$n") },
+                                    onClick = {
+                                        gridMenu = false
+                                        viewModel.setGridCols(n)
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
             }
             if (show3d) {
                 Fleet3DView()
@@ -116,9 +174,12 @@ fun FlowScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(8.dp)
-                    .pointerInput(state.miners.size) {
+                    .pointerInput(state.miners.size, state.gridCols) {
                         detectTapGestures { pos ->
-                            val layout = minerLayout(size.width.toFloat(), size.height.toFloat(), state.miners.size)
+                            val layout = minerLayout(
+                                size.width.toFloat(), size.height.toFloat(),
+                                state.miners.size, state.gridCols,
+                            ).positions
                             val idx = layout.indexOfFirst { (it - pos).getDistance() < 56f }
                             if (idx >= 0) onMinerClick(state.miners[idx].id)
                         }
@@ -280,7 +341,8 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
     val stratumIndexByKey = stratums.mapIndexed { i, s -> "${s.host}:${s.port}" to i }.toMap()
 
     val miners = state.miners
-    val minerPos = minerLayout(w, h, miners.size)
+    val slots = minerLayout(w, h, miners.size, state.gridCols)
+    val minerPos = slots.positions
 
     // Edges: stratum -> network (uplink), colored by reachability/internet.
     stratums.forEachIndexed { i, s ->
@@ -317,10 +379,14 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
         }
         drawNode(stratumPos[i], 22f, col, pulse = t + i)
     }
-    // Adjacent-slot spacing; the ASIC glyph is ~2× bigger now, still capped to the slot so
-    // dense fleets don't overlap.
-    val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
-    val boxW = (adjSpacing * 0.82f).coerceAtMost(110f)
+    // Glyph sized to the slot. In grid mode the row height must also fit the two label
+    // lines; in row mode dense fleets stay capped so adjacent glyphs don't overlap.
+    val grid = state.gridCols > 0
+    val boxW = if (grid) {
+        minOf(slots.slotW * 0.8f, (slots.slotH - 100f) / 0.6f).coerceIn(36f, 240f)
+    } else {
+        (slots.slotW * 0.82f).coerceAtMost(110f)
+    }
     miners.forEachIndexed { i, m ->
         drawAsicMiner(
             minerPos[i], boxW,
@@ -349,9 +415,16 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
             if (height != null) "BLOCK ${"%,d".format(height)}" else "BITCOIN NETWORK",
             networkPos.x, networkPos.y - 66f, bignum,
         )
+        // Age of the tip block, so a long gap since the last block is visible at a glance.
+        val sinceBlock = state.blockTimeEpochSec?.let {
+            val mins = ((System.currentTimeMillis() / 1000 - it) / 60).coerceAtLeast(0)
+            if (mins >= 60) "${mins / 60}h ${mins % 60}m" else "${mins}m"
+        }
         val caption = if (height != null) "BITCOIN NETWORK" else "waiting for block height…"
         drawText(
-            caption + (state.networkDifficulty?.let { "   ·   diff ${Units.formatDifficulty(it)}" } ?: ""),
+            caption +
+                (sinceBlock?.let { "   ·   $it since block" } ?: "") +
+                (state.networkDifficulty?.let { "   ·   diff ${Units.formatDifficulty(it)}" } ?: ""),
             networkPos.x, networkPos.y + 80f, label,
         )
         stratums.forEachIndexed { i, s ->
@@ -362,18 +435,21 @@ private fun DrawScope.drawPipeline(state: FlowUiState, timeMs: Long) {
                 stratumPos[i].x, stratumPos[i].y + 68f, label,
             )
         }
-        // Miner labels: staggered across two rows + ellipsized to the slot so adjacent labels
-        // never overlap, however many miners there are. Spacing scales with the larger text.
+        // Miner labels, ellipsized to the slot so adjacent labels never overlap. In row
+        // mode they stagger across two rows for extra horizontal room; grid cells own
+        // their full width so no stagger is needed.
         val minerLabel = android.graphics.Paint(label).apply { textSize = 44f }
         val minerHash = android.graphics.Paint(strong).apply { textSize = 44f }
-        val adjSpacing = if (miners.size > 1) w * 0.84f / (miners.size - 1) else w * 0.6f
-        val boxW = (adjSpacing * 0.82f).coerceAtMost(110f)
         val boxH = boxW * 0.6f
-        // Staggered rows double the effective horizontal room for a given row.
-        val maxLabelW = (adjSpacing * 1.85f - 8f).coerceAtLeast(40f)
+        val maxLabelW = if (grid) {
+            (slots.slotW - 10f).coerceAtLeast(40f)
+        } else {
+            // Staggered rows double the effective horizontal room for a given row.
+            (slots.slotW * 1.85f - 8f).coerceAtLeast(40f)
+        }
         val lineH = 46f
         miners.forEachIndexed { i, m ->
-            val stagger = (i % 2) * lineH
+            val stagger = if (grid) 0f else (i % 2) * lineH
             val name = fitText(minerLabel, m.name, maxLabelW)
             val hash = fitText(minerHash, Units.formatHashrate(m.hashrateGhs), maxLabelW)
             drawText(hash, minerPos[i].x, minerPos[i].y - boxH / 2f - 26f - stagger, minerHash)

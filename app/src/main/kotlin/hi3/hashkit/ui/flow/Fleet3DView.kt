@@ -366,10 +366,10 @@ private fun DrawScope.drawEndFace(
     // Face-local "up" on screen: bottom-edge midpoint -> top-edge midpoint.
     val upX = (corners[top[0]].x + corners[top[1]].x) / 2f - (corners[bottom[0]].x + corners[bottom[1]].x) / 2f
     val upY = (corners[top[0]].y + corners[top[1]].y) / 2f - (corners[bottom[0]].y + corners[bottom[1]].y) / 2f
-    // Fan sits high on the face; name/IP flank its top corners and the big
-    // hashrate/temp readout fills the lower half.
-    val center = Offset(fx + upX * 0.26f, fy + upY * 0.26f)
-    val r = edge * 0.18f
+    // Fan sits mid-face: name and IP get full-width rows above it; uptime and the big
+    // hashrate·temp readout fill the lower half.
+    val center = Offset(fx - upX * 0.02f, fy - upY * 0.02f)
+    val r = edge * 0.14f
     // Recessed housing + rim.
     drawCircle(Color.Black.copy(alpha = if (flir) 0.5f else 0.38f), r, center)
     drawCircle(
@@ -408,10 +408,11 @@ private fun DrawScope.drawEndFace(
 }
 
 /**
- * End-face labels: name in the upper-left corner, IP in the upper-right, and a large
- * hashrate + chip-temp readout filling the lower half — all oriented along the face's
- * bottom edge. Skipped on far/tiny boxes where text would be unreadable anyway. `u` runs
- * bottom(-0.5)→top(+0.5) of the face; `rt` runs left(-0.5)→right(+0.5).
+ * End-face labels: full-width name and IP rows across the top, then uptime and a large
+ * one-line hashrate · chip-temp readout across the bottom — all oriented along the face's
+ * bottom edge and auto-shrunk to the face width. Skipped on far/tiny boxes where text
+ * would be unreadable anyway. `u` runs bottom(-0.5)→top(+0.5) of the face; `rt` runs
+ * left(-0.5)→right(+0.5).
  */
 @Suppress("LongParameterList") // positioned inside an already-projected face
 private fun DrawScope.drawEndLabels(
@@ -434,20 +435,30 @@ private fun DrawScope.drawEndLabels(
         isAntiAlias = true
     }
     val native = drawContext.canvas.nativeCanvas
+    // Draws centered at (u, rt), shrinking the text to fit the face width when needed.
     fun drawAt(u: Float, rt: Float, text: String, sizePx: Float) {
         paint.textSize = sizePx
+        val maxW = edge * 0.94f
+        val measured = paint.measureText(text)
+        if (measured > maxW) paint.textSize = sizePx * maxW / measured
         native.save()
         native.translate(fx + upX * u + rightX * rt, fy + upY * u + rightY * rt)
         native.rotate(deg)
-        native.drawText(text, 0f, sizePx * 0.35f, paint)
+        native.drawText(text, 0f, paint.textSize * 0.35f, paint)
         native.restore()
     }
-    val idSize = (edge / 8f).coerceIn(9f, 24f)
-    val metricSize = (edge / 4f).coerceIn(14f, 46f) // much larger — the primary readout
-    drawAt(0.42f, -0.27f, unit.name.take(10), idSize)              // upper-left
-    drawAt(0.42f, 0.27f, unit.host, idSize)                        // upper-right
-    drawAt(-0.08f, 0f, Units.formatHashrate(unit.hashrateGhs), metricSize)
-    drawAt(-0.34f, 0f, unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—", metricSize)
+    val idSize = (edge / 6f).coerceIn(11f, 34f) // name/IP: full-width rows, big and legible
+    val metricSize = (edge / 4.5f).coerceIn(13f, 44f) // the primary readout
+    val uptimeSize = (edge / 8f).coerceIn(10f, 26f)
+    drawAt(0.40f, 0f, unit.name, idSize)
+    drawAt(0.24f, 0f, unit.host, idSize)
+    unit.uptimeSeconds?.let { drawAt(-0.26f, 0f, "up " + Units.formatUptime(it), uptimeSize) }
+    drawAt(
+        -0.41f, 0f,
+        Units.formatHashrate(unit.hashrateGhs) + " · " +
+            (unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—"),
+        metricSize,
+    )
 }
 
 private fun DrawScope.drawFrames(
@@ -511,6 +522,13 @@ private fun androidx.compose.foundation.layout.BoxScope.SelectedReadout(unit: Un
             style = MaterialTheme.typography.labelMedium,
             color = if (flir) Color.White else HiBrand.textPrimary,
         )
+        unit.uptimeSeconds?.let {
+            Text(
+                "up " + Units.formatUptime(it),
+                style = MaterialTheme.typography.labelSmall,
+                color = if (flir) Color.White else HiBrand.textSecondary,
+            )
+        }
         Text(
             unit.host + " · " + Units.formatHashrate(unit.hashrateGhs) +
                 (unit.chipTempC?.let { " · %.0f°C".format(it) } ?: ""),

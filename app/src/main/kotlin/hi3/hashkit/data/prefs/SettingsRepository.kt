@@ -85,6 +85,8 @@ data class AppSettings(
     val pinnedFarmId: Long = -1,
     /** Virtual rack size (NxN units) in the 3D fleet view, 2..8. */
     val fleet3dRackSize: Int = 4,
+    /** Miner tile columns on the Flow view: 0 = classic single row, else 2..8 (NxN grid). */
+    val flowGridCols: Int = 0,
     /** Passphrase of the Hashkit field-kit Wi-Fi AP (SSID Hi3-Hashkit). */
     val hashkitApPassphrase: String = "",
     /** SAF tree URI weekly auto-backups are written to; blank = auto-backup off. */
@@ -212,6 +214,7 @@ class SettingsRepository @Inject constructor(
         val dashboardCardOrder = stringPreferencesKey("dashboard_card_order")
         val pinnedFarmId = longPreferencesKey("pinned_farm_id")
         val fleet3dRackSize = intPreferencesKey("fleet3d_rack_size")
+        val flowGridCols = intPreferencesKey("flow_grid_cols")
         val hashkitApPassphrase = stringPreferencesKey("hashkit_ap_passphrase")
         val autoBackupFolderUri = stringPreferencesKey("auto_backup_folder_uri")
         val autoBackupLastMs = longPreferencesKey("auto_backup_last_ms")
@@ -321,6 +324,7 @@ class SettingsRepository @Inject constructor(
             dashboardCardOrder = p[Keys.dashboardCardOrder] ?: "",
             pinnedFarmId = p[Keys.pinnedFarmId] ?: -1,
             fleet3dRackSize = p[Keys.fleet3dRackSize] ?: 4,
+            flowGridCols = p[Keys.flowGridCols] ?: 0,
             hashkitApPassphrase = p[Keys.hashkitApPassphrase] ?: "",
             autoBackupFolderUri = p[Keys.autoBackupFolderUri] ?: "",
             autoBackupLastMs = p[Keys.autoBackupLastMs] ?: 0,
@@ -410,6 +414,8 @@ class SettingsRepository @Inject constructor(
     suspend fun setDashboardCardOrder(value: String) = edit { it[Keys.dashboardCardOrder] = value.trim() }
     suspend fun setPinnedFarmId(value: Long) = edit { it[Keys.pinnedFarmId] = value }
     suspend fun setFleet3dRackSize(value: Int) = edit { it[Keys.fleet3dRackSize] = value.coerceIn(2, 8) }
+    suspend fun setFlowGridCols(value: Int) =
+        edit { it[Keys.flowGridCols] = if (value == 0) 0 else value.coerceIn(2, 8) }
     suspend fun setHashkitApPassphrase(value: String) = edit { it[Keys.hashkitApPassphrase] = value.trim() }
     suspend fun setAutoBackupFolderUri(value: String) = edit { it[Keys.autoBackupFolderUri] = value.trim() }
     suspend fun setAutoBackupLastMs(value: Long) = edit { it[Keys.autoBackupLastMs] = value }
