@@ -63,7 +63,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import javax.inject.Inject
 
-enum class SortColumn { NAME, IP, MODEL, HASHRATE, TEMP, POOL, UPTIME, EFFICIENCY }
+enum class SortColumn { NAME, IP, MODEL, HASHRATE, TEMP, POOL, UPTIME, EFFICIENCY, FREQUENCY, VOLTAGE }
 
 data class TableState(
     val miners: List<Miner> = emptyList(),
@@ -144,6 +144,8 @@ class TableViewModel @Inject constructor(
                 SortColumn.POOL -> compareBy { (it.lastTelemetry?.poolUrl ?: "").lowercase() }
                 SortColumn.UPTIME -> compareBy { it.lastTelemetry?.uptimeSeconds ?: -1L }
                 SortColumn.EFFICIENCY -> compareBy { it.lastTelemetry?.efficiencyJTh?.value ?: Double.MAX_VALUE }
+                SortColumn.FREQUENCY -> compareBy { it.lastTelemetry?.frequencyMhz?.value ?: -1.0 }
+                SortColumn.VOLTAGE -> compareBy { it.lastTelemetry?.coreVoltageMv?.value ?: -1.0 }
             }
             return miners.sortedWith(if (ascending) cmp else cmp.reversed())
         }
@@ -169,6 +171,8 @@ private val COLUMNS = listOf(
     Col("Pool", SortColumn.POOL, 150),
     Col("Uptime", SortColumn.UPTIME, 92),
     Col("J/TH", SortColumn.EFFICIENCY, 78),
+    Col("MHz", SortColumn.FREQUENCY, 74),
+    Col("mV", SortColumn.VOLTAGE, 74),
 )
 
 @OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
@@ -359,6 +363,9 @@ private fun TableRow(
         t?.poolUrl?.substringAfter("//")?.ifBlank { "—" } ?: "—",
         Units.formatUptime(t?.uptimeSeconds),
         t?.efficiencyJTh?.value?.let { "%.1f".format(it) } ?: "—",
+        // Not all firmwares report tune values (Avalon/Antminer-class don't) — show "—".
+        t?.frequencyMhz?.value?.let { "%.0f".format(it) } ?: "—",
+        t?.coreVoltageMv?.value?.let { "%.0f".format(it) } ?: "—",
     )
     Row(
         Modifier.width(totalWidth)
