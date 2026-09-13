@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.78.3
+
+- Flow view: new "Tiles" option lays the miners out as a 2×2–8×8 grid (or the classic
+  single row); the choice is remembered.
+- Flow view: the block caption now shows how long ago the tip block was found.
+- 3D fleet view: name and IP are full-width rows on each machine face and much larger,
+  uptime is shown above the metrics, and hashrate + temp share one line at the bottom.
+  Uptime also appears in the selected-miner readout.
+
 ## 0.78.2
 
 - 3D fleet view: the hashrate and chip-temp readout under each fan is now much larger and
