@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.77.7
+
+- **3D fleet view (Flow → 3D).** Orbit your whole fleet in 3D — drag to rotate, pinch to
+  zoom. Miners with rack locations sit in their real racks; the rest fill virtual racks
+  (choose 2×2 up to 8×8) ordered by IP, or cluster by farm. Tap any unit for its stats.
+- **FLIR thermal mode.** One tap turns the 3D view into a thermal camera: ironbow or
+  white-hot palette over live chip temps, heat bloom, and a crosshair on your hottest miner.
+
 ## 0.77.6
 
 - **Two new home-screen widgets.** "Hashrate sources" compares your fleet's rate as local
