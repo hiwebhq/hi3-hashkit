@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.77.5
+
+- **Reorder the dashboard.** Settings → Display → "Dashboard card order" arranges the
+  main page's blocks — including the miner list itself, so Pool and MMP stats can sit
+  below your miners. Your order persists and is included in backups.
+
 ## 0.77.1
 
 - **Site Map: Scan miners (API).** After a capture walk, one tap probes every collected
