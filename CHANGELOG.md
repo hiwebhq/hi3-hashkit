@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.76.13
+
+- **NerdQAxe autotune.** The autotune sweep now works on NerdQAxe machines (incl.
+  NerdQAxe++), using the device's own approved frequency/voltage lists — with support for
+  OTP-protected firmwares (enter your TOTP code; a session token is minted and reused).
+- **Fleet table: MHz & mV columns.** Live frequency and core voltage per miner, sortable;
+  firmwares that don't report tune values show a dash.
+
 ## 0.76.12
 
 - **Event logs for every miner.** Avalon, Braiins OS and Antminer-class miners now get an
