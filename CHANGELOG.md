@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.76.14
+
+- **Hammer-class miners: live logs & reboot.** Lucky-Miner-style BC01 forks (like the
+  Hi3Hammer) now stream real firmware logs into the Log Analyzer and support the Reboot
+  control — both verified on-device. Tuning and pool/fan writes stay off until their
+  endpoints can be verified.
+
 ## 0.76.13
 
 - **NerdQAxe autotune.** The autotune sweep now works on NerdQAxe machines (incl.
