@@ -1,13 +1,20 @@
 # Project overrides on top of detekt's defaults (buildUponDefaultConfig = true).
 naming:
+  FunctionNaming:
+    # Composable functions are PascalCase by convention.
+    ignoreAnnotated: ['Composable']
   PackageNaming:
     # Default pattern forbids digits in the first segment; this app lives under `hi3.*`.
     packagePattern: '[a-z][a-z0-9]*(\.[a-z][A-Za-z0-9]*)*'
 
 complexity:
   LongParameterList:
-    # Hilt constructor injection routinely needs more than 7 dependencies.
-    ignoreAnnotated: ['Inject', 'HiltViewModel']
+    # Hilt constructor injection routinely needs more than 7 dependencies, and
+    # Composable functions conventionally take many slot/state parameters.
+    ignoreAnnotated: ['Inject', 'HiltViewModel', 'Composable']
+  TooManyFunctions:
+    # Room DAOs legitimately accumulate one function per query.
+    ignoreAnnotated: ['Dao']
 
 style:
   ReturnCount:

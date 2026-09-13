@@ -63,12 +63,58 @@ class AutotuneViewModel @Inject constructor(
     private val repository: MinerRepository,
     private val controlRepository: ControlRepository,
     private val tuneSweepDao: TuneSweepDao,
+    private val telemetryDao: hi3.hashkit.data.db.TelemetryDao,
 ) : ViewModel() {
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
     private val _state = MutableStateFlow(AutotuneUiState())
     val state: StateFlow<AutotuneUiState> = _state
     private var job: Job? = null
+
+    /** What each observed operating point actually delivered, plus peer standing. */
+    data class TuneInsightsUi(
+        val periods: List<hi3.hashkit.data.db.SettingsPeriodStat>,
+        val bestEfficiency: hi3.hashkit.data.db.SettingsPeriodStat?,
+        val bestHashrate: hi3.hashkit.data.db.SettingsPeriodStat?,
+        /** Percent vs the median same-model peer over 24h; negative = behind. */
+        val peerGapPercent: Double?,
+        val peerCount: Int,
+    )
+
+    private val _insights = MutableStateFlow<TuneInsightsUi?>(null)
+    val insights: StateFlow<TuneInsightsUi?> = _insights
+
+    init {
+        viewModelScope.launch { runCatching { loadInsights() } }
+    }
+
+    private suspend fun loadInsights() {
+        val now = System.currentTimeMillis()
+        val periods = telemetryDao.settingsPeriods(
+            minerId, now - INSIGHTS_WINDOW_MS, INSIGHTS_MIN_SAMPLES,
+        )
+        val me = repository.observeMinerEntity(minerId).first() ?: return
+        val ranked = hi3.hashkit.domain.tune.TuneInsights.rank(periods, me.alertChipTempC)
+        val daySince = now - PEER_WINDOW_MS
+        val peers = repository.observeMinerEntities().first().filter {
+            it.id != minerId && !it.isDemo && it.model != null && it.model == me.model
+        }
+        val peerAvgs = peers.mapNotNull { repository.avgHashrateSince(it.id, daySince) }
+        val gap = hi3.hashkit.domain.tune.TuneInsights.peerGapPercent(
+            repository.avgHashrateSince(minerId, daySince), peerAvgs,
+        )
+        // Publish only when there's something to show; the screen renders nothing for null.
+        if (ranked.periods.isNotEmpty() || gap != null) {
+            _insights.value = TuneInsightsUi(
+                periods = ranked.periods,
+                bestEfficiency = ranked.bestEfficiency,
+                bestHashrate = ranked.bestHashrate,
+                peerGapPercent = gap,
+                peerCount = peerAvgs.size,
+            )
+        }
+    }
+
 
     /** Persisted efficiency curve across all past sweeps for this miner. */
     val optimizer: StateFlow<TuneOptimizer.Summary> =
@@ -222,6 +268,11 @@ class AutotuneViewModel @Inject constructor(
          */
         fun nearestOption(value: Int, options: List<Int>): Int =
             options.minByOrNull { kotlin.math.abs(it - value) } ?: value
+
+        private const val INSIGHTS_WINDOW_MS = 7L * 86_400_000L
+        /** ~10 minutes at 15 s polling before an operating point counts. */
+        private const val INSIGHTS_MIN_SAMPLES = 40
+        private const val PEER_WINDOW_MS = 86_400_000L
     }
 
     fun cancel() {

@@ -85,6 +85,14 @@ class MinerRepository @Inject constructor(
         telemetryDao.pruneRawBefore(now - RAW_RETENTION_MS)
     }
 
+    /** Sample-weighted average hashrate (GH/s) from the hourly rollups since [sinceEpochMs]. */
+    suspend fun avgHashrateSince(minerId: Long, sinceEpochMs: Long): Double? {
+        val rows = hourlyDao?.listSince(minerId, sinceEpochMs) ?: return null
+        val weight = rows.filter { it.avgHashrateGhs != null }.sumOf { it.samples }
+        if (weight <= 0) return null
+        return rows.sumOf { (it.avgHashrateGhs ?: 0.0) * it.samples } / weight
+    }
+
     /** Stored identity fields of a miner, for capability checks without a network call. */
     fun identityOf(entity: MinerEntity): MinerIdentity = MinerIdentity(
         macAddress = entity.macAddress,

@@ -123,6 +123,21 @@ interface TelemetryDao {
     suspend fun oldestSampleTimestamp(minerId: Long): Long?
 
     /**
+     * Aggregate online telemetry by the (frequency, voltage) the miner was running,
+     * for tune insights: how each observed operating point actually performed.
+     */
+    @Query(
+        "SELECT frequencyMhz, coreVoltageMv, COUNT(*) AS samples, " +
+            "AVG(hashrateGhs) AS avgHashrateGhs, AVG(powerW) AS avgPowerW, " +
+            "AVG(efficiencyJTh) AS avgEfficiencyJTh, MAX(chipTempC) AS maxChipTempC " +
+            "FROM telemetry_samples WHERE minerId = :minerId AND timestampEpochMs >= :sinceEpochMs " +
+            "AND frequencyMhz IS NOT NULL AND coreVoltageMv IS NOT NULL AND status = 'ONLINE' " +
+            "GROUP BY frequencyMhz, coreVoltageMv HAVING COUNT(*) >= :minSamples " +
+            "ORDER BY COUNT(*) DESC"
+    )
+    suspend fun settingsPeriods(minerId: Long, sinceEpochMs: Long, minSamples: Int): List<SettingsPeriodStat>
+
+    /**
      * All miners' hashrate samples since [since], for the fleet trend chart. One-shot
      * (recomputed per poll cycle) rather than a Flow, to avoid rebucketing on every
      * per-miner insert.

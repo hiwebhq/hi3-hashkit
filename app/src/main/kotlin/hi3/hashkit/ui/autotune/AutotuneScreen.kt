@@ -2,6 +2,7 @@ package hi3.hashkit.ui.autotune
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,6 +50,7 @@ fun AutotuneScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val optimizer by viewModel.optimizer.collectAsStateWithLifecycle()
+    val insights by viewModel.insights.collectAsStateWithLifecycle()
     var settle by remember { mutableStateOf(60) }
     var maxTemp by remember { mutableStateOf(70) }
     var optimizeHashrate by remember { mutableStateOf(false) }
@@ -87,32 +89,15 @@ fun AutotuneScreen(
                 item { Text(state.message ?: "Not supported on this miner.", color = HiBrand.statusDegraded) }
                 return@LazyColumn
             }
+            insights?.let { ins -> item { TuneInsightsCard(ins) } }
             item {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text("Settle per step", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    listOf(60, 90, 120).forEach { s ->
-                        FilterChip(
-                            selected = settle == s,
-                            onClick = { settle = s },
-                            enabled = !state.running,
-                            label = { Text("${s}s") },
-                            modifier = Modifier.padding(start = 6.dp),
-                        )
-                    }
+                IntChipRow("Settle per step", listOf(60, 90, 120), settle, !state.running, "s") {
+                    settle = it
                 }
             }
             item {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text("Temp ceiling", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    listOf(65, 70, 75).forEach { c ->
-                        FilterChip(
-                            selected = maxTemp == c,
-                            onClick = { maxTemp = c },
-                            enabled = !state.running,
-                            label = { Text("${c}°C") },
-                            modifier = Modifier.padding(start = 6.dp),
-                        )
-                    }
+                IntChipRow("Temp ceiling", listOf(65, 70, 75), maxTemp, !state.running, "°C") {
+                    maxTemp = it
                 }
             }
             item {
@@ -248,6 +233,80 @@ private fun ResultRow(r: TuneResult, isBest: Boolean) {
                 style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold,
                 color = if (isBest) HiBrand.accent else HiBrand.textPrimary,
             )
+        }
+    }
+}
+
+/** Approximate seconds represented by one telemetry sample (default poll cadence). */
+private const val SECONDS_PER_SAMPLE = 15.0
+private const val SECONDS_PER_HOUR = 3600.0
+private const val GHS_PER_THS = 1000.0
+private const val PEER_LAG_WARN_PCT = -10.0
+
+@Composable
+private fun IntChipRow(
+    label: String,
+    options: List<Int>,
+    selected: Int,
+    enabled: Boolean,
+    suffix: String,
+    onSelect: (Int) -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        options.forEach { v ->
+            FilterChip(
+                selected = selected == v,
+                onClick = { onSelect(v) },
+                enabled = enabled,
+                label = { Text("$v$suffix") },
+                modifier = Modifier.padding(start = 6.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun TuneInsightsCard(ins: AutotuneViewModel.TuneInsightsUi) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(Modifier.padding(14.dp)) {
+            Text(
+                "OBSERVED OPERATING POINTS (7 DAYS)",
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
+            ins.periods.forEach { p ->
+                val marks = buildString {
+                    if (p === ins.bestEfficiency) append(" ⚡best J/TH")
+                    if (p === ins.bestHashrate) append(" ▲best rate")
+                }
+                Text(
+                    "%.0f MHz / %.0f mV — %.2f TH/s · %s J/TH · max %s · ≈%.1f h%s".format(
+                        p.frequencyMhz, p.coreVoltageMv,
+                        (p.avgHashrateGhs ?: 0.0) / GHS_PER_THS,
+                        p.avgEfficiencyJTh?.let { "%.1f".format(it) } ?: "—",
+                        p.maxChipTempC?.let { "%.0f°C".format(it) } ?: "—",
+                        p.samples * SECONDS_PER_SAMPLE / SECONDS_PER_HOUR,
+                        marks,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (marks.isNotEmpty()) HiBrand.accent else HiBrand.textPrimary,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+            ins.peerGapPercent?.let { gap ->
+                Text(
+                    "vs same-model peers (${ins.peerCount}): " +
+                        (if (gap >= 0) "+" else "") + "%.1f%% hashrate (24h avg)".format(gap),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (gap < PEER_LAG_WARN_PCT) HiBrand.statusDegraded else HiBrand.textSecondary,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
         }
     }
 }

@@ -644,6 +644,12 @@ fun SettingsScreen(
 
                 fun share(intent: android.content.Intent, title: String) =
                     context.launchChooser(intent, title)
+                ActionRow("Fleet report — last 7 days (HTML)") {
+                    viewModel.exportOpsReport(REPORT_WEEK_DAYS) { share(it, "Fleet report") }
+                }
+                ActionRow("Fleet report — last 30 days (HTML)") {
+                    viewModel.exportOpsReport(REPORT_MONTH_DAYS) { share(it, "Fleet report") }
+                }
                 ActionRow("Export fleet telemetry CSV (last 7 days)") {
                     viewModel.exportFleetCsv { share(it, "Export CSV") }
                 }
@@ -994,3 +1000,6 @@ private fun NumberRow(label: String, initial: String, onCommit: (String) -> Unit
     )
     Spacer(Modifier.height(0.dp))
 }
+
+private const val REPORT_WEEK_DAYS = 7
+private const val REPORT_MONTH_DAYS = 30

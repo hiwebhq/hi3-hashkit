@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CurrencyBitcoin
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Hearing
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.PriceChange
 import androidx.compose.material.icons.filled.Schedule
@@ -61,6 +62,7 @@ private data class AdvancedItem(
     val onClick: () -> Unit,
 )
 
+@Suppress("LongMethod") // a declarative list of feature rows, one entry per Advanced tool
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdvancedScreen(
@@ -80,6 +82,7 @@ fun AdvancedScreen(
     onHashRental: () -> Unit,
     onEnergyCost: () -> Unit,
     onLiveBitcoin: () -> Unit,
+    onSiteMap: () -> Unit,
 ) {
     val items = listOf(
         AdvancedItem(
@@ -143,8 +146,13 @@ fun AdvancedScreen(
             Icons.Filled.Bookmark, onAddressBook,
         ),
         AdvancedItem(
+            "Site Map",
+            "Map buildings/racks/tiers, then capture miners by IP Report button walk",
+            Icons.Filled.Map, onSiteMap,
+        ),
+        AdvancedItem(
             "Rack & site",
-            "Physical rack layout and site map",
+            "Physical rack layout, grouped by each miner's Location",
             Icons.Filled.GridView, onRack,
         ),
         AdvancedItem(

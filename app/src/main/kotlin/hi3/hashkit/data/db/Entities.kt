@@ -117,6 +117,17 @@ data class TelemetrySampleEntity(
     val usingFallbackPool: Boolean?,
 )
 
+/** Aggregated performance at one observed (frequency, voltage) point (not a table). */
+data class SettingsPeriodStat(
+    val frequencyMhz: Double,
+    val coreVoltageMv: Double,
+    val samples: Int,
+    val avgHashrateGhs: Double?,
+    val avgPowerW: Double?,
+    val avgEfficiencyJTh: Double?,
+    val maxChipTempC: Double?,
+)
+
 /** Lightweight projection for the fleet trend chart (not a table). */
 data class FleetSamplePoint(
     val minerId: Long,

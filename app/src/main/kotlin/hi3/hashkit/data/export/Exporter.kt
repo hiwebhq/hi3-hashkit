@@ -36,6 +36,8 @@ class Exporter @Inject constructor(
     private val ruleDao: hi3.hashkit.data.db.RuleDao,
     private val savedPoolDao: hi3.hashkit.data.db.SavedPoolDao,
     private val settingsRepository: hi3.hashkit.data.prefs.SettingsRepository,
+    private val hourlyDao: hi3.hashkit.data.db.HourlyDao,
+    private val alertDao: hi3.hashkit.data.db.AlertDao,
     private val pollingEngine: hi3.hashkit.data.poll.PollingEngine? = null,
 ) {
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
@@ -424,6 +426,51 @@ class Exporter @Inject constructor(
             " imported (identity re-verifies on next poll)."
     }
 
+    // -------------------------------------------------------------- ops report ----
+
+    /** Fleet operations report over the last [days] days as a self-contained HTML file. */
+    suspend fun opsReport(days: Int): File = withContext(Dispatchers.IO) {
+        val since = System.currentTimeMillis() - days * DAY_MS
+        val settings = settingsRepository.current()
+        val miners = minerDao.observeAll().first().filter { !it.isDemo }
+        val alerts = alertDao.eventsSince(since)
+        val alertsByMiner = alerts.groupingBy { it.minerId }.eachCount()
+        val rows = miners.map { m ->
+            val hours = hourlyDao.listSince(m.id, since)
+            val samples = hours.sumOf { it.samples }
+            val online = hours.sumOf { it.onlineSamples }
+            // Weight hourly averages by their sample counts so sparse hours don't skew.
+            val rateWeight = hours.filter { it.avgHashrateGhs != null }.sumOf { it.samples }
+            val avgRate = if (rateWeight > 0) {
+                hours.sumOf { (it.avgHashrateGhs ?: 0.0) * it.samples } / rateWeight
+            } else null
+            OpsReport.MinerRow(
+                name = m.name,
+                model = m.model,
+                uptimePct = if (samples > 0) online * 100.0 / samples else null,
+                avgHashrateGhs = avgRate,
+                expectedHashrateGhs = m.expectedHashrateGhs,
+                maxChipTempC = hours.mapNotNull { it.maxChipTempC }.maxOrNull(),
+                energyKwh = hours.mapNotNull { it.energyWh }.takeIf { it.isNotEmpty() }?.sum()?.div(WH_PER_KWH),
+                alertCount = alertsByMiner[m.id] ?: 0,
+            )
+        }
+        val html = OpsReport.html(
+            OpsReport.Inputs(
+                periodDays = days,
+                generatedAtEpochMs = System.currentTimeMillis(),
+                miners = rows,
+                alertsByType = alerts.groupingBy { it.type }.eachCount()
+                    .entries.sortedByDescending { it.value }.map { it.key to it.value },
+                electricityRatePerKwh = settings.electricityRatePerKwh,
+                currencyCode = settings.currencyCode,
+            )
+        )
+        val file = exportFile("hi3-report-${timestamp()}-${days}d.html")
+        file.writeText(html)
+        file
+    }
+
     // -------------------------------------------------------------- diagnostics ----
 
     /** Support bundle. IP addresses are redacted unless the user opts in. */
@@ -491,5 +538,7 @@ class Exporter @Inject constructor(
     companion object {
         /** 1: miners+schedules; 2: +maintenance notes/photos; 3: +farms/pools/rules/settings. */
         const val CURRENT_BACKUP_FORMAT = 3
+        private const val DAY_MS = 86_400_000L
+        private const val WH_PER_KWH = 1000.0
     }
 }

@@ -204,58 +204,66 @@ fun TableScreen(
         viewModel.clearHighlight()
     }
     val totalWidth = COLUMNS.sumOf { it.width }.dp
+    // Landscape: drop all chrome so the machines table itself gets the whole screen
+    // (the system back gesture still exits; rotate back for search/print/scan tools).
+    val landscape = androidx.compose.ui.platform.LocalConfiguration.current.orientation ==
+        android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Fleet table", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
-            )
+            if (!landscape) {
+                TopAppBar(
+                    title = { Text("Fleet table", fontWeight = FontWeight.Bold) },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
+                )
+            }
         },
         containerColor = HiBrand.background,
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            OutlinedTextField(
-                value = state.query,
-                onValueChange = viewModel::setQuery,
-                label = { Text("Filter (name, IP, model, pool)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-            )
             val context = androidx.compose.ui.platform.LocalContext.current
-            androidx.compose.foundation.layout.FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-            ) {
-                if (state.inventoryTagType.showQr) {
-                    androidx.compose.material3.OutlinedButton(
-                        onClick = { showPrintSize = true },
-                        enabled = state.miners.isNotEmpty(),
-                    ) { Text("Print QR codes") }
-                }
-                if (state.advancedUnlocked) {
-                    if (state.inventoryTagType.showNfc) {
+            if (!landscape) {
+                OutlinedTextField(
+                    value = state.query,
+                    onValueChange = viewModel::setQuery,
+                    label = { Text("Filter (name, IP, model, pool)") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                )
+                androidx.compose.foundation.layout.FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                ) {
+                    if (state.inventoryTagType.showQr) {
                         androidx.compose.material3.OutlinedButton(
-                            onClick = { onProgramNfc(state.miners.map { it.id }) },
+                            onClick = { showPrintSize = true },
                             enabled = state.miners.isNotEmpty(),
-                        ) { Text("Program NFC tags") }
+                        ) { Text("Print QR codes") }
                     }
-                    androidx.compose.material3.OutlinedButton(
-                        onClick = onScan,
-                    ) { Text(if (state.inventoryTagType.showQr) "Scan tag / QR" else "Scan NFC") }
+                    if (state.advancedUnlocked) {
+                        if (state.inventoryTagType.showNfc) {
+                            androidx.compose.material3.OutlinedButton(
+                                onClick = { onProgramNfc(state.miners.map { it.id }) },
+                                enabled = state.miners.isNotEmpty(),
+                            ) { Text("Program NFC tags") }
+                        }
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = onScan,
+                        ) { Text(if (state.inventoryTagType.showQr) "Scan tag / QR" else "Scan NFC") }
+                    }
                 }
+                Text(
+                    "${state.miners.size} tag(s) · scannable in the AR rack overlay",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                )
             }
-            Text(
-                "${state.miners.size} tag(s) · scannable in the AR rack overlay",
-                style = MaterialTheme.typography.labelSmall,
-                color = HiBrand.textSecondary,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            )
             Column(Modifier.horizontalScroll(hScroll)) {
                 // Header
                 Row(

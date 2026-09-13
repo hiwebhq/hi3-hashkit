@@ -360,7 +360,11 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
                 onHashRental = { nav.navigate("hashrental") },
                 onEnergyCost = { nav.navigate("energycost") },
                 onLiveBitcoin = { context.openUrl("https://hi3.cc/bitcoin") },
+                onSiteMap = { nav.navigate("sitemap") },
             )
+        }
+        composable("sitemap") {
+            hi3.hashkit.ui.sitemap.SiteMapScreen(onBack = { nav.popBackStack() })
         }
         composable("heatreuse") {
             hi3.hashkit.ui.heat.HeatReuseScreen(onBack = { nav.popBackStack() })

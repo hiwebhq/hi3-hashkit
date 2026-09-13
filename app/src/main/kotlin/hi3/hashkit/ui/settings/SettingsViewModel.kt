@@ -143,6 +143,12 @@ class SettingsViewModel @Inject constructor(
             onReady(exporter.shareIntent(file, "text/plain"))
         }
 
+    fun exportOpsReport(days: Int, onReady: (android.content.Intent) -> Unit) =
+        viewModelScope.launch {
+            val file = exporter.opsReport(days)
+            onReady(exporter.shareIntent(file, "text/html"))
+        }
+
     fun setShowSoloCard(v: Boolean) = viewModelScope.launch { repo.setShowSoloCard(v) }
     fun setShowProfitCard(v: Boolean) = viewModelScope.launch { repo.setShowProfitCard(v) }
     fun setThemeMode(v: hi3.hashkit.ui.theme.ThemeMode) = viewModelScope.launch { repo.setThemeMode(v) }

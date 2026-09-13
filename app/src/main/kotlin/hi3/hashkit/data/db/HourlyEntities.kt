@@ -43,6 +43,12 @@ interface HourlyDao {
     )
     fun observeSince(minerId: Long, sinceEpochMs: Long): Flow<List<TelemetryHourlyEntity>>
 
+    @Query(
+        "SELECT * FROM telemetry_hourly WHERE minerId = :minerId AND hourStartEpochMs >= :sinceEpochMs " +
+            "ORDER BY hourStartEpochMs"
+    )
+    suspend fun listSince(minerId: Long, sinceEpochMs: Long): List<TelemetryHourlyEntity>
+
     @Query("SELECT MAX(hourStartEpochMs) FROM telemetry_hourly WHERE minerId = :minerId")
     suspend fun highWaterMark(minerId: Long): Long?
 

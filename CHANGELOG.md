@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.77.0
+
+- **Site Map (Advanced).** Commission a whole site by walking the racks: define
+  buildings / racks / tiers / positions, hit Start, and press each miner's IP Report
+  button — the app hears the UDP broadcast, acks it (the miner blinks green), beeps,
+  fills the map slot with the miner's last octet, and advances to the next position
+  (Tier 1 left→right, up the rack, next rack). Pause/Stop, Undo, Skip-slot and Manual
+  IP entry included. Results export as CSV or save straight to a Farm, writing each
+  miner's B/R/T/P location code so Rack & site groups them. Supports Bitmain Antminer
+  (S9–S21 era) on stock firmware, Braiins OS and LuxOS.
+
 ## 0.76.14
 
 - **Hammer-class miners: live logs & reboot.** Lucky-Miner-style BC01 forks (like the
