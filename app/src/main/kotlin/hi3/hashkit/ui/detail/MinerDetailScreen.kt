@@ -436,17 +436,33 @@ fun MinerDetailScreen(
                 }
             }
 
-            // VNish / stock Bitmain controls authenticate with the miner's web password.
+            // VNish / stock Bitmain controls authenticate with the miner's web password;
+            // NerdQAxe optionally protects writes with TOTP (the secret from its enrollment QR).
             val fw = miner.identity.firmwareFamily?.lowercase() ?: ""
-            val needsLogin = "vnish" in fw || "bitmain" in fw
-            val loginLabel = if ("bitmain" in fw) "Root web password" else "VNish web password"
+            val model = miner.identity.model ?: ""
+            val isNerdQaxe = model.contains("NerdQAxe", ignoreCase = true) ||
+                model.contains("NerdAxe", ignoreCase = true)
+            val needsLogin = "vnish" in fw || "bitmain" in fw || isNerdQaxe
+            val loginLabel = when {
+                isNerdQaxe -> "TOTP secret (base32)"
+                "bitmain" in fw -> "Root web password"
+                else -> "VNish web password"
+            }
             if (needsLogin) {
                 SectionCard("MINER LOGIN (FOR CONTROLS)") {
                     val credSet by viewModel.credentialSet.collectAsStateWithLifecycle()
                     var pw by remember { mutableStateOf("") }
                     Text(
-                        if (credSet) "A web password is saved (encrypted). Enter a new one to replace it, or clear it."
-                        else "Enter the miner's web password to enable controls. Stored encrypted on this device only.",
+                        when {
+                            credSet -> "A credential is saved (encrypted). Enter a new one to replace it, or clear it."
+                            isNerdQaxe ->
+                                "Only needed if OTP is enabled on the device: enter the TOTP secret " +
+                                    "from its enrollment QR (otpauth://…secret=…) to enable tune/reboot. " +
+                                    "Stored encrypted on this device only."
+                            else ->
+                                "Enter the miner's web password to enable controls. " +
+                                    "Stored encrypted on this device only."
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         color = HiBrand.textSecondary,
                     )

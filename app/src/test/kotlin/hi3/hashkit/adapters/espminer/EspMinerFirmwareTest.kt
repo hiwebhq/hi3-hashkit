@@ -49,6 +49,18 @@ class EspMinerFirmwareTest {
     }
 
     @Test
+    fun `nerdqaxe supports reboot and tune but unknown forks support neither`() {
+        assertTrue(EspMinerFirmware.rebootSupported(EspMinerFlavor.NERDQAXE))
+        assertTrue(EspMinerFirmware.tuneSupported(EspMinerFlavor.NERDQAXE))
+
+        assertFalse(EspMinerFirmware.rebootSupported(EspMinerFlavor.UNKNOWN_FORK))
+        assertFalse(EspMinerFirmware.tuneSupported(EspMinerFlavor.UNKNOWN_FORK))
+
+        assertTrue(EspMinerFirmware.tuneSupported(EspMinerFlavor.OFFICIAL_V2_FLAT_POOLS))
+        assertTrue(EspMinerFirmware.tuneSupported(EspMinerFlavor.OFFICIAL_V2_POOLS_ARRAY))
+    }
+
+    @Test
     fun `official v2 firmware supports controls`() {
         assertTrue(EspMinerFirmware.controlsSupported(EspMinerFirmware.flavorOf(identity("v2.14.2"))))
         assertTrue(EspMinerFirmware.controlsSupported(EspMinerFirmware.flavorOf(identity("v2.15.1"))))

@@ -14,8 +14,10 @@ import hi3.hashkit.domain.model.MinerIdentity
  *    tune via frequency/coreVoltage constrained to GET /api/system/asic options.
  *
  * NerdQAxe (e.g. NerdQAxe++) and other forks share the info endpoint but have
- * unverified control semantics (NerdQAxe's autofanspeed is a mode enum, not a bool) —
- * they stay monitoring-only until verified separately.
+ * partially different control semantics (NerdQAxe's autofanspeed is a mode enum, not a
+ * bool, and pools are saved through its stratum manager) — pool/fan controls stay
+ * disabled until verified separately. Reboot and tune ARE verified on NerdQAxe, see
+ * [rebootSupported] and [tuneSupported].
  */
 enum class EspMinerFlavor {
     OFFICIAL_V2_FLAT_POOLS,
@@ -50,6 +52,17 @@ object EspMinerFirmware {
      * safe on NerdQAxe too — unlike pool/fan/tune whose semantics differ on the fork.
      */
     fun rebootSupported(flavor: EspMinerFlavor): Boolean =
+        controlsSupported(flavor) || flavor == EspMinerFlavor.NERDQAXE
+
+    /**
+     * Frequency/voltage tuning is verified on NerdQAxe firmware (checked against the
+     * tagged v1.1.0 source and a live NerdQAxe++): `GET /api/system/asic` publishes
+     * `frequencyOptions`/`voltageOptions` exactly like official ESP-Miner, and
+     * `PATCH /api/system` accepts `frequency`/`coreVoltage` (handler_system.cpp), which
+     * the power-management task applies live without a restart. Pool/fan semantics
+     * still differ on the fork and remain gated by [controlsSupported].
+     */
+    fun tuneSupported(flavor: EspMinerFlavor): Boolean =
         controlsSupported(flavor) || flavor == EspMinerFlavor.NERDQAXE
 
     const val UNVERIFIED_REASON =

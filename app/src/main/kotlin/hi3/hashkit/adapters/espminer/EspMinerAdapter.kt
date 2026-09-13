@@ -1,5 +1,6 @@
 package hi3.hashkit.adapters.espminer
 
+import hi3.hashkit.core.Totp
 import hi3.hashkit.discovery.MinerHostValidator
 import hi3.hashkit.domain.adapter.ActionResult
 import hi3.hashkit.domain.adapter.FanControl
@@ -24,6 +25,7 @@ import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -43,8 +45,10 @@ import javax.inject.Singleton
  *  - PATCH /api/system          — settings (pools, fan, frequency, coreVoltage)
  *  - POST  /api/system/restart  — reboot
  *
- * Controls are enabled only for official v2.x firmware; forks and NerdQAxe devices are
- * monitoring-only with an explanatory capability reason.
+ * Controls are enabled only for official v2.x firmware; unknown forks are
+ * monitoring-only with an explanatory capability reason. NerdQAxe devices additionally
+ * get reboot, log streaming, and approved-option tuning — the subset verified against
+ * the NerdQAxe firmware source (see EspMinerFirmware).
  */
 @Singleton
 class EspMinerAdapter @Inject constructor(
@@ -101,10 +105,12 @@ class EspMinerAdapter @Inject constructor(
             val base = MinerCapabilities.monitoringOnly(EspMinerFirmware.UNVERIFIED_REASON)
             // Read-only log streaming over /api/ws is verified on NerdQAxe firmware.
             return if (flavor == EspMinerFlavor.NERDQAXE) {
-                // Reboot + log streaming are verified on NerdQAxe; pool/fan/tune differ.
+                // Reboot, log streaming, and approved-option tuning are verified on
+                // NerdQAxe; pool/fan semantics differ and stay disabled.
+                val verified = setOf(Capability.LOGS, Capability.REBOOT, Capability.APPLY_APPROVED_TUNE)
                 base.copy(
-                    supported = base.supported + Capability.LOGS + Capability.REBOOT,
-                    unsupportedReasons = base.unsupportedReasons - Capability.LOGS - Capability.REBOOT,
+                    supported = base.supported + verified,
+                    unsupportedReasons = base.unsupportedReasons - verified,
                 )
             } else base
         }
@@ -144,7 +150,7 @@ class EspMinerAdapter @Inject constructor(
 
     override suspend fun reboot(host: MinerHost): ActionResult =
         gated(host, EspMinerFirmware::rebootSupported) { _, _ ->
-            when (val r = send(host, "POST", "/api/system/restart", null)) {
+            when (val r = sendAuthed(host, "POST", "/api/system/restart", null)) {
                 is Fetched.Ok -> ActionResult.Success
                 is Fetched.HttpError -> ActionResult.Failure("Restart rejected: HTTP ${r.code}")
                 is Fetched.NetworkError ->
@@ -219,7 +225,7 @@ class EspMinerAdapter @Inject constructor(
         }
 
     override suspend fun applyTune(host: MinerHost, frequencyMhz: Int, coreVoltageMv: Int): ActionResult =
-        gated(host) { _, _ ->
+        gated(host, EspMinerFirmware::tuneSupported) { _, _ ->
             val options = getTuneOptions(host)
                 ?: return@gated ActionResult.Unsupported(
                     "This firmware does not publish approved tune options (/api/system/asic); tuning is disabled."
@@ -266,13 +272,70 @@ class EspMinerAdapter @Inject constructor(
     private fun get(host: MinerHost, path: String): Fetched = send(host, "GET", path, null)
 
     private fun patch(host: MinerHost, payload: JsonObject): Fetched =
-        send(host, "PATCH", "/api/system", payload.toString())
+        sendAuthed(host, "PATCH", "/api/system", payload.toString())
 
-    private fun send(host: MinerHost, method: String, path: String, body: String?): Fetched {
+    // ------------------------------------------------------------ NerdQAxe OTP auth ----
+
+    /** Minted `X-OTP-Session` tokens per host, valid ~24h (see NerdQAxe otp/doc.md). */
+    private val otpSessions = java.util.concurrent.ConcurrentHashMap<String, OtpSession>()
+
+    private data class OtpSession(val token: String, val expiresAtMs: Long)
+
+    /**
+     * Write path with NerdQAxe OTP handling. NerdQAxe firmware can protect all settings
+     * writes with TOTP (RFC 6238, SHA-1/6-digit/30 s — verified in the v1.1.0 source,
+     * otp.cpp): with OTP enabled every write needs an `X-TOTP` code or an `X-OTP-Session`
+     * token from `POST /api/v2/otp/session`. The miner's stored admin credential is the
+     * base32 TOTP secret; on a 401 we mint a session token from it and retry once.
+     * Official firmware and OTP-disabled NerdQAxe never return 401, so this is a no-op
+     * for them.
+     */
+    private fun sendAuthed(host: MinerHost, method: String, path: String, body: String?): Fetched {
+        val key = "${host.host}:${host.port}"
+        val cached = otpSessions[key]?.takeIf { it.expiresAtMs > System.currentTimeMillis() }
+        val headers = cached?.let { mapOf(HEADER_OTP_SESSION to it.token) }.orEmpty()
+        val first = send(host, method, path, body, headers)
+        if (first !is Fetched.HttpError || first.code != HTTP_UNAUTHORIZED) return first
+        val secret = host.secret?.takeIf { it.isNotBlank() } ?: return first
+        val token = mintOtpSession(host, secret) ?: return first
+        return send(host, method, path, body, mapOf(HEADER_OTP_SESSION to token))
+    }
+
+    /**
+     * Trade a fresh TOTP code for a session token; caches it per host. Null on failure.
+     * Both path layouts exist in the wild — current builds serve /api/otp/session
+     * (verified on a live NerdQAxe++ reporting v1.1.0), while the tagged v1.1.0 source
+     * registers /api/v2/otp/session — so try them in that order.
+     */
+    private fun mintOtpSession(host: MinerHost, secretBase32: String): String? {
+        val code = Totp.code(secretBase32) ?: return null
+        return OTP_SESSION_PATHS.firstNotNullOfOrNull { path -> requestSessionToken(host, path, code) }
+    }
+
+    private fun requestSessionToken(host: MinerHost, path: String, totpCode: String): String? {
+        val response = send(host, "POST", path, null, mapOf("X-TOTP" to totpCode))
+        val body = (response as? Fetched.Ok)?.body ?: return null
+        val obj = runCatching { json.parseToJsonElement(body).jsonObject }.getOrNull() ?: return null
+        val token = (obj["token"] as? JsonPrimitive)?.content?.takeIf { it.isNotBlank() } ?: return null
+        val ttlMs = (obj["ttlMs"] as? JsonPrimitive)?.longOrNull ?: DEFAULT_OTP_TTL_MS
+        // Renew a minute early so a token never expires mid-request.
+        otpSessions["${host.host}:${host.port}"] =
+            OtpSession(token, System.currentTimeMillis() + ttlMs - SESSION_RENEW_MARGIN_MS)
+        return token
+    }
+
+    private fun send(
+        host: MinerHost,
+        method: String,
+        path: String,
+        body: String?,
+        headers: Map<String, String> = emptyMap(),
+    ): Fetched {
         if (!MinerHostValidator.resolvesToAllowed(host.host)) {
             return Fetched.NetworkError("Refused: ${host.host} is not a private/Tailscale address")
         }
         val builder = Request.Builder().url("http://${host.host}:${host.port}$path")
+        headers.forEach { (name, value) -> builder.header(name, value) }
         when (method) {
             "GET" -> builder.get()
             "POST" -> builder.post((body ?: "").toRequestBody(JSON_TYPE))
@@ -290,7 +353,13 @@ class EspMinerAdapter @Inject constructor(
 
     private fun Fetched.toActionResult(): ActionResult = when (this) {
         is Fetched.Ok -> ActionResult.Success
-        is Fetched.HttpError -> ActionResult.Failure("Miner rejected the change: HTTP $code")
+        is Fetched.HttpError ->
+            if (code == HTTP_UNAUTHORIZED) ActionResult.Failure(
+                "Miner rejected the change: HTTP 401 (authentication). If this device has " +
+                    "OTP enabled, save its TOTP secret (from the enrollment QR) as the " +
+                    "miner's admin credential."
+            )
+            else ActionResult.Failure("Miner rejected the change: HTTP $code")
         is Fetched.NetworkError -> ActionResult.Failure("Network error: $cause")
     }
 
@@ -309,5 +378,10 @@ class EspMinerAdapter @Inject constructor(
     companion object {
         const val TYPE = "espminer"
         private val JSON_TYPE = "application/json".toMediaType()
+        private const val HEADER_OTP_SESSION = "X-OTP-Session"
+        private const val HTTP_UNAUTHORIZED = 401
+        private const val DEFAULT_OTP_TTL_MS = 24 * 3600 * 1000L
+        private const val SESSION_RENEW_MARGIN_MS = 60_000L
+        private val OTP_SESSION_PATHS = listOf("/api/otp/session", "/api/v2/otp/session")
     }
 }

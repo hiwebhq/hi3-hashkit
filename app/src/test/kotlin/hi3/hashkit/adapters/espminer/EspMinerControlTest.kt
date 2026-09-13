@@ -45,7 +45,7 @@ class EspMinerControlTest {
         server.shutdown()
     }
 
-    private fun host() = MinerHost("127.0.0.1", server.port)
+    private fun host(credential: String? = null) = MinerHost("127.0.0.1", server.port, credential)
 
     @Test
     fun `v2_15 pool edit echoes masked passwords and edits only the primary pool`() = runTest {
@@ -103,11 +103,34 @@ class EspMinerControlTest {
     }
 
     @Test
-    fun `controls are refused on nerdqaxe firmware`() = runTest {
+    fun `pool and fan controls are refused on nerdqaxe firmware`() = runTest {
         server.enqueue(MockResponse().setBody(fixture("real_bm1370_v1.1.0.json")))
         val result = adapter.setFan(host(), FanControl.Manual(80))
         assertTrue(result is ActionResult.Unsupported)
         assertEquals(1, server.requestCount)
+    }
+
+    @Test
+    fun `tune applies approved values on nerdqaxe firmware`() = runTest {
+        // NerdQAxe v1.1.0: PATCH frequency/coreVoltage is verified (applied live by the
+        // power-management task), and /api/system/asic publishes the approved options.
+        server.enqueue(MockResponse().setBody(fixture("real_bm1370_v1.1.0.json"))) // gate
+        server.enqueue(
+            MockResponse().setBody(
+                """{"frequencyOptions":[500,600,750],"voltageOptions":[1200,1260]}"""
+            )
+        ) // asic options
+        server.enqueue(MockResponse().setBody("{}")) // PATCH response
+
+        val result = adapter.applyTune(host(), 600, 1200)
+        assertTrue(result is ActionResult.Success)
+        server.takeRequest(); server.takeRequest()
+        val patch = server.takeRequest()
+        assertEquals("PATCH", patch.method)
+        assertEquals("/api/system", patch.path)
+        val body = json.parseToJsonElement(patch.body.readUtf8()).jsonObject
+        assertEquals("600", body["frequency"]!!.jsonPrimitive.content)
+        assertEquals("1200", body["coreVoltage"]!!.jsonPrimitive.content)
     }
 
     @Test
@@ -142,6 +165,59 @@ class EspMinerControlTest {
         val body = json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
         assertEquals("490", body["frequency"]!!.jsonPrimitive.content)
         assertEquals("1150", body["coreVoltage"]!!.jsonPrimitive.content)
+    }
+
+    @Test
+    fun `tune on otp-protected nerdqaxe mints a session token and retries, then reuses it`() = runTest {
+        val secret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
+        val asicOptions = """{"frequencyOptions":[500,600,750],"voltageOptions":[1200,1260]}"""
+
+        // First tune: PATCH is refused with 401, a session is minted, PATCH retried.
+        server.enqueue(MockResponse().setBody(fixture("real_bm1370_v1.1.0.json"))) // gate
+        server.enqueue(MockResponse().setBody(asicOptions)) // asic options
+        server.enqueue(MockResponse().setResponseCode(401)) // PATCH → OTP required
+        server.enqueue(MockResponse().setBody("""{"token":"SESSTOKEN.ABC","ttlMs":86400000}"""))
+        server.enqueue(MockResponse().setBody("{}")) // retried PATCH
+
+        val result = adapter.applyTune(host(credential = secret), 600, 1200)
+        assertTrue(result is ActionResult.Success)
+
+        server.takeRequest(); server.takeRequest() // gate GET, asic GET
+        val refused = server.takeRequest()
+        assertEquals("PATCH", refused.method)
+        assertEquals(null, refused.getHeader("X-OTP-Session"))
+        val mint = server.takeRequest()
+        assertEquals("POST", mint.method)
+        assertEquals("/api/otp/session", mint.path)
+        // A 6-digit TOTP code computed from the stored secret.
+        assertTrue(mint.getHeader("X-TOTP")!!.matches(Regex("\\d{6}")))
+        val retried = server.takeRequest()
+        assertEquals("PATCH", retried.method)
+        assertEquals("SESSTOKEN.ABC", retried.getHeader("X-OTP-Session"))
+
+        // Second tune: the cached session token is attached up front — no 401 round trip.
+        server.enqueue(MockResponse().setBody(fixture("real_bm1370_v1.1.0.json")))
+        server.enqueue(MockResponse().setBody(asicOptions))
+        server.enqueue(MockResponse().setBody("{}"))
+        assertTrue(adapter.applyTune(host(credential = secret), 750, 1260) is ActionResult.Success)
+        server.takeRequest(); server.takeRequest()
+        assertEquals("SESSTOKEN.ABC", server.takeRequest().getHeader("X-OTP-Session"))
+    }
+
+    @Test
+    fun `tune on otp-protected nerdqaxe without a stored secret fails with guidance`() = runTest {
+        server.enqueue(MockResponse().setBody(fixture("real_bm1370_v1.1.0.json")))
+        server.enqueue(
+            MockResponse().setBody(
+                """{"frequencyOptions":[500,600,750],"voltageOptions":[1200,1260]}"""
+            )
+        )
+        server.enqueue(MockResponse().setResponseCode(401))
+
+        val result = adapter.applyTune(host(), 600, 1200)
+        assertTrue(result is ActionResult.Failure)
+        assertTrue((result as ActionResult.Failure).message.contains("TOTP secret"))
+        assertEquals(3, server.requestCount) // no session mint was attempted
     }
 
     @Test
