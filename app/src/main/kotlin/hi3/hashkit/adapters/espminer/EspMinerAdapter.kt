@@ -104,15 +104,20 @@ class EspMinerAdapter @Inject constructor(
         if (!EspMinerFirmware.controlsSupported(flavor)) {
             val base = MinerCapabilities.monitoringOnly(EspMinerFirmware.UNVERIFIED_REASON)
             // Read-only log streaming over /api/ws is verified on NerdQAxe firmware.
-            return if (flavor == EspMinerFlavor.NERDQAXE) {
+            val verified = when (flavor) {
                 // Reboot, log streaming, and approved-option tuning are verified on
                 // NerdQAxe; pool/fan semantics differ and stay disabled.
-                val verified = setOf(Capability.LOGS, Capability.REBOOT, Capability.APPLY_APPROVED_TUNE)
-                base.copy(
-                    supported = base.supported + verified,
-                    unsupportedReasons = base.unsupportedReasons - verified,
-                )
-            } else base
+                EspMinerFlavor.NERDQAXE ->
+                    setOf(Capability.LOGS, Capability.REBOOT, Capability.APPLY_APPROVED_TUNE)
+                // BC01 Lucky-Miner fork: /api/ws (101) and restart verified live
+                // 2026-09-13; /api/system/asic publishes no tune options, so no tuning.
+                EspMinerFlavor.LUCKY_MINER -> setOf(Capability.LOGS, Capability.REBOOT)
+                else -> emptySet()
+            }
+            return if (verified.isEmpty()) base else base.copy(
+                supported = base.supported + verified,
+                unsupportedReasons = base.unsupportedReasons - verified,
+            )
         }
         return MinerCapabilities(
             supported = setOf(

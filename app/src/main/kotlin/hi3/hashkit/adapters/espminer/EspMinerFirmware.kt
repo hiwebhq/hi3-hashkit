@@ -23,6 +23,8 @@ enum class EspMinerFlavor {
     OFFICIAL_V2_FLAT_POOLS,
     OFFICIAL_V2_POOLS_ARRAY,
     NERDQAXE,
+    /** Lucky-Miner-style BC01 fork (fw "2.0.0 ..."), e.g. the Hi3Hammer unit. */
+    LUCKY_MINER,
     UNKNOWN_FORK,
 }
 
@@ -35,6 +37,10 @@ object EspMinerFirmware {
         ) {
             return EspMinerFlavor.NERDQAXE
         }
+        // Lucky-Miner-style BC01 fork: DeviceModel "BC01", non-v-prefixed "2.0.0 ..." version.
+        // Verified live 2026-09-13 (BC01 fw 2.0.0 20260418): /api/ws streams logs (101) and
+        // POST /api/system/restart reboots (uptime reset observed twice).
+        if (model.contains("BC01", ignoreCase = true)) return EspMinerFlavor.LUCKY_MINER
         val version = identity?.firmwareVersion.orEmpty()
         val match = Regex("^v2\\.(\\d+)").find(version) ?: return EspMinerFlavor.UNKNOWN_FORK
         val minor = match.groupValues[1].toIntOrNull() ?: return EspMinerFlavor.UNKNOWN_FORK
@@ -44,15 +50,17 @@ object EspMinerFirmware {
 
     fun controlsSupported(flavor: EspMinerFlavor): Boolean = when (flavor) {
         EspMinerFlavor.OFFICIAL_V2_FLAT_POOLS, EspMinerFlavor.OFFICIAL_V2_POOLS_ARRAY -> true
-        EspMinerFlavor.NERDQAXE, EspMinerFlavor.UNKNOWN_FORK -> false
+        EspMinerFlavor.NERDQAXE, EspMinerFlavor.LUCKY_MINER, EspMinerFlavor.UNKNOWN_FORK -> false
     }
 
     /**
      * Reboot (`POST /api/system/restart`) is inherited unchanged from ESP-Miner, so it's
-     * safe on NerdQAxe too — unlike pool/fan/tune whose semantics differ on the fork.
+     * safe on NerdQAxe (verified live) and the BC01 Lucky-Miner fork (verified live) —
+     * unlike pool/fan/tune whose semantics differ on forks.
      */
     fun rebootSupported(flavor: EspMinerFlavor): Boolean =
-        controlsSupported(flavor) || flavor == EspMinerFlavor.NERDQAXE
+        controlsSupported(flavor) ||
+            flavor == EspMinerFlavor.NERDQAXE || flavor == EspMinerFlavor.LUCKY_MINER
 
     /**
      * Frequency/voltage tuning is verified on NerdQAxe firmware (checked against the

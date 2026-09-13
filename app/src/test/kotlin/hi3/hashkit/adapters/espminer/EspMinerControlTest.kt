@@ -94,12 +94,19 @@ class EspMinerControlTest {
     }
 
     @Test
-    fun `controls are refused on fork firmware`() = runTest {
+    fun `bc01 fork refuses unverified controls but reboot goes through`() = runTest {
+        // Pool/fan semantics are unverified on this fork — refused after only the gating GET.
         server.enqueue(MockResponse().setBody(fixture("real_variant_2.0.0_string_bestdiff.json")))
-        val result = adapter.reboot(host())
-        assertTrue(result is ActionResult.Unsupported)
-        // Only the gating GET was sent — no restart request reached the miner.
+        val refused = adapter.setFan(host(), FanControl.Manual(80))
+        assertTrue(refused is ActionResult.Unsupported)
         assertEquals(1, server.requestCount)
+
+        // Reboot is live-verified on BC01 (2026-09-13) — the restart POST reaches the miner.
+        server.enqueue(MockResponse().setBody(fixture("real_variant_2.0.0_string_bestdiff.json")))
+        server.enqueue(MockResponse().setBody("{}"))
+        val result = adapter.reboot(host())
+        assertTrue(result is ActionResult.Success)
+        assertEquals(3, server.requestCount)
     }
 
     @Test

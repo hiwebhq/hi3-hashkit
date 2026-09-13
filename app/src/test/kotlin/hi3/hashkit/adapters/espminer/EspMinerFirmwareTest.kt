@@ -49,6 +49,15 @@ class EspMinerFirmwareTest {
     }
 
     @Test
+    fun `bc01 lucky-miner fork gets reboot but not the full control set`() {
+        // Matches the live-verified Hi3Hammer unit (DeviceModel BC01, fw "2.0.0 20260418").
+        val lucky = EspMinerFirmware.flavorOf(identity("2.0.0 20260418", model = "BC01"))
+        assertEquals(EspMinerFlavor.LUCKY_MINER, lucky)
+        assertFalse(EspMinerFirmware.controlsSupported(lucky))
+        assertTrue(EspMinerFirmware.rebootSupported(lucky))
+    }
+
+    @Test
     fun `nerdqaxe supports reboot and tune but unknown forks support neither`() {
         assertTrue(EspMinerFirmware.rebootSupported(EspMinerFlavor.NERDQAXE))
         assertTrue(EspMinerFirmware.tuneSupported(EspMinerFlavor.NERDQAXE))
