@@ -186,16 +186,14 @@ private fun Fleet3DControls(
             )
         }
         FilterChip(selected = tour, onClick = { onTour(!tour) }, label = { Text("Tour") })
-        // Tap cycles the virtual rack size 2×2 → … → 8×8 → 2×2.
-        FilterChip(
-            selected = false,
-            onClick = {
-                onRackSize(
-                    if (rackSize >= Fleet3D.RACK_SIZE_MAX) Fleet3D.RACK_SIZE_MIN else rackSize + 1
-                )
-            },
-            label = { Text("${rackSize}×$rackSize") },
-        )
+        // Virtual rack size: pick any 2×2 … 8×8 directly.
+        for (n in Fleet3D.RACK_SIZE_MIN..Fleet3D.RACK_SIZE_MAX) {
+            FilterChip(
+                selected = rackSize == n,
+                onClick = { onRackSize(n) },
+                label = { Text("$n×$n") },
+            )
+        }
     }
 }
 
@@ -302,7 +300,7 @@ private fun DrawScope.drawUnitBox(
                 )
             }
         }
-    drawFan(corners, unit, flir, timeMs)
+    drawEndFaces(corners, unit, flir, timeMs)
     drawSideLabels(corners, unit, flir)
 }
 
@@ -312,14 +310,38 @@ private fun faceForward(corners: List<Fleet3D.Projected>, quad: IntArray): Boole
     return quad.map { corners[it].depth }.average() > centerDepth
 }
 
-/** Spinning intake fan on the front face — RPM-driven, frozen when the miner is off. */
-private fun DrawScope.drawFan(
+/**
+ * End faces of the machine: FRONT and BACK each carry a spinning intake/exhaust fan
+ * (RPM-driven, frozen when the miner is off) with the live telemetry readout painted
+ * below it. `bottom`/`top` are the corner pairs of that face's bottom and top edges,
+ * used to find the face's "up" direction on screen.
+ */
+private val END_FACES = listOf(
+    Triple(FACES[1], intArrayOf(4, 5), intArrayOf(6, 7)), // front
+    Triple(FACES[0], intArrayOf(0, 1), intArrayOf(2, 3)), // back
+)
+
+private fun DrawScope.drawEndFaces(
     corners: List<Fleet3D.Projected>,
     unit: Unit3DUi,
     flir: Boolean,
     timeMs: Long,
 ) {
-    val quad = FACES[1] // front
+    for ((quad, bottom, top) in END_FACES) {
+        drawEndFace(corners, unit, flir, timeMs, quad, bottom, top)
+    }
+}
+
+@Suppress("LongParameterList") // face renderer needs the box's full display state
+private fun DrawScope.drawEndFace(
+    corners: List<Fleet3D.Projected>,
+    unit: Unit3DUi,
+    flir: Boolean,
+    timeMs: Long,
+    quad: IntArray,
+    bottom: IntArray,
+    top: IntArray,
+) {
     if (!faceForward(corners, quad)) return
     val fx = quad.map { corners[it].x }.average().toFloat()
     val fy = quad.map { corners[it].y }.average().toFloat()
@@ -328,8 +350,12 @@ private fun DrawScope.drawFan(
         corners[quad[1]].y - corners[quad[0]].y,
     )
     if (edge < FAN_MIN_EDGE_PX) return
-    val r = edge * 0.32f
-    val center = Offset(fx, fy)
+    // Face-local "up" on screen: bottom-edge midpoint -> top-edge midpoint.
+    val upX = (corners[top[0]].x + corners[top[1]].x) / 2f - (corners[bottom[0]].x + corners[bottom[1]].x) / 2f
+    val upY = (corners[top[0]].y + corners[top[1]].y) / 2f - (corners[bottom[0]].y + corners[bottom[1]].y) / 2f
+    // Fan sits in the upper part of the face, leaving the lower part for telemetry.
+    val center = Offset(fx + upX * 0.17f, fy + upY * 0.17f)
+    val r = edge * 0.26f
     // Recessed housing + rim.
     drawCircle(Color.Black.copy(alpha = if (flir) 0.5f else 0.38f), r, center)
     drawCircle(
@@ -358,9 +384,51 @@ private fun DrawScope.drawFan(
         )
     }
     drawCircle(bladeColor, (r * 0.16f).coerceAtLeast(1.5f), center)
+    drawEndTelemetry(corners, unit, flir, quad, bottom, edge, fx, fy)
 }
 
-/** Name / IP / rate / temp painted on whichever side face is toward the viewer. */
+/** Hashrate + chip temp painted under the fan, aligned to the face's bottom edge. */
+@Suppress("LongParameterList") // positioned inside an already-projected face
+private fun DrawScope.drawEndTelemetry(
+    corners: List<Fleet3D.Projected>,
+    unit: Unit3DUi,
+    flir: Boolean,
+    quad: IntArray,
+    bottom: IntArray,
+    edge: Float,
+    fx: Float,
+    fy: Float,
+) {
+    if (edge < LABEL_MIN_EDGE_PX) return
+    val a = corners[bottom[0]]
+    val b = corners[bottom[1]]
+    var deg = Math.toDegrees(atan2((b.y - a.y).toDouble(), (b.x - a.x).toDouble())).toFloat()
+    if (deg > 90f) deg -= 180f
+    if (deg < -90f) deg += 180f
+    val paint = android.graphics.Paint().apply {
+        color = if (flir) android.graphics.Color.WHITE
+        else android.graphics.Color.argb(235, 255, 255, 255)
+        textSize = (edge / 6.4f).coerceIn(8f, 20f)
+        textAlign = android.graphics.Paint.Align.CENTER
+        isAntiAlias = true
+    }
+    val lines = listOf(
+        Units.formatHashrate(unit.hashrateGhs),
+        unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—",
+    )
+    val lh = paint.textSize * 1.12f
+    val native = drawContext.canvas.nativeCanvas
+    native.save()
+    native.translate(fx, fy)
+    native.rotate(deg)
+    // Local +y is "down" the face after rotation: start below the fan, near the bottom edge.
+    lines.forEachIndexed { i, line ->
+        native.drawText(line, 0f, edge * 0.14f + i * lh + paint.textSize * 0.35f, paint)
+    }
+    native.restore()
+}
+
+/** Identity (name / IP) on the flanks; live telemetry lives under the end-face fans. */
 private fun DrawScope.drawSideLabels(
     corners: List<Fleet3D.Projected>,
     unit: Unit3DUi,
@@ -398,8 +466,6 @@ private fun DrawScope.drawOneSideLabel(
         val lines = listOf(
             unit.name.take(14),
             unit.host,
-            Units.formatHashrate(unit.hashrateGhs),
-            unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—",
         )
         val lh = paint.textSize * 1.12f
         val native = drawContext.canvas.nativeCanvas

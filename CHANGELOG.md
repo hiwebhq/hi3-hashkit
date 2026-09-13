@@ -17,9 +17,10 @@
 - 3D fleet view now shows name/IP/hashrate/temp on each machine's sides, animated fans,
   and a "Tour" mode that flies around the fleet like a drone. Flow summary stats moved to
   the top bar so the view fills the screen.
+- 3D fleet view: fans now spin on BOTH ends of every machine, with live hashrate and
+  chip temp painted below each fan; machine sides show name + IP. Rack size is a direct
+  2×2–8×8 picker instead of a tap-to-cycle chip.
 - Wall / TV and Rack & site now group farm-assigned miners under their farm name instead
-  of "Unassigned".
-- Wall/Rack views: miners assigned to a farm are grouped under the farm's name instead
   of "Unassigned".
 
 ## 0.77.7
