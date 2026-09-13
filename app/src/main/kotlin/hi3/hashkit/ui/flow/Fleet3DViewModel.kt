@@ -23,6 +23,7 @@ data class Unit3DUi(
     val status: MinerStatus,
     val chipTempC: Double?,
     val hashrateGhs: Double?,
+    val fanRpm: Int?,
     val locationCode: String?,
     val farmOrdinal: Int,
 )
@@ -61,6 +62,7 @@ class Fleet3DViewModel @Inject constructor(
                             status = m.status,
                             chipTempC = m.lastTelemetry?.chipTempC?.value,
                             hashrateGhs = m.lastTelemetry?.hashrateGhs?.value,
+                            fanRpm = m.lastTelemetry?.fans?.firstOrNull()?.rpm,
                             locationCode = e.location,
                             farmOrdinal = e.farmId?.let { farmOrdinals[it] } ?: -1,
                         )

@@ -82,7 +82,10 @@ fun FlowScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                actions = { LiveIndicator(liveStatusOf(state)) },
+                actions = {
+                    CompactStats(state)
+                    LiveIndicator(liveStatusOf(state))
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
             )
         },
@@ -107,7 +110,6 @@ fun FlowScreen(
                 Fleet3DView()
                 return@Column
             }
-            SummaryCards(state)
             Canvas(
                 Modifier
                     .fillMaxWidth()
@@ -173,6 +175,28 @@ private fun LiveIndicator(status: LiveStatus) {
     }
 }
 
+@Composable
+private fun CompactStats(state: FlowUiState) {
+    Column(
+        horizontalAlignment = Alignment.End,
+        modifier = Modifier.padding(end = 10.dp),
+    ) {
+        Text(
+            Units.formatHashrate(state.totalHashrateGhs) + " · " +
+                Units.formatPower(state.totalPowerW) + (if (state.anyEstimatedPower) "*" else ""),
+            style = MaterialTheme.typography.labelSmall,
+            color = HiBrand.accent,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            "${state.onlineCount}/${state.minerCount} online",
+            style = MaterialTheme.typography.labelSmall,
+            color = HiBrand.textSecondary,
+        )
+    }
+}
+
+@Suppress("UnusedPrivateMember") // kept for the expanded-stats option; compact bar is default
 @Composable
 private fun SummaryCards(state: FlowUiState) {
     LazyRow(

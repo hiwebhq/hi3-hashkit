@@ -235,4 +235,69 @@ object Fleet3D {
         Triple(1.00f, 0.85f, 0.25f), // yellow
         Triple(1.00f, 1.00f, 1.00f), // white-hot
     )
+
+    // ------------------------------------------------------------------ drone tour ----
+
+    /** One frame of the automated drone tour: full camera state + which unit is focused. */
+    data class TourFrame(
+        val yaw: Float,
+        val pitch: Float,
+        val zoom: Float,
+        val pivot: P3,
+        /** Index into the placed list of the unit being inspected; -1 = fleet overview. */
+        val focusPlacedIndex: Int,
+    )
+
+    private const val TOUR_OVERVIEW_MS = 6_000L
+    private const val TOUR_TRAVEL_MS = 1_500L
+    private const val TOUR_ORBIT_MS = 4_500L
+    private const val TOUR_VISIT_MS = TOUR_TRAVEL_MS + TOUR_ORBIT_MS
+    private const val TOUR_OVERVIEW_ZOOM = 1.0f
+    private const val TOUR_CLOSE_ZOOM = 3.6f
+    private const val TOUR_PITCH = 0.28f
+    private const val TOUR_YAW_RATE = 0.45f // rad/s of continuous glide
+    private const val MS_PER_SECOND = 1000f
+    private const val TWO_PI = (Math.PI * 2).toFloat()
+
+    /**
+     * Drone flight plan: a slow orbit of the whole fleet, then a visit to each unit —
+     * fly in, circle it a full turn at close zoom, fly on — looping forever. Pure
+     * function of elapsed time so the flight is deterministic and testable.
+     */
+    fun tourFrame(elapsedMs: Long, targets: List<P3>, fleetPivot: P3): TourFrame {
+        val cycle = TOUR_OVERVIEW_MS + targets.size * TOUR_VISIT_MS
+        val t = if (cycle > 0) elapsedMs % cycle else 0L
+        // Yaw advances continuously so the whole flight feels like one glide.
+        val yaw = elapsedMs / MS_PER_SECOND * TOUR_YAW_RATE
+        if (t < TOUR_OVERVIEW_MS || targets.isEmpty()) {
+            return TourFrame(yaw, TOUR_PITCH, TOUR_OVERVIEW_ZOOM, fleetPivot, -1)
+        }
+        val visitT = t - TOUR_OVERVIEW_MS
+        val idx = (visitT / TOUR_VISIT_MS).toInt().coerceAtMost(targets.size - 1)
+        val inVisit = visitT - idx * TOUR_VISIT_MS
+        val from = if (idx == 0) fleetPivot else targets[idx - 1]
+        val target = targets[idx]
+        return if (inVisit < TOUR_TRAVEL_MS) {
+            val f = smooth(inVisit / TOUR_TRAVEL_MS.toFloat())
+            TourFrame(
+                yaw, TOUR_PITCH,
+                TOUR_OVERVIEW_ZOOM + (TOUR_CLOSE_ZOOM - TOUR_OVERVIEW_ZOOM) * f,
+                lerp(from, target, f),
+                idx,
+            )
+        } else {
+            // Full extra turn around the unit on top of the base glide.
+            val orbitF = (inVisit - TOUR_TRAVEL_MS) / TOUR_ORBIT_MS.toFloat()
+            TourFrame(yaw + orbitF * TWO_PI, TOUR_PITCH, TOUR_CLOSE_ZOOM, target, idx)
+        }
+    }
+
+    @Suppress("MagicNumber") // the standard smoothstep polynomial
+    private fun smooth(f: Float): Float {
+        val t = f.coerceIn(0f, 1f)
+        return t * t * (3 - 2 * t)
+    }
+
+    private fun lerp(a: P3, b: P3, f: Float): P3 =
+        P3(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f, a.z + (b.z - a.z) * f)
 }

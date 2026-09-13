@@ -3,6 +3,8 @@
 package hi3.hashkit.ui.flow
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -16,11 +18,13 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,6 +41,8 @@ import hi3.hashkit.core.Units
 import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.domain.viz.Fleet3D
 import hi3.hashkit.ui.theme.HiBrand
+import kotlin.math.atan2
+import kotlin.math.hypot
 
 private const val YAW_START = 0.55f
 private const val PITCH_START = 0.35f
@@ -49,8 +55,13 @@ private const val TAP_RADIUS_PX = 60f
 private const val FLIR_MIN_C = 25f
 private const val FLIR_MAX_C = 85f
 private const val BLOOM_HEAT = 0.55f
+private const val TWO_PI = (Math.PI * 2).toFloat()
+private const val LABEL_MIN_EDGE_PX = 44f
+private const val FAN_MIN_EDGE_PX = 26f
+private const val DEFAULT_FAN_RPM = 3000
 
 /** The 3D fleet view: orbit/zoom scene of the fleet with an optional FLIR thermal mode. */
+@Suppress("LongMethod") // one declarative screen: controls + camera resolution + canvas
 @Composable
 fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
@@ -61,6 +72,12 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
     var pitch by remember { mutableFloatStateOf(PITCH_START) }
     var zoom by remember { mutableFloatStateOf(1f) }
     var selectedId by remember { mutableStateOf<Long?>(null) }
+    var tour by remember { mutableStateOf(false) }
+    var tourStartMs by remember { mutableStateOf(0L) }
+    // Frame clock drives fan spin and the drone tour.
+    val timeMs by produceState(0L) {
+        while (true) withInfiniteAnimationFrameMillis { value = it }
+    }
 
     val scene = remember(state.units, layoutMode, state.rackSize) {
         Fleet3D.layout(
@@ -72,6 +89,14 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
     val pivot = remember(scene) { Fleet3D.centerOf(scene.placed) }
     // Screen positions of the last draw, for tap hit-testing.
     val hitCenters = remember { mutableMapOf<Long, Offset>() }
+    // Drone tour overrides the manual camera; any gesture hands control back.
+    val tourF = if (tour) {
+        Fleet3D.tourFrame(timeMs - tourStartMs, scene.placed.map { it.center }, pivot)
+    } else null
+    val focusId = tourF?.focusPlacedIndex?.takeIf { it >= 0 }
+        ?.let { scene.placed.getOrNull(it)?.index }
+        ?.let { i -> state.units.getOrNull(i)?.id }
+    val effectiveSelected = focusId ?: selectedId
 
     Column(Modifier.fillMaxSize()) {
         Fleet3DControls(
@@ -83,6 +108,11 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
             onWhiteHot = { whiteHot = it },
             rackSize = state.rackSize,
             onRackSize = viewModel::setRackSize,
+            tour = tour,
+            onTour = { on ->
+                tour = on
+                if (on) tourStartMs = timeMs
+            },
         )
         Box(Modifier.fillMaxSize()) {
             Canvas(
@@ -90,6 +120,7 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
                     .fillMaxSize()
                     .pointerInput(Unit) {
                         detectTransformGestures { _, pan, gestureZoom, _ ->
+                            tour = false
                             yaw += pan.x * ROTATE_PER_PX
                             pitch = (pitch + pan.y * ROTATE_PER_PX).coerceIn(-PITCH_MAX, PITCH_MAX)
                             zoom = (zoom * gestureZoom).coerceIn(ZOOM_MIN, ZOOM_MAX)
@@ -104,11 +135,15 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
                     },
             ) {
                 drawScene(
-                    scene, state.units, pivot, yaw, pitch, zoom,
-                    flir, whiteHot, hitCenters, selectedId,
+                    scene, state.units,
+                    tourF?.pivot ?: pivot,
+                    tourF?.yaw ?: yaw,
+                    tourF?.pitch ?: pitch,
+                    tourF?.zoom ?: zoom,
+                    flir, whiteHot, hitCenters, effectiveSelected, timeMs,
                 )
             }
-            state.units.firstOrNull { it.id == selectedId }?.let { SelectedReadout(it, flir) }
+            state.units.firstOrNull { it.id == effectiveSelected }?.let { SelectedReadout(it, flir) }
             if (flir) FlirLegend(whiteHot)
         }
     }
@@ -124,10 +159,16 @@ private fun Fleet3DControls(
     onWhiteHot: (Boolean) -> Unit,
     rackSize: Int,
     onRackSize: (Int) -> Unit,
+    tour: Boolean,
+    onTour: (Boolean) -> Unit,
 ) {
+    // One compact, scrollable line — the canvas below gets the rest of the screen.
     Row(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 10.dp),
     ) {
         FilterChip(
             selected = layoutMode == Fleet3D.Layout.RACKS,
@@ -144,29 +185,16 @@ private fun Fleet3DControls(
                 onClick = { onWhiteHot(!whiteHot) }, label = { Text("White-hot") },
             )
         }
-    }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        modifier = Modifier.padding(horizontal = 10.dp),
-    ) {
-        Text(
-            "Rack ${rackSize}×$rackSize",
-            style = MaterialTheme.typography.labelSmall,
-            color = HiBrand.textSecondary,
-        )
-        TextButton(
-            onClick = { onRackSize(rackSize - 1) },
-            enabled = rackSize > Fleet3D.RACK_SIZE_MIN,
-        ) { Text("–") }
-        TextButton(
-            onClick = { onRackSize(rackSize + 1) },
-            enabled = rackSize < Fleet3D.RACK_SIZE_MAX,
-        ) { Text("+") }
-        Text(
-            "drag to rotate · pinch to zoom · tap a unit",
-            style = MaterialTheme.typography.labelSmall,
-            color = HiBrand.textSecondary,
-            modifier = Modifier.padding(top = 12.dp),
+        FilterChip(selected = tour, onClick = { onTour(!tour) }, label = { Text("Tour") })
+        // Tap cycles the virtual rack size 2×2 → … → 8×8 → 2×2.
+        FilterChip(
+            selected = false,
+            onClick = {
+                onRackSize(
+                    if (rackSize >= Fleet3D.RACK_SIZE_MAX) Fleet3D.RACK_SIZE_MIN else rackSize + 1
+                )
+            },
+            label = { Text("${rackSize}×$rackSize") },
         )
     }
 }
@@ -183,6 +211,7 @@ private fun DrawScope.drawScene(
     whiteHot: Boolean,
     hitCenters: MutableMap<Long, Offset>,
     selectedId: Long?,
+    timeMs: Long,
 ) {
     drawRect(if (flir) Color.Black else HiBrand.background)
     val cx = size.width / 2f
@@ -221,7 +250,7 @@ private fun DrawScope.drawScene(
                     center = Offset(c.x, c.y),
                 )
             }
-            drawUnitBox(corners, unit, heat, flir, whiteHot, unit.id == selectedId)
+            drawUnitBox(corners, unit, heat, flir, whiteHot, unit.id == selectedId, timeMs)
             hitCenters[unit.id] = Offset(c.x, c.y)
             if (flir && unit == hottest) drawCrosshair(Offset(c.x, c.y), unit.chipTempC)
         }
@@ -246,6 +275,7 @@ private fun DrawScope.drawUnitBox(
     flir: Boolean,
     whiteHot: Boolean,
     selected: Boolean,
+    timeMs: Long,
 ) {
     FACES.indices.sortedBy { f -> FACES[f].map { corners[it].depth }.average() }
         .forEach { f ->
@@ -272,6 +302,115 @@ private fun DrawScope.drawUnitBox(
                 )
             }
         }
+    drawFan(corners, unit, flir, timeMs)
+    drawSideLabels(corners, unit, flir)
+}
+
+/** A face is toward the viewer when its average depth is nearer than the box center. */
+private fun faceForward(corners: List<Fleet3D.Projected>, quad: IntArray): Boolean {
+    val centerDepth = corners.map { it.depth }.average()
+    return quad.map { corners[it].depth }.average() > centerDepth
+}
+
+/** Spinning intake fan on the front face — RPM-driven, frozen when the miner is off. */
+private fun DrawScope.drawFan(
+    corners: List<Fleet3D.Projected>,
+    unit: Unit3DUi,
+    flir: Boolean,
+    timeMs: Long,
+) {
+    val quad = FACES[1] // front
+    if (!faceForward(corners, quad)) return
+    val fx = quad.map { corners[it].x }.average().toFloat()
+    val fy = quad.map { corners[it].y }.average().toFloat()
+    val edge = hypot(
+        corners[quad[1]].x - corners[quad[0]].x,
+        corners[quad[1]].y - corners[quad[0]].y,
+    )
+    if (edge < FAN_MIN_EDGE_PX) return
+    val r = edge * 0.32f
+    val center = Offset(fx, fy)
+    // Recessed housing + rim.
+    drawCircle(Color.Black.copy(alpha = if (flir) 0.5f else 0.38f), r, center)
+    drawCircle(
+        if (flir) Color(0.35f, 0.35f, 0.35f) else Color(0.75f, 0.78f, 0.82f),
+        r,
+        center,
+        style = androidx.compose.ui.graphics.drawscope.Stroke(width = (r * 0.09f).coerceAtLeast(1.5f)),
+    )
+    val rpm = when {
+        unit.status == MinerStatus.OFFLINE -> 0
+        else -> unit.fanRpm ?: DEFAULT_FAN_RPM
+    }
+    val angle = if (rpm <= 0) 0.6f else (timeMs / 1000f * rpm / 60f * TWO_PI) % TWO_PI
+    val bladeColor = when {
+        flir -> Color(0.45f, 0.45f, 0.45f)
+        rpm <= 0 -> Color(0.45f, 0.45f, 0.48f)
+        else -> Color(0.82f, 0.85f, 0.9f)
+    }
+    repeat(3) { k ->
+        val a = angle + k * (TWO_PI / 3)
+        drawLine(
+            bladeColor,
+            Offset(center.x + r * 0.18f * kotlin.math.cos(a), center.y + r * 0.18f * kotlin.math.sin(a)),
+            Offset(center.x + r * 0.85f * kotlin.math.cos(a), center.y + r * 0.85f * kotlin.math.sin(a)),
+            strokeWidth = (r * 0.24f).coerceAtLeast(2f),
+        )
+    }
+    drawCircle(bladeColor, (r * 0.16f).coerceAtLeast(1.5f), center)
+}
+
+/** Name / IP / rate / temp painted on whichever side face is toward the viewer. */
+private fun DrawScope.drawSideLabels(
+    corners: List<Fleet3D.Projected>,
+    unit: Unit3DUi,
+    flir: Boolean,
+) {
+    for (f in intArrayOf(4, 5)) { // left, right
+        drawOneSideLabel(corners, unit, flir, FACES[f])
+    }
+}
+
+private fun DrawScope.drawOneSideLabel(
+    corners: List<Fleet3D.Projected>,
+    unit: Unit3DUi,
+    flir: Boolean,
+    quad: IntArray,
+) {
+    if (!faceForward(corners, quad)) return
+    run {
+        val a = corners[quad[0]]
+        val b = corners[quad[3]] // the along-depth edge: text baseline direction
+        val len = hypot(b.x - a.x, b.y - a.y)
+        if (len < LABEL_MIN_EDGE_PX) return
+        val fx = quad.map { corners[it].x }.average().toFloat()
+        val fy = quad.map { corners[it].y }.average().toFloat()
+        var deg = Math.toDegrees(atan2((b.y - a.y).toDouble(), (b.x - a.x).toDouble())).toFloat()
+        if (deg > 90f) deg -= 180f
+        if (deg < -90f) deg += 180f
+        val paint = android.graphics.Paint().apply {
+            color = if (flir) android.graphics.Color.WHITE
+            else android.graphics.Color.argb(235, 255, 255, 255)
+            textSize = (len / 7.2f).coerceIn(9f, 24f)
+            textAlign = android.graphics.Paint.Align.CENTER
+            isAntiAlias = true
+        }
+        val lines = listOf(
+            unit.name.take(14),
+            unit.host,
+            Units.formatHashrate(unit.hashrateGhs),
+            unit.chipTempC?.let { "%.0f°C".format(it) } ?: "—",
+        )
+        val lh = paint.textSize * 1.12f
+        val native = drawContext.canvas.nativeCanvas
+        native.save()
+        native.translate(fx, fy)
+        native.rotate(deg)
+        lines.forEachIndexed { i, line ->
+            native.drawText(line, 0f, (i - (lines.size - 1) / 2f) * lh + paint.textSize * 0.35f, paint)
+        }
+        native.restore()
+    }
 }
 
 private fun DrawScope.drawFrames(

@@ -84,4 +84,34 @@ class Fleet3DTest {
         assertTrue(Fleet3D.ipKey("10.0.0.9") < Fleet3D.ipKey("10.0.0.107"))
         assertTrue(Fleet3D.ipKey("not-an-ip") == Long.MAX_VALUE)
     }
+
+    @Test
+    fun `tour starts with a fleet overview then visits each unit up close`() {
+        val targets = listOf(Fleet3D.P3(0f, 0f, 0f), Fleet3D.P3(5f, 0f, 0f))
+        val pivot = Fleet3D.P3(2.5f, 0f, 0f)
+        val overview = Fleet3D.tourFrame(1_000L, targets, pivot)
+        assertEquals(-1, overview.focusPlacedIndex)
+        assertEquals(pivot, overview.pivot)
+        // Mid-orbit of the first unit: zoomed in, pivot on the unit.
+        val visit1 = Fleet3D.tourFrame(6_000L + 3_000L, targets, pivot)
+        assertEquals(0, visit1.focusPlacedIndex)
+        assertEquals(targets[0], visit1.pivot)
+        assertTrue(visit1.zoom > overview.zoom)
+        // Second unit's orbit window.
+        val visit2 = Fleet3D.tourFrame(6_000L + 6_000L + 3_000L, targets, pivot)
+        assertEquals(1, visit2.focusPlacedIndex)
+        assertEquals(targets[1], visit2.pivot)
+        // The whole plan loops.
+        val looped = Fleet3D.tourFrame(6_000L + 2 * 6_000L + 1_000L, targets, pivot)
+        assertEquals(-1, looped.focusPlacedIndex)
+    }
+
+    @Test
+    fun `tour travel eases between targets`() {
+        val targets = listOf(Fleet3D.P3(10f, 0f, 0f))
+        val pivot = Fleet3D.P3(0f, 0f, 0f)
+        val mid = Fleet3D.tourFrame(6_000L + 750L, targets, pivot) // halfway through travel
+        assertTrue(mid.pivot.x > 0f && mid.pivot.x < 10f)
+        assertEquals(0, mid.focusPlacedIndex)
+    }
 }

@@ -17,6 +17,8 @@ complexity:
     ignoreAnnotated: ['Dao']
     # Compose UI files are many small composables/helpers by design.
     thresholdInFiles: 18
+    # Cohesive math/util objects (Units, Fleet3D) keep related pure functions together.
+    thresholdInObjects: 15
 
 style:
   ReturnCount:
