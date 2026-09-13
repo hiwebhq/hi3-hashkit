@@ -32,6 +32,7 @@ class AlertNotifier @Inject constructor(
             CHANNEL_SHARES to "Rejected shares",
             CHANNEL_STATUS to "Status changes",
             CHANNEL_RECOVERY to "Recoveries",
+            CHANNEL_WATCHDOG to "Watchdog & automation",
             CHANNEL_DIGEST to "Daily digest",
         ).forEach { (id, name) ->
             manager.createNotificationChannel(
@@ -48,6 +49,7 @@ class AlertNotifier @Inject constructor(
             hi3.hashkit.domain.alerts.AlertType.VR_OVER_TEMP -> CHANNEL_THERMAL
             hi3.hashkit.domain.alerts.AlertType.FAN_STOPPED -> CHANNEL_FAN
             hi3.hashkit.domain.alerts.AlertType.REJECT_RATE_HIGH -> CHANNEL_SHARES
+            hi3.hashkit.domain.alerts.AlertType.RULE_TRIGGERED -> CHANNEL_WATCHDOG
             else -> CHANNEL_STATUS
         }
     }
@@ -124,6 +126,7 @@ class AlertNotifier @Inject constructor(
         const val CHANNEL_SHARES = "alerts_shares"
         const val CHANNEL_STATUS = "alerts_status"
         const val CHANNEL_RECOVERY = "alerts_recovery"
+        const val CHANNEL_WATCHDOG = "alerts_watchdog"
         const val CHANNEL_DIGEST = "alerts_digest"
         const val DIGEST_NOTIFICATION_ID = 424242
     }

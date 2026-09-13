@@ -22,6 +22,20 @@ data class Slot(val building: Int, val rack: Int, val tier: Int, val position: I
     /** Compact location code written into a miner's Location field, e.g. "B1-R2-T3-P4". */
     val code: String get() = "B$building-R$rack-T$tier-P$position"
     val label: String get() = "Building $building · Rack $rack · Tier $tier · Position $position"
+
+    companion object {
+        private val CODE_RE = Regex("""^B(\d+)-R(\d+)-T(\d+)-P(\d+)$""", RegexOption.IGNORE_CASE)
+
+        /** Parse a "B1-R2-T3-P4" location code back into a [Slot]; null for anything else. */
+        @Suppress("DestructuringDeclarationWithTooManyEntries") // a slot is inherently 4 coordinates
+        fun parse(code: String?): Slot? {
+            val m = CODE_RE.matchEntire(code?.trim().orEmpty()) ?: return null
+            val (b, r, t, p) = m.destructured
+            val slot = Slot(b.toIntOrNull() ?: 0, r.toIntOrNull() ?: 0, t.toIntOrNull() ?: 0, p.toIntOrNull() ?: 0)
+            val allPositive = listOf(slot.building, slot.rack, slot.tier, slot.position).all { it >= 1 }
+            return if (allPositive) slot else null
+        }
+    }
 }
 
 /**
@@ -47,6 +61,20 @@ object SiteWalk {
             (slot.rack - 1) * config.slotsPerRack +
             (slot.tier - 1) * config.positionsPerTier +
             (slot.position - 1)
+
+    /**
+     * Smallest geometry containing every slot — how the heatmap re-derives a site layout
+     * from the location codes saved on miners. Null when there are no slots.
+     */
+    fun geometryOf(slots: Collection<Slot>): SiteMapConfig? {
+        if (slots.isEmpty()) return null
+        return SiteMapConfig(
+            buildings = slots.maxOf { it.building },
+            racksPerBuilding = slots.maxOf { it.rack },
+            tiersPerRack = slots.maxOf { it.tier },
+            positionsPerTier = slots.maxOf { it.position },
+        )
+    }
 }
 
 /** A filled slot: which miner answered (or was typed in) at that physical location. */

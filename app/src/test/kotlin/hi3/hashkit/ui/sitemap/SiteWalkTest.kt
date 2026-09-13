@@ -88,4 +88,23 @@ class SiteWalkTest {
             line,
         )
     }
+
+    @Test
+    fun `slot code parse round-trips and rejects junk`() {
+        val slot = Slot(2, 3, 4, 5)
+        assertEquals(slot, Slot.parse(slot.code))
+        assertEquals(slot, Slot.parse(" b2-r3-t4-p5 ")) // tolerant of case and whitespace
+        assertEquals(null, Slot.parse(null))
+        assertEquals(null, Slot.parse(""))
+        assertEquals(null, Slot.parse("Garage shelf"))
+        assertEquals(null, Slot.parse("B0-R1-T1-P1")) // coordinates are 1-based
+        assertEquals(null, Slot.parse("B1-R1-T1"))
+    }
+
+    @Test
+    fun `geometry is the smallest box containing every slot`() {
+        val cfg = SiteWalk.geometryOf(listOf(Slot(1, 2, 1, 4), Slot(2, 1, 3, 1)))
+        assertEquals(SiteMapConfig(buildings = 2, racksPerBuilding = 2, tiersPerRack = 3, positionsPerTier = 4), cfg)
+        assertEquals(null, SiteWalk.geometryOf(emptyList()))
+    }
 }

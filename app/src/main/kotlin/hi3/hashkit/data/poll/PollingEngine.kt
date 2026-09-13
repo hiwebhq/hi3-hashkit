@@ -158,7 +158,7 @@ class PollingEngine @Inject constructor(
         lastPollDurationMs = (System.nanoTime() - startedAt) / 1_000_000
         totalPollMs += lastPollDurationMs
         pollCount += 1
-        runCatching { hi3.hashkit.widget.HashkitWidget().updateAll(appContext) }
+        hi3.hashkit.widget.updateAllWidgets(appContext)
         runCatching {
             val at = Instant.now()
             val domain = miners.map { entity ->

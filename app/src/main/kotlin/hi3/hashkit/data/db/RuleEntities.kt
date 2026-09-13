@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.Flow
 /**
  * An automation rule: when [conditionType] (with optional [threshold]) holds for a target
  * miner, run [actionType] on it. [targetGroup] blank = all real miners. [minIntervalMinutes]
- * throttles how often the rule may fire. Executions are recorded here + in audit_events.
+ * throttles how often the rule may fire per miner. [sustainedForMinutes] is the watchdog
+ * window: the condition must hold continuously that long before the action runs (0 = fire on
+ * first match). Executions are recorded here + in audit_events.
  */
 @Entity(tableName = "rules")
 data class RuleEntity(
@@ -28,6 +30,8 @@ data class RuleEntity(
     val minIntervalMinutes: Int,
     val lastFiredAtEpochMs: Long?,
     val lastResult: String?,
+    @androidx.room.ColumnInfo(defaultValue = "0")
+    val sustainedForMinutes: Int = 0,
 )
 
 @Dao

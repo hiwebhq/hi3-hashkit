@@ -32,4 +32,19 @@ class ProfitMathTest {
         assertNull(ProfitMath.powerCostPerDay(3000.0, 0.0))
         assertNull(ProfitMath.energyKwhPerDay(null))
     }
+
+    @Test
+    fun `revenue needs both btc per day and price`() {
+        assertEquals(65.0, ProfitMath.revenuePerDay(0.001, 65_000.0)!!, 0.001) // 0.001 BTC * 65k
+        assertNull(ProfitMath.revenuePerDay(null, 65_000.0))
+        assertNull(ProfitMath.revenuePerDay(0.001, null))
+        assertNull(ProfitMath.revenuePerDay(0.001, 0.0))
+    }
+
+    @Test
+    fun `net needs both sides known`() {
+        assertEquals(-2.2, ProfitMath.netPerDay(5.0, 7.2)!!, 0.001)
+        assertNull(ProfitMath.netPerDay(5.0, null)) // unknown cost must not read as pure profit
+        assertNull(ProfitMath.netPerDay(null, 7.2))
+    }
 }

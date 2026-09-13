@@ -53,6 +53,7 @@ object AppModule {
                 HashkitDatabase.MIGRATION_14_15,
                 HashkitDatabase.MIGRATION_15_16,
                 HashkitDatabase.MIGRATION_16_17,
+                HashkitDatabase.MIGRATION_17_18,
             )
             .build()
 

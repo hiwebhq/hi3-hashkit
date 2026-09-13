@@ -54,13 +54,7 @@ fun MinerVisual(
     }
 }
 
-private fun tempColor(t: Double?): Color = when {
-    t == null -> HiBrand.textSecondary
-    t >= 80 -> HiBrand.statusOffline
-    t >= 65 -> HiBrand.statusDegraded
-    t >= 45 -> Color(0xFFB6C94A)
-    else -> HiBrand.accentAlt
-}
+private fun tempColor(t: Double?): Color = hi3.hashkit.ui.theme.TempColors.tempColor(t)
 
 private fun DrawScope.drawMiner(
     timeMs: Long,

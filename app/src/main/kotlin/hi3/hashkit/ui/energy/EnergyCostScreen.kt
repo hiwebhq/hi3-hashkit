@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,16 +65,30 @@ data class EnergyRow(
     val kwhPerDay: Double?,
     val costPerDay: Double?,
     val costPerMonth: Double?,
+    val efficiencyJTh: Double?,
+    val revenuePerDay: Double?,
+    val netPerDay: Double?,
     val online: Boolean,
 )
+
+enum class EnergySort(val label: String) {
+    COST("Cost"),
+    EFFICIENCY("J/TH"),
+    NET("Net/day"),
+}
 
 data class EnergyCostState(
     val rows: List<EnergyRow> = emptyList(),
     val query: String = "",
+    val sort: EnergySort = EnergySort.COST,
     val currency: String = "USD",
     val ratePerKwh: Double = 0.0,
     val totalCostDay: Double? = null,
     val totalKwhDay: Double = 0.0,
+    val totalRevenueDay: Double? = null,
+    val totalNetDay: Double? = null,
+    /** True when difficulty + BTC price are available, i.e. revenue columns mean something. */
+    val revenueAvailable: Boolean = false,
 )
 
 @HiltViewModel
@@ -86,48 +101,85 @@ class EnergyCostViewModel @Inject constructor(
     private val query = MutableStateFlow("")
     fun setQuery(v: String) { query.value = v }
 
+    private val sort = MutableStateFlow(EnergySort.COST)
+    fun setSort(v: EnergySort) { sort.value = v }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<EnergyCostState> =
         combine(
             combine(repository.observeMinerEntities(), pollingEngine.lastRefresh, settingsRepository.settings) { entities, _, settings ->
                 val now = Instant.now()
                 val rate = settings.electricityRatePerKwh
-                val rows = entities
+                val miners = entities
                     .filter { settings.demoModeEnabled || !it.isDemo }
                     .map { repository.toDomain(it, now) }
-                    .map { m ->
-                        val power = m.lastTelemetry?.powerW?.value
-                        EnergyRow(
-                            id = m.id,
-                            name = m.name,
-                            host = m.host,
-                            model = m.identity.model,
-                            powerW = power,
-                            estimated = m.lastTelemetry?.powerW?.source == ValueSource.ESTIMATED || power == null,
-                            kwhPerDay = ProfitMath.energyKwhPerDay(power),
-                            costPerDay = ProfitMath.powerCostPerDay(power, rate.takeIf { it > 0 }),
-                            costPerMonth = ProfitMath.powerCostPerDay(power, rate.takeIf { it > 0 })?.times(DAYS_PER_MONTH),
-                            online = m.status == MinerStatus.ONLINE || m.status == MinerStatus.DEGRADED,
-                        )
-                    }
-                Triple(rows, settings.currencyCode, rate)
+                // Same difficulty/price resolution as the dashboard profit card: the freshest
+                // miner-reported difficulty, else the (opt-in fetched or manual) setting.
+                val difficulty = miners.mapNotNull { it.lastTelemetry?.networkDifficulty }.maxOrNull()
+                    ?: settings.networkDifficulty.takeIf { it > 0 }
+                val price = settings.btcPrice.takeIf { it > 0 }
+                val rows = miners.map { m ->
+                    val power = m.lastTelemetry?.powerW?.value
+                    val hashrate = m.lastTelemetry?.hashrateGhs?.value
+                    val cost = ProfitMath.powerCostPerDay(power, rate.takeIf { it > 0 })
+                    val revenue = ProfitMath.revenuePerDay(ProfitMath.btcPerDay(hashrate, difficulty), price)
+                    EnergyRow(
+                        id = m.id,
+                        name = m.name,
+                        host = m.host,
+                        model = m.identity.model,
+                        powerW = power,
+                        estimated = m.lastTelemetry?.powerW?.source == ValueSource.ESTIMATED || power == null,
+                        kwhPerDay = ProfitMath.energyKwhPerDay(power),
+                        costPerDay = cost,
+                        costPerMonth = cost?.times(DAYS_PER_MONTH),
+                        efficiencyJTh = m.lastTelemetry?.efficiencyJTh?.value
+                            ?: hi3.hashkit.core.Units.efficiencyJTh(power, hashrate),
+                        revenuePerDay = revenue,
+                        netPerDay = ProfitMath.netPerDay(revenue, cost),
+                        online = m.status == MinerStatus.ONLINE || m.status == MinerStatus.DEGRADED,
+                    )
+                }
+                RowsBundle(rows, settings.currencyCode, rate, revenueAvailable = difficulty != null && price != null)
             },
             query,
-        ) { (rows, currency, rate), q ->
-            val filtered = if (q.isBlank()) rows else rows.filter {
+            sort,
+        ) { bundle, q, s ->
+            val filtered = if (q.isBlank()) bundle.rows else bundle.rows.filter {
                 it.name.contains(q, true) || it.host.contains(q, true) || (it.model?.contains(q, true) == true)
-            }.let { it }
+            }
             EnergyCostState(
-                rows = filtered.sortedByDescending { it.costPerDay ?: it.powerW ?: 0.0 },
+                rows = sortRows(filtered, s),
                 query = q,
-                currency = currency,
-                ratePerKwh = rate,
+                sort = s,
+                currency = bundle.currency,
+                ratePerKwh = bundle.rate,
                 totalCostDay = filtered.mapNotNull { it.costPerDay }.takeIf { it.isNotEmpty() }?.sum(),
                 totalKwhDay = filtered.mapNotNull { it.kwhPerDay }.sum(),
+                totalRevenueDay = filtered.mapNotNull { it.revenuePerDay }.takeIf { it.isNotEmpty() }?.sum(),
+                totalNetDay = filtered.mapNotNull { it.netPerDay }.takeIf { it.isNotEmpty() }?.sum(),
+                revenueAvailable = bundle.revenueAvailable,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EnergyCostState())
+
+    private data class RowsBundle(
+        val rows: List<EnergyRow>,
+        val currency: String,
+        val rate: Double,
+        val revenueAvailable: Boolean,
+    )
+
+    companion object {
+        /** League-table ordering: cost + net descending (big first), efficiency ascending (lower J/TH wins). */
+        fun sortRows(rows: List<EnergyRow>, sort: EnergySort): List<EnergyRow> = when (sort) {
+            EnergySort.COST -> rows.sortedByDescending { it.costPerDay ?: it.powerW ?: 0.0 }
+            EnergySort.EFFICIENCY -> rows.sortedBy { it.efficiencyJTh ?: Double.MAX_VALUE }
+            EnergySort.NET -> rows.sortedByDescending { it.netPerDay ?: -Double.MAX_VALUE }
+        }
+    }
 }
 
+@Suppress("LongMethod") // a declarative screen: filter + totals + row list
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EnergyCostScreen(
@@ -140,7 +192,7 @@ fun EnergyCostScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Energy cost", fontWeight = FontWeight.Bold) },
+                title = { Text("Energy & profit", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -159,9 +211,30 @@ fun EnergyCostScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             )
+            Row(
+                Modifier.padding(horizontal = 12.dp).horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                EnergySort.entries.forEach { s ->
+                    FilterChip(
+                        selected = state.sort == s,
+                        onClick = { viewModel.setSort(s) },
+                        label = { Text(s.label) },
+                    )
+                }
+            }
             if (state.ratePerKwh <= 0.0) {
                 Text(
                     "Set your electricity rate in Settings to see cost estimates (energy use shows regardless).",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                )
+            }
+            if (!state.revenueAvailable) {
+                Text(
+                    "Revenue and net need network difficulty and a BTC price — enable auto-fetch " +
+                        "or set them in Settings. Estimates exclude pool and transaction fees.",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -175,6 +248,16 @@ fun EnergyCostScreen(
             ) {
                 Row(Modifier.padding(14.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     Metric("Fleet Energy Est.", state.totalCostDay?.let { money(it, state.currency) + "/day" } ?: "—", valueColor = HiBrand.accent)
+                    Metric(
+                        "Revenue Est.",
+                        state.totalRevenueDay?.let { money(it, state.currency) + "/day" } ?: "—",
+                        source = state.totalRevenueDay?.let { ValueSource.ESTIMATED },
+                    )
+                    Metric(
+                        "Net Est.",
+                        state.totalNetDay?.let { money(it, state.currency) + "/day" } ?: "—",
+                        valueColor = netColor(state.totalNetDay),
+                    )
                     Metric("This month", state.totalCostDay?.let { money(it * DAYS_PER_MONTH, state.currency) } ?: "—")
                     Metric("Energy", "%,.1f kWh/day".format(state.totalKwhDay))
                     Metric("Machines", "${state.rows.size}")
@@ -184,16 +267,17 @@ fun EnergyCostScreen(
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(state.rows, key = { it.id }) { row ->
-                    EnergyRowCard(row, state.currency) { onMinerClick(row.id) }
+                itemsIndexed(state.rows, key = { _, row -> row.id }) { index, row ->
+                    EnergyRowCard(row, rank = index + 1, currency = state.currency) { onMinerClick(row.id) }
                 }
             }
         }
     }
 }
 
+@Suppress("CyclomaticComplexMethod") // one branch per optional metric on the card
 @Composable
-private fun EnergyRowCard(row: EnergyRow, currency: String, onClick: () -> Unit) {
+private fun EnergyRowCard(row: EnergyRow, rank: Int, currency: String, onClick: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
         shape = RoundedCornerShape(12.dp),
@@ -202,7 +286,7 @@ private fun EnergyRowCard(row: EnergyRow, currency: String, onClick: () -> Unit)
     ) {
         Column(Modifier.padding(14.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(row.name, style = MaterialTheme.typography.titleSmall, color = HiBrand.textPrimary)
+                Text("#$rank  ${row.name}", style = MaterialTheme.typography.titleSmall, color = HiBrand.textPrimary)
                 Text(
                     if (!row.online) "offline" else row.host,
                     style = MaterialTheme.typography.labelSmall,
@@ -214,12 +298,28 @@ private fun EnergyRowCard(row: EnergyRow, currency: String, onClick: () -> Unit)
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 Metric("Power", row.powerW?.let { "%.0f W".format(it) } ?: "—", source = if (row.estimated) ValueSource.ESTIMATED else null)
+                Metric("Efficiency", row.efficiencyJTh?.let { hi3.hashkit.core.Units.formatEfficiency(it) } ?: "—")
+                Metric("Cost", row.costPerDay?.let { money(it, currency) + "/day" } ?: "—", valueColor = HiBrand.accent)
+                Metric(
+                    "Revenue", row.revenuePerDay?.let { money(it, currency) + "/day" } ?: "—",
+                    source = row.revenuePerDay?.let { ValueSource.ESTIMATED },
+                )
+                Metric(
+                    "Net", row.netPerDay?.let { money(it, currency) + "/day" } ?: "—",
+                    valueColor = netColor(row.netPerDay),
+                )
                 Metric("Energy", row.kwhPerDay?.let { "%.2f kWh/day".format(it) } ?: "—")
-                Metric("Energy Est.", row.costPerDay?.let { money(it, currency) + "/day" } ?: "—", valueColor = HiBrand.accent)
                 Metric("Est. month", row.costPerMonth?.let { money(it, currency) } ?: "—")
             }
         }
     }
+}
+
+@Composable
+private fun netColor(net: Double?) = when {
+    net == null -> HiBrand.textPrimary
+    net >= 0 -> HiBrand.statusOnline
+    else -> HiBrand.statusOffline
 }
 
 private fun money(value: Double, currency: String): String =

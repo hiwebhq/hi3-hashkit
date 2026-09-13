@@ -55,4 +55,37 @@ class RuleEngineTest {
         val t = telemetry(chip = null)
         assertFalse(RuleEngine.matches(RuleEngine.ConditionType.CHIP_TEMP_ABOVE, 75.0, t, MinerStatus.ONLINE, null))
     }
+
+    @Test fun sustainZeroMinutesFiresOnFirstMatch() {
+        val d = RuleEngine.sustain(matchesNow = true, sinceEpochMs = null, nowEpochMs = 1_000L, sustainedForMinutes = 0)
+        assertTrue(d.fire)
+        assertTrue(d.sinceEpochMs == 1_000L)
+    }
+
+    @Test fun sustainWaitsForFullWindow() {
+        val start = 1_000L
+        // First observation: pending, not firing.
+        val first = RuleEngine.sustain(true, null, start, sustainedForMinutes = 10)
+        assertFalse(first.fire)
+        // 9 minutes in: still pending.
+        val pending = RuleEngine.sustain(true, first.sinceEpochMs, start + 9 * 60_000L, 10)
+        assertFalse(pending.fire)
+        assertTrue(pending.sinceEpochMs == start)
+        // 10 minutes in: fires.
+        val fired = RuleEngine.sustain(true, pending.sinceEpochMs, start + 10 * 60_000L, 10)
+        assertTrue(fired.fire)
+    }
+
+    @Test fun sustainResetsWhenConditionClears() {
+        val start = 1_000L
+        val first = RuleEngine.sustain(true, null, start, 10)
+        // Condition clears mid-window: state resets.
+        val cleared = RuleEngine.sustain(false, first.sinceEpochMs, start + 5 * 60_000L, 10)
+        assertFalse(cleared.fire)
+        assertTrue(cleared.sinceEpochMs == null)
+        // Matching again must re-earn the full window from the new start.
+        val again = RuleEngine.sustain(true, cleared.sinceEpochMs, start + 6 * 60_000L, 10)
+        assertFalse(again.fire)
+        assertTrue(again.sinceEpochMs == start + 6 * 60_000L)
+    }
 }

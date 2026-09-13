@@ -154,6 +154,8 @@ class Exporter @Inject constructor(
         val actionType: String,
         val targetGroup: String?,
         val minIntervalMinutes: Int,
+        // Default keeps older backups (which never wrote this field) decoding.
+        val sustainedForMinutes: Int = 0,
     )
 
     @Serializable
@@ -261,6 +263,7 @@ class Exporter @Inject constructor(
                 BackupRule(
                     it.enabled, it.label, it.conditionType, it.threshold,
                     it.actionType, it.targetGroup, it.minIntervalMinutes,
+                    it.sustainedForMinutes,
                 )
             },
             settings = settingsRepository.exportForBackup(),
@@ -390,7 +393,7 @@ class Exporter @Inject constructor(
                     enabled = r.enabled, label = r.label, conditionType = r.conditionType,
                     threshold = r.threshold, actionType = r.actionType, targetGroup = r.targetGroup,
                     minIntervalMinutes = r.minIntervalMinutes, lastFiredAtEpochMs = null,
-                    lastResult = null,
+                    lastResult = null, sustainedForMinutes = r.sustainedForMinutes,
                 )
             )
             rulesAdded++

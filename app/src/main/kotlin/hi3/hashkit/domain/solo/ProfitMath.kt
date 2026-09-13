@@ -35,6 +35,19 @@ object ProfitMath {
     fun energyKwhPerDay(powerW: Double?): Double? =
         powerW?.takeIf { it > 0 }?.let { it / 1000.0 * 24.0 }
 
+    /** Revenue per day in the price's currency. Null unless both inputs are known. */
+    fun revenuePerDay(btcPerDay: Double?, btcPrice: Double?): Double? {
+        if (btcPerDay == null || btcPrice == null || btcPrice <= 0) return null
+        return btcPerDay * btcPrice
+    }
+
+    /**
+     * Net per day = revenue − power cost. Null unless BOTH sides are known: showing revenue
+     * with an unknown cost (or vice versa) as "net" would overstate it.
+     */
+    fun netPerDay(revenuePerDay: Double?, costPerDay: Double?): Double? =
+        if (revenuePerDay == null || costPerDay == null) null else revenuePerDay - costPerDay
+
     /** Heat output in BTU/hr (1 W ≈ 3.412 BTU/hr) — for heat-reuse planning. */
     fun heatBtuPerHour(powerW: Double?): Double? =
         powerW?.takeIf { it > 0 }?.let { it * 3.412 }

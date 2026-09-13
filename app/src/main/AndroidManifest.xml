@@ -60,6 +60,30 @@
                 android:resource="@xml/hashkit_widget_info" />
         </receiver>
 
+        <!-- Widget: local vs pool vs MMP hashrate comparison. -->
+        <receiver
+            android:name=".widget.CompareWidgetReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/compare_widget_info" />
+        </receiver>
+
+        <!-- Widget: mini fleet table (per-miner rows). -->
+        <receiver
+            android:name=".widget.FleetTableWidgetReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/fleet_table_widget_info" />
+        </receiver>
+
         <!-- Share exported CSV/backup/diagnostics files with other apps the user picks. -->
         <provider
             android:name="androidx.core.content.FileProvider"

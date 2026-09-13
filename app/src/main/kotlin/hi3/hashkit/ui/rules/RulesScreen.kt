@@ -105,9 +105,11 @@ fun RulesScreen(
         ) {
             item {
                 Text(
-                    "Rules are checked each poll cycle. When a miner matches, the action runs " +
-                        "on it — at most once per the rule's interval. Unsupported control " +
-                        "actions are skipped; each run is recorded.",
+                    "Rules are checked each poll cycle. A condition must hold for the rule's " +
+                        "sustained window before the action runs, and each rule fires at most " +
+                        "once per interval per miner. Muted miners are skipped, unsupported " +
+                        "control actions are skipped with a reason, and every fire raises a " +
+                        "watchdog notification.",
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
@@ -153,10 +155,11 @@ private fun RuleRow(rule: RuleEntity, onToggle: (Boolean) -> Unit, onDelete: () 
                 }
             }
             val thr = rule.threshold?.let { " ${it.toInt()}${condition?.unit ?: ""}" } ?: ""
+            val sustained = if (rule.sustainedForMinutes > 0) " for ≥${rule.sustainedForMinutes}m" else ""
             Text(
-                "IF ${condition?.label ?: rule.conditionType}$thr  →  ${action?.label ?: rule.actionType}" +
+                "IF ${condition?.label ?: rule.conditionType}$thr$sustained  →  ${action?.label ?: rule.actionType}" +
                     (rule.targetGroup?.let { "  ·  group \"$it\"" } ?: "  ·  all miners") +
-                    "  ·  every ${rule.minIntervalMinutes}m",
+                    "  ·  every ${rule.minIntervalMinutes}m per miner",
                 style = MaterialTheme.typography.bodySmall,
                 color = HiBrand.textSecondary,
             )
@@ -179,9 +182,11 @@ private fun RuleEditorDialog(onSave: (RuleEntity) -> Unit, onDismiss: () -> Unit
     var threshold by rememberSaveable { mutableStateOf("75") }
     var group by rememberSaveable { mutableStateOf("") }
     var interval by rememberSaveable { mutableStateOf("30") }
+    var sustained by rememberSaveable { mutableStateOf("0") }
 
     val thresholdValid = !condition.needsThreshold || threshold.toDoubleOrNull() != null
-    val valid = label.isNotBlank() && thresholdValid && (interval.toIntOrNull() ?: 0) >= 1
+    val valid = label.isNotBlank() && thresholdValid && (interval.toIntOrNull() ?: 0) >= 1 &&
+        (sustained.toIntOrNull() ?: -1) >= 0
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -210,7 +215,18 @@ private fun RuleEditorDialog(onSave: (RuleEntity) -> Unit, onDismiss: () -> Unit
                     }
                 }
                 OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Target group (blank = all)") }, singleLine = true)
-                OutlinedTextField(value = interval, onValueChange = { interval = it }, label = { Text("Min interval between fires (min)") }, singleLine = true)
+                OutlinedTextField(
+                    value = sustained,
+                    onValueChange = { sustained = it },
+                    label = { Text("Sustained for (min, 0 = first match)") },
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = interval,
+                    onValueChange = { interval = it },
+                    label = { Text("Min interval between fires per miner (min)") },
+                    singleLine = true,
+                )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     "Control actions (pause/resume/reboot) use the miner's verified control " +
@@ -236,6 +252,7 @@ private fun RuleEditorDialog(onSave: (RuleEntity) -> Unit, onDismiss: () -> Unit
                             minIntervalMinutes = interval.toIntOrNull()?.coerceAtLeast(1) ?: 30,
                             lastFiredAtEpochMs = null,
                             lastResult = null,
+                            sustainedForMinutes = sustained.toIntOrNull()?.coerceAtLeast(0) ?: 0,
                         )
                     )
                 },

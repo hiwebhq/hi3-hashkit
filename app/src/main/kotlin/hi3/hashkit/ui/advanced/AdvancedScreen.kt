@@ -81,11 +81,12 @@ fun AdvancedScreen(
     onEnergyCost: () -> Unit,
     onLiveBitcoin: () -> Unit,
     onSiteMap: () -> Unit,
+    onSiteHeatmap: () -> Unit,
 ) {
     val items = listOf(
         AdvancedItem(
-            "Energy cost",
-            "Per-miner energy use and estimated cost, with a filter",
+            "Energy & profit",
+            "Per-miner energy cost, J/TH ranking and estimated revenue vs cost",
             Icons.Filled.Bolt, onEnergyCost,
         ),
         AdvancedItem(
@@ -142,6 +143,11 @@ fun AdvancedScreen(
             "Site Map",
             "Map buildings/racks/tiers, then capture miners by IP Report button walk",
             Icons.Filled.Map, onSiteMap,
+        ),
+        AdvancedItem(
+            "Heatmap",
+            "Rack layout colored by live chip temperature — spot the hot corner",
+            Icons.Filled.Thermostat, onSiteHeatmap,
         ),
         AdvancedItem(
             "Rack & site",

@@ -10,6 +10,8 @@ import hi3.hashkit.domain.model.MinerTelemetry
  */
 object RuleEngine {
 
+    private const val MS_PER_MINUTE = 60_000L
+
     enum class ConditionType(val label: String, val needsThreshold: Boolean, val unit: String) {
         CHIP_TEMP_ABOVE("Chip temp above", true, "°C"),
         VR_TEMP_ABOVE("VR temp above", true, "°C"),
@@ -33,6 +35,27 @@ object RuleEngine {
         companion object {
             fun fromName(n: String?): ActionType? = entries.firstOrNull { it.name == n }
         }
+    }
+
+    /**
+     * Watchdog decision for one (rule, miner) pair: whether the condition has now held long
+     * enough to fire. [sinceEpochMs] is when the condition was first observed true (null if it
+     * wasn't true last cycle); the returned [SustainDecision.sinceEpochMs] is the value to carry
+     * to the next cycle — null again as soon as the condition stops matching, so a flapping
+     * miner must re-earn the full sustained window.
+     */
+    data class SustainDecision(val sinceEpochMs: Long?, val fire: Boolean)
+
+    fun sustain(
+        matchesNow: Boolean,
+        sinceEpochMs: Long?,
+        nowEpochMs: Long,
+        sustainedForMinutes: Int,
+    ): SustainDecision {
+        if (!matchesNow) return SustainDecision(sinceEpochMs = null, fire = false)
+        val since = sinceEpochMs ?: nowEpochMs
+        val fire = nowEpochMs - since >= sustainedForMinutes * MS_PER_MINUTE
+        return SustainDecision(sinceEpochMs = since, fire = fire)
     }
 
     /**
