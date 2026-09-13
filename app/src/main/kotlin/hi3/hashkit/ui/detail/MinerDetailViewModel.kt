@@ -69,6 +69,7 @@ class MinerDetailViewModel @Inject constructor(
     private val exporter: hi3.hashkit.data.export.Exporter,
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
     private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
+    private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     alertDao: AlertDao,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
@@ -233,6 +234,7 @@ class MinerDetailViewModel @Inject constructor(
         tagsCsv: String,
         expectedHashrateGhs: Double?,
         alertOverrides: hi3.hashkit.domain.alerts.AlertOverrides,
+        farmId: Long? = FARM_UNCHANGED,
     ) {
         viewModelScope.launch {
             repository.updateMinerMeta(
@@ -245,8 +247,20 @@ class MinerDetailViewModel @Inject constructor(
                 expectedHashrateGhs = expectedHashrateGhs,
                 alertOverrides = alertOverrides,
             )
+            if (farmId != FARM_UNCHANGED) farmRepository.assignMiner(minerId, farmId)
         }
     }
+
+    /** Farms available for the edit dialog's farm picker. */
+    val farms: StateFlow<List<hi3.hashkit.data.db.FarmEntity>> =
+        farmRepository.observeFarms()
+            .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** This miner's current farm id (null = unassigned). */
+    val farmId: StateFlow<Long?> = repository.observeMinerEntity(minerId)
+        .map { it?.farmId }
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), null)
+
 
     /** Build a telemetry CSV for the current window and hand back a share intent. */
     fun exportCsv(onReady: (android.content.Intent) -> Unit) {
@@ -334,5 +348,8 @@ class MinerDetailViewModel @Inject constructor(
 
     companion object {
         const val HISTORY_WINDOW_MS = 3_600_000L
+
+        /** Sentinel: saveMeta callers that don't touch the farm leave the assignment as-is. */
+        const val FARM_UNCHANGED = Long.MIN_VALUE
     }
 }

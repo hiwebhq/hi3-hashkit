@@ -110,7 +110,7 @@ fun FarmsScreen(
                     onSetActive = { viewModel.setActive(row.farm.id) },
                     onSetDefault = { viewModel.setDefault(row.farm.id) },
                     onScan = { viewModel.scanFarm(row.farm.id) },
-                    onDelete = { viewModel.delete(row.farm.id) },
+                    onDelete = { alsoMiners -> viewModel.delete(row.farm.id, alsoMiners) },
                 )
             }
         }
@@ -154,7 +154,7 @@ private fun FarmCard(
     onSetActive: () -> Unit,
     onSetDefault: () -> Unit,
     onScan: () -> Unit,
-    onDelete: () -> Unit,
+    onDelete: (alsoMiners: Boolean) -> Unit,
 ) {
     var confirmDelete by remember { mutableStateOf(false) }
     Card(
@@ -204,18 +204,49 @@ private fun FarmCard(
         }
     }
     if (confirmDelete) {
-        AlertDialog(
-            onDismissRequest = { confirmDelete = false },
-            title = { Text("Delete ${row.farm.name}?") },
-            text = { Text("Its ${row.minerCount} miner(s) stay tracked but become unassigned. History is kept.") },
-            confirmButton = {
-                TextButton(onClick = { confirmDelete = false; onDelete() }) {
-                    Text("Delete", color = HiBrand.statusOffline)
-                }
-            },
-            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Cancel") } },
+        DeleteFarmDialog(
+            row = row,
+            onConfirm = { alsoMiners -> confirmDelete = false; onDelete(alsoMiners) },
+            onDismiss = { confirmDelete = false },
         )
     }
+}
+
+@Composable
+private fun DeleteFarmDialog(
+    row: FarmRow,
+    onConfirm: (alsoMiners: Boolean) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var alsoMiners by remember { mutableStateOf(false) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete ${row.farm.name}?") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    if (alsoMiners) {
+                        "Its ${row.minerCount} miner(s) and their history are deleted with it."
+                    } else {
+                        "Its ${row.minerCount} miner(s) stay tracked but become unassigned. History is kept."
+                    },
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    androidx.compose.material3.Checkbox(
+                        checked = alsoMiners,
+                        onCheckedChange = { alsoMiners = it },
+                    )
+                    Text("Also delete its ${row.minerCount} miner(s)")
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(alsoMiners) }) {
+                Text("Delete", color = HiBrand.statusOffline)
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+    )
 }
 
 @Composable

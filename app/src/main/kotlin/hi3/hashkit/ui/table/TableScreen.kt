@@ -2,6 +2,7 @@ package hi3.hashkit.ui.table
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,6 +55,7 @@ import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.ui.theme.HiBrand
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -73,6 +75,9 @@ data class TableState(
     val ascending: Boolean = true,
     val advancedUnlocked: Boolean = false,
     val inventoryTagType: hi3.hashkit.data.prefs.InventoryTagType = hi3.hashkit.data.prefs.InventoryTagType.BOTH,
+    /** Long-press a row to start selecting; selection enables assign-to-farm and delete. */
+    val selection: Set<Long> = emptySet(),
+    val farms: List<hi3.hashkit.data.db.FarmEntity> = emptyList(),
 )
 
 private data class TableSettingsBundle(
@@ -88,6 +93,7 @@ class TableViewModel @Inject constructor(
     private val pollingEngine: PollingEngine,
     private val settingsRepository: SettingsRepository,
     private val nfcRouter: hi3.hashkit.data.nfc.NfcRouter,
+    private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
 ) : ViewModel() {
 
     /** (miner id, nonce) to highlight after a scan; nonce lets the same miner re-highlight. */
@@ -97,11 +103,29 @@ class TableViewModel @Inject constructor(
     private val query = MutableStateFlow("")
     private val sort = MutableStateFlow(SortColumn.NAME)
     private val ascending = MutableStateFlow(true)
+    private val selection = MutableStateFlow<Set<Long>>(emptySet())
 
     fun setQuery(v: String) { query.value = v }
     fun toggleSort(col: SortColumn) {
         if (sort.value == col) ascending.value = !ascending.value
         else { sort.value = col; ascending.value = true }
+    }
+
+    /** The UI computes toggles / select-all-filtered / clear and hands back the new set. */
+    fun setSelection(ids: Set<Long>) { selection.value = ids }
+
+    fun deleteSelected() {
+        viewModelScope.launch {
+            state.value.selection.forEach { repository.deleteMiner(it) }
+            selection.value = emptySet()
+        }
+    }
+
+    fun assignSelectedToFarm(farmId: Long?) {
+        viewModelScope.launch {
+            state.value.selection.forEach { farmRepository.assignMiner(it, farmId) }
+            selection.value = emptySet()
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -120,8 +144,9 @@ class TableViewModel @Inject constructor(
                     settings.inventoryTagType,
                 )
             },
-            query, sort, ascending,
-        ) { bundle, q, s, asc ->
+            combine(query, sort, ascending) { q, s, asc -> Triple(q, s, asc) },
+            combine(selection, farmRepository.observeFarms()) { sel, farms -> sel to farms },
+        ) { bundle, (q, s, asc), (sel, farms) ->
             val filtered = if (q.isBlank()) bundle.miners else bundle.miners.filter {
                 it.name.contains(q, true) || it.host.contains(q, true) ||
                     (it.identity.model?.contains(q, true) == true) ||
@@ -130,6 +155,8 @@ class TableViewModel @Inject constructor(
             TableState(
                 sortMiners(filtered, s, asc), bundle.fahrenheit, q, s, asc,
                 advancedUnlocked = bundle.advancedUnlocked, inventoryTagType = bundle.inventoryTagType,
+                selection = sel.filter { id -> bundle.miners.any { it.id == id } }.toSet(),
+                farms = farms,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TableState())
 
@@ -187,6 +214,12 @@ fun TableScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val hScroll = rememberScrollState()
     var showPrintSize by remember { mutableStateOf(false) }
+    var showAssignFarm by remember { mutableStateOf(false) }
+    var confirmDeleteSelected by remember { mutableStateOf(false) }
+    fun toggleSelect(id: Long) {
+        val sel = state.selection
+        viewModel.setSelection(if (id in sel) sel - id else sel + id)
+    }
     // After a scan, scroll to and highlight the scanned miner in the list.
     val highlight by viewModel.highlight.collectAsStateWithLifecycle()
     val highlightId = highlight?.first
@@ -258,10 +291,20 @@ fun TableScreen(
                     }
                 }
                 Text(
-                    "${state.miners.size} tag(s) · scannable in the AR rack overlay",
+                    "${state.miners.size} tag(s) · scannable in the AR rack overlay · long-press a row to select",
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                )
+            }
+            if (state.selection.isNotEmpty()) {
+                TableSelectionBar(
+                    count = state.selection.size,
+                    filteredCount = state.miners.size,
+                    onSelectAll = { viewModel.setSelection(state.miners.map { it.id }.toSet()) },
+                    onAssignFarm = { showAssignFarm = true },
+                    onDelete = { confirmDeleteSelected = true },
+                    onClear = { viewModel.setSelection(emptySet()) },
                 )
             }
             Column(Modifier.horizontalScroll(hScroll)) {
@@ -289,11 +332,33 @@ fun TableScreen(
                 }
                 LazyColumn(state = listState, contentPadding = PaddingValues(bottom = 24.dp)) {
                     items(state.miners, key = { it.id }) { m ->
-                        TableRow(m, state.fahrenheit, totalWidth, highlighted = m.id == highlightId) { onMinerClick(m.id) }
+                        TableRow(
+                            m, state.fahrenheit, totalWidth,
+                            highlighted = m.id == highlightId,
+                            selected = m.id in state.selection,
+                            onLongClick = { toggleSelect(m.id) },
+                        ) {
+                            if (state.selection.isNotEmpty()) toggleSelect(m.id) else onMinerClick(m.id)
+                        }
                     }
                 }
             }
 
+            if (showAssignFarm) {
+                AssignFarmDialog(
+                    farms = state.farms,
+                    count = state.selection.size,
+                    onPick = { farmId -> showAssignFarm = false; viewModel.assignSelectedToFarm(farmId) },
+                    onDismiss = { showAssignFarm = false },
+                )
+            }
+            if (confirmDeleteSelected) {
+                ConfirmDeleteSelectedDialog(
+                    count = state.selection.size,
+                    onConfirm = { confirmDeleteSelected = false; viewModel.deleteSelected() },
+                    onDismiss = { confirmDeleteSelected = false },
+                )
+            }
             if (showPrintSize) {
                 PrintSizeDialog(
                     onDismiss = { showPrintSize = false },
@@ -345,12 +410,16 @@ private fun PrintSizeDialog(
     )
 }
 
+@Suppress("CyclomaticComplexMethod") // flat per-column formatting: one small branch per cell
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun TableRow(
     miner: Miner,
     fahrenheit: Boolean,
     totalWidth: androidx.compose.ui.unit.Dp,
     highlighted: Boolean = false,
+    selected: Boolean = false,
+    onLongClick: () -> Unit = {},
     onClick: () -> Unit,
 ) {
     val t = miner.lastTelemetry
@@ -378,12 +447,15 @@ private fun TableRow(
     Row(
         Modifier.width(totalWidth)
             .then(
-                if (highlighted) {
-                    Modifier.background(HiBrand.accent.copy(alpha = 0.22f))
-                        .border(2.dp, HiBrand.accent, RoundedCornerShape(8.dp))
-                } else Modifier,
+                when {
+                    highlighted ->
+                        Modifier.background(HiBrand.accent.copy(alpha = 0.22f))
+                            .border(2.dp, HiBrand.accent, RoundedCornerShape(8.dp))
+                    selected -> Modifier.background(HiBrand.accent.copy(alpha = 0.12f))
+                    else -> Modifier
+                },
             )
-            .clickable(onClick = onClick)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

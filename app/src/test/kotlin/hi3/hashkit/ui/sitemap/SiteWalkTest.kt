@@ -65,8 +65,27 @@ class SiteWalkTest {
         )
         val lines = siteMapCsv(rows).trim().lines()
         assertEquals(3, lines.size)
-        assertEquals("building,rack,tier,position,location,ip,last_octet,mac,source,captured_at_epoch_ms", lines[0])
-        assertEquals("1,1,1,1,B1-R1-T1-P1,10.0.0.48,48,AA:BB:CC:DD:EE:FF,ip-report,1000", lines[1])
-        assertEquals("1,1,1,2,B1-R1-T1-P2,10.0.0.107,107,,manual,2000", lines[2])
+        assertEquals(
+            "building,rack,tier,position,location,ip,last_octet,mac,source,captured_at_epoch_ms," +
+                "model,serial,pool,worker,hashrate_ghs",
+            lines[0],
+        )
+        assertEquals("1,1,1,1,B1-R1-T1-P1,10.0.0.48,48,AA:BB:CC:DD:EE:FF,ip-report,1000,,,,,", lines[1])
+        assertEquals("1,1,1,2,B1-R1-T1-P2,10.0.0.107,107,,manual,2000,,,,,", lines[2])
+    }
+
+    @Test
+    fun `csv carries API-scan enrichment and quotes fields with commas`() {
+        val row = CapturedSlot(Slot(1, 1, 1, 1), "10.0.0.48", null, manual = true, atEpochMs = 1000L)
+        val info = EnrichedMiner(
+            adapterType = "cgminer-generic", model = "Antminer S19, Pro", mac = "AA:BB:CC:DD:EE:FF",
+            serial = "SN123", pool = "stratum+tcp://pool.hi3.cc:3333", worker = "w.0x48", hashrateGhs = 95500.0,
+        )
+        val line = siteMapCsv(listOf(row), mapOf(row.slot.code to info)).trim().lines()[1]
+        assertEquals(
+            "1,1,1,1,B1-R1-T1-P1,10.0.0.48,48,AA:BB:CC:DD:EE:FF,manual,1000," +
+                "\"Antminer S19, Pro\",SN123,stratum+tcp://pool.hi3.cc:3333,w.0x48,95500.0",
+            line,
+        )
     }
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.77.1
+
+- **Site Map: Scan miners (API).** After a capture walk, one tap probes every collected
+  IP with the real adapters and pulls MAC, serial, model, pool, worker and live hashrate
+  into the results table and CSV; scan results also upgrade the records Save-to-Farm
+  creates (correct adapter type and identity, MAC backfilled onto manual fills).
+- **Fleet table: multi-select.** Long-press a row to select, then assign the selection
+  to a farm or delete it (with confirm); select-all honors the current filter.
+- **Miner editor: farm picker.** Assign or change a miner's farm (or clear it) from the
+  Edit dialog on its detail page.
+- **Farms: optional full delete.** Deleting a farm can now also delete its miners and
+  their history (checkbox in the confirm dialog); default behavior is unchanged.
+
 ## 0.77.0
 
 - **Site Map (Advanced).** Commission a whole site by walking the racks: define

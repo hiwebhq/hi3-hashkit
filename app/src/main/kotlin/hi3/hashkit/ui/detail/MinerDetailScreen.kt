@@ -570,10 +570,14 @@ fun MinerDetailScreen(
     }
 
     if (editing && miner != null) {
+        val farms by viewModel.farms.collectAsStateWithLifecycle()
+        val currentFarmId by viewModel.farmId.collectAsStateWithLifecycle()
         EditMinerDialog(
             miner = miner,
-            onSave = { name, group, location, notes, tags, expected, overrides ->
-                viewModel.saveMeta(name, group, location, notes, tags, expected, overrides)
+            farms = farms,
+            currentFarmId = currentFarmId,
+            onSave = { name, group, location, notes, tags, expected, overrides, farmId ->
+                viewModel.saveMeta(name, group, location, notes, tags, expected, overrides, farmId)
                 editing = false
             },
             onDismiss = { editing = false },
@@ -753,15 +757,23 @@ private fun historyStats(history: List<hi3.hashkit.domain.model.MinerTelemetry>)
     return uptimePct to energy
 }
 
+@Suppress("LongMethod") // a declarative form: one field per editable miner property
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun EditMinerDialog(
     miner: hi3.hashkit.domain.model.Miner,
-    onSave: (String, String?, String?, String?, String, Double?, hi3.hashkit.domain.alerts.AlertOverrides) -> Unit,
+    farms: List<hi3.hashkit.data.db.FarmEntity>,
+    currentFarmId: Long?,
+    onSave: (
+        String, String?, String?, String?, String, Double?,
+        hi3.hashkit.domain.alerts.AlertOverrides, Long?,
+    ) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf(miner.name) }
     var group by remember { mutableStateOf(miner.group ?: "") }
     var location by remember { mutableStateOf(miner.location ?: "") }
+    var farmId by remember { mutableStateOf(currentFarmId) }
     var notes by remember { mutableStateOf(miner.notes ?: "") }
     var tags by remember { mutableStateOf(miner.tags.joinToString(", ")) }
     var expected by remember { mutableStateOf(miner.expectedHashrateGhs?.toString() ?: "") }
@@ -783,6 +795,25 @@ private fun EditMinerDialog(
                 androidx.compose.material3.OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, singleLine = true)
                 androidx.compose.material3.OutlinedTextField(value = group, onValueChange = { group = it }, label = { Text("Group") }, singleLine = true)
                 androidx.compose.material3.OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location (room/rack/shelf)") }, singleLine = true)
+                if (farms.isNotEmpty()) {
+                    Text("FARM", style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+                    androidx.compose.foundation.layout.FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        androidx.compose.material3.FilterChip(
+                            selected = farmId == null,
+                            onClick = { farmId = null },
+                            label = { Text("None") },
+                        )
+                        farms.forEach { farm ->
+                            androidx.compose.material3.FilterChip(
+                                selected = farmId == farm.id,
+                                onClick = { farmId = farm.id },
+                                label = { Text(farm.name) },
+                            )
+                        }
+                    }
+                }
                 androidx.compose.material3.OutlinedTextField(value = tags, onValueChange = { tags = it }, label = { Text("Tags (comma-separated)") }, singleLine = true)
                 androidx.compose.material3.OutlinedTextField(
                     value = expected,
@@ -826,6 +857,7 @@ private fun EditMinerDialog(
                             rejectRatePercent = ovReject.toDoubleOrNull(),
                             muted = muted,
                         ),
+                        farmId,
                     )
                 },
             ) { Text("Save") }

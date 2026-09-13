@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -34,9 +35,9 @@ private const val W_IP = 1.0f
 private const val W_MAC = 1.4f
 private const val W_SOURCE = 0.7f
 
-/** DONE-phase list items: export/save actions plus the results table. */
+/** DONE-phase list items: export/save/scan actions plus the results table. */
 internal fun LazyListScope.doneItems(vm: SiteMapViewModel, state: SiteMapState) {
-    val rows = state.captured.toSortedMap().values.toList()
+    val rows = state.captured.toSortedMap().entries.toList()
     item { DoneActions(vm, state) }
     item {
         Text(
@@ -45,7 +46,9 @@ internal fun LazyListScope.doneItems(vm: SiteMapViewModel, state: SiteMapState) 
         )
     }
     item { ResultHeader() }
-    items(rows, key = { it.slot.code }) { row -> ResultRow(row) }
+    items(rows, key = { it.value.slot.code }) { (index, row) ->
+        ResultRow(row, state.enriched[index])
+    }
 }
 
 @Composable
@@ -61,6 +64,15 @@ private fun DoneActions(vm: SiteMapViewModel, state: SiteMapState) {
                 modifier = Modifier.weight(1f), enabled = state.captured.isNotEmpty(),
             ) { Text("Export CSV") }
             TextButton(onClick = vm::newSession, modifier = Modifier.weight(1f)) { Text("New session") }
+        }
+        OutlinedButton(
+            onClick = vm::enrich, modifier = Modifier.fillMaxWidth(),
+            enabled = !state.enriching && state.captured.isNotEmpty(),
+        ) {
+            Text(
+                if (state.enriching) "Scanning… ${state.enrichProgress}/${state.captured.size}"
+                else "Scan miners (API): MAC · serial · pool · worker · hashrate",
+            )
         }
         OutlinedTextField(
             value = farmName, onValueChange = { farmName = it },
@@ -91,14 +103,31 @@ private fun ResultHeader() {
 }
 
 @Composable
-private fun ResultRow(row: CapturedSlot) {
+private fun ResultRow(row: CapturedSlot, info: EnrichedMiner?) {
     val style = MaterialTheme.typography.bodySmall
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(row.slot.code, Modifier.weight(W_LOCATION), style = style, color = HiBrand.textPrimary)
-        Text(row.ip, Modifier.weight(W_IP), style = style, color = HiBrand.textPrimary)
-        Text(row.mac ?: "—", Modifier.weight(W_MAC), style = style, color = HiBrand.textSecondary)
-        val source = if (row.manual) "manual" else "button"
-        Text(source, Modifier.weight(W_SOURCE), style = style, color = HiBrand.textSecondary)
+    Column(Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(row.slot.code, Modifier.weight(W_LOCATION), style = style, color = HiBrand.textPrimary)
+            Text(row.ip, Modifier.weight(W_IP), style = style, color = HiBrand.textPrimary)
+            Text(row.mac ?: "—", Modifier.weight(W_MAC), style = style, color = HiBrand.textSecondary)
+            val source = if (row.manual) "manual" else "button"
+            Text(source, Modifier.weight(W_SOURCE), style = style, color = HiBrand.textSecondary)
+        }
+        if (info != null) {
+            val line = if (info.error != null) {
+                "scan failed: ${info.error}"
+            } else {
+                listOfNotNull(
+                    info.model, info.serial?.let { "SN $it" }, info.pool, info.worker,
+                    info.hashrateGhs?.let { hi3.hashkit.core.Units.formatHashrate(it) },
+                ).joinToString(" · ").ifBlank { "no details reported" }
+            }
+            Text(
+                line, style = MaterialTheme.typography.labelSmall,
+                color = if (info.error != null) HiBrand.statusOffline else HiBrand.statusOnline,
+                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp),
+            )
+        }
     }
 }
 

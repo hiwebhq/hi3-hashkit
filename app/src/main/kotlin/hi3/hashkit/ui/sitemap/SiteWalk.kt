@@ -60,16 +60,43 @@ data class CapturedSlot(
     val lastOctet: String get() = ip.substringAfterLast('.')
 }
 
-/** Results CSV: header plus one row per captured slot, in walk order. */
-fun siteMapCsv(captured: List<CapturedSlot>): String = buildString {
-    appendLine("building,rack,tier,position,location,ip,last_octet,mac,source,captured_at_epoch_ms")
-    captured.forEach { c ->
+/** Details fetched from the miner's own API after capture ("Scan miners"). */
+data class EnrichedMiner(
+    val adapterType: String? = null,
+    val model: String? = null,
+    val mac: String? = null,
+    val serial: String? = null,
+    val pool: String? = null,
+    val worker: String? = null,
+    val hashrateGhs: Double? = null,
+    val error: String? = null,
+)
+
+/**
+ * Results CSV: header plus one row per captured slot, in walk order. Enrichment columns
+ * are filled from [enrichedByCode] (keyed by slot code) when an API scan has run.
+ */
+fun siteMapCsv(captured: List<CapturedSlot>, enrichedByCode: Map<String, EnrichedMiner> = emptyMap()): String =
+    buildString {
         appendLine(
-            listOf(
-                c.slot.building, c.slot.rack, c.slot.tier, c.slot.position, c.slot.code,
-                c.ip, c.lastOctet, c.mac.orEmpty(),
-                if (c.manual) "manual" else "ip-report", c.atEpochMs,
-            ).joinToString(","),
+            "building,rack,tier,position,location,ip,last_octet,mac,source,captured_at_epoch_ms," +
+                "model,serial,pool,worker,hashrate_ghs",
         )
+        captured.forEach { c ->
+            val e = enrichedByCode[c.slot.code]
+            appendLine(
+                listOf(
+                    c.slot.building, c.slot.rack, c.slot.tier, c.slot.position, c.slot.code,
+                    c.ip, c.lastOctet, (c.mac ?: e?.mac).orEmpty(),
+                    if (c.manual) "manual" else "ip-report", c.atEpochMs,
+                    csvField(e?.model), csvField(e?.serial), csvField(e?.pool), csvField(e?.worker),
+                    e?.hashrateGhs?.let { String.format(java.util.Locale.US, "%.1f", it) }.orEmpty(),
+                ).joinToString(","),
+            )
+        }
     }
+
+private fun csvField(value: String?): String {
+    val v = value.orEmpty()
+    return if (v.contains(',') || v.contains('"')) "\"${v.replace("\"", "\"\"")}\"" else v
 }

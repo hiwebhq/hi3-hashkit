@@ -18,8 +18,15 @@ import hi3.hashkit.data.repo.FarmRepository
 import hi3.hashkit.data.repo.MinerRepository
 import hi3.hashkit.discovery.IpReportListener
 import hi3.hashkit.discovery.parseIpReport
+import hi3.hashkit.domain.adapter.MinerHost
+import hi3.hashkit.domain.adapter.ProbeResult
+import hi3.hashkit.domain.adapter.TelemetryResult
 import hi3.hashkit.domain.model.MinerIdentity
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +62,10 @@ data class SiteMapState(
     val farms: List<FarmEntity> = emptyList(),
     val saving: Boolean = false,
     val saveResult: String? = null,
+    /** API-scan results per slot index ("Scan miners" on the Done screen). */
+    val enriched: Map<Int, EnrichedMiner> = emptyMap(),
+    val enriching: Boolean = false,
+    val enrichProgress: Int = 0,
 )
 
 /**
@@ -69,6 +80,7 @@ class SiteMapViewModel @Inject constructor(
     private val listener: IpReportListener,
     private val farmRepository: FarmRepository,
     private val minerRepository: MinerRepository,
+    private val registry: hi3.hashkit.domain.adapter.AdapterRegistry,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SiteMapState())
@@ -228,11 +240,15 @@ class SiteMapViewModel @Inject constructor(
     /** Write the results CSV into the FileProvider-shared exports dir; caller shares it. */
     fun exportCsv(): File? {
         val rows = capturedInOrder()
-        if (rows.isEmpty()) return null
+        val cfg = _state.value.config
+        if (rows.isEmpty() || cfg == null) return null
+        val enrichedByCode = _state.value.enriched.entries.mapNotNull { (idx, info) ->
+            SiteWalk.slotAt(cfg, idx)?.let { it.code to info }
+        }.toMap()
         val stamp = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())
         val dir = File(context.cacheDir, "exports").apply { mkdirs() }
         val file = File(dir, "hi3-sitemap-$stamp.csv")
-        file.writeText(siteMapCsv(rows))
+        file.writeText(siteMapCsv(rows, enrichedByCode))
         return file
     }
 
@@ -267,9 +283,74 @@ class SiteMapViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Probe every captured IP with the real adapters and pull MAC / serial / model /
+     * pool / worker / live hashrate into the results table, CSV, and save path.
+     */
+    fun enrich() {
+        val rows = capturedInOrder()
+        val cfg = _state.value.config
+        if (rows.isEmpty() || cfg == null || _state.value.enriching) return
+        _state.update { it.copy(enriching = true, enrichProgress = 0) }
+        viewModelScope.launch {
+            val results = coroutineScope {
+                val sem = Semaphore(SCAN_CONCURRENCY)
+                rows.map { row ->
+                    async {
+                        val info = sem.withPermit { scanOne(row.ip) }
+                        _state.update { s -> s.copy(enrichProgress = s.enrichProgress + 1) }
+                        SiteWalk.indexOf(cfg, row.slot) to info
+                    }
+                }.map { it.await() }
+            }
+            _state.update { s ->
+                var captured = s.captured
+                results.forEach { (idx, info) ->
+                    val row = captured[idx]
+                    if (row != null && row.mac == null && info.mac != null) {
+                        captured = captured + (idx to row.copy(mac = info.mac))
+                    }
+                }
+                s.copy(enriching = false, enriched = s.enriched + results.toMap(), captured = captured)
+            }
+        }
+    }
+
+    private suspend fun scanOne(ip: String): EnrichedMiner {
+        var lastError = "no adapter recognized this device"
+        for (adapter in registry.probeable()) {
+            val host = MinerHost(ip, adapter.defaultPort)
+            when (val probe = adapter.probe(host)) {
+                is ProbeResult.Supported -> {
+                    val telemetry = (adapter.getTelemetry(host) as? TelemetryResult.Success)?.telemetry
+                    return EnrichedMiner(
+                        adapterType = probe.adapterType,
+                        model = probe.identity.model,
+                        mac = probe.identity.macAddress?.uppercase(),
+                        serial = probe.identity.serialNumber,
+                        pool = telemetry?.poolUrl?.let { u -> telemetry.poolPort?.let { p -> "$u:$p" } ?: u },
+                        worker = telemetry?.workerName,
+                        hashrateGhs = telemetry?.hashrateGhs?.value,
+                    )
+                }
+                is ProbeResult.Unreachable -> lastError = probe.cause
+                ProbeResult.NotThisDevice -> Unit
+            }
+        }
+        return EnrichedMiner(error = lastError)
+    }
+
     private suspend fun upsertRow(row: CapturedSlot, farmId: Long): AddMinerResult {
-        val identity = MinerIdentity(macAddress = row.mac, manufacturer = if (row.mac != null) "Bitmain" else null)
-        val result = minerRepository.upsertDiscovered(row.ip, 0, GenericCgMinerAdapter.TYPE, identity)
+        val cfg = _state.value.config
+        val info = cfg?.let { _state.value.enriched[SiteWalk.indexOf(it, row.slot)] }
+        val identity = MinerIdentity(
+            macAddress = row.mac ?: info?.mac,
+            serialNumber = info?.serial,
+            model = info?.model,
+            manufacturer = if (info == null && row.mac != null) "Bitmain" else null,
+        )
+        val adapterType = info?.adapterType ?: GenericCgMinerAdapter.TYPE
+        val result = minerRepository.upsertDiscovered(row.ip, 0, adapterType, identity)
         val minerId = when (result) {
             is AddMinerResult.Added -> result.minerId
             is AddMinerResult.AlreadyKnown -> result.minerId
@@ -318,5 +399,6 @@ class SiteMapViewModel @Inject constructor(
         const val TONE_VOLUME = 80
         const val TONE_MS = 120
         const val VIBRATE_MS = 60L
+        const val SCAN_CONCURRENCY = 6
     }
 }

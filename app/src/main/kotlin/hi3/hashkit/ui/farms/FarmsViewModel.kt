@@ -11,6 +11,7 @@ import hi3.hashkit.discovery.AutoScanManager
 import hi3.hashkit.discovery.NetworkInspector
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -30,6 +31,7 @@ class FarmsViewModel @Inject constructor(
     private val autoScan: AutoScanManager,
     private val settingsRepository: SettingsRepository,
     private val networkInspector: NetworkInspector,
+    private val minerRepository: hi3.hashkit.data.repo.MinerRepository,
     pollingEngine: PollingEngine,
 ) : ViewModel() {
 
@@ -58,7 +60,21 @@ class FarmsViewModel @Inject constructor(
 
     fun setDefault(id: Long) { viewModelScope.launch { farmRepository.setDefault(id) } }
     fun setActive(id: Long) { viewModelScope.launch { farmRepository.setActive(id) } }
-    fun delete(id: Long) { viewModelScope.launch { farmRepository.deleteFarm(id) } }
+    /**
+     * Delete a farm; with [alsoMiners] its miners (and their history) are deleted too,
+     * via the full per-miner cascade (maintenance photos included) — otherwise they
+     * just become unassigned as before.
+     */
+    fun delete(id: Long, alsoMiners: Boolean = false) {
+        viewModelScope.launch {
+            if (alsoMiners) {
+                minerRepository.observeMinerEntities().first()
+                    .filter { it.farmId == id }
+                    .forEach { minerRepository.deleteMiner(it.id) }
+            }
+            farmRepository.deleteFarm(id)
+        }
+    }
     fun scanFarm(id: Long) = autoScan.scanFarm(id)
 
     val scanState: StateFlow<AutoScanManager.State> = autoScan.state
