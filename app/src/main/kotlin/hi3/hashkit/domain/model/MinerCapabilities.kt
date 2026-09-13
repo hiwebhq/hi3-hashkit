@@ -13,6 +13,8 @@ enum class Capability {
     APPLY_APPROVED_TUNE,
     REBOOT,
     POWER_CONTROL,
+    /** Blink a locate light so the physical unit can be found in a rack. */
+    LOCATE,
 }
 
 data class MinerCapabilities(

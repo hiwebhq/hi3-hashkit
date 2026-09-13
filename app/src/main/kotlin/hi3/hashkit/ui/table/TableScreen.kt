@@ -60,6 +60,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
@@ -94,6 +95,7 @@ class TableViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val nfcRouter: hi3.hashkit.data.nfc.NfcRouter,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
+    private val controlRepository: hi3.hashkit.data.repo.ControlRepository,
 ) : ViewModel() {
 
     /** (miner id, nonce) to highlight after a scan; nonce lets the same miner re-highlight. */
@@ -118,6 +120,17 @@ class TableViewModel @Inject constructor(
         viewModelScope.launch {
             state.value.selection.forEach { repository.deleteMiner(it) }
             selection.value = emptySet()
+        }
+    }
+
+    /** Blink/stop the locate light on every selected miner that supports it (others no-op). */
+    fun blinkSelected(on: Boolean) {
+        viewModelScope.launch {
+            state.value.selection.forEach { id ->
+                repository.observeMinerEntity(id).first()?.let { entity ->
+                    runCatching { controlRepository.locate(entity, on) }
+                }
+            }
         }
     }
 
@@ -305,6 +318,7 @@ fun TableScreen(
                     onAssignFarm = { showAssignFarm = true },
                     onDelete = { confirmDeleteSelected = true },
                     onClear = { viewModel.setSelection(emptySet()) },
+                    onBlink = viewModel::blinkSelected,
                 )
             }
             Column(Modifier.horizontalScroll(hScroll)) {

@@ -497,6 +497,7 @@ fun MinerDetailScreen(
                         busyAction = state.busyAction,
                         lastActionMessage = state.lastActionMessage,
                         onReboot = viewModel::reboot,
+                        onLocate = viewModel::locate,
                         onSetPool = viewModel::setPool,
                         onSetFanAuto = viewModel::setFanAuto,
                         onSetFanManual = viewModel::setFanManual,

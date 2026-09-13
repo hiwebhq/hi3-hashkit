@@ -107,4 +107,8 @@ interface MinerControlAdapter : MinerAdapter {
     /** Pause/resume hashing. Default: unsupported (most families expose no such control). */
     suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult =
         ActionResult.Unsupported("This device has no pause/resume control.")
+
+    /** Blink the locate light on/off. Default: unsupported. */
+    suspend fun locate(host: MinerHost, on: Boolean): ActionResult =
+        ActionResult.Unsupported("This device has no locate light control.")
 }

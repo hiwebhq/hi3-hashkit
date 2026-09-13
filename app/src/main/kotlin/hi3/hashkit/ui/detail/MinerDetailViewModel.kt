@@ -272,6 +272,10 @@ class MinerDetailViewModel @Inject constructor(
 
     fun reboot() = runAction("restarting") { controlRepository.reboot(it) }
 
+    fun locate(on: Boolean) = runAction(if (on) "blinking LED" else "stopping blink") {
+        controlRepository.locate(it, on)
+    }
+
     fun pauseHashing() = runAction("pausing hashing") {
         controlRepository.powerControl(it, hi3.hashkit.domain.adapter.PowerAction.PAUSE)
     }

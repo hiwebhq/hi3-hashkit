@@ -27,6 +27,7 @@ internal fun TableSelectionBar(
     onAssignFarm: () -> Unit,
     onDelete: () -> Unit,
     onClear: () -> Unit,
+    onBlink: (Boolean) -> Unit = {},
 ) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
         Text(
@@ -36,6 +37,9 @@ internal fun TableSelectionBar(
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onAssignFarm) { Text("Assign to farm") }
+            // Locate lights (miners whose firmware has no locate control are skipped).
+            OutlinedButton(onClick = { onBlink(true) }) { Text("Blink LED") }
+            OutlinedButton(onClick = { onBlink(false) }) { Text("Stop blink") }
             OutlinedButton(onClick = onDelete) { Text("Delete", color = HiBrand.statusOffline) }
             if (count < filteredCount) {
                 TextButton(onClick = onSelectAll) { Text("Select all $filteredCount") }

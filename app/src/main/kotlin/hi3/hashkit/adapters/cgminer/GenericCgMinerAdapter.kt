@@ -104,7 +104,7 @@ class GenericCgMinerAdapter @Inject constructor(
             )
             // Stock Bitmain: reboot via the authenticated web CGI (Digest). No pause on stock.
             "bitmain" in family -> MinerCapabilities(
-                supported = setOf(Capability.TELEMETRY, Capability.REBOOT),
+                supported = setOf(Capability.TELEMETRY, Capability.REBOOT, Capability.LOCATE),
                 unsupportedReasons = mapOf(
                     Capability.SET_POOLS to "Bitmain pool changes need the set_miner_conf.cgi config round-trip, not yet verified.",
                     Capability.POWER_CONTROL to "Stock Bitmain has no pause/resume control.",
@@ -153,6 +153,13 @@ class GenericCgMinerAdapter @Inject constructor(
             requireSecret(host)?.let { bitmain.reboot(host.host, "root", it) }
                 ?: ActionResult.Unsupported("Set the miner's root web password in the miner's settings first.")
         else -> ActionResult.Unsupported("Reboot is not verified for this firmware.")
+    }
+
+    override suspend fun locate(host: MinerHost, on: Boolean): ActionResult = when (familyOf(host)) {
+        CgMinerCommon.Family.ANTMINER_STOCK ->
+            requireSecret(host)?.let { bitmain.blink(host.host, "root", it, on) }
+                ?: ActionResult.Unsupported("Set the miner's root web password in the miner's settings first.")
+        else -> ActionResult.Unsupported("Locate light is not verified for this firmware.")
     }
 
     override suspend fun powerControl(host: MinerHost, action: PowerAction): ActionResult =

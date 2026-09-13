@@ -39,6 +39,7 @@ import kotlin.math.roundToInt
  * current -> proposed values with risks, and tuning is limited to firmware-approved
  * option lists with a rollback path.
  */
+@Suppress("LongMethod", "CyclomaticComplexMethod") // one capability-gated row/dialog per control
 @Composable
 fun ControlsCard(
     capabilities: MinerCapabilities,
@@ -59,8 +60,10 @@ fun ControlsCard(
     onRollbackTune: () -> Unit,
     onPause: () -> Unit = {},
     onResume: () -> Unit = {},
+    onLocate: (Boolean) -> Unit = {},
 ) {
     var dialog by remember { mutableStateOf<ControlDialog?>(null) }
+    var blinking by remember { mutableStateOf(false) }
     val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
     fun buzz() = haptics.performHapticFeedback(
         androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress
@@ -83,6 +86,15 @@ fun ControlsCard(
                     onClick = { dialog = ControlDialog.Reboot },
                     enabled = busyAction == null,
                 ) { Text("Restart") }
+            }
+            if (Capability.LOCATE in capabilities) {
+                OutlinedButton(
+                    onClick = {
+                        blinking = !blinking
+                        onLocate(blinking)
+                    },
+                    enabled = busyAction == null,
+                ) { Text(if (blinking) "Stop blink" else "Blink LED") }
             }
             if (Capability.SET_POOLS in capabilities) {
                 OutlinedButton(

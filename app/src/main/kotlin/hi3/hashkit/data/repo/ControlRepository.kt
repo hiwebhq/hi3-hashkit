@@ -52,6 +52,15 @@ class ControlRepository @Inject constructor(
         return result
     }
 
+    /** Blink the locate light so the physical unit can be found in a rack. */
+    suspend fun locate(entity: MinerEntity, on: Boolean): ActionResult {
+        val adapter = controlAdapter(entity)
+            ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")
+        val result = adapter.locate(hostOf(entity), on)
+        audit(entity.id, "locate", "{}", "{\"on\":$on}", result)
+        return result
+    }
+
     suspend fun powerControl(
         entity: MinerEntity,
         action: hi3.hashkit.domain.adapter.PowerAction,

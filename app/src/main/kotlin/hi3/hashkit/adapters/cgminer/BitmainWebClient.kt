@@ -4,8 +4,10 @@ import hi3.hashkit.discovery.MinerHostValidator
 import hi3.hashkit.domain.adapter.ActionResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.security.MessageDigest
 import kotlin.random.Random
 import javax.inject.Inject
@@ -28,9 +30,23 @@ class BitmainWebClient @Inject constructor(
     private val okHttpClient: OkHttpClient,
 ) {
     suspend fun reboot(host: String, user: String, password: String): ActionResult =
-        digestGet(host, "/cgi-bin/reboot.cgi", user, password)
+        digestRequest(host, "/cgi-bin/reboot.cgi", user, password)
 
-    private suspend fun digestGet(host: String, path: String, user: String, password: String): ActionResult =
+    /**
+     * Locate light: POST /cgi-bin/blink.cgi with {"blink":true|false} (S17/S19-era stock
+     * firmware convention). Implemented from the stock CGI spec — worst case on an older
+     * model is an HTTP error surfaced to the user; the command is harmless either way.
+     */
+    suspend fun blink(host: String, user: String, password: String, on: Boolean): ActionResult =
+        digestRequest(host, "/cgi-bin/blink.cgi", user, password, jsonBody = "{\"blink\":$on}")
+
+    private suspend fun digestRequest(
+        host: String,
+        path: String,
+        user: String,
+        password: String,
+        jsonBody: String? = null,
+    ): ActionResult =
         withContext(Dispatchers.IO) {
             if (!MinerHostValidator.resolvesToAllowed(host)) {
                 return@withContext ActionResult.Failure("Refused: $host is not a private/Tailscale address")
@@ -39,17 +55,23 @@ class BitmainWebClient @Inject constructor(
                 return@withContext ActionResult.Unsupported("Set the miner's root web password to use controls.")
             }
             val url = "http://$host$path"
+            val method = if (jsonBody == null) "GET" else "POST"
+            fun request(): Request.Builder {
+                val b = Request.Builder().url(url)
+                return if (jsonBody == null) b.get()
+                else b.post(jsonBody.toRequestBody("application/json".toMediaType()))
+            }
             runCatching {
                 // First request draws the 401 + WWW-Authenticate challenge.
-                okHttpClient.newCall(Request.Builder().url(url).get().build()).execute().use { challenge ->
+                okHttpClient.newCall(request().build()).execute().use { challenge ->
                     if (challenge.isSuccessful) return@use ActionResult.Success // no auth required
                     if (challenge.code != 401) return@use ActionResult.Failure("Miner answered HTTP ${challenge.code}")
                     val header = challenge.header("WWW-Authenticate")
                         ?: return@use ActionResult.Failure("No auth challenge from miner")
-                    val authz = digestHeader(header, "GET", path, user, password)
+                    val authz = digestHeader(header, method, path, user, password)
                         ?: return@use ActionResult.Failure("Unsupported auth challenge")
                     okHttpClient.newCall(
-                        Request.Builder().url(url).get().header("Authorization", authz).build()
+                        request().header("Authorization", authz).build()
                     ).execute().use { resp ->
                         if (resp.isSuccessful) ActionResult.Success
                         else ActionResult.Failure("Miner rejected the command (HTTP ${resp.code}) — check the root password")
