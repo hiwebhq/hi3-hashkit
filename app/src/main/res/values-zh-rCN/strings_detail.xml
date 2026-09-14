@@ -216,4 +216,17 @@
     <string name="det_act_fan_manual">将风扇设为 %1$d%%</string>
     <string name="det_act_applying_tune">应用 %1$d MHz / %2$d mV</string>
     <string name="det_act_rollback">回滚调优</string>
+
+    <!-- Display dialog (Bitaxe screen) -->
+    <string name="det_display">屏幕</string>
+    <string name="det_display_title">屏幕设置</string>
+    <string name="det_display_rotation">旋转</string>
+    <string name="det_display_invert">反色显示</string>
+    <string name="det_display_timeout">屏幕自动关闭时间</string>
+    <string name="det_display_always_on">常亮</string>
+    <string name="det_display_always_off">常关</string>
+    <string name="det_display_minutes">%1$d 分钟</string>
+    <string name="det_display_hours">%1$d 小时</string>
+    <string name="det_display_hint">仅更改矿机自带的小屏幕，不影响挖矿。</string>
+    <string name="det_act_display">正在更新屏幕设置</string>
 </resources>

@@ -36,6 +36,7 @@ object EspMinerParser {
         "fallbackStratumURL", "fallbackStratumPort", "fallbackStratumUser",
         "isUsingFallbackStratum", "version", "idfVersion", "boardVersion", "runningPartition",
         "flipscreen", "overheat_mode", "invertscreen", "invertfanpolarity",
+        "rotation", "displayTimeout", "display", "networkDifficulty",
         "autofanspeed", "fanspeed", "fanrpm", "fanrpm2",
         // ESP-Miner forks and derivatives (Lucky Miner-style, NerdQAxe)
         "DeviceModel", "deviceModel", "sn_str",
@@ -83,6 +84,11 @@ object EspMinerParser {
             vrTempC = Sourced.measured(obj.num("vrTemp")),
             fans = fans,
             autoFanEnabled = obj.bool("autofanspeed"),
+            // Screen settings exist on v2.x with a "rotation" field (older builds used
+            // "flipscreen", which the app doesn't drive). Values verified in nvs_config.c.
+            displayRotationDegrees = obj.num("rotation")?.toInt(),
+            displayInverted = obj.bool("invertscreen"),
+            displayTimeoutMinutes = obj.num("displayTimeout")?.toInt(),
             frequencyMhz = Sourced.reported(obj.num("frequency")),
             coreVoltageMv = Sourced.reported(obj.num("coreVoltageActual") ?: obj.num("coreVoltage")),
             inputVoltageMv = Sourced.measured(obj.num("voltage")),
@@ -92,6 +98,9 @@ object EspMinerParser {
             bestDifficulty = obj.difficulty("bestDiff"),
             bestSessionDifficulty = obj.difficulty("bestSessionDiff"),
             uptimeSeconds = obj.num("uptimeSeconds")?.toLong(),
+            // v2.14+ reports the network difficulty it mines against; feeds solo odds and
+            // "% of a block" without any external fetch.
+            networkDifficulty = obj.num("networkDifficulty")?.takeIf { it > 0 },
             poolUrl = obj.str("stratumURL"),
             poolPort = obj.num("stratumPort")?.toInt(),
             workerName = obj.str("stratumUser"),

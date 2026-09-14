@@ -3,6 +3,7 @@ package hi3.hashkit.adapters.espminer
 import hi3.hashkit.core.Totp
 import hi3.hashkit.discovery.MinerHostValidator
 import hi3.hashkit.domain.adapter.ActionResult
+import hi3.hashkit.domain.adapter.DisplayControl
 import hi3.hashkit.domain.adapter.FanControl
 import hi3.hashkit.domain.adapter.MinerControlAdapter
 import hi3.hashkit.domain.adapter.MinerHost
@@ -42,7 +43,8 @@ import javax.inject.Singleton
  * devices (see EspMinerFirmware for version-specific behavior):
  *  - GET   /api/system/info     — identity + telemetry
  *  - GET   /api/system/asic     — firmware-approved tune options (newer firmware)
- *  - PATCH /api/system          — settings (pools, fan, frequency, coreVoltage)
+ *  - PATCH /api/system          — settings (pools, fan, frequency, coreVoltage,
+ *                                 rotation/invertscreen/displayTimeout — nvs_config.c)
  *  - POST  /api/system/restart  — reboot
  *
  * Controls are enabled only for official v2.x firmware; unknown forks are
@@ -127,6 +129,7 @@ class EspMinerAdapter @Inject constructor(
                 Capability.SET_POOLS,
                 Capability.SET_FAN,
                 Capability.APPLY_APPROVED_TUNE,
+                Capability.SET_DISPLAY,
             ),
             unsupportedReasons = mapOf(
                 Capability.SET_OPERATING_MODE to "ESP-Miner has no operating-mode concept; use tune profiles.",
@@ -228,6 +231,41 @@ class EspMinerAdapter @Inject constructor(
             }
             patch(host, payload).toActionResult()
         }
+
+    /**
+     * Screen settings, verified in nvs_config.c: `rotation` (u16, one of 0/90/180/270),
+     * `invertscreen` (bool), `displayTimeout` (i32, -1 always on / 0 always off / minutes).
+     * Firmware older than the rotation field (which still reports `flipscreen`) is refused
+     * rather than guessed at.
+     */
+    override suspend fun setDisplay(host: MinerHost, config: DisplayControl): ActionResult {
+        config.rotationDegrees?.let {
+            if (it !in DisplayControl.ROTATIONS) return ActionResult.Failure("Rotation must be 0, 90, 180 or 270.")
+        }
+        config.timeoutMinutes?.let {
+            if (it < DisplayControl.TIMEOUT_ALWAYS_ON || it > MAX_DISPLAY_TIMEOUT_MIN) {
+                return ActionResult.Failure("Display timeout must be -1 (always on), 0 (off) or minutes.")
+            }
+        }
+        if (config.rotationDegrees == null && config.inverted == null && config.timeoutMinutes == null) {
+            return ActionResult.Failure("Nothing to change.")
+        }
+        return gated(host) { _, info ->
+            if (info["rotation"] == null) {
+                return@gated ActionResult.Unsupported(
+                    "This firmware predates the screen-rotation setting; update it to control the display."
+                )
+            }
+            patch(
+                host,
+                buildJsonObject {
+                    config.rotationDegrees?.let { put("rotation", it) }
+                    config.inverted?.let { put("invertscreen", it) }
+                    config.timeoutMinutes?.let { put("displayTimeout", it) }
+                },
+            ).toActionResult()
+        }
+    }
 
     override suspend fun applyTune(host: MinerHost, frequencyMhz: Int, coreVoltageMv: Int): ActionResult =
         gated(host, EspMinerFirmware::tuneSupported) { _, _ ->
@@ -386,6 +424,8 @@ class EspMinerAdapter @Inject constructor(
         private const val HEADER_OTP_SESSION = "X-OTP-Session"
         private const val HTTP_UNAUTHORIZED = 401
         private const val DEFAULT_OTP_TTL_MS = 24 * 3600 * 1000L
+        /** nvs_config.c bounds displayTimeout at UINT16_MAX minutes. */
+        private const val MAX_DISPLAY_TIMEOUT_MIN = 65_535
         private const val SESSION_RENEW_MARGIN_MS = 60_000L
         private val OTP_SESSION_PATHS = listOf("/api/otp/session", "/api/v2/otp/session")
     }

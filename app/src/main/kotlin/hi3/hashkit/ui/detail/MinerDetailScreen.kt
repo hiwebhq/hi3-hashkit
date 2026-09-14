@@ -509,6 +509,12 @@ fun MinerDetailScreen(
                         onRollbackTune = viewModel::rollbackTune,
                         onPause = viewModel::pauseHashing,
                         onResume = viewModel::resumeHashing,
+                        displayNow = t?.let {
+                            hi3.hashkit.domain.adapter.DisplayControl(
+                                it.displayRotationDegrees, it.displayInverted, it.displayTimeoutMinutes,
+                            )
+                        },
+                        onSetDisplay = viewModel::setDisplay,
                     )
                     if (state.tuneOptions != null) {
                         Spacer(Modifier.height(8.dp))

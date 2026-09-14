@@ -31,6 +31,18 @@ class EspMinerParserTest {
         assertEquals(0.0, parsed.telemetry.vrTempC.value!!, 0.001)
         assertNotNull(parsed.telemetry.efficiencyJTh.value)
         assertEquals(ValueSource.CALCULATED, parsed.telemetry.efficiencyJTh.source)
+        // Screen settings + the network difficulty the miner itself reports (v2.14+).
+        assertEquals(180, parsed.telemetry.displayRotationDegrees)
+        assertEquals(false, parsed.telemetry.displayInverted)
+        assertEquals(-1, parsed.telemetry.displayTimeoutMinutes)
+        assertEquals(127450789715843.0, parsed.telemetry.networkDifficulty!!, 1.0)
+    }
+
+    @Test
+    fun `old firmware without a rotation field leaves display settings unknown`() {
+        val parsed = EspMinerParser.parseSystemInfo(fixture("real_bm1370_v1.1.0.json"))!!
+        assertNull(parsed.telemetry.displayRotationDegrees)
+        assertNull(parsed.telemetry.displayTimeoutMinutes)
     }
 
     @Test

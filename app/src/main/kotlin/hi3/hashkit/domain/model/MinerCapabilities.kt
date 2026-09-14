@@ -15,6 +15,8 @@ enum class Capability {
     POWER_CONTROL,
     /** Blink a locate light so the physical unit can be found in a rack. */
     LOCATE,
+    /** Rotate / invert / time out the unit's own little screen (Bitaxe OLED). */
+    SET_DISPLAY,
 }
 
 data class MinerCapabilities(

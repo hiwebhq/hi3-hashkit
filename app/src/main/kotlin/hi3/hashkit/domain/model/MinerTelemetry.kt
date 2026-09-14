@@ -54,6 +54,12 @@ data class MinerTelemetry(
     /** Whether firmware-managed fan control is on. Not persisted; null when unknown. */
     val autoFanEnabled: Boolean? = null,
 
+    /** On-device screen settings (Bitaxe OLED). Not persisted; null when unreported. */
+    val displayRotationDegrees: Int? = null,
+    val displayInverted: Boolean? = null,
+    /** -1 = always on, 0 = always off, >0 = minutes until the screen blanks. */
+    val displayTimeoutMinutes: Int? = null,
+
     val frequencyMhz: Sourced<Double> = Sourced.unavailable(),
     val coreVoltageMv: Sourced<Double> = Sourced.unavailable(),
     val inputVoltageMv: Sourced<Double> = Sourced.unavailable(),

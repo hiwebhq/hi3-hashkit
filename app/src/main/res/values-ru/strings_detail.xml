@@ -215,4 +215,17 @@
     <string name="det_act_fan_manual">установка вентилятора на %1$d%%</string>
     <string name="det_act_applying_tune">применение %1$d MHz / %2$d mV</string>
     <string name="det_act_rollback">откат тюнинга</string>
+
+    <!-- Display dialog (Bitaxe screen) -->
+    <string name="det_display">Экран</string>
+    <string name="det_display_title">Настройки экрана</string>
+    <string name="det_display_rotation">Поворот</string>
+    <string name="det_display_invert">Инвертировать цвета</string>
+    <string name="det_display_timeout">Выключать экран через</string>
+    <string name="det_display_always_on">Всегда включён</string>
+    <string name="det_display_always_off">Всегда выключен</string>
+    <string name="det_display_minutes">%1$d мин</string>
+    <string name="det_display_hours">%1$d ч</string>
+    <string name="det_display_hint">Меняет только маленький экран майнера — на майнинг это не влияет.</string>
+    <string name="det_act_display">обновление настроек экрана</string>
 </resources>

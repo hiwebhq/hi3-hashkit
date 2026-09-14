@@ -110,6 +110,19 @@ class ControlRepository @Inject constructor(
         return result
     }
 
+    suspend fun setDisplay(entity: MinerEntity, config: hi3.hashkit.domain.adapter.DisplayControl): ActionResult {
+        val adapter = controlAdapter(entity)
+            ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")
+        val applied = buildJsonObject {
+            config.rotationDegrees?.let { put("rotation", it) }
+            config.inverted?.let { put("invertscreen", it) }
+            config.timeoutMinutes?.let { put("displayTimeout", it) }
+        }.toString()
+        val result = adapter.setDisplay(hostOf(entity), config)
+        audit(entity.id, "set_display", "{}", applied, result)
+        return result
+    }
+
     suspend fun applyTune(entity: MinerEntity, frequencyMhz: Int, coreVoltageMv: Int): ActionResult {
         val adapter = controlAdapter(entity)
             ?: return ActionResult.Unsupported("No control adapter for ${entity.adapterType}.")

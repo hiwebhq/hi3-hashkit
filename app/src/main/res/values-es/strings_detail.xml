@@ -214,4 +214,17 @@
     <string name="det_act_fan_manual">poniendo ventilador al %1$d%%</string>
     <string name="det_act_applying_tune">aplicando %1$d MHz / %2$d mV</string>
     <string name="det_act_rollback">revirtiendo tuning</string>
+
+    <!-- Display dialog (Bitaxe screen) -->
+    <string name="det_display">Pantalla</string>
+    <string name="det_display_title">Ajustes de pantalla</string>
+    <string name="det_display_rotation">Rotación</string>
+    <string name="det_display_invert">Invertir colores</string>
+    <string name="det_display_timeout">Apagar la pantalla tras</string>
+    <string name="det_display_always_on">Siempre encendida</string>
+    <string name="det_display_always_off">Siempre apagada</string>
+    <string name="det_display_minutes">%1$d min</string>
+    <string name="det_display_hours">%1$d h</string>
+    <string name="det_display_hint">Solo cambia la pequeña pantalla del minero; la minería no se ve afectada.</string>
+    <string name="det_act_display">actualizando la pantalla</string>
 </resources>

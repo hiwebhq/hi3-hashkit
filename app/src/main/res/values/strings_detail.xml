@@ -113,6 +113,19 @@
     <string name="det_pause">Pause</string>
     <string name="det_resume">Resume</string>
 
+    <!-- Display dialog (Bitaxe screen) -->
+    <string name="det_display">Display</string>
+    <string name="det_display_title">Screen settings</string>
+    <string name="det_display_rotation">Rotation</string>
+    <string name="det_display_invert">Invert colors</string>
+    <string name="det_display_timeout">Turn the screen off after</string>
+    <string name="det_display_always_on">Always on</string>
+    <string name="det_display_always_off">Always off</string>
+    <string name="det_display_minutes">%1$d min</string>
+    <string name="det_display_hours">%1$d h</string>
+    <string name="det_display_hint">Changes the miner\'s own little screen only — nothing about mining changes.</string>
+    <string name="det_act_display">Updating screen settings</string>
+
     <!-- Pool dialog -->
     <string name="det_pool_title">Change primary pool</string>
     <string name="det_pool_current">Current: %1$s:%2$d</string>

@@ -302,6 +302,9 @@ class MinerDetailViewModel @Inject constructor(
         controlRepository.setFan(it, FanControl.Manual(percent))
     }
 
+    fun setDisplay(config: hi3.hashkit.domain.adapter.DisplayControl) =
+        runAction(appContext.getString(R.string.det_act_display)) { controlRepository.setDisplay(it, config) }
+
     fun applyTune(freq: Int, volt: Int) = runAction(appContext.getString(R.string.det_act_applying_tune, freq, volt)) {
         controlRepository.applyTune(it, freq, volt).also { r ->
             if (r is ActionResult.Success) hasRollback.value = true

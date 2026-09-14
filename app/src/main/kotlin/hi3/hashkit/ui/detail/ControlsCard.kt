@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import hi3.hashkit.R
+import hi3.hashkit.domain.adapter.DisplayControl
 import hi3.hashkit.domain.adapter.TuneOptions
 import hi3.hashkit.domain.model.Capability
 import hi3.hashkit.domain.model.MinerCapabilities
@@ -63,6 +64,8 @@ fun ControlsCard(
     onPause: () -> Unit = {},
     onResume: () -> Unit = {},
     onLocate: (Boolean) -> Unit = {},
+    displayNow: DisplayControl? = null,
+    onSetDisplay: (DisplayControl) -> Unit = {},
 ) {
     var dialog by remember { mutableStateOf<ControlDialog?>(null) }
     var blinking by remember { mutableStateOf(false) }
@@ -121,6 +124,12 @@ fun ControlsCard(
                     onClick = { dialog = ControlDialog.Power },
                     enabled = busyAction == null,
                 ) { Text(stringResource(R.string.det_power)) }
+            }
+            if (Capability.SET_DISPLAY in capabilities) {
+                OutlinedButton(
+                    onClick = { dialog = ControlDialog.Display },
+                    enabled = busyAction == null,
+                ) { Text(stringResource(R.string.det_display)) }
             }
         }
 
@@ -192,11 +201,93 @@ fun ControlsCard(
                 }
             },
         )
+        ControlDialog.Display -> DisplayDialog(
+            current = displayNow,
+            onApply = { dialog = null; onSetDisplay(it) },
+            onDismiss = { dialog = null },
+        )
         null -> Unit
     }
 }
 
-private enum class ControlDialog { Reboot, Pool, Fan, Tune, Power }
+private enum class ControlDialog { Reboot, Pool, Fan, Tune, Power, Display }
+
+/** Timeout choices mirror the AxeOS web UI (minutes; -1 always on, 0 always off). */
+@Suppress("MagicNumber") // the choice list is the data
+private val DISPLAY_TIMEOUT_CHOICES = listOf(
+    DisplayControl.TIMEOUT_ALWAYS_ON, DisplayControl.TIMEOUT_ALWAYS_OFF, 1, 5, 15, 30, 60, 240,
+)
+private const val MINUTES_PER_HOUR = 60
+
+@Composable
+private fun displayTimeoutLabel(minutes: Int): String = when {
+    minutes == DisplayControl.TIMEOUT_ALWAYS_ON -> stringResource(R.string.det_display_always_on)
+    minutes == DisplayControl.TIMEOUT_ALWAYS_OFF -> stringResource(R.string.det_display_always_off)
+    minutes % MINUTES_PER_HOUR == 0 -> stringResource(R.string.det_display_hours, minutes / MINUTES_PER_HOUR)
+    else -> stringResource(R.string.det_display_minutes, minutes)
+}
+
+@Composable
+private fun DisplayDialog(
+    current: DisplayControl?,
+    onApply: (DisplayControl) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var rotation by rememberSaveable { mutableStateOf(current?.rotationDegrees ?: 0) }
+    var inverted by rememberSaveable { mutableStateOf(current?.inverted ?: false) }
+    var timeout by rememberSaveable {
+        mutableStateOf(current?.timeoutMinutes ?: DisplayControl.TIMEOUT_ALWAYS_ON)
+    }
+    // A timeout the firmware reports but we don't list (custom value) stays selectable.
+    val timeoutChoices = (DISPLAY_TIMEOUT_CHOICES + timeout).distinct().sorted()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.det_display_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.det_display_rotation), style = MaterialTheme.typography.labelMedium)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    DisplayControl.ROTATIONS.forEach { deg ->
+                        FilterChip(
+                            selected = rotation == deg,
+                            onClick = { rotation = deg },
+                            label = { Text("$deg°") },
+                        )
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.det_display_invert), Modifier.weight(1f))
+                    Switch(checked = inverted, onCheckedChange = { inverted = it })
+                }
+                Text(stringResource(R.string.det_display_timeout), style = MaterialTheme.typography.labelMedium)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                ) {
+                    timeoutChoices.forEach { minutes ->
+                        FilterChip(
+                            selected = timeout == minutes,
+                            onClick = { timeout = minutes },
+                            label = { Text(displayTimeoutLabel(minutes)) },
+                        )
+                    }
+                }
+                Text(
+                    stringResource(R.string.det_display_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onApply(DisplayControl(rotation, inverted, timeout)) }) {
+                Text(stringResource(R.string.common_apply))
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
+    )
+}
 
 @Composable
 private fun ConfirmDialog(

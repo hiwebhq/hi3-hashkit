@@ -89,6 +89,22 @@ sealed interface FanControl {
 enum class PowerAction { PAUSE, RESUME }
 
 /**
+ * On-device screen settings. Null fields are left untouched. [timeoutMinutes] follows the
+ * firmware convention: -1 = always on, 0 = always off, >0 = minutes until it blanks.
+ */
+data class DisplayControl(
+    val rotationDegrees: Int? = null,
+    val inverted: Boolean? = null,
+    val timeoutMinutes: Int? = null,
+) {
+    companion object {
+        const val TIMEOUT_ALWAYS_ON = -1
+        const val TIMEOUT_ALWAYS_OFF = 0
+        val ROTATIONS = listOf(0, 90, 180, 270)
+    }
+}
+
+/**
  * Write path. Implemented only where a control endpoint is verified against real
  * firmware. Every call must be gated on [MinerAdapter.getCapabilities] by the caller,
  * and adapters must still return [ActionResult.Unsupported] defensively.
@@ -111,4 +127,8 @@ interface MinerControlAdapter : MinerAdapter {
     /** Blink the locate light on/off. Default: unsupported. */
     suspend fun locate(host: MinerHost, on: Boolean): ActionResult =
         ActionResult.Unsupported("This device has no locate light control.")
+
+    /** Change the unit's own screen settings. Default: unsupported. */
+    suspend fun setDisplay(host: MinerHost, config: DisplayControl): ActionResult =
+        ActionResult.Unsupported("This device has no controllable display.")
 }

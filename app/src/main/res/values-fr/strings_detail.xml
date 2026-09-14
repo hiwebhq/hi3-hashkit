@@ -215,4 +215,17 @@
     <string name="det_act_fan_manual">réglage du ventilateur à %1$d%%</string>
     <string name="det_act_applying_tune">application de %1$d MHz / %2$d mV</string>
     <string name="det_act_rollback">retour au réglage précédent</string>
+
+    <!-- Display dialog (Bitaxe screen) -->
+    <string name="det_display">Écran</string>
+    <string name="det_display_title">Réglages de l\'écran</string>
+    <string name="det_display_rotation">Rotation</string>
+    <string name="det_display_invert">Inverser les couleurs</string>
+    <string name="det_display_timeout">Éteindre l\'écran après</string>
+    <string name="det_display_always_on">Toujours allumé</string>
+    <string name="det_display_always_off">Toujours éteint</string>
+    <string name="det_display_minutes">%1$d min</string>
+    <string name="det_display_hours">%1$d h</string>
+    <string name="det_display_hint">Ne modifie que le petit écran du mineur — le minage n\'est pas affecté.</string>
+    <string name="det_act_display">mise à jour des réglages de l\'écran</string>
 </resources>

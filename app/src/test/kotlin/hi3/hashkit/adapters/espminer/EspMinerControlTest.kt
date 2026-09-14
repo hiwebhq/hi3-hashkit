@@ -78,6 +78,39 @@ class EspMinerControlTest {
     }
 
     @Test
+    fun `display settings patch only the fields given and validate the rest`() = runTest {
+        server.enqueue(MockResponse().setBody(fixture("real_bm1366_v2.15.1.json"))) // gate
+        server.enqueue(MockResponse().setBody("{}"))
+
+        val result = adapter.setDisplay(
+            host(),
+            hi3.hashkit.domain.adapter.DisplayControl(rotationDegrees = 180, timeoutMinutes = 5),
+        )
+        assertTrue(result is ActionResult.Success)
+        server.takeRequest()
+        val patch = server.takeRequest()
+        assertEquals("PATCH", patch.method)
+        val body = json.parseToJsonElement(patch.body.readUtf8()).jsonObject
+        assertEquals("180", body["rotation"]!!.jsonPrimitive.content)
+        assertEquals("5", body["displayTimeout"]!!.jsonPrimitive.content)
+        assertTrue("invertscreen" !in body)
+
+        // Invalid values never reach the miner.
+        val bad = adapter.setDisplay(host(), hi3.hashkit.domain.adapter.DisplayControl(rotationDegrees = 45))
+        assertTrue(bad is ActionResult.Failure)
+        assertEquals(2, server.requestCount)
+    }
+
+    @Test
+    fun `display settings are refused on firmware that predates the rotation field`() = runTest {
+        // v2.x body without "rotation": gating GET only, nothing written.
+        server.enqueue(MockResponse().setBody("""{"version":"v2.4.1","ASICModel":"BM1366","invertscreen":0}"""))
+        val result = adapter.setDisplay(host(), hi3.hashkit.domain.adapter.DisplayControl(inverted = true))
+        assertTrue(result is ActionResult.Unsupported)
+        assertEquals(1, server.requestCount)
+    }
+
+    @Test
     fun `v2_14 pool edit uses flat fields`() = runTest {
         server.enqueue(MockResponse().setBody(fixture("real_bm1370_v2.14.2.json")))
         server.enqueue(MockResponse().setBody("{}"))

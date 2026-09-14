@@ -216,4 +216,17 @@
     <string name="det_act_fan_manual">ajustando a ventoinha para %1$d%%</string>
     <string name="det_act_applying_tune">aplicando %1$d MHz / %2$d mV</string>
     <string name="det_act_rollback">revertendo o ajuste</string>
+
+    <!-- Display dialog (Bitaxe screen) -->
+    <string name="det_display">Tela</string>
+    <string name="det_display_title">Configurações da tela</string>
+    <string name="det_display_rotation">Rotação</string>
+    <string name="det_display_invert">Inverter cores</string>
+    <string name="det_display_timeout">Desligar a tela após</string>
+    <string name="det_display_always_on">Sempre ligada</string>
+    <string name="det_display_always_off">Sempre desligada</string>
+    <string name="det_display_minutes">%1$d min</string>
+    <string name="det_display_hours">%1$d h</string>
+    <string name="det_display_hint">Altera apenas a telinha do minerador — a mineração não muda.</string>
+    <string name="det_act_display">atualizando as configurações da tela</string>
 </resources>
