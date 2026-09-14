@@ -12,6 +12,7 @@
     <!-- Column headers -->
     <string name="table_col_name">Имя</string>
     <string name="table_col_ip">IP</string>
+    <string name="table_col_location">Место</string>
     <string name="table_col_model">Модель</string>
     <string name="table_col_hashrate">Хешрейт</string>
     <string name="table_col_temp">Темп.</string>

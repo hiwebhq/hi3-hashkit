@@ -12,6 +12,7 @@
     <!-- Column headers -->
     <string name="table_col_name">Name</string>
     <string name="table_col_ip">IP</string>
+    <string name="table_col_location">Location</string>
     <string name="table_col_model">Model</string>
     <string name="table_col_hashrate">Hashrate</string>
     <string name="table_col_temp">Temp</string>

@@ -794,7 +794,12 @@ private fun EditMinerDialog(
     var name by remember { mutableStateOf(miner.name) }
     var group by remember { mutableStateOf(miner.group ?: "") }
     var location by remember { mutableStateOf(miner.location ?: "") }
+    // The farm assignment arrives async (the flow's first frame is null), so follow it
+    // until the user actually taps a chip — otherwise saving before the first emission
+    // would silently clear the miner's farm.
+    var farmTouched by remember { mutableStateOf(false) }
     var farmId by remember { mutableStateOf(currentFarmId) }
+    androidx.compose.runtime.LaunchedEffect(currentFarmId) { if (!farmTouched) farmId = currentFarmId }
     var notes by remember { mutableStateOf(miner.notes ?: "") }
     var tags by remember { mutableStateOf(miner.tags.joinToString(", ")) }
     var expected by remember { mutableStateOf(miner.expectedHashrateGhs?.toString() ?: "") }
@@ -823,13 +828,19 @@ private fun EditMinerDialog(
                     ) {
                         androidx.compose.material3.FilterChip(
                             selected = farmId == null,
-                            onClick = { farmId = null },
+                            onClick = {
+                                farmTouched = true
+                                farmId = null
+                            },
                             label = { Text(stringResource(R.string.common_none)) },
                         )
                         farms.forEach { farm ->
                             androidx.compose.material3.FilterChip(
                                 selected = farmId == farm.id,
-                                onClick = { farmId = farm.id },
+                                onClick = {
+                                    farmTouched = true
+                                    farmId = farm.id
+                                },
                                 label = { Text(farm.name) },
                             )
                         }

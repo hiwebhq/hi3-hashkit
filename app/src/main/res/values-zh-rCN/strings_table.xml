@@ -12,6 +12,7 @@
     <!-- Column headers -->
     <string name="table_col_name">名称</string>
     <string name="table_col_ip">IP</string>
+    <string name="table_col_location">位置</string>
     <string name="table_col_model">型号</string>
     <string name="table_col_hashrate">算力</string>
     <string name="table_col_temp">温度</string>

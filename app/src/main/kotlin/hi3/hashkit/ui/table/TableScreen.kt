@@ -69,7 +69,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import javax.inject.Inject
 
-enum class SortColumn { NAME, IP, MODEL, HASHRATE, TEMP, POOL, UPTIME, EFFICIENCY, FREQUENCY, VOLTAGE }
+enum class SortColumn { NAME, IP, LOCATION, MODEL, HASHRATE, TEMP, POOL, UPTIME, EFFICIENCY, FREQUENCY, VOLTAGE }
 
 data class TableState(
     val miners: List<Miner> = emptyList(),
@@ -181,6 +181,8 @@ class TableViewModel @Inject constructor(
             val cmp: Comparator<Miner> = when (sort) {
                 SortColumn.NAME -> compareBy { it.name.lowercase() }
                 SortColumn.IP -> compareBy { ipKey(it.host) }
+                // Blank locations sort last so the walked/racked miners lead the list.
+                SortColumn.LOCATION -> compareBy({ it.location.isNullOrBlank() }, { (it.location ?: "").lowercase() })
                 SortColumn.MODEL -> compareBy { (it.identity.model ?: "").lowercase() }
                 SortColumn.HASHRATE -> compareBy { it.lastTelemetry?.hashrateGhs?.value ?: -1.0 }
                 SortColumn.TEMP -> compareBy { it.lastTelemetry?.chipTempC?.value ?: -1.0 }
@@ -209,9 +211,11 @@ private data class Col(
     val sortable: Boolean = true,
 )
 
+@Suppress("MagicNumber") // the dp widths ARE the column layout
 private val COLUMNS = listOf(
     Col(R.string.table_col_name, SortColumn.NAME, 130),
     Col(R.string.table_col_ip, SortColumn.IP, 110),
+    Col(R.string.table_col_location, SortColumn.LOCATION, 96),
     Col(R.string.table_col_model, SortColumn.MODEL, 120),
     Col(R.string.table_col_hashrate, SortColumn.HASHRATE, 100),
     Col(R.string.table_col_temp, SortColumn.TEMP, 74),
@@ -469,6 +473,7 @@ private fun TableRow(
     val cells = listOf(
         miner.name,
         miner.host,
+        miner.location ?: "—",
         miner.identity.model ?: "—",
         if (miner.status == MinerStatus.OFFLINE) {
             stringResource(R.string.table_cell_offline)
