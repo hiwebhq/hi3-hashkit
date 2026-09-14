@@ -114,4 +114,39 @@ class Fleet3DTest {
         assertTrue(mid.pivot.x > 0f && mid.pivot.x < 10f)
         assertEquals(0, mid.focusPlacedIndex)
     }
+
+    @Test
+    fun `fitZoom fits every box corner inside the viewport margins`() {
+        // A wide fleet: 20 loose miners in 4x4 racks -> two racks side by side.
+        val scene = Fleet3D.layout(
+            List(20) { unit(ip = "10.0.0.${it + 1}") },
+            Fleet3D.Layout.RACKS,
+            rackSize = 4,
+        )
+        val pivot = Fleet3D.centerOf(scene.placed)
+        val w = 1080f
+        val h = 1650f
+        val ppu = minOf(w, h) * 0.055f
+        val yaw = 0.55f
+        val pitch = 0.35f
+        val zoom = Fleet3D.fitZoom(scene.placed, pivot, yaw, pitch, w, h, ppu)
+        assertTrue(zoom > 0f)
+        // Every corner of every box projects inside the viewport at the fitted zoom.
+        val half = Fleet3D.BOX / 2f
+        scene.placed.forEach { pb ->
+            for (dz in listOf(-half, half)) for (dy in listOf(-half, half)) for (dx in listOf(-half, half)) {
+                val pr = Fleet3D.project(
+                    Fleet3D.P3(pb.center.x + dx, pb.center.y + dy, pb.center.z + dz),
+                    pivot, yaw, pitch, zoom, w / 2f, h / 2f, ppu,
+                )
+                assertTrue(pr.x in 0f..w)
+                assertTrue(pr.y in 0f..h)
+            }
+        }
+    }
+
+    @Test
+    fun `fitZoom of an empty scene is the neutral zoom`() {
+        assertEquals(1f, Fleet3D.fitZoom(emptyList(), Fleet3D.P3(0f, 0f, 0f), 0f, 0f, 100f, 100f, 10f), 1e-6f)
+    }
 }

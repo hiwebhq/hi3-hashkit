@@ -201,6 +201,55 @@ object Fleet3D {
     private const val CAMERA_DIST = 18f
     private const val NEAR_PLANE = 2f
 
+    /**
+     * Zoom that fits the whole scene — every corner of every box, frame padding included —
+     * inside a [viewW]×[viewH] viewport at the given camera angles, leaving
+     * (1 - [marginFrac]) slack per side. Screen offset from center is linear in zoom for a
+     * fixed point, so project everything at zoom 1 and scale by the worst overshoot.
+     */
+    @Suppress("LongParameterList") // a camera is inherently many scalars; grouping adds nothing
+    fun fitZoom(
+        placed: List<Placed>,
+        pivot: P3,
+        yawRad: Float,
+        pitchRad: Float,
+        viewW: Float,
+        viewH: Float,
+        pxPerUnit: Float,
+        marginFrac: Float = FIT_MARGIN,
+    ): Float {
+        if (placed.isEmpty()) return 1f
+        if (viewW <= 0f || viewH <= 0f || pxPerUnit <= 0f) return 1f
+        val cx = viewW / 2f
+        val cy = viewH / 2f
+        var maxRatio = 0f
+        placed.forEach { pb ->
+            FIT_CORNER_OFFSETS.forEach { o ->
+                val pr = project(
+                    P3(pb.center.x + o.x, pb.center.y + o.y, pb.center.z + o.z),
+                    pivot, yawRad, pitchRad, 1f, cx, cy, pxPerUnit,
+                )
+                maxRatio = maxOf(
+                    maxRatio,
+                    kotlin.math.abs(pr.x - cx) / (cx * marginFrac),
+                    kotlin.math.abs(pr.y - cy) / (cy * marginFrac),
+                )
+            }
+        }
+        return if (maxRatio <= 0f) 1f else 1f / maxRatio
+    }
+
+    private const val FIT_MARGIN = 0.92f
+
+    /** The eight corners of a unit box (frame padding included), pivot-relative. */
+    private val FIT_CORNER_OFFSETS: List<P3> = run {
+        val h = HALF + FRAME_PAD
+        listOf(
+            P3(-h, -h, -h), P3(h, -h, -h), P3(-h, h, -h), P3(h, h, -h),
+            P3(-h, -h, h), P3(h, -h, h), P3(-h, h, h), P3(h, h, h),
+        )
+    }
+
     /** Octet-wise numeric key so 10.0.0.9 sorts before 10.0.0.107. */
     fun ipKey(host: String): Long {
         val parts = host.substringBefore(':').split('.').mapNotNull { it.toIntOrNull() }

@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
@@ -37,6 +39,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import hi3.hashkit.core.Units
@@ -63,7 +66,7 @@ private const val FAN_MIN_EDGE_PX = 26f
 private const val DEFAULT_FAN_RPM = 3000
 
 /** The 3D fleet view: orbit/zoom scene of the fleet with an optional FLIR thermal mode. */
-@Suppress("LongMethod") // one declarative screen: controls + camera resolution + canvas
+@Suppress("LongMethod", "CyclomaticComplexMethod") // one declarative screen: controls + camera resolution + canvas
 @Composable
 fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
@@ -76,6 +79,10 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
     var selectedId by remember { mutableStateOf<Long?>(null) }
     var tour by remember { mutableStateOf(false) }
     var tourStartMs by remember { mutableStateOf(0L) }
+    // Fit-to-screen: pending on first open (and on Reset) until the canvas has a size
+    // and the scene has boxes to measure.
+    var fitPending by remember { mutableStateOf(true) }
+    var canvasPx by remember { mutableStateOf(androidx.compose.ui.unit.IntSize.Zero) }
     // Frame clock drives fan spin and the drone tour.
     val timeMs by produceState(0L) {
         while (true) withInfiniteAnimationFrameMillis { value = it }
@@ -100,6 +107,17 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
         ?.let { i -> state.units.getOrNull(i)?.id }
     val effectiveSelected = focusId ?: selectedId
 
+    androidx.compose.runtime.LaunchedEffect(fitPending, canvasPx, scene.placed.size) {
+        if (fitPending && canvasPx.width > 0 && scene.placed.isNotEmpty()) {
+            val w = canvasPx.width.toFloat()
+            val h = canvasPx.height.toFloat()
+            val ppu = minOf(w, h) * PX_PER_UNIT_FRACTION
+            zoom = Fleet3D.fitZoom(scene.placed, pivot, yaw, pitch, w, h, ppu)
+                .coerceIn(ZOOM_MIN, ZOOM_MAX)
+            fitPending = false
+        }
+    }
+
     Column(Modifier.fillMaxSize()) {
         Fleet3DControls(
             layoutMode = layoutMode,
@@ -120,6 +138,7 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
+                    .onSizeChanged { canvasPx = it }
                     .pointerInput(Unit) {
                         detectTransformGestures { _, pan, gestureZoom, _ ->
                             tour = false
@@ -145,7 +164,27 @@ fun Fleet3DView(viewModel: Fleet3DViewModel = hiltViewModel()) {
                     flir, whiteHot, hitCenters, effectiveSelected, timeMs,
                 )
             }
-            state.units.firstOrNull { it.id == effectiveSelected }?.let { SelectedReadout(it, flir) }
+            Column(
+                Modifier
+                    .align(androidx.compose.ui.Alignment.TopEnd)
+                    .padding(4.dp),
+                horizontalAlignment = androidx.compose.ui.Alignment.End,
+            ) {
+                // Reset: back to the default angles plus a fresh fit-to-screen.
+                androidx.compose.material3.IconButton(onClick = {
+                    tour = false
+                    yaw = YAW_START
+                    pitch = PITCH_START
+                    fitPending = true
+                }) {
+                    androidx.compose.material3.Icon(
+                        Icons.Filled.ZoomOutMap,
+                        contentDescription = "Reset view",
+                        tint = if (flir) Color.White else HiBrand.textSecondary,
+                    )
+                }
+                state.units.firstOrNull { it.id == effectiveSelected }?.let { SelectedReadout(it, flir) }
+            }
             if (flir) FlirLegend(whiteHot)
         }
     }
@@ -511,11 +550,10 @@ private fun DrawScope.drawCrosshair(center: Offset, tempC: Double?) {
 }
 
 @Composable
-private fun androidx.compose.foundation.layout.BoxScope.SelectedReadout(unit: Unit3DUi, flir: Boolean) {
+private fun SelectedReadout(unit: Unit3DUi, flir: Boolean) {
     Column(
-        Modifier
-            .align(androidx.compose.ui.Alignment.TopEnd)
-            .padding(10.dp),
+        Modifier.padding(horizontal = 6.dp),
+        horizontalAlignment = androidx.compose.ui.Alignment.End,
     ) {
         Text(
             unit.name,

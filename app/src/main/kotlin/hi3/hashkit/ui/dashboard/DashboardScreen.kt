@@ -538,11 +538,13 @@ fun DashboardScreen(
  * Dedicated fleet view: just every miner's card — no summary card and none of the
  * pool/MMP/solo/search sections of the dashboard. Reached by tapping the Fleet card.
  */
+@Suppress("LongMethod") // declarative screen layout: scaffold + adaptive card grid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FleetDetailScreen(
     onBack: () -> Unit,
     onMinerClick: (Long) -> Unit,
+    onFlow: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -558,6 +560,12 @@ fun FleetDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = onFlow) {
+                        Icon(
+                            Icons.Filled.AccountTree,
+                            contentDescription = stringResource(R.string.dash_menu_flow_view),
+                        )
+                    }
                     DensitySelector(
                         current = state.settings.cardDensity,
                         onSelect = viewModel::setDensity,

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -86,6 +87,7 @@ private fun minerLayout(w: Float, h: Float, count: Int, cols: Int): MinerSlots {
 fun FlowScreen(
     onBack: () -> Unit,
     onMinerClick: (Long) -> Unit,
+    onHome: () -> Unit = onBack,
     viewModel: FlowViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -105,7 +107,8 @@ fun FlowScreen(
                 },
                 actions = {
                     CompactStats(state)
-                    LiveIndicator(liveStatusOf(state))
+                    // Tapping the LIVE badge always jumps back to the main page.
+                    LiveIndicator(liveStatusOf(state), onClick = onHome)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
             )
@@ -206,7 +209,7 @@ private fun liveStatusOf(state: FlowUiState): LiveStatus = when {
 }
 
 @Composable
-private fun LiveIndicator(status: LiveStatus) {
+private fun LiveIndicator(status: LiveStatus, onClick: () -> Unit) {
     val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "live")
     val alpha by transition.animateFloat(
         initialValue = 1f,
@@ -219,7 +222,9 @@ private fun LiveIndicator(status: LiveStatus) {
     )
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(end = 16.dp),
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(end = 16.dp),
     ) {
         Box(
             Modifier

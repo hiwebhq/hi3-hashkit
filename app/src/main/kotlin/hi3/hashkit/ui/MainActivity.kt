@@ -414,6 +414,7 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
             hi3.hashkit.ui.dashboard.FleetDetailScreen(
                 onBack = { nav.popBackStack() },
                 onMinerClick = { id -> nav.navigate("miner/$id") },
+                onFlow = { nav.navigate("flow") },
             )
         }
         composable("schedules") {
@@ -467,6 +468,8 @@ private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> 
             hi3.hashkit.ui.flow.FlowScreen(
                 onBack = { nav.popBackStack() },
                 onMinerClick = { id -> nav.navigate("miner/$id") },
+                // The LIVE badge always lands on the main page, however Flow was reached.
+                onHome = { nav.popBackStack("dashboard", inclusive = false) },
             )
         }
         composable("alerts") {
