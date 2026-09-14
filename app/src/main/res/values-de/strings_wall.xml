@@ -8,6 +8,7 @@
     <string name="wall_display_options">Anzeigeoptionen</string>
     <string name="wall_card_size">KARTENGRÖSSE</string>
     <string name="wall_grid_columns">RASTERSPALTEN</string>
+    <string name="wall_trend_1h">1-h-Hashrate</string>
     <string name="wall_fewer_columns">Weniger Spalten</string>
     <string name="wall_more_columns">Mehr Spalten</string>
     <string name="wall_columns_auto">Auto</string>

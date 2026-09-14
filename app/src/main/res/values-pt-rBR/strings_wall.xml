@@ -8,6 +8,7 @@
     <string name="wall_display_options">Opções de exibição</string>
     <string name="wall_card_size">TAMANHO DO CARD</string>
     <string name="wall_grid_columns">COLUNAS DA GRADE</string>
+    <string name="wall_trend_1h">Hashrate 1 h</string>
     <string name="wall_fewer_columns">Menos colunas</string>
     <string name="wall_more_columns">Mais colunas</string>
     <string name="wall_columns_auto">Auto</string>

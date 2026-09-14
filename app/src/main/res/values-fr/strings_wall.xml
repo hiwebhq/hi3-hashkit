@@ -8,6 +8,7 @@
     <string name="wall_display_options">Options d\'affichage</string>
     <string name="wall_card_size">TAILLE DES CARTES</string>
     <string name="wall_grid_columns">COLONNES DE LA GRILLE</string>
+    <string name="wall_trend_1h">Hashrate 1 h</string>
     <string name="wall_fewer_columns">Moins de colonnes</string>
     <string name="wall_more_columns">Plus de colonnes</string>
     <string name="wall_columns_auto">Auto</string>

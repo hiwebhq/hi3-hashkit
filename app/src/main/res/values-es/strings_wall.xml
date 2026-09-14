@@ -7,6 +7,7 @@
     <string name="wall_display_options">Opciones de pantalla</string>
     <string name="wall_card_size">TAMAÑO DE TARJETA</string>
     <string name="wall_grid_columns">COLUMNAS DE LA CUADRÍCULA</string>
+    <string name="wall_trend_1h">Hashrate 1 h</string>
     <string name="wall_fewer_columns">Menos columnas</string>
     <string name="wall_more_columns">Más columnas</string>
     <string name="wall_columns_auto">Auto</string>

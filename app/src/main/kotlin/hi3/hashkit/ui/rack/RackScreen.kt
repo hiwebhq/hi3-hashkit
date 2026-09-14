@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -103,6 +104,26 @@ class RackViewModel @Inject constructor(
         viewModelScope.launch { settingsRepository.setWallColumns(cols) }
     }
 
+    /** Wall / TV mode: last-1h hashrate sparkline on each tile. */
+    val wallShowTrend: StateFlow<Boolean> =
+        settingsRepository.settings
+            .map { it.wallShowTrend }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+
+    fun setWallShowTrend(show: Boolean) {
+        viewModelScope.launch { settingsRepository.setWallShowTrend(show) }
+    }
+
+    /** Per-miner last-1h hashrate series for the wall tiles, recomputed each poll cycle. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val wallSparklines: StateFlow<Map<Long, List<Double>>> =
+        combine(
+            pollingEngine.lastRefresh,
+            settingsRepository.settings.map { it.demoModeEnabled },
+        ) { _, demo -> demo }
+            .mapLatest { demo -> repository.minerSparklines(WALL_TREND_WINDOW_MS, demo) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val groups: StateFlow<List<RackGroup>> =
         combine(
@@ -123,6 +144,7 @@ class RackViewModel @Inject constructor(
 
     companion object {
         private const val UNASSIGNED = "Unassigned"
+        private const val WALL_TREND_WINDOW_MS = 60 * 60_000L
 
         /** Group by location; a miner with no Location falls back to its FARM name, and
          *  only farm-less, location-less miners land in Unassigned (which sorts last). */

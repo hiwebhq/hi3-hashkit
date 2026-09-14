@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,6 +54,7 @@ import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerStatus
 import hi3.hashkit.ui.rack.RackGroup
 import hi3.hashkit.ui.rack.RackViewModel
+import hi3.hashkit.ui.sitemap.Slot
 import hi3.hashkit.ui.theme.HiBrand
 
 /** Selectable Wall / TV tile+font size, chosen on the wall page. */
@@ -105,12 +107,35 @@ fun WallScreen(
     onExit: () -> Unit,
     viewModel: RackViewModel = hiltViewModel(),
 ) {
-    val groups by viewModel.groups.collectAsStateWithLifecycle()
+    val rawGroups by viewModel.groups.collectAsStateWithLifecycle()
     val fahrenheit by viewModel.useFahrenheit.collectAsStateWithLifecycle()
     val wallSize by viewModel.wallSize.collectAsStateWithLifecycle()
     val wallColumns by viewModel.wallColumns.collectAsStateWithLifecycle()
+    val showTrend by viewModel.wallShowTrend.collectAsStateWithLifecycle()
+    val sparklines by viewModel.wallSparklines.collectAsStateWithLifecycle()
     val dims = wallDims(wallSize)
     var optionsOpen by remember { mutableStateOf(false) }
+
+    // Site-Map slot codes (B1-R1-T1-P1) are per-miner, which exploded the wall into one
+    // group — and so one tile row — per machine. Merge groups up to rack level (B1-R1) so
+    // the tiles actually tile; miners inside sort in physical order (tier, then position).
+    val groups = remember(rawGroups) {
+        rawGroups
+            .groupBy { g -> Slot.parse(g.location)?.let { "B${it.building}-R${it.rack}" } ?: g.location }
+            .map { (loc, gs) ->
+                RackGroup(
+                    loc,
+                    gs.flatMap { it.miners }.sortedWith(
+                        compareBy(
+                            { Slot.parse(it.location) == null },
+                            { Slot.parse(it.location)?.tier ?: 0 },
+                            { Slot.parse(it.location)?.position ?: 0 },
+                            { it.name.lowercase() },
+                        ),
+                    ),
+                )
+            }
+    }
 
     // Keep the screen on while the wall is up; clear the flag when leaving.
     val context = LocalContext.current
@@ -219,6 +244,13 @@ fun WallScreen(
                                             )
                                         }
                                     }
+                                    Row(Modifier.padding(top = 12.dp)) {
+                                        FilterChip(
+                                            selected = showTrend,
+                                            onClick = { viewModel.setWallShowTrend(!showTrend) },
+                                            label = { Text(stringResource(R.string.wall_trend_1h)) },
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -257,7 +289,12 @@ fun WallScreen(
                             horizontalArrangement = Arrangement.spacedBy(dims.tileGap),
                             verticalArrangement = Arrangement.spacedBy(dims.tileGap),
                         ) {
-                            group.miners.forEach { WallTile(it, fahrenheit, dims, tileWidth) }
+                            group.miners.forEach {
+                                WallTile(
+                                    it, fahrenheit, dims, tileWidth,
+                                    trend = if (showTrend) sparklines[it.id] else null,
+                                )
+                            }
                         }
                     }
                 }
@@ -266,45 +303,89 @@ fun WallScreen(
     }
 }
 
+@Suppress("MagicNumber") // tile geometry/scale literals ARE the layout
 @Composable
-private fun WallTile(miner: Miner, fahrenheit: Boolean, dims: WallDims, tileWidth: Dp = dims.tileWidth) {
+private fun WallTile(
+    miner: Miner,
+    fahrenheit: Boolean,
+    dims: WallDims,
+    tileWidth: Dp = dims.tileWidth,
+    trend: List<Double>? = null,
+) {
     val color = when (miner.status) {
         MinerStatus.ONLINE -> HiBrand.statusOnline
         MinerStatus.DEGRADED -> HiBrand.statusDegraded
         MinerStatus.OFFLINE -> HiBrand.statusOffline
         MinerStatus.UNKNOWN -> HiBrand.statusUnknown
     }
+    // A forced column count can squeeze tiles well below the preset width — shrink the
+    // type with the tile so text never clips.
+    val fontScale = (tileWidth / dims.tileWidth).coerceIn(0.55f, 1f)
     Column(
         modifier = Modifier
             .width(tileWidth)
             .clip(RoundedCornerShape(18.dp))
             .background(HiBrand.surface)
-            .padding(dims.tilePad),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(dims.tilePad * fontScale),
+        verticalArrangement = Arrangement.spacedBy(8.dp * fontScale),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(dims.dot).clip(CircleShape).background(color))
+            Box(Modifier.size(dims.dot * fontScale).clip(CircleShape).background(color))
             Text(
                 miner.name,
-                fontSize = dims.nameSp,
+                fontSize = dims.nameSp * fontScale,
                 fontWeight = FontWeight.Bold,
                 color = HiBrand.textPrimary,
                 maxLines = 1,
-                modifier = Modifier.padding(start = 14.dp),
+                modifier = Modifier.padding(start = 14.dp * fontScale),
             )
         }
         val hr = miner.lastTelemetry?.hashrateGhs?.value
         Text(
             if (miner.status == MinerStatus.OFFLINE) stringResource(R.string.status_offline) else Units.formatHashrate(hr),
-            fontSize = dims.hashSp,
+            fontSize = dims.hashSp * fontScale,
             fontWeight = FontWeight.Bold,
             color = if (miner.status == MinerStatus.OFFLINE) HiBrand.statusOffline else HiBrand.textPrimary,
         )
+        if (trend != null && trend.size >= 2) {
+            TrendLine(
+                trend,
+                height = (tileWidth * 0.16f).coerceIn(18.dp, 44.dp),
+                color = if (miner.status == MinerStatus.OFFLINE) HiBrand.statusOffline else HiBrand.accent,
+            )
+        }
         val temp = miner.lastTelemetry?.chipTempC?.value
         Text(
             temp?.let { Units.formatTemp(it, fahrenheit) } ?: "—",
-            fontSize = dims.tempSp,
+            fontSize = dims.tempSp * fontScale,
             color = HiBrand.textSecondary,
+        )
+    }
+}
+
+/** Minimal last-1h hashrate sparkline: a single scaled polyline, no axes. */
+@Suppress("MagicNumber") // a Canvas renderer: the geometry literals ARE the drawing
+@Composable
+private fun TrendLine(points: List<Double>, height: Dp, color: androidx.compose.ui.graphics.Color) {
+    androidx.compose.foundation.Canvas(Modifier.fillMaxWidth().height(height)) {
+        val min = points.min()
+        val max = points.max()
+        val span = (max - min).takeIf { it > 1e-9 } ?: 1.0
+        val stepX = size.width / (points.size - 1)
+        val path = androidx.compose.ui.graphics.Path()
+        points.forEachIndexed { i, v ->
+            val x = i * stepX
+            // 10% headroom top and bottom so a flat line doesn't hug an edge.
+            val y = size.height * (0.9f - 0.8f * ((v - min) / span).toFloat())
+            if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        }
+        drawPath(
+            path, color,
+            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                width = 2.dp.toPx(),
+                cap = androidx.compose.ui.graphics.StrokeCap.Round,
+                join = androidx.compose.ui.graphics.StrokeJoin.Round,
+            ),
         )
     }
 }

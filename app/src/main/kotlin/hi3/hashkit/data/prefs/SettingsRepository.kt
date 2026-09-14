@@ -121,6 +121,8 @@ data class AppSettings(
     val wallSize: hi3.hashkit.ui.wall.WallSize = hi3.hashkit.ui.wall.WallSize.MEDIUM,
     /** Wall / TV mode fixed grid columns (0 = auto-wrap by tile width; 1–8 = that many across). */
     val wallColumns: Int = 0,
+    /** Wall / TV mode: draw a last-1h hashrate sparkline on each tile. */
+    val wallShowTrend: Boolean = true,
     /** Whether first-run onboarding has been completed. */
     val onboardingComplete: Boolean = false,
     val alertThresholds: AlertThresholds = AlertThresholds(),
@@ -233,6 +235,7 @@ class SettingsRepository @Inject constructor(
         val themeColor = stringPreferencesKey("theme_color")
         val wallSize = stringPreferencesKey("wall_size")
         val wallColumns = intPreferencesKey("wall_columns")
+        val wallShowTrend = booleanPreferencesKey("wall_show_trend")
         val onboardingComplete = booleanPreferencesKey("onboarding_complete")
         val alertsEnabled = booleanPreferencesKey("alerts_enabled")
         val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
@@ -345,6 +348,7 @@ class SettingsRepository @Inject constructor(
             themeColor = hi3.hashkit.ui.theme.ThemeColor.fromName(p[Keys.themeColor]),
             wallSize = hi3.hashkit.ui.wall.WallSize.fromName(p[Keys.wallSize]),
             wallColumns = (p[Keys.wallColumns] ?: 0).coerceIn(0, 8),
+            wallShowTrend = p[Keys.wallShowTrend] ?: true,
             onboardingComplete = p[Keys.onboardingComplete] ?: false,
             alertsEnabled = p[Keys.alertsEnabled] ?: false,
             alertThresholds = AlertThresholds(
@@ -436,6 +440,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setThemeColor(value: hi3.hashkit.ui.theme.ThemeColor) = edit { it[Keys.themeColor] = value.name }
     suspend fun setWallSize(value: hi3.hashkit.ui.wall.WallSize) = edit { it[Keys.wallSize] = value.name }
     suspend fun setWallColumns(value: Int) = edit { it[Keys.wallColumns] = value.coerceIn(0, 8) }
+    suspend fun setWallShowTrend(value: Boolean) = edit { it[Keys.wallShowTrend] = value }
     suspend fun setOnboardingComplete(value: Boolean) = edit { it[Keys.onboardingComplete] = value }
 
     /** Store the MMP API key encrypted with the Android Keystore; blank clears it. */

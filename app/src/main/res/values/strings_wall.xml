@@ -8,6 +8,7 @@
     <string name="wall_display_options">Display options</string>
     <string name="wall_card_size">CARD SIZE</string>
     <string name="wall_grid_columns">GRID COLUMNS</string>
+    <string name="wall_trend_1h">1h hashrate</string>
     <string name="wall_fewer_columns">Fewer columns</string>
     <string name="wall_more_columns">More columns</string>
     <string name="wall_columns_auto">Auto</string>
