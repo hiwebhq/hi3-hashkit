@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.78.6
+
+- Wall / TV mode: tiles group by rack (B1-R1) again instead of one group per slot code,
+  so the grid-columns setting fills the screen; tiles sort in physical rack order.
+- Wall / TV mode: new "1h hashrate" option draws a last-hour sparkline on every tile.
+- Wall / TV mode: tile text auto-shrinks when a forced column count makes tiles narrow.
+
 ## 0.79.0
 
 The home-miner release: eight features for the person with a Bitaxe or two on the desk.
