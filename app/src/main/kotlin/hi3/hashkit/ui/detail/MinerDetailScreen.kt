@@ -464,6 +464,21 @@ fun MinerDetailScreen(
                 }
             }
 
+            val fwRelease by viewModel.firmwareUpdateAvailable.collectAsStateWithLifecycle()
+            val fwStep by viewModel.firmwareUpdateStep.collectAsStateWithLifecycle()
+            if (fwRelease != null || fwStep != null) {
+                SectionCard(stringResource(R.string.det_section_firmware)) {
+                    FirmwareUpdateCard(
+                        release = fwRelease,
+                        runningVersion = miner.identity.firmwareVersion,
+                        step = fwStep,
+                        onUpdate = viewModel::startFirmwareUpdate,
+                        onDismiss = viewModel::dismissFirmwareResult,
+                        onReleaseNotes = { fwRelease?.url?.let(context::openUrl) },
+                    )
+                }
+            }
+
             SectionCard(stringResource(R.string.det_section_identity)) {
                 InfoRow(stringResource(R.string.det_id_model), miner.identity.model)
                 InfoRow(stringResource(R.string.det_id_asic), miner.identity.asicModel)

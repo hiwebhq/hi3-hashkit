@@ -44,7 +44,14 @@ In this build:
 5. **Optional, off by default — firmware-update check:** while "Check for firmware
    updates" is enabled, the app makes one HTTPS GET to
    `api.github.com/repos/bitaxeorg/ESP-Miner/releases/latest` (at most every 6h) to read
-   the latest AxeOS version tag. No device data is sent; nothing is flashed.
+   the latest AxeOS version tag and its asset list. No device data is sent; checking
+   never flashes anything. **Only when you tap "Update now" on a specific Bitaxe** does
+   the app download that release's `esp-miner.bin` (and `www.bin` on releases that still
+   ship one) from `github.com` over HTTPS and POST the raw image to the miner's own
+   `/api/system/OTA` / `/api/system/OTAWWW` endpoints over the LAN, exactly as the AxeOS
+   web UI does. The image is size-checked against the release manifest, the miner
+   validates it before switching partitions, and every attempt is written to the local
+   audit log. Forks (NerdQAxe, Lucky-Miner) are never flashed from the app.
 6. **Smart-plug control (local only):** when you configure a plug for a miner, the
    app sends its on/off command over the LAN only — Tasmota/Shelly/Kasa on a private
    address, or a generic webhook URL you supply. Plug hosts must be private/Tailscale

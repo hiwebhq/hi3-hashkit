@@ -270,4 +270,21 @@
     <string name="det_quiet_night">Silencieux la nuit</string>
     <string name="det_quiet_night_hint">Silencieux dès 22:00, retour en Normal à 07:00, chaque jour. Horaires modifiables dans Avancé → Planifications.</string>
     <string name="det_act_mode">Passage en %1$s</string>
+
+    <!-- One-tap AxeOS firmware update -->
+    <string name="det_section_firmware">MISE À JOUR DU FIRMWARE</string>
+    <string name="det_fw_available">AxeOS %1$s est disponible — ce mineur tourne en %2$s.</string>
+    <string name="det_fw_update_now">Mettre à jour</string>
+    <string name="det_fw_release_notes">Notes de version</string>
+    <string name="det_fw_retry">Réessayer</string>
+    <string name="det_fw_confirm_title">Mettre à jour vers %1$s ?</string>
+    <string name="det_fw_confirm_body">Hashkit télécharge l\'esp-miner.bin officiel (%1$s Mo) depuis la release ESP-Miner sur GitHub, l\'envoie au mineur via ton réseau, puis le mineur redémarre de lui-même. Le minage s\'arrête environ une minute et tes réglages (Wi-Fi, pool, tuning) sont conservés. Ne débranche pas le mineur avant « Terminé ».</string>
+    <string name="det_fw_step_download">Téléchargement… %1$d%%</string>
+    <string name="det_fw_step_www">Envoi de l\'interface web… %1$d%%</string>
+    <string name="det_fw_step_firmware">Envoi du firmware… %1$d%%</string>
+    <string name="det_fw_step_reboot">Le mineur redémarre…</string>
+    <string name="det_fw_step_verify">Vérification de la nouvelle version…</string>
+    <string name="det_fw_keep_powered">Laisse le mineur alimenté et connecté au Wi-Fi.</string>
+    <string name="det_fw_done">Mis à jour — le mineur tourne maintenant en %1$s 🎉</string>
+    <string name="det_fw_failed">Échec de la mise à jour : %1$s</string>
 </resources>

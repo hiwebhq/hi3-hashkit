@@ -18,6 +18,23 @@
     <string name="det_section_shares_pool">SHARES &amp; POOL</string>
     <string name="det_section_cost">WHAT THIS COSTS</string>
     <string name="det_section_bests">PERSONAL BESTS</string>
+    <string name="det_section_firmware">FIRMWARE UPDATE</string>
+
+    <!-- One-tap AxeOS firmware update -->
+    <string name="det_fw_available">AxeOS %1$s is available — this miner runs %2$s.</string>
+    <string name="det_fw_update_now">Update now</string>
+    <string name="det_fw_release_notes">Release notes</string>
+    <string name="det_fw_retry">Try again</string>
+    <string name="det_fw_confirm_title">Update to %1$s?</string>
+    <string name="det_fw_confirm_body">Hashkit downloads the official esp-miner.bin (%1$s MB) from the ESP-Miner GitHub release, uploads it to the miner over your network, and the miner reboots itself. Hashing pauses for about a minute and your settings (Wi-Fi, pool, tuning) are kept. Don\'t unplug the miner until it says Done.</string>
+    <string name="det_fw_step_download">Downloading… %1$d%%</string>
+    <string name="det_fw_step_www">Uploading web UI… %1$d%%</string>
+    <string name="det_fw_step_firmware">Uploading firmware… %1$d%%</string>
+    <string name="det_fw_step_reboot">Miner is rebooting…</string>
+    <string name="det_fw_step_verify">Checking the new version…</string>
+    <string name="det_fw_keep_powered">Keep the miner powered and on Wi-Fi.</string>
+    <string name="det_fw_done">Updated — the miner now runs %1$s 🎉</string>
+    <string name="det_fw_failed">Update failed: %1$s</string>
 
     <!-- Personal bests + share card -->
     <string name="det_bests_none">No records yet — the first share that beats this miner\'s best lands here.</string>

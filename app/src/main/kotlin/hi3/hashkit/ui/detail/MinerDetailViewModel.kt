@@ -76,6 +76,8 @@ class MinerDetailViewModel @Inject constructor(
     private val personalBestDao: hi3.hashkit.data.db.PersonalBestDao,
     private val statsCardRenderer: hi3.hashkit.ui.share.StatsCardRenderer,
     private val scheduleDao: hi3.hashkit.data.db.ScheduleDao,
+    private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker,
+    private val firmwareUpdater: hi3.hashkit.integrations.update.FirmwareUpdater,
     alertDao: AlertDao,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
@@ -128,6 +130,35 @@ class MinerDetailViewModel @Inject constructor(
         personalBestDao.observeForMiner(minerId, BESTS_SHOWN)
             .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
 
+
+    /** The AxeOS release this miner can update to, or null (nothing newer, not eligible, check off). */
+    val firmwareUpdateAvailable: StateFlow<hi3.hashkit.integrations.update.FirmwareUpdateChecker.Release?> =
+        combine(firmwareChecker.axeOs, repository.observeMinerEntity(minerId)) { release, entity ->
+            release?.takeIf { entity != null && firmwareUpdater.canUpdate(entity, it) }
+        }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), null)
+
+    private val firmwareStep = MutableStateFlow<hi3.hashkit.integrations.update.FirmwareUpdater.Step?>(null)
+
+    /** Progress of an in-flight (or just-finished) firmware update; null when idle. */
+    val firmwareUpdateStep: StateFlow<hi3.hashkit.integrations.update.FirmwareUpdater.Step?> = firmwareStep
+
+    fun startFirmwareUpdate() {
+        val step = firmwareStep.value
+        if (step != null && step !is hi3.hashkit.integrations.update.FirmwareUpdater.Step.Failed &&
+            step !is hi3.hashkit.integrations.update.FirmwareUpdater.Step.Done
+        ) return
+        viewModelScope.launch {
+            val entity = repository.observeMinerEntity(minerId).first() ?: return@launch
+            val release = firmwareUpdateAvailable.value ?: firmwareChecker.axeOs.value ?: return@launch
+            firmwareUpdater.update(entity, release).collect { firmwareStep.value = it }
+            // Re-read identity so the stored version (and the update banner) catch up.
+            runCatching { repository.pollMiner(entity) }
+        }
+    }
+
+    fun dismissFirmwareResult() {
+        firmwareStep.value = null
+    }
 
     /** True while this miner has its pair of "Quiet at night" schedules. */
     val quietNightEnabled: StateFlow<Boolean> = scheduleDao.observeAll()

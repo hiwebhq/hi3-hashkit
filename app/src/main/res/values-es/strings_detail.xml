@@ -269,4 +269,21 @@
     <string name="det_quiet_night">Silencio nocturno</string>
     <string name="det_quiet_night_hint">Silencioso desde las 22:00 y Normal a las 07:00, cada día. Las horas se editan en Avanzado → Programaciones.</string>
     <string name="det_act_mode">Cambiando a %1$s</string>
+
+    <!-- One-tap AxeOS firmware update -->
+    <string name="det_section_firmware">ACTUALIZACIÓN DE FIRMWARE</string>
+    <string name="det_fw_available">AxeOS %1$s está disponible; este minero ejecuta %2$s.</string>
+    <string name="det_fw_update_now">Actualizar ahora</string>
+    <string name="det_fw_release_notes">Notas de la versión</string>
+    <string name="det_fw_retry">Reintentar</string>
+    <string name="det_fw_confirm_title">¿Actualizar a %1$s?</string>
+    <string name="det_fw_confirm_body">Hashkit descarga el esp-miner.bin oficial (%1$s MB) de la release de ESP-Miner en GitHub, lo sube al minero por tu red y el minero se reinicia solo. La minería se pausa alrededor de un minuto y tus ajustes (Wi-Fi, pool, tuning) se conservan. No desenchufes el minero hasta que diga Listo.</string>
+    <string name="det_fw_step_download">Descargando… %1$d%%</string>
+    <string name="det_fw_step_www">Subiendo la interfaz web… %1$d%%</string>
+    <string name="det_fw_step_firmware">Subiendo el firmware… %1$d%%</string>
+    <string name="det_fw_step_reboot">El minero se está reiniciando…</string>
+    <string name="det_fw_step_verify">Comprobando la nueva versión…</string>
+    <string name="det_fw_keep_powered">Mantén el minero encendido y con Wi-Fi.</string>
+    <string name="det_fw_done">Actualizado: el minero ahora ejecuta %1$s 🎉</string>
+    <string name="det_fw_failed">Error al actualizar: %1$s</string>
 </resources>

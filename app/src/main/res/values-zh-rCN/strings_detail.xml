@@ -271,4 +271,21 @@
     <string name="det_quiet_night">夜间安静</string>
     <string name="det_quiet_night_hint">每天 22:00 切换为安静，07:00 恢复正常。时间可在 高级 → 计划 中修改。</string>
     <string name="det_act_mode">正在切换到%1$s</string>
+
+    <!-- One-tap AxeOS firmware update -->
+    <string name="det_section_firmware">固件更新</string>
+    <string name="det_fw_available">AxeOS %1$s 已发布——这台矿机当前运行 %2$s。</string>
+    <string name="det_fw_update_now">立即更新</string>
+    <string name="det_fw_release_notes">发行说明</string>
+    <string name="det_fw_retry">重试</string>
+    <string name="det_fw_confirm_title">更新到 %1$s？</string>
+    <string name="det_fw_confirm_body">Hashkit 会从 ESP-Miner 的 GitHub 发行版下载官方 esp-miner.bin（%1$s MB），通过你的网络上传到矿机，然后矿机自动重启。挖矿会暂停约一分钟，你的设置（Wi-Fi、矿池、调校）会保留。在显示完成之前请勿断电。</string>
+    <string name="det_fw_step_download">正在下载… %1$d%%</string>
+    <string name="det_fw_step_www">正在上传网页界面… %1$d%%</string>
+    <string name="det_fw_step_firmware">正在上传固件… %1$d%%</string>
+    <string name="det_fw_step_reboot">矿机正在重启…</string>
+    <string name="det_fw_step_verify">正在检查新版本…</string>
+    <string name="det_fw_keep_powered">请保持矿机通电并连接 Wi-Fi。</string>
+    <string name="det_fw_done">已更新——矿机现在运行 %1$s 🎉</string>
+    <string name="det_fw_failed">更新失败：%1$s</string>
 </resources>

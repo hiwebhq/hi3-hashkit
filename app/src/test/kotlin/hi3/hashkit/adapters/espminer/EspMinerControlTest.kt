@@ -102,6 +102,41 @@ class EspMinerControlTest {
     }
 
     @Test
+    fun `firmware image is posted raw to the OTA endpoint`() = runTest {
+        server.enqueue(MockResponse().setBody(fixture("real_bm1366_v2.15.1.json"))) // gate
+        server.enqueue(MockResponse().setBody("Firmware update complete, rebooting now!\n"))
+        val image = java.io.File.createTempFile("esp-miner", ".bin").apply {
+            deleteOnExit()
+            writeBytes(ByteArray(70_000) { (it % 251).toByte() })
+        }
+        var lastProgress = 0f
+        val result = adapter.uploadImage(host(), image, webUi = false) { lastProgress = it }
+        assertTrue(result is ActionResult.Success)
+        assertEquals(1f, lastProgress, 0.0001f)
+        server.takeRequest()
+        val post = server.takeRequest()
+        assertEquals("POST", post.method)
+        assertEquals("/api/system/OTA", post.path)
+        assertTrue(post.getHeader("Content-Type")!!.startsWith("application/octet-stream"))
+        assertTrue(image.readBytes().contentEquals(post.body.readByteArray()))
+    }
+
+    @Test
+    fun `web-ui image goes to OTAWWW and forks are refused before any upload`() = runTest {
+        server.enqueue(MockResponse().setBody(fixture("real_bm1366_v2.15.1.json")))
+        server.enqueue(MockResponse().setBody("WWW update complete, rebooting now!\n"))
+        val image = java.io.File.createTempFile("www", ".bin").apply { deleteOnExit(); writeBytes(ByteArray(1024)) }
+        assertTrue(adapter.uploadImage(host(), image, webUi = true) is ActionResult.Success)
+        server.takeRequest()
+        assertEquals("/api/system/OTAWWW", server.takeRequest().path)
+
+        server.enqueue(MockResponse().setBody(fixture("real_bm1370_v1.1.0.json"))) // NerdQAxe
+        val refused = adapter.uploadImage(host(), image, webUi = false)
+        assertTrue(refused is ActionResult.Unsupported)
+        assertEquals(3, server.requestCount)
+    }
+
+    @Test
     fun `display settings are refused on firmware that predates the rotation field`() = runTest {
         // v2.x body without "rotation": gating GET only, nothing written.
         server.enqueue(MockResponse().setBody("""{"version":"v2.4.1","ASICModel":"BM1366","invertscreen":0}"""))

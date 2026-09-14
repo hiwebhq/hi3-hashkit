@@ -270,4 +270,21 @@
     <string name="det_quiet_night">Тихо ночью</string>
     <string name="det_quiet_night_hint">Тихий режим с 22:00, обычный с 07:00, ежедневно. Время меняется в Дополнительно → Расписания.</string>
     <string name="det_act_mode">Переключение: %1$s</string>
+
+    <!-- One-tap AxeOS firmware update -->
+    <string name="det_section_firmware">ОБНОВЛЕНИЕ ПРОШИВКИ</string>
+    <string name="det_fw_available">Доступна AxeOS %1$s — на этом майнере стоит %2$s.</string>
+    <string name="det_fw_update_now">Обновить сейчас</string>
+    <string name="det_fw_release_notes">Примечания к выпуску</string>
+    <string name="det_fw_retry">Повторить</string>
+    <string name="det_fw_confirm_title">Обновить до %1$s?</string>
+    <string name="det_fw_confirm_body">Hashkit скачает официальный esp-miner.bin (%1$s МБ) из релиза ESP-Miner на GitHub, загрузит его в майнер по вашей сети, и майнер перезагрузится сам. Майнинг остановится примерно на минуту, настройки (Wi-Fi, пул, тюнинг) сохранятся. Не выключайте майнер, пока не появится «Готово».</string>
+    <string name="det_fw_step_download">Загрузка… %1$d%%</string>
+    <string name="det_fw_step_www">Отправка веб-интерфейса… %1$d%%</string>
+    <string name="det_fw_step_firmware">Отправка прошивки… %1$d%%</string>
+    <string name="det_fw_step_reboot">Майнер перезагружается…</string>
+    <string name="det_fw_step_verify">Проверка новой версии…</string>
+    <string name="det_fw_keep_powered">Не выключайте майнер и Wi-Fi.</string>
+    <string name="det_fw_done">Обновлено — майнер теперь на %1$s 🎉</string>
+    <string name="det_fw_failed">Ошибка обновления: %1$s</string>
 </resources>

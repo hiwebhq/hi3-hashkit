@@ -46,6 +46,8 @@ import javax.inject.Singleton
  *  - PATCH /api/system          — settings (pools, fan, frequency, coreVoltage,
  *                                 rotation/invertscreen/displayTimeout — nvs_config.c)
  *  - POST  /api/system/restart  — reboot
+ *  - POST  /api/system/OTA      — raw firmware image, then esp_restart() (http_server.c)
+ *  - POST  /api/system/OTAWWW   — raw web-UI image, same handling
  *
  * Controls are enabled only for official v2.x firmware; unknown forks are
  * monitoring-only with an explanatory capability reason. NerdQAxe devices additionally
@@ -292,6 +294,85 @@ class EspMinerAdapter @Inject constructor(
             ).toActionResult()
         }
 
+    // ------------------------------------------------------------------- OTA upload ----
+
+    /**
+     * Flash a firmware (`/api/system/OTA`) or web-UI (`/api/system/OTAWWW`) image. Both
+     * handlers (http_server.c: POST_OTA_update / POST_WWW_update) consume the raw request
+     * body in chunks, validate, then `esp_restart()` — so a successful call ends with the
+     * miner dropping off the network for a minute. Refused in AP mode by the firmware and
+     * on unverified flavors here. The upload uses a long-timeout client: the shared one
+     * caps calls at 8 s, far too short for a ~2.5 MB write to flash.
+     */
+    suspend fun uploadImage(
+        host: MinerHost,
+        image: java.io.File,
+        webUi: Boolean,
+        onProgress: (Float) -> Unit = {},
+    ): ActionResult = gated(host, EspMinerFirmware::controlsSupported) { _, _ ->
+        withContext(Dispatchers.IO) {
+            val body = ProgressFileBody(image, onProgress)
+            val path = if (webUi) OTA_WWW_PATH else OTA_PATH
+            val request = Request.Builder().url("http://${host.host}:${host.port}$path").post(body).build()
+            try {
+                otaClient.newCall(request).execute().use { resp ->
+                    val text = resp.body?.string().orEmpty().trim()
+                    if (resp.isSuccessful) {
+                        ActionResult.Success
+                    } else {
+                        ActionResult.Failure(
+                            "Miner rejected the image: HTTP ${resp.code} ${text.take(MAX_ERROR_CHARS)}"
+                        )
+                    }
+                }
+            } catch (e: IOException) {
+                // The firmware restarts right after acknowledging; a dropped connection at
+                // the very end is the expected shape of success.
+                val closedAfterWrite = body.fullyWritten &&
+                    e.message?.contains("unexpected end of stream", ignoreCase = true) == true
+                if (closedAfterWrite) {
+                    ActionResult.Success
+                } else {
+                    ActionResult.Failure("Upload failed: ${e.message ?: e.javaClass.simpleName}")
+                }
+            }
+        }
+    }
+
+    private val otaClient: OkHttpClient by lazy {
+        client.newBuilder()
+            .callTimeout(0, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(OTA_IO_TIMEOUT_S, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(OTA_IO_TIMEOUT_S, java.util.concurrent.TimeUnit.SECONDS)
+            .build()
+    }
+
+    /** Streams a file as a raw octet-stream body, reporting bytes written. */
+    private class ProgressFileBody(
+        private val file: java.io.File,
+        private val onProgress: (Float) -> Unit,
+    ) : okhttp3.RequestBody() {
+        @Volatile var fullyWritten = false; private set
+        override fun contentType() = OCTET_STREAM
+        override fun contentLength() = file.length()
+        override fun writeTo(sink: okio.BufferedSink) {
+            val total = file.length().coerceAtLeast(1)
+            var written = 0L
+            file.inputStream().use { input ->
+                val buf = ByteArray(UPLOAD_CHUNK)
+                while (true) {
+                    val n = input.read(buf)
+                    if (n < 0) break
+                    sink.write(buf, 0, n)
+                    written += n
+                    onProgress((written.toFloat() / total).coerceIn(0f, 1f))
+                }
+            }
+            sink.flush()
+            fullyWritten = true
+        }
+    }
+
     // ---------------------------------------------------------------- http helpers ----
 
     /** Run a control action only after re-verifying the firmware flavor supports controls. */
@@ -426,6 +507,12 @@ class EspMinerAdapter @Inject constructor(
         private const val DEFAULT_OTP_TTL_MS = 24 * 3600 * 1000L
         /** nvs_config.c bounds displayTimeout at UINT16_MAX minutes. */
         private const val MAX_DISPLAY_TIMEOUT_MIN = 65_535
+        const val OTA_PATH = "/api/system/OTA"
+        const val OTA_WWW_PATH = "/api/system/OTAWWW"
+        private val OCTET_STREAM = "application/octet-stream".toMediaType()
+        private const val OTA_IO_TIMEOUT_S = 120L
+        private const val UPLOAD_CHUNK = 16 * 1024
+        private const val MAX_ERROR_CHARS = 120
         private const val SESSION_RENEW_MARGIN_MS = 60_000L
         private val OTP_SESSION_PATHS = listOf("/api/otp/session", "/api/v2/otp/session")
     }
