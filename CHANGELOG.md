@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.78.4
+
+- Fix: saving the miner Edit dialog (e.g. after adding a rack location) could silently
+  clear the miner's farm assignment, making it disappear from its farm on the dashboard.
+- Fleet table: new sortable Location column (after IP), showing each miner's rack code.
+
 ## 0.78.3
 
 - Flow view: new "Tiles" option lays the miners out as a 2×2–8×8 grid (or the classic
