@@ -229,9 +229,9 @@ Reviewed and confirmed:
 - **Release build**: R8-minified, resource-shrunk, signed with a locally-generated
   4096-bit RSA key (`hi3-release.jks` + `keystore.properties`, both gitignored and
   verified untracked). `apksigner verify` passes.
-- **Dependencies**: pinned via the version catalog — AGP 8.9.2, Kotlin 2.1.10,
-  Compose BOM 2025.04.01, OkHttp 4.12.0, Room 2.7.1, Hilt 2.55,
-  kotlinx.serialization 1.8.0, DataStore 1.1.4, WorkManager 2.10.0. All are
+- **Dependencies**: pinned via the version catalog — AGP 9.4.0 (Gradle 9.7.1,
+  compileSdk 37), Kotlin 2.4.20, Compose BOM 2026.09.00, OkHttp 5.5.0, Room 2.8.5,
+  Hilt 2.60.1, kotlinx.serialization 1.11.0, DataStore 1.2.1, WorkManager 2.11.2. All are
   maintained mainstream releases with no known-critical CVEs at review time; this was
   a manual review — wiring an automated scanner (e.g. OWASP dependency-check or
   `gradle dependencyUpdates`) into CI is recommended when CI exists.

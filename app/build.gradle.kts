@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -29,14 +28,14 @@ val keystoreProps = Properties().apply {
 
 android {
     namespace = "hi3.hashkit"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "hi3.hashkit"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 138
-        versionName = "0.79.2"
+        targetSdk = 37
+        versionCode = 139
+        versionName = "0.79.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -82,9 +81,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.79.3
+
+- Build toolchain upgrade: Android Gradle Plugin 9.4 (built-in Kotlin), Gradle 9.7.1,
+  Kotlin 2.4.20, compileSdk/targetSdk 37. Library refresh: Compose BOM 2026.09, Room 2.8.5,
+  Hilt 2.60.1, Navigation 2.10, OkHttp 5.5, WorkManager 2.11, DataStore 1.2, Glance 1.2,
+  Wear Compose 1.6. No user-facing feature changes.
+
 ## 0.79.2
 
 - Tapping the Hi3 Hashkit logo on the main page opens the About screen.

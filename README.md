@@ -1,6 +1,6 @@
 # Hi3 Hashkit
 
-**Current version: 0.79.2**
+**Current version: 0.79.3**
 
 Hi3 Hashkit is a privacy-first, local-first Android app for monitoring and safely
 controlling your Bitcoin miners. It talks only to the miners on your own network — over
