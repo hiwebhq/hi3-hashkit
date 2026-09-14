@@ -166,4 +166,6 @@
     <string name="dash_rescan_scanning">Escaneando %1$d hosts…</string>
     <string name="dash_rescan_done">Reescaneo terminado — %1$d minero(s) encontrados.</string>
     <string name="dash_metric_cost_mo">Coste/mes</string>
+    <string name="dash_card_bests">Récords personales</string>
+    <string name="dash_bests_header">RÉCORDS PERSONALES</string>
 </resources>

@@ -204,9 +204,13 @@ object AlertEvaluator {
 
             val best = telemetry.bestDifficulty
             if (best != null && previous.previousBestDifficulty != null && best > previous.previousBestDifficulty) {
+                val ofBlock = hi3.hashkit.domain.solo.PersonalBests
+                    .percentOfBlock(best, telemetry.networkDifficulty)
+                    ?.let { " — ${hi3.hashkit.domain.solo.PersonalBests.formatPercent(it)} of a block" }
+                    .orEmpty()
                 signals += AlertSignal(
                     minerId, minerName, AlertType.NEW_BEST_DIFFICULTY,
-                    "$minerName found a new best difficulty: ${hi3.hashkit.core.Units.formatDifficulty(best)}.",
+                    "🏆 $minerName found a new best share: ${hi3.hashkit.core.Units.formatDifficulty(best)}$ofBlock.",
                     active = true,
                 )
             }

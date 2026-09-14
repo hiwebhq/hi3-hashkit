@@ -21,6 +21,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
+@Suppress("TooManyFunctions") // one @Provides per Room DAO
 object AppModule {
 
     @Provides
@@ -55,6 +56,7 @@ object AppModule {
                 HashkitDatabase.MIGRATION_16_17,
                 HashkitDatabase.MIGRATION_17_18,
                 HashkitDatabase.MIGRATION_18_19,
+                HashkitDatabase.MIGRATION_19_20,
             )
             .build()
 
@@ -93,6 +95,9 @@ object AppModule {
 
     @Provides
     fun tuneSweepDao(db: HashkitDatabase): hi3.hashkit.data.db.TuneSweepDao = db.tuneSweepDao()
+
+    @Provides
+    fun personalBestDao(db: HashkitDatabase): hi3.hashkit.data.db.PersonalBestDao = db.personalBestDao()
 }
 
 @Module

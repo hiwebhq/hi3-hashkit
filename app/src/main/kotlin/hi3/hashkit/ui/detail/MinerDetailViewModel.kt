@@ -71,9 +71,43 @@ class MinerDetailViewModel @Inject constructor(
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
     private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
+    private val personalBestDao: hi3.hashkit.data.db.PersonalBestDao,
+    private val statsCardRenderer: hi3.hashkit.ui.share.StatsCardRenderer,
     alertDao: AlertDao,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
+
+    /** Render the shareable stats-card PNG off the main thread and hand back the file. */
+    fun shareStatsCard(accentArgb: Int, onReady: (java.io.File) -> Unit) {
+        viewModelScope.launch {
+            val entity = repository.observeMinerEntity(minerId).first() ?: return@launch
+            val t = repository.latestTelemetry(minerId)
+            val best = personalBestDao.bestFor(minerId) ?: t?.bestDifficulty
+            val netDiff = t?.networkDifficulty?.takeIf { it > 0 }
+                ?: settingsRepository.current().networkDifficulty.takeIf { it > 0 }
+            val days = ((System.currentTimeMillis() - entity.createdAtEpochMs) / DAY_MS).toInt().coerceAtLeast(0)
+            val stats = hi3.hashkit.ui.share.StatsCardRenderer.Stats(
+                minerName = entity.name,
+                model = entity.model,
+                hashrate = hi3.hashkit.core.Units.formatHashrate(t?.hashrateGhs?.value),
+                bestShare = hi3.hashkit.core.Units.formatDifficulty(best),
+                percentOfBlock = hi3.hashkit.domain.solo.PersonalBests.percentOfBlock(best, netDiff)?.let {
+                    appContext.getString(
+                        R.string.det_bests_pct_block,
+                        hi3.hashkit.domain.solo.PersonalBests.formatPercent(it),
+                    )
+                },
+                uptime = hi3.hashkit.core.Units.formatUptime(t?.uptimeSeconds),
+                efficiency = hi3.hashkit.core.Units.formatEfficiency(t?.efficiencyJTh?.value),
+                daysMining = days,
+                accentArgb = accentArgb,
+            )
+            val file = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                statsCardRenderer.render(stats)
+            }
+            onReady(file)
+        }
+    }
 
     /** Inline rate entry on the cost card (same setting as Settings → Energy). */
     fun setElectricityRate(ratePerKwh: Double) {
@@ -85,6 +119,12 @@ class MinerDetailViewModel @Inject constructor(
     }
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
+
+    /** This miner's top personal-best shares, best first. */
+    val bests: StateFlow<List<hi3.hashkit.data.db.PersonalBestEntity>> =
+        personalBestDao.observeForMiner(minerId, BESTS_SHOWN)
+            .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
+
 
     /** User-written maintenance notes for this miner, newest first. */
     val maintenanceNotes: StateFlow<List<hi3.hashkit.data.db.MaintenanceNoteEntity>> =
@@ -371,6 +411,8 @@ class MinerDetailViewModel @Inject constructor(
 
     companion object {
         const val HISTORY_WINDOW_MS = 3_600_000L
+        private const val BESTS_SHOWN = 5
+        private const val DAY_MS = 86_400_000L
 
         /** Sentinel: saveMeta callers that don't touch the farm leave the assignment as-is. */
         const val FARM_UNCHANGED = Long.MIN_VALUE

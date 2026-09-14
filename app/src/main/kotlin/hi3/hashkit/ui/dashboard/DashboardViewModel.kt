@@ -106,7 +106,13 @@ class DashboardViewModel @Inject constructor(
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     private val firmwareChecker: hi3.hashkit.integrations.update.FirmwareUpdateChecker,
     alertDao: AlertDao,
+    personalBestDao: hi3.hashkit.data.db.PersonalBestDao,
 ) : ViewModel() {
+
+    /** Fleet-wide top personal-best shares (real miners only), for the trophy card. */
+    val bests: StateFlow<List<hi3.hashkit.data.db.PersonalBestRow>> =
+        personalBestDao.observeTop(BESTS_ON_DASHBOARD)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     /** Latest AxeOS release (opt-in), for the dashboard update banner. */
     val firmwareLatest = firmwareChecker.axeOs
@@ -371,6 +377,10 @@ class DashboardViewModel @Inject constructor(
                 isDemo = true,
             )
         }
+    }
+
+    private companion object {
+        const val BESTS_ON_DASHBOARD = 3
     }
 
     private fun totalsOf(miners: List<Miner>, settings: AppSettings): FleetTotals? {

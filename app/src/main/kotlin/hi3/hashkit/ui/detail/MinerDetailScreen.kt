@@ -13,6 +13,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Spacer
@@ -105,6 +106,17 @@ fun MinerDetailScreen(
                     }
                 },
                 actions = {
+                    val accent = HiBrand.accent
+                    val shareTitle = stringResource(R.string.det_share_card)
+                    if (miner != null && !miner.isDemo) {
+                        IconButton(onClick = {
+                            viewModel.shareStatsCard(accent.toArgb()) { file ->
+                                context.shareFile(file, "image/png", shareTitle)
+                            }
+                        }) {
+                            Icon(Icons.Filled.Share, contentDescription = shareTitle)
+                        }
+                    }
                     IconButton(onClick = { editing = true }) {
                         Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.det_cd_edit_miner))
                     }
@@ -302,6 +314,24 @@ fun MinerDetailScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = HiBrand.textSecondary,
                 )
+            }
+
+            if (!miner.isDemo) {
+                SectionCard(stringResource(R.string.det_section_bests)) {
+                    val bests by viewModel.bests.collectAsStateWithLifecycle()
+                    PersonalBestsList(
+                        bests = bests,
+                        networkDifficultyNow = t?.networkDifficulty?.takeIf { it > 0 }
+                            ?: state.settings.networkDifficulty.takeIf { it > 0 },
+                    )
+                    val accent = HiBrand.accent
+                    val shareTitle = stringResource(R.string.det_share_card)
+                    androidx.compose.material3.TextButton(onClick = {
+                        viewModel.shareStatsCard(accent.toArgb()) { file ->
+                            context.shareFile(file, "image/png", shareTitle)
+                        }
+                    }) { Text(shareTitle) }
+                }
             }
 
             if (state.capabilities?.let { hi3.hashkit.domain.model.Capability.LOGS in it } == true) {
@@ -738,6 +768,55 @@ private fun NotePhoto(path: String) {
                 }
             }
         }
+    }
+}
+
+/** The trophy shelf: all-time best on top, the runners-up below, each with its "% of a block". */
+@Composable
+private fun PersonalBestsList(
+    bests: List<hi3.hashkit.data.db.PersonalBestEntity>,
+    networkDifficultyNow: Double?,
+) {
+    if (bests.isEmpty()) {
+        Text(
+            stringResource(R.string.det_bests_none),
+            style = MaterialTheme.typography.bodySmall,
+            color = HiBrand.textSecondary,
+        )
+        return
+    }
+    val dateFormat = remember { java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM) }
+    fun pct(best: hi3.hashkit.data.db.PersonalBestEntity): String? =
+        hi3.hashkit.domain.solo.PersonalBests
+            .percentOfBlock(best.difficulty, best.networkDifficulty ?: networkDifficultyNow)
+            ?.let { hi3.hashkit.domain.solo.PersonalBests.formatPercent(it) }
+    val top = bests.first()
+    Text(
+        "🏆 " + Units.formatDifficulty(top.difficulty),
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.Bold,
+        color = HiBrand.accent,
+    )
+    Text(
+        listOfNotNull(
+            stringResource(R.string.det_bests_all_time),
+            pct(top)?.let { stringResource(R.string.det_bests_pct_block, it) },
+            dateFormat.format(java.util.Date(top.atEpochMs)),
+        ).joinToString("  ·  "),
+        style = MaterialTheme.typography.labelSmall,
+        color = HiBrand.textSecondary,
+    )
+    bests.drop(1).forEach { best ->
+        Text(
+            listOfNotNull(
+                "🏅 " + Units.formatDifficulty(best.difficulty),
+                pct(best)?.let { stringResource(R.string.det_bests_pct_block, it) },
+                dateFormat.format(java.util.Date(best.atEpochMs)),
+            ).joinToString("  ·  "),
+            style = MaterialTheme.typography.bodySmall,
+            color = HiBrand.textSecondary,
+            modifier = Modifier.padding(top = 4.dp),
+        )
     }
 }
 

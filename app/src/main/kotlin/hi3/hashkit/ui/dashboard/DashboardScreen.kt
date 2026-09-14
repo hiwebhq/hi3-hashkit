@@ -118,6 +118,7 @@ fun DashboardScreen(
     val fleetTrend by viewModel.fleetTrend.collectAsStateWithLifecycle()
     val fleetWindow by viewModel.fleetWindowMs.collectAsStateWithLifecycle()
     val networkEpoch by viewModel.networkEpoch.collectAsStateWithLifecycle()
+    val bests by viewModel.bests.collectAsStateWithLifecycle()
     // Count of AxeOS miners behind the latest release; the banner item only exists when > 0
     // so a disabled banner doesn't add phantom LazyColumn spacing.
     val firmwareOutdated = firmwareLatest?.let { latest ->
@@ -323,6 +324,9 @@ fun DashboardScreen(
             }
             DashboardCard.SOLO -> if (state.settings.showSoloCard) {
                 state.solo?.let { solo -> item { SoloCard(solo) } }
+            }
+            DashboardCard.BESTS -> if (bests.isNotEmpty()) {
+                item { BestsCard(bests, state.solo?.networkDifficulty, onMinerClick) }
             }
             DashboardCard.HALVING -> networkEpoch?.let { epoch -> item { HalvingCountdownCard(epoch) } }
             DashboardCard.POOL -> if (poolState.enabled) {
@@ -1099,6 +1103,67 @@ private fun ProfitCard(p: hi3.hashkit.ui.dashboard.ProfitSummary) {
                 style = MaterialTheme.typography.labelSmall,
                 color = HiBrand.textSecondary,
             )
+        }
+    }
+}
+
+/** Fleet trophy shelf: the best shares any of your miners ever found. */
+@Composable
+private fun BestsCard(
+    bests: List<hi3.hashkit.data.db.PersonalBestRow>,
+    networkDifficultyNow: Double?,
+    onMinerClick: (Long) -> Unit,
+) {
+    val dateFormat = androidx.compose.runtime.remember {
+        java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM)
+    }
+    Card(
+        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                stringResource(R.string.dash_bests_header),
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
+            Spacer(Modifier.height(8.dp))
+            bests.forEachIndexed { i, best ->
+                val pct = hi3.hashkit.domain.solo.PersonalBests
+                    .percentOfBlock(best.difficulty, best.networkDifficulty ?: networkDifficultyNow)
+                    ?.let { hi3.hashkit.domain.solo.PersonalBests.formatPercent(it) }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onMinerClick(best.minerId) }
+                        .padding(vertical = 4.dp),
+                ) {
+                    Text(if (i == 0) "🏆" else "🏅", modifier = Modifier.padding(end = 10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            best.minerName,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            listOfNotNull(
+                                pct?.let { stringResource(R.string.det_bests_pct_block, it) },
+                                dateFormat.format(java.util.Date(best.atEpochMs)),
+                            ).joinToString("  ·  "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
+                        )
+                    }
+                    Text(
+                        Units.formatDifficulty(best.difficulty),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = HiBrand.accent,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
         }
     }
 }

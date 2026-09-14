@@ -39,6 +39,7 @@ class Exporter @Inject constructor(
     private val hourlyDao: hi3.hashkit.data.db.HourlyDao,
     private val alertDao: hi3.hashkit.data.db.AlertDao,
     private val pollingEngine: hi3.hashkit.data.poll.PollingEngine? = null,
+    private val personalBestDao: hi3.hashkit.data.db.PersonalBestDao? = null,
 ) {
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
@@ -183,6 +184,15 @@ class Exporter @Inject constructor(
         val photoBase64: String? = null,
     )
 
+    /** A personal-best record (format 3+, additive), re-attached by the miner's stableKey. */
+    @Serializable
+    data class BackupBest(
+        val minerStableKey: String,
+        val difficulty: Double,
+        val atEpochMs: Long,
+        val networkDifficulty: Double? = null,
+    )
+
     @Serializable
     data class Backup(
         /** Decode default stays 1: pre-format-3 files never wrote this field (defaults are
@@ -199,6 +209,8 @@ class Exporter @Inject constructor(
         val rules: List<BackupRule> = emptyList(),
         /** Settings as type-tagged strings; Keystore-encrypted secrets are never included. */
         val settings: Map<String, String> = emptyMap(),
+        /** Personal-best record book (additive; older backups decode with none). */
+        val bests: List<BackupBest> = emptyList(),
     )
 
     /**
@@ -270,6 +282,13 @@ class Exporter @Inject constructor(
                 )
             },
             settings = settingsRepository.exportForBackup(),
+            bests = personalBestDao?.let { dao ->
+                miners.flatMap { miner ->
+                    dao.listForMiner(miner.id).map {
+                        BackupBest(miner.stableKey, it.difficulty, it.atEpochMs, it.networkDifficulty)
+                    }
+                }
+            }.orEmpty(),
         )
         val plain = json.encodeToString(backup)
         val pass = passphrase?.trim().orEmpty()
@@ -426,8 +445,26 @@ class Exporter @Inject constructor(
             )
             notesAdded++
         }
+        // Personal bests: re-attach by stableKey; a record already present (same value)
+        // is skipped so repeated restores don't duplicate trophies.
+        var bestsAdded = 0
+        personalBestDao?.let { dao ->
+            for (b in backup.bests) {
+                val miner = minerDao.byStableKey(b.minerStableKey) ?: continue
+                val existing = dao.listForMiner(miner.id)
+                if (existing.any { it.difficulty == b.difficulty }) continue
+                dao.insert(
+                    hi3.hashkit.data.db.PersonalBestEntity(
+                        minerId = miner.id, difficulty = b.difficulty, atEpochMs = b.atEpochMs,
+                        networkDifficulty = b.networkDifficulty,
+                    )
+                )
+                bestsAdded++
+            }
+        }
         "Restored: $minersAdded miners added, $minersUpdated updated; " +
             "${backup.schedules.size} schedules, $notesAdded maintenance notes, " +
+            "$bestsAdded personal bests, " +
             "${backup.farms.size} farms, $poolsAdded pools, $rulesAdded rules" +
             (if (backup.settings.isNotEmpty()) " and app settings" else "") +
             " imported (identity re-verifies on next poll)."

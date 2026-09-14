@@ -167,4 +167,6 @@
     <string name="dash_rescan_scanning">Varrendo %1$d hosts…</string>
     <string name="dash_rescan_done">Varredura concluída — %1$d minerador(es) encontrado(s).</string>
     <string name="dash_metric_cost_mo">Custo/mês</string>
+    <string name="dash_card_bests">Recordes pessoais</string>
+    <string name="dash_bests_header">RECORDES PESSOAIS</string>
 </resources>

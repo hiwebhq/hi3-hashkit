@@ -243,4 +243,18 @@
     <string name="det_cost_solo_line">Solo: tiempo esperado hasta un bloque %1$s — un boleto de lotería de %2$s/mes.</string>
     <string name="det_cost_note">Solo estimaciones: excluye comisiones de pool y de transacción; la dificultad y el precio cambian a diario.</string>
     <string name="det_paid_label">Lo que pagaste (%1$s, opcional)</string>
+
+    <!-- Personal bests + share card -->
+    <string name="det_section_bests">RÉCORDS PERSONALES</string>
+    <string name="det_bests_none">Aún no hay récords: la primera share que supere el mejor de este minero aparecerá aquí.</string>
+    <string name="det_bests_all_time">mejor share de todos los tiempos</string>
+    <string name="det_bests_pct_block">%1$s de un bloque</string>
+    <string name="det_share_card">Compartir tarjeta de estadísticas</string>
+    <string name="det_share_lbl_hashrate">HASHRATE</string>
+    <string name="det_share_lbl_best">MEJOR SHARE</string>
+    <string name="det_share_lbl_uptime">TIEMPO ACTIVO</string>
+    <string name="det_share_lbl_eff">EFICIENCIA</string>
+    <string name="det_share_lbl_days">MINANDO DESDE HACE</string>
+    <string name="det_share_days_value">%1$d días</string>
+    <string name="det_share_tagline">Minería en casa, medida con honestidad · Hi3 Hashkit</string>
 </resources>

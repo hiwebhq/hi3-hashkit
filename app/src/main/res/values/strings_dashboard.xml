@@ -159,6 +159,8 @@
     <string name="dash_card_fleet">Fleet summary</string>
     <string name="dash_card_profit">Profitability</string>
     <string name="dash_card_solo">Solo odds</string>
+    <string name="dash_card_bests">Personal bests</string>
+    <string name="dash_bests_header">PERSONAL BESTS</string>
     <string name="dash_card_halving">Halving countdown</string>
     <string name="dash_card_pool">Hi3 Pool stats</string>
     <string name="dash_card_mmp">MMP fleet</string>

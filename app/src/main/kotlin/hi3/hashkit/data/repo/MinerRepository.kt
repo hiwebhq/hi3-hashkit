@@ -37,6 +37,7 @@ class MinerRepository @Inject constructor(
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient? = null,
     private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao? = null,
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context? = null,
+    private val personalBestDao: hi3.hashkit.data.db.PersonalBestDao? = null,
 ) {
     /** Telemetry older than this renders as stale/UNKNOWN rather than pretending freshness. */
     val staleAfterMs: Long = 120_000
@@ -182,6 +183,7 @@ class MinerRepository @Inject constructor(
             }
             dao.deleteForMiner(id)
         }
+        personalBestDao?.deleteForMiner(id)
         minerDao.delete(id)
     }
 
@@ -194,6 +196,7 @@ class MinerRepository @Inject constructor(
         val filesDir = context?.filesDir ?: return
         runCatching {
             dao.deleteOrphans()
+            personalBestDao?.deleteOrphans()
             val referenced = dao.allPhotoPaths().toSet()
             java.io.File(filesDir, "maintenance").listFiles()?.forEach { f ->
                 if (f.absolutePath !in referenced) f.delete()

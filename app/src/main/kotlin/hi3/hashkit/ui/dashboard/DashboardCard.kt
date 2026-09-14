@@ -12,6 +12,7 @@ enum class DashboardCard(val label: String, @StringRes val labelRes: Int) {
     FLEET("Fleet summary", R.string.dash_card_fleet),
     PROFIT("Profitability", R.string.dash_card_profit),
     SOLO("Solo odds", R.string.dash_card_solo),
+    BESTS("Personal bests", R.string.dash_card_bests),
     HALVING("Halving countdown", R.string.dash_card_halving),
     POOL("Hi3 Pool stats", R.string.dash_card_pool),
     MMP("MMP fleet", R.string.dash_card_mmp),

@@ -17,6 +17,20 @@
     <string name="det_section_live_telemetry">LIVE TELEMETRY</string>
     <string name="det_section_shares_pool">SHARES &amp; POOL</string>
     <string name="det_section_cost">WHAT THIS COSTS</string>
+    <string name="det_section_bests">PERSONAL BESTS</string>
+
+    <!-- Personal bests + share card -->
+    <string name="det_bests_none">No records yet — the first share that beats this miner\'s best lands here.</string>
+    <string name="det_bests_all_time">all-time best share</string>
+    <string name="det_bests_pct_block">%1$s of a block</string>
+    <string name="det_share_card">Share stats card</string>
+    <string name="det_share_lbl_hashrate">HASHRATE</string>
+    <string name="det_share_lbl_best">BEST SHARE</string>
+    <string name="det_share_lbl_uptime">UPTIME</string>
+    <string name="det_share_lbl_eff">EFFICIENCY</string>
+    <string name="det_share_lbl_days">MINING FOR</string>
+    <string name="det_share_days_value">%1$d days</string>
+    <string name="det_share_tagline">Home mining, honestly measured · Hi3 Hashkit</string>
     <string name="det_section_live_logs">LIVE LOGS</string>
     <string name="det_section_event_log">EVENT LOG</string>
     <string name="det_section_maintenance">MAINTENANCE LOG</string>

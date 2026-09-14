@@ -244,4 +244,18 @@
     <string name="det_cost_solo_line">Соло: ожидаемое время до блока %1$s — лотерейный билет за %2$s/мес.</string>
     <string name="det_cost_note">Только оценки: без комиссий пула и транзакций; сложность и курс меняются ежедневно.</string>
     <string name="det_paid_label">Цена покупки (%1$s, необязательно)</string>
+
+    <!-- Personal bests + share card -->
+    <string name="det_section_bests">ЛИЧНЫЕ РЕКОРДЫ</string>
+    <string name="det_bests_none">Рекордов пока нет — первая шара, побившая лучший результат этого майнера, появится здесь.</string>
+    <string name="det_bests_all_time">лучшая шара за всё время</string>
+    <string name="det_bests_pct_block">%1$s от блока</string>
+    <string name="det_share_card">Поделиться карточкой статистики</string>
+    <string name="det_share_lbl_hashrate">ХЕШРЕЙТ</string>
+    <string name="det_share_lbl_best">ЛУЧШАЯ ШАРА</string>
+    <string name="det_share_lbl_uptime">АПТАЙМ</string>
+    <string name="det_share_lbl_eff">ЭФФЕКТИВНОСТЬ</string>
+    <string name="det_share_lbl_days">МАЙНИТ УЖЕ</string>
+    <string name="det_share_days_value">%1$d дн.</string>
+    <string name="det_share_tagline">Домашний майнинг, честные измерения · Hi3 Hashkit</string>
 </resources>

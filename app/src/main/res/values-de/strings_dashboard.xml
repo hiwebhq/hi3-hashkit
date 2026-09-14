@@ -167,4 +167,6 @@
     <string name="dash_rescan_scanning">Scanne %1$d Hosts…</string>
     <string name="dash_rescan_done">Rescan fertig — %1$d Miner gefunden.</string>
     <string name="dash_metric_cost_mo">Kosten/Mon.</string>
+    <string name="dash_card_bests">Persönliche Bestwerte</string>
+    <string name="dash_bests_header">PERSÖNLICHE BESTWERTE</string>
 </resources>

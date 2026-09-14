@@ -245,4 +245,18 @@
     <string name="det_cost_solo_line">单挖：预计出块时间 %1$s——相当于每月 %2$s 的一张彩票。</string>
     <string name="det_cost_note">仅为估算：不含矿池和交易手续费；难度和价格每天都在变化。</string>
     <string name="det_paid_label">购买价格（%1$s，可选）</string>
+
+    <!-- Personal bests + share card -->
+    <string name="det_section_bests">个人最佳</string>
+    <string name="det_bests_none">还没有记录——第一次超过这台矿机最佳难度的份额会显示在这里。</string>
+    <string name="det_bests_all_time">历史最佳份额</string>
+    <string name="det_bests_pct_block">相当于一个区块的 %1$s</string>
+    <string name="det_share_card">分享数据卡片</string>
+    <string name="det_share_lbl_hashrate">算力</string>
+    <string name="det_share_lbl_best">最佳份额</string>
+    <string name="det_share_lbl_uptime">运行时间</string>
+    <string name="det_share_lbl_eff">能效</string>
+    <string name="det_share_lbl_days">已挖矿</string>
+    <string name="det_share_days_value">%1$d 天</string>
+    <string name="det_share_tagline">在家挖矿，诚实计量 · Hi3 Hashkit</string>
 </resources>

@@ -167,4 +167,6 @@
     <string name="dash_rescan_scanning">Сканирование %1$d хостов…</string>
     <string name="dash_rescan_done">Пересканирование завершено — найдено майнеров: %1$d.</string>
     <string name="dash_metric_cost_mo">Расход/мес</string>
+    <string name="dash_card_bests">Личные рекорды</string>
+    <string name="dash_bests_header">ЛИЧНЫЕ РЕКОРДЫ</string>
 </resources>

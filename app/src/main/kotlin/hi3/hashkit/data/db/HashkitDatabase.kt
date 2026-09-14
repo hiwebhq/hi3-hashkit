@@ -22,8 +22,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SavedPoolEntity::class,
         LogLineEntity::class,
         TuneSweepEntity::class,
+        PersonalBestEntity::class,
     ],
-    version = 19,
+    version = 20,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -39,8 +40,26 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun savedPoolDao(): SavedPoolDao
     abstract fun logDao(): LogDao
     abstract fun tuneSweepDao(): TuneSweepDao
+    abstract fun personalBestDao(): PersonalBestDao
 
     companion object {
+        /** v19 -> v20: personal_bests record book (additive). */
+        @Suppress("MagicNumber") // schema versions are inherently literal
+        val MIGRATION_19_20 = object : Migration(19, 20) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `personal_bests` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`minerId` INTEGER NOT NULL, `difficulty` REAL NOT NULL, " +
+                        "`atEpochMs` INTEGER NOT NULL, `networkDifficulty` REAL)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_personal_bests_minerId_difficulty` " +
+                        "ON `personal_bests` (`minerId`, `difficulty`)"
+                )
+            }
+        }
+
         /** v18 -> v19: miners.purchasePrice for the home-miner payback estimate (additive). */
         @Suppress("MagicNumber") // schema versions are inherently literal
         val MIGRATION_18_19 = object : Migration(18, 19) {

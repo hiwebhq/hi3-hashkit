@@ -167,4 +167,6 @@
     <string name="dash_rescan_scanning">正在扫描 %1$d 台主机…</string>
     <string name="dash_rescan_done">重新扫描完成——发现 %1$d 台矿机。</string>
     <string name="dash_metric_cost_mo">成本/月</string>
+    <string name="dash_card_bests">个人最佳</string>
+    <string name="dash_bests_header">个人最佳</string>
 </resources>

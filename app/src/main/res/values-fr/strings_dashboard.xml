@@ -167,4 +167,6 @@
     <string name="dash_rescan_scanning">Analyse de %1$d hôtes…</string>
     <string name="dash_rescan_done">Nouvelle analyse terminée — %1$d mineur(s) trouvé(s).</string>
     <string name="dash_metric_cost_mo">Coût/mois</string>
+    <string name="dash_card_bests">Records personnels</string>
+    <string name="dash_bests_header">RECORDS PERSONNELS</string>
 </resources>

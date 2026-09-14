@@ -43,6 +43,7 @@ class PollingEngine @Inject constructor(
     private val derivedLogRecorder: hi3.hashkit.data.logs.DerivedLogRecorder,
     private val ipMoveRecovery: hi3.hashkit.data.recovery.IpMoveRecovery,
     private val autoBackupManager: hi3.hashkit.data.export.AutoBackupManager,
+    private val personalBestTracker: hi3.hashkit.data.bests.PersonalBestTracker,
 ) {
     private var job: Job? = null
     private var safetyJob: Job? = null
@@ -141,6 +142,7 @@ class PollingEngine @Inject constructor(
                             processAlerts(entity, telemetry, settings)
                         }
                         if (!entity.isDemo) {
+                            runCatching { personalBestTracker.onPolled(entity.id, telemetry) }
                             maybeCutPower(entity, telemetry)
                             remediationEngine.onPolled(entity, telemetry.status)
                             // Derived event log for miners without a firmware log stream.
