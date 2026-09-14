@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.79.2
+
+- Tapping the Hi3 Hashkit logo on the main page opens the About screen.
+- Alerts: long-press to multi-select and delete chosen alerts, or clear the whole list
+  with the trash button — both with a confirm step.
+
 ## 0.79.1
 
 - Wall / TV mode: tiles group by rack (B1-R1) again instead of one group per slot code,
