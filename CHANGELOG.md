@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.78.5
+
+- 3D fleet view now opens fitted to the whole fleet, and a new reset button (top right)
+  restores the default angles and re-fits the view.
+- Fleet page: Flow shortcut icon in the top bar.
+- Flow/3D: tapping the LIVE badge returns to the main page.
+
 ## 0.78.4
 
 - Fix: saving the miner Edit dialog (e.g. after adding a rack location) could silently
