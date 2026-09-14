@@ -258,4 +258,5 @@
     <string name="det_share_lbl_days">МАЙНИТ УЖЕ</string>
     <string name="det_share_days_value">%1$d дн.</string>
     <string name="det_share_tagline">Домашний майнинг, честные измерения · Hi3 Hashkit</string>
+    <string name="det_maint_nudge">🧹 Температура чипа выросла на %1$s по сравнению с месяцем назад при той же мощности — пора почистить вентилятор и радиатор.</string>
 </resources>

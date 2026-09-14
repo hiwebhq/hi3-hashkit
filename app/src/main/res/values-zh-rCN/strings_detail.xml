@@ -259,4 +259,5 @@
     <string name="det_share_lbl_days">已挖矿</string>
     <string name="det_share_days_value">%1$d 天</string>
     <string name="det_share_tagline">在家挖矿，诚实计量 · Hi3 Hashkit</string>
+    <string name="det_maint_nudge">🧹 与一个月前相比，在相同功耗下芯片温度上升了 %1$s——该清理风扇和散热片了。</string>
 </resources>

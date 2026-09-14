@@ -258,4 +258,5 @@
     <string name="det_share_lbl_days">EN MINAGE DEPUIS</string>
     <string name="det_share_days_value">%1$d jours</string>
     <string name="det_share_tagline">Minage à la maison, mesuré honnêtement · Hi3 Hashkit</string>
+    <string name="det_maint_nudge">🧹 La température de la puce a augmenté de %1$s par rapport au mois dernier à consommation égale — il est temps de nettoyer le ventilateur et le dissipateur.</string>
 </resources>

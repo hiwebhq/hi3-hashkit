@@ -126,6 +126,17 @@ class MinerDetailViewModel @Inject constructor(
             .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
 
 
+    /** Dust nudge for this miner (null when temps haven't crept up, or history is too short). */
+    val maintenanceFinding: StateFlow<hi3.hashkit.domain.analysis.MaintenanceAdvisor.Finding?> =
+        repository.observeHourlyPointsSince(
+            minerId,
+            System.currentTimeMillis() -
+                hi3.hashkit.domain.analysis.MaintenanceAdvisor.LOOKBACK_DAYS *
+                hi3.hashkit.domain.analysis.MaintenanceAdvisor.DAY_MS,
+        )
+            .map { hi3.hashkit.domain.analysis.MaintenanceAdvisor.analyze(it, System.currentTimeMillis()) }
+            .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), null)
+
     /** User-written maintenance notes for this miner, newest first. */
     val maintenanceNotes: StateFlow<List<hi3.hashkit.data.db.MaintenanceNoteEntity>> =
         maintenanceDao.observeForMiner(minerId)

@@ -25,6 +25,8 @@ enum class AlertType {
     BLOCK_FOUND,
     /** An automation rule fired (notify action, or logged alongside a control action). */
     RULE_TRIGGERED,
+    /** Chip temp has crept up at unchanged power over a month — clean the fan/heatsink. */
+    MAINTENANCE_DUE,
 }
 
 /** Global alert thresholds; per-miner values override via [AlertOverrides]. */

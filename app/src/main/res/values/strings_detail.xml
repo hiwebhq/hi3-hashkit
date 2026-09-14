@@ -82,6 +82,7 @@
     <string name="det_event_log_hint">This firmware exposes no log stream, so Hashkit records health events derived from each poll — reboots, temp-limit crossings, disconnects, fan stops, reject spikes — and analyzes those.</string>
 
     <!-- Maintenance log -->
+    <string name="det_maint_nudge">🧹 Chip temperature is up %1$s compared with a month ago at the same power draw — time to clean the fan and heatsink.</string>
     <string name="det_add_note_label">Add a note (e.g. \"repasted\", \"replaced fan 2\")</string>
     <string name="det_add_note">Add note</string>
     <string name="det_gallery">Gallery</string>

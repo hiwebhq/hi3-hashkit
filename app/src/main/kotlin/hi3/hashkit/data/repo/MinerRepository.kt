@@ -98,6 +98,28 @@ class MinerRepository @Inject constructor(
         return rows.sumOf { (it.avgHashrateGhs ?: 0.0) * it.samples } / weight
     }
 
+    /** Hourly rollups since [sinceEpochMs] as advisor points (empty when rollups are unavailable). */
+    suspend fun hourlyPointsSince(
+        minerId: Long,
+        sinceEpochMs: Long,
+    ): List<hi3.hashkit.domain.analysis.MaintenanceAdvisor.HourPoint> =
+        hourlyDao?.listSince(minerId, sinceEpochMs)?.map { it.toAdvisorPoint() }.orEmpty()
+
+    fun observeHourlyPointsSince(
+        minerId: Long,
+        sinceEpochMs: Long,
+    ): Flow<List<hi3.hashkit.domain.analysis.MaintenanceAdvisor.HourPoint>> =
+        hourlyDao?.observeSince(minerId, sinceEpochMs)?.map { rows -> rows.map { it.toAdvisorPoint() } }
+            ?: kotlinx.coroutines.flow.flowOf(emptyList())
+
+    private fun hi3.hashkit.data.db.TelemetryHourlyEntity.toAdvisorPoint() =
+        hi3.hashkit.domain.analysis.MaintenanceAdvisor.HourPoint(
+            hourStartEpochMs = hourStartEpochMs,
+            avgChipTempC = avgChipTempC,
+            avgPowerW = avgPowerW,
+            onlineSamples = onlineSamples,
+        )
+
     /** Stored identity fields of a miner, for capability checks without a network call. */
     fun identityOf(entity: MinerEntity): MinerIdentity = MinerIdentity(
         macAddress = entity.macAddress,

@@ -67,6 +67,9 @@ import hi3.hashkit.ui.util.shareFile
 import java.time.Duration
 import java.time.Instant
 
+/** A temperature *difference* converts by the slope only (no 32° offset). */
+private const val FAHRENHEIT_PER_CELSIUS = 1.8
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MinerDetailScreen(
@@ -360,6 +363,20 @@ fun MinerDetailScreen(
 
             SectionCard(stringResource(R.string.det_section_maintenance)) {
                 val notes by viewModel.maintenanceNotes.collectAsStateWithLifecycle()
+                val nudge by viewModel.maintenanceFinding.collectAsStateWithLifecycle()
+                nudge?.let { f ->
+                    val rise = if (state.settings.useFahrenheit) f.tempRiseC * FAHRENHEIT_PER_CELSIUS else f.tempRiseC
+                    val unit = if (state.settings.useFahrenheit) "°F" else "°C"
+                    Text(
+                        stringResource(
+                            R.string.det_maint_nudge,
+                            String.format(java.util.Locale.US, "%.1f%s", rise, unit),
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = HiBrand.statusDegraded,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
                 var noteText by remember { mutableStateOf("") }
                 var pendingPhoto by remember { mutableStateOf<android.net.Uri?>(null) }
                 val photoPicker = androidx.activity.compose.rememberLauncherForActivityResult(

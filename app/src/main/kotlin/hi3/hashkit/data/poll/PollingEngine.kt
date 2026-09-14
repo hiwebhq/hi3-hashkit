@@ -229,6 +229,22 @@ class PollingEngine @Inject constructor(
                 val history = repository.observeTelemetrySince(entity.id, now - 3 * 3_600_000L).first()
                 alertRepository.processAnomalies(entity.id, entity.name, history)
             }
+            // Dust nudge: chip temp creeping up over a month at the same power draw.
+            runCatching {
+                val hours = repository.hourlyPointsSince(
+                    entity.id,
+                    now - hi3.hashkit.domain.analysis.MaintenanceAdvisor.LOOKBACK_DAYS *
+                        hi3.hashkit.domain.analysis.MaintenanceAdvisor.DAY_MS,
+                )
+                hi3.hashkit.domain.analysis.MaintenanceAdvisor.analyze(hours, now)?.let { finding ->
+                    alertRepository.raiseEvent(
+                        entity.id, entity.name,
+                        hi3.hashkit.domain.alerts.AlertType.MAINTENANCE_DUE,
+                        "🧹 ${entity.name}: ${finding.message}",
+                        cooldownMs = MAINTENANCE_NUDGE_COOLDOWN_MS,
+                    )
+                }
+            }
             // Firmware update available (AxeOS family only), once per day per miner.
             if (latest != null &&
                 hi3.hashkit.integrations.update.FirmwareUpdateChecker.isAxeOsFamily(entity.firmwareFamily) &&
@@ -298,5 +314,7 @@ class PollingEngine @Inject constructor(
     companion object {
         /** Cadence of the dedicated smart-plug safety poll (independent of the dashboard interval). */
         const val SAFETY_INTERVAL_MS = 20_000L
+        /** A cleaning reminder is a once-a-fortnight kind of message. */
+        const val MAINTENANCE_NUDGE_COOLDOWN_MS = 14 * 24 * 3_600_000L
     }
 }

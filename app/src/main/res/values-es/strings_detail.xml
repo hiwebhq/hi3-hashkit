@@ -257,4 +257,5 @@
     <string name="det_share_lbl_days">MINANDO DESDE HACE</string>
     <string name="det_share_days_value">%1$d días</string>
     <string name="det_share_tagline">Minería en casa, medida con honestidad · Hi3 Hashkit</string>
+    <string name="det_maint_nudge">🧹 La temperatura del chip ha subido %1$s respecto a hace un mes con el mismo consumo: toca limpiar el ventilador y el disipador.</string>
 </resources>
