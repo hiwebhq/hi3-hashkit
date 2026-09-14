@@ -1,6 +1,6 @@
 # Hi3 Hashkit
 
-**Current version: 0.78.5**
+**Current version: 0.79.0**
 
 Hi3 Hashkit is a privacy-first, local-first Android app for monitoring and safely
 controlling your Bitcoin miners. It talks only to the miners on your own network — over
@@ -30,6 +30,20 @@ All captures below use the app's built-in demo mode (synthetic miners).
 🎬 [Watch the 40-second app tour](docs/media/hashkit-tour.mp4)
 
 ## Key features
+
+**For the home miner**
+- **Set up a new Bitaxe from the phone** — join its `Bitaxe_XXXX` hotspot from inside the
+  app and hand it your Wi-Fi, a name and a pool; no captive portal.
+- **One-tap firmware update** — download the official AxeOS image and flash a Bitaxe over
+  the LAN, with progress, reboot wait and version check.
+- **Personal bests & share card** — a record book of best shares with "% of a block", a
+  dashboard trophy card, and a branded stats-card PNG for the share sheet.
+- **Quiet / Normal / Boost** modes within the firmware's approved values, plus a
+  "Quiet at night" switch.
+- **What this costs** — monthly power bill, expected earnings, payback on what you paid,
+  and the honest solo-lottery framing.
+- **Single-miner widget, Quick Settings hashrate tile**, Bitaxe screen settings, and a
+  dust nudge when chip temps creep up at unchanged power.
 
 **Monitoring & insight**
 - **Auto-discovery** — scans your local subnet at launch and on demand (plus **mDNS/DNS-SD**

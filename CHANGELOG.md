@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.79.0
+
+The home-miner release: eight features for the person with a Bitaxe or two on the desk.
+
+- **Set up a new Bitaxe from the phone.** Add miners → "Set up a new Bitaxe" joins the
+  unit's `Bitaxe_XXXX` hotspot (Android 10+, system picker), reads it, and writes your home
+  Wi-Fi, an optional name and pool, then restarts it onto your network — no captive portal.
+  The Wi-Fi password only travels over the direct link and is never stored.
+- **One-tap firmware update.** When "Check for firmware updates" is on and a newer AxeOS is
+  out, the miner detail shows a FIRMWARE UPDATE section: confirm, and Hashkit downloads the
+  official `esp-miner.bin`, uploads it to the miner's own OTA endpoint, waits through the
+  reboot and confirms the new version. Official ESP-Miner v2.x only; every attempt is
+  audited.
+- **Personal bests.** A record book of every new best share, kept across firmware resets:
+  a PERSONAL BESTS section per miner, a fleet trophy card on the dashboard, and "% of a
+  block" on the new-best notification. Records travel in backups.
+- **Share stats card.** The Share button on a miner renders a branded PNG (hashrate, best
+  share, uptime, efficiency, days mining) for the share sheet.
+- **Quiet / Normal / Boost.** Three chips on the Controls card, resolved against the
+  miner's own firmware-approved frequency list at stock voltage, applied as an ordinary
+  roll-back-able tune. A "Quiet at night" switch creates a 22:00 Quiet / 07:00 Normal
+  schedule pair; Schedules gains a matching "Power mode" action for mixed fleets.
+- **What this costs.** Per-miner monthly electricity cost (with inline rate entry),
+  expected pool earnings and net, payback on what you paid ("never" when power exceeds
+  earnings), and the solo-lottery framing. Purchase price is a new field in Edit miner and
+  is backed up; large dashboard cards show Cost/mo once a rate is set.
+- **Single-miner widget + Quick Settings tile.** A home-screen widget for one chosen
+  miner (name, status, hashrate, temp, best share) and a shade tile with the fleet
+  hashrate. Widget taps and alert notifications now open the miner directly.
+- **Screen settings.** Rotation, invert and display timeout for the Bitaxe OLED, verified
+  against the firmware's settings table.
+- **Dust nudge.** If a miner's chip temperature has crept up 4°C or more over a month at
+  the same power draw, Hashkit raises a fortnightly "clean the fan and heatsink" reminder
+  and shows it on the maintenance log.
+- ESP-Miner telemetry now includes the network difficulty the miner itself reports, so
+  solo odds and "% of a block" work with no external fetch.
+
 ## 0.78.5
 
 - 3D fleet view now opens fitted to the whole fleet, and a new reset button (top right)

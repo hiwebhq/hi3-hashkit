@@ -9,7 +9,22 @@ calculated, or estimated — so an estimate is never dressed up as a fact.
 **Android 8.0+. Sideload and go. Speaks 7 languages** — English, Spanish, Chinese
 (Simplified), Russian, German, French and Brazilian Portuguese, switchable per-app.
 
-Current release: **v0.78.5**.
+Current release: **v0.79.0**.
+
+## 🏠 Made for the Home Miner Too
+
+- **Set up a new Bitaxe from your phone**: join its hotspot from inside the app and hand
+  it your Wi-Fi, a name and a pool — no captive portal, no tiny screen.
+- **One-tap firmware update** for a Bitaxe: official image, LAN upload, reboot wait,
+  version check, all audited.
+- **Personal bests**: every record share kept for good, "% of a block" on each, a
+  trophy card on the dashboard, and a **shareable stats card**.
+- **Quiet / Normal / Boost** within the firmware's approved values, with a
+  **Quiet at night** switch.
+- **What this costs**: monthly power bill, expected earnings, payback on what you paid,
+  and the honest solo-lottery framing.
+- A **single-miner widget**, a **Quick Settings hashrate tile**, Bitaxe **screen
+  settings**, and a **dust nudge** when chip temps creep up at unchanged power.
 
 ## 🔍 Find Every Miner, Instantly
 
