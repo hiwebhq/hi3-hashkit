@@ -50,7 +50,6 @@
     <ID>EmptyFunctionBlock:NsdDiscoverer.kt$NsdDiscoverer.&lt;no name provided&gt;${}</ID>
     <ID>LongMethod:AboutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AboutScreen(onBack: () -&gt; Unit)</ID>
     <ID>LongMethod:AcousticScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AcousticScreen(onBack: () -&gt; Unit)</ID>
-    <ID>LongMethod:AddMinerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AddMinerScreen( onDone: () -&gt; Unit, viewModel: AddMinerViewModel = hiltViewModel(), )</ID>
     <ID>LongMethod:AddressBookScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AddressBookScreen( onBack: () -&gt; Unit, viewModel: AddressBookViewModel = hiltViewModel(), )</ID>
     <ID>LongMethod:AlertEngine.kt$AlertEvaluator$fun evaluate( minerId: Long, minerName: String, telemetry: MinerTelemetry, expectedHashrateGhs: Double?, thresholds: AlertThresholds, previous: PreviousState, ): List&lt;AlertSignal&gt;</ID>
     <ID>LongMethod:AlertRepository.kt$AlertRepository$suspend fun processTelemetry( minerId: Long, minerName: String, telemetry: MinerTelemetry, expectedHashrateGhs: Double?, thresholds: AlertThresholds, )</ID>

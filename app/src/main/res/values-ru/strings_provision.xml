@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prov_title">Настроить новый Bitaxe</string>
+    <string name="prov_intro_header">ПЕРЕД НАЧАЛОМ</string>
+    <string name="prov_intro_body">Включите Bitaxe. Новое (или сброшенное) устройство раздаёт собственную точку доступа Wi-Fi с именем Bitaxe_XXXX. Нажмите «Подключиться», выберите эту сеть в системном диалоге — и Hashkit передаст устройству ваш домашний Wi-Fi и пул: без captive-портала и крошечного экрана.</string>
+    <string name="prov_connect_button">Подключиться к точке доступа Bitaxe</string>
+    <string name="prov_unsupported">Эта версия Android не позволяет подключиться к точке доступа из приложения. Подключитесь к Bitaxe_XXXX в настройках Wi-Fi и откройте её страницу настройки.</string>
+    <string name="prov_open_portal">Открыть 192.168.4.1</string>
+    <string name="prov_connecting">Ожидание выбора сети Bitaxe_XXXX…</string>
+    <string name="prov_found_unit">Подключено: %1$s</string>
+    <string name="prov_found_unknown">Подключено к точке доступа, но устройство пока не отвечает — настройки всё равно можно ввести.</string>
+    <string name="prov_wifi_header">ДОМАШНИЙ WI-FI</string>
+    <string name="prov_wifi_name">Имя Wi-Fi (2,4 ГГц)</string>
+    <string name="prov_wifi_password">Пароль Wi-Fi</string>
+    <string name="prov_hostname">Имя майнера (hostname, необязательно)</string>
+    <string name="prov_pool_header">ЗАДАТЬ И ПУЛ</string>
+    <string name="prov_apply">Отправить настройки и перезагрузить</string>
+    <string name="prov_applying">Отправка настроек — Bitaxe перезагрузится…</string>
+    <string name="prov_done">Готово. Bitaxe перезагружается и подключается к %1$s.</string>
+    <string name="prov_done_hint">Телефон сам вернётся к обычному Wi-Fi. Дайте майнеру около минуты, затем найдите его в сети.</string>
+    <string name="prov_find_it">Найти в моей сети</string>
+    <string name="prov_another">Настроить ещё один</string>
+    <string name="prov_failed">Ошибка настройки: %1$s</string>
+    <string name="prov_start_over">Начать заново</string>
+    <string name="prov_privacy_note">Пароль Wi-Fi передаётся только на Bitaxe по прямому каналу точки доступа; Hashkit его не хранит.</string>
+</resources>

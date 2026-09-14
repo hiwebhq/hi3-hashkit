@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prov_title">Neuen Bitaxe einrichten</string>
+    <string name="prov_intro_header">BEVOR ES LOSGEHT</string>
+    <string name="prov_intro_body">Bitaxe einstecken. Ein neues (oder zurückgesetztes) Gerät sendet einen eigenen WLAN-Hotspot namens Bitaxe_XXXX. Tippe auf Verbinden, wähle dieses Netz im Systemdialog, und Hashkit übergibt dem Gerät dein Heim-WLAN und den Pool – ohne Captive Portal, ohne Mini-Display.</string>
+    <string name="prov_connect_button">Mit dem Bitaxe-Hotspot verbinden</string>
+    <string name="prov_unsupported">Diese Android-Version kann den Hotspot nicht aus einer App heraus beitreten. Verbinde dich in den WLAN-Einstellungen mit Bitaxe_XXXX und öffne dann seine Einrichtungsseite.</string>
+    <string name="prov_open_portal">192.168.4.1 öffnen</string>
+    <string name="prov_connecting">Warte darauf, dass du das Netz Bitaxe_XXXX auswählst…</string>
+    <string name="prov_found_unit">Verbunden: %1$s</string>
+    <string name="prov_found_unknown">Mit dem Hotspot verbunden, aber das Gerät antwortet noch nicht – die Einstellungen kannst du trotzdem eingeben.</string>
+    <string name="prov_wifi_header">HEIM-WLAN</string>
+    <string name="prov_wifi_name">WLAN-Name (2,4 GHz)</string>
+    <string name="prov_wifi_password">WLAN-Passwort</string>
+    <string name="prov_hostname">Miner-Name (Hostname, optional)</string>
+    <string name="prov_pool_header">AUCH DEN POOL SETZEN</string>
+    <string name="prov_apply">Einstellungen senden &amp; neu starten</string>
+    <string name="prov_applying">Einstellungen werden gesendet – der Bitaxe startet neu…</string>
+    <string name="prov_done">Fertig. Der Bitaxe startet neu und verbindet sich mit %1$s.</string>
+    <string name="prov_done_hint">Dein Handy kehrt von selbst in sein normales WLAN zurück. Gib dem Miner etwa eine Minute und suche ihn dann im Netzwerk.</string>
+    <string name="prov_find_it">Im Netzwerk finden</string>
+    <string name="prov_another">Weiteren einrichten</string>
+    <string name="prov_failed">Einrichtung fehlgeschlagen: %1$s</string>
+    <string name="prov_start_over">Von vorn beginnen</string>
+    <string name="prov_privacy_note">Dein WLAN-Passwort geht nur über die direkte Hotspot-Verbindung an den Bitaxe und wird von Hashkit nicht gespeichert.</string>
+</resources>

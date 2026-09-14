@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prov_title">Configurer un nouveau Bitaxe</string>
+    <string name="prov_intro_header">AVANT DE COMMENCER</string>
+    <string name="prov_intro_body">Branche le Bitaxe. Un appareil neuf (ou réinitialisé) diffuse son propre point d\'accès Wi-Fi nommé Bitaxe_XXXX. Touche Connecter, choisis ce réseau dans la boîte de dialogue du système, et Hashkit lui transmet ton Wi-Fi maison et ton pool — sans portail captif ni écran minuscule.</string>
+    <string name="prov_connect_button">Se connecter au point d\'accès du Bitaxe</string>
+    <string name="prov_unsupported">Cette version d\'Android ne permet pas de rejoindre le point d\'accès depuis une appli. Connecte-toi à Bitaxe_XXXX dans les réglages Wi-Fi, puis ouvre sa page de configuration.</string>
+    <string name="prov_open_portal">Ouvrir 192.168.4.1</string>
+    <string name="prov_connecting">En attente de ta sélection du réseau Bitaxe_XXXX…</string>
+    <string name="prov_found_unit">Connecté : %1$s</string>
+    <string name="prov_found_unknown">Connecté au point d\'accès, mais l\'appareil ne répond pas encore — tu peux quand même saisir ses réglages.</string>
+    <string name="prov_wifi_header">WI-FI DE LA MAISON</string>
+    <string name="prov_wifi_name">Nom du Wi-Fi (2,4 GHz)</string>
+    <string name="prov_wifi_password">Mot de passe Wi-Fi</string>
+    <string name="prov_hostname">Nom du mineur (hostname, facultatif)</string>
+    <string name="prov_pool_header">RÉGLER AUSSI LE POOL</string>
+    <string name="prov_apply">Envoyer les réglages et redémarrer</string>
+    <string name="prov_applying">Envoi des réglages — le Bitaxe va redémarrer…</string>
+    <string name="prov_done">Terminé. Le Bitaxe redémarre et rejoint %1$s.</string>
+    <string name="prov_done_hint">Ton téléphone revient tout seul sur son Wi-Fi habituel. Laisse une minute au mineur, puis retrouve-le sur ton réseau.</string>
+    <string name="prov_find_it">Le trouver sur mon réseau</string>
+    <string name="prov_another">En configurer un autre</string>
+    <string name="prov_failed">Échec de la configuration : %1$s</string>
+    <string name="prov_start_over">Recommencer</string>
+    <string name="prov_privacy_note">Ton mot de passe Wi-Fi n\'est envoyé qu\'au Bitaxe par son lien direct et Hashkit ne le conserve pas.</string>
+</resources>

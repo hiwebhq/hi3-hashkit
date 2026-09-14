@@ -551,7 +551,18 @@ private fun AppNavHost(
             hi3.hashkit.ui.autotune.AutotuneScreen(onBack = { nav.popBackStack() })
         }
         composable("add") {
-            AddMinerScreen(onDone = { nav.popBackStack() })
+            AddMinerScreen(
+                onDone = { nav.popBackStack() },
+                onSetUpNewBitaxe = { nav.navigate("provision") },
+            )
+        }
+        composable("provision") {
+            hi3.hashkit.ui.provision.ProvisionScreen(
+                onBack = { nav.popBackStack() },
+                onFindOnNetwork = {
+                    nav.navigate("network") { popUpTo("dashboard") { inclusive = false } }
+                },
+            )
         }
     }
 }

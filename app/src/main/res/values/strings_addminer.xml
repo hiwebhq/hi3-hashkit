@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="addm_title">Add miners</string>
+    <string name="addm_new_bitaxe">NEW BITAXE</string>
+    <string name="addm_new_bitaxe_hint">Just unboxed a Bitaxe? Set its Wi-Fi and pool from here instead of through its hotspot page.</string>
+    <string name="addm_new_bitaxe_button">Set up a new Bitaxe</string>
     <string name="addm_manual_entry">MANUAL ENTRY</string>
     <string name="addm_manual_hint">Enter a miner\'s IP or hostname — including Tailscale addresses (100.x.y.z) when this device is on your tailnet.</string>
     <string name="addm_host_label">IP address or hostname</string>

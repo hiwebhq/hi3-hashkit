@@ -13,6 +13,10 @@
          Settings section and never used for anything else. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- New-Bitaxe setup: request a temporary, app-only connection to the unit's own
+         Bitaxe_XXXX hotspot (WifiNetworkSpecifier). The system shows its picker; the
+         connection carries no internet and is released as soon as setup finishes. -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <!-- Required for the Site Map capture's multicast lock: some wifi drivers drop the
          miners' IP Report UDP broadcasts unless one is held. Only held while capturing. -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />

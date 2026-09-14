@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- New-Bitaxe setup wizard (ui/provision). -->
+<resources>
+    <string name="prov_title">Set up a new Bitaxe</string>
+    <string name="prov_intro_header">BEFORE YOU START</string>
+    <string name="prov_intro_body">Plug the Bitaxe in. A brand-new (or reset) unit broadcasts its own Wi-Fi hotspot named Bitaxe_XXXX. Tap Connect, pick that network in the system dialog, and Hashkit will hand the unit your home Wi-Fi and pool — no captive portal, no tiny screen.</string>
+    <string name="prov_connect_button">Connect to the Bitaxe hotspot</string>
+    <string name="prov_unsupported">This Android version can\'t join the hotspot from inside an app. Join Bitaxe_XXXX from your Wi-Fi settings, then open its setup page.</string>
+    <string name="prov_open_portal">Open 192.168.4.1</string>
+    <string name="prov_connecting">Waiting for you to pick the Bitaxe_XXXX network…</string>
+    <string name="prov_found_unit">Connected: %1$s</string>
+    <string name="prov_found_unknown">Connected to the hotspot, but the unit didn\'t answer yet — you can still enter its settings.</string>
+    <string name="prov_wifi_header">HOME WI-FI</string>
+    <string name="prov_wifi_name">Wi-Fi name (2.4 GHz)</string>
+    <string name="prov_wifi_password">Wi-Fi password</string>
+    <string name="prov_hostname">Miner name (hostname, optional)</string>
+    <string name="prov_pool_header">SET THE POOL TOO</string>
+    <string name="prov_apply">Send settings &amp; restart</string>
+    <string name="prov_applying">Sending settings — the Bitaxe will restart…</string>
+    <string name="prov_done">Done. The Bitaxe is restarting and joining %1$s.</string>
+    <string name="prov_done_hint">Your phone returns to its normal Wi-Fi by itself. Give the miner about a minute, then find it on your network.</string>
+    <string name="prov_find_it">Find it on my network</string>
+    <string name="prov_another">Set up another</string>
+    <string name="prov_failed">Setup failed: %1$s</string>
+    <string name="prov_start_over">Start over</string>
+    <string name="prov_privacy_note">Your Wi-Fi password is sent only to the Bitaxe over its direct hotspot link and is not stored by Hashkit.</string>
+</resources>

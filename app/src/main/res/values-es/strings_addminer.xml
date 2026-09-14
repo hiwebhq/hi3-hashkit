@@ -13,4 +13,7 @@
     <string name="addm_hosts_progress">%1$d / %2$d hosts</string>
     <string name="addm_added">añadido</string>
     <string name="addm_known">conocido</string>
+    <string name="addm_new_bitaxe">NUEVO BITAXE</string>
+    <string name="addm_new_bitaxe_hint">¿Acabas de desembalar un Bitaxe? Configura su Wi-Fi y pool desde aquí en lugar de en su página del punto de acceso.</string>
+    <string name="addm_new_bitaxe_button">Configurar un Bitaxe nuevo</string>
 </resources>

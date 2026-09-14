@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prov_title">设置新的 Bitaxe</string>
+    <string name="prov_intro_header">开始之前</string>
+    <string name="prov_intro_body">插上 Bitaxe 电源。全新（或已重置）的设备会广播名为 Bitaxe_XXXX 的自有 Wi-Fi 热点。点击“连接”，在系统对话框中选择该网络，Hashkit 就会把你的家庭 Wi-Fi 和矿池写入设备——无需强制门户，也不用盯着小屏幕。</string>
+    <string name="prov_connect_button">连接到 Bitaxe 热点</string>
+    <string name="prov_unsupported">此 Android 版本无法在应用内加入热点。请在 Wi-Fi 设置中连接 Bitaxe_XXXX，然后打开它的设置页面。</string>
+    <string name="prov_open_portal">打开 192.168.4.1</string>
+    <string name="prov_connecting">等待你选择 Bitaxe_XXXX 网络…</string>
+    <string name="prov_found_unit">已连接：%1$s</string>
+    <string name="prov_found_unknown">已连接到热点，但设备还没有响应——你仍然可以填写它的设置。</string>
+    <string name="prov_wifi_header">家庭 Wi-Fi</string>
+    <string name="prov_wifi_name">Wi-Fi 名称（2.4 GHz）</string>
+    <string name="prov_wifi_password">Wi-Fi 密码</string>
+    <string name="prov_hostname">矿机名称（主机名，可选）</string>
+    <string name="prov_pool_header">同时设置矿池</string>
+    <string name="prov_apply">发送设置并重启</string>
+    <string name="prov_applying">正在发送设置——Bitaxe 将会重启…</string>
+    <string name="prov_done">完成。Bitaxe 正在重启并加入 %1$s。</string>
+    <string name="prov_done_hint">手机会自动回到原来的 Wi-Fi。给矿机大约一分钟，然后在网络中查找它。</string>
+    <string name="prov_find_it">在我的网络中查找</string>
+    <string name="prov_another">再设置一台</string>
+    <string name="prov_failed">设置失败：%1$s</string>
+    <string name="prov_start_over">重新开始</string>
+    <string name="prov_privacy_note">你的 Wi-Fi 密码只会通过热点直连发送给 Bitaxe，Hashkit 不会保存。</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prov_title">Configurar un Bitaxe nuevo</string>
+    <string name="prov_intro_header">ANTES DE EMPEZAR</string>
+    <string name="prov_intro_body">Enchufa el Bitaxe. Una unidad nueva (o reiniciada) emite su propio punto de acceso Wi-Fi llamado Bitaxe_XXXX. Toca Conectar, elige esa red en el diálogo del sistema y Hashkit le pasará tu Wi-Fi de casa y el pool: sin portal cautivo ni pantalla diminuta.</string>
+    <string name="prov_connect_button">Conectar al punto de acceso del Bitaxe</string>
+    <string name="prov_unsupported">Esta versión de Android no permite unirse al punto de acceso desde una app. Conéctate a Bitaxe_XXXX desde los ajustes de Wi-Fi y abre su página de configuración.</string>
+    <string name="prov_open_portal">Abrir 192.168.4.1</string>
+    <string name="prov_connecting">Esperando a que elijas la red Bitaxe_XXXX…</string>
+    <string name="prov_found_unit">Conectado: %1$s</string>
+    <string name="prov_found_unknown">Conectado al punto de acceso, pero la unidad aún no responde; puedes introducir sus ajustes igualmente.</string>
+    <string name="prov_wifi_header">WI-FI DE CASA</string>
+    <string name="prov_wifi_name">Nombre de la Wi-Fi (2,4 GHz)</string>
+    <string name="prov_wifi_password">Contraseña de la Wi-Fi</string>
+    <string name="prov_hostname">Nombre del minero (hostname, opcional)</string>
+    <string name="prov_pool_header">CONFIGURAR TAMBIÉN EL POOL</string>
+    <string name="prov_apply">Enviar ajustes y reiniciar</string>
+    <string name="prov_applying">Enviando ajustes: el Bitaxe se reiniciará…</string>
+    <string name="prov_done">Listo. El Bitaxe se está reiniciando y uniéndose a %1$s.</string>
+    <string name="prov_done_hint">Tu móvil vuelve solo a su Wi-Fi habitual. Dale al minero un minuto y luego búscalo en tu red.</string>
+    <string name="prov_find_it">Buscarlo en mi red</string>
+    <string name="prov_another">Configurar otro</string>
+    <string name="prov_failed">Error de configuración: %1$s</string>
+    <string name="prov_start_over">Empezar de nuevo</string>
+    <string name="prov_privacy_note">Tu contraseña Wi-Fi se envía solo al Bitaxe por su enlace directo y Hashkit no la guarda.</string>
+</resources>

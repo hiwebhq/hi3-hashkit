@@ -39,10 +39,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.R
 import hi3.hashkit.ui.theme.HiBrand
 
+@Suppress("LongMethod") // declarative screen: one card per way to add a miner
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMinerScreen(
     onDone: () -> Unit,
+    onSetUpNewBitaxe: () -> Unit = {},
     viewModel: AddMinerViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -69,6 +71,29 @@ fun AddMinerScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+                shape = RoundedCornerShape(14.dp),
+            ) {
+                Column(Modifier.padding(14.dp)) {
+                    Text(
+                        stringResource(R.string.addm_new_bitaxe),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.addm_new_bitaxe_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = HiBrand.textSecondary,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    OutlinedButton(onClick = onSetUpNewBitaxe) {
+                        Text(stringResource(R.string.addm_new_bitaxe_button))
+                    }
+                }
+            }
+
             Card(
                 colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
                 shape = RoundedCornerShape(14.dp),

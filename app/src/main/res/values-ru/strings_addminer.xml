@@ -14,4 +14,7 @@
     <string name="addm_hosts_progress">%1$d / %2$d хостов</string>
     <string name="addm_added">добавлено</string>
     <string name="addm_known">известно</string>
+    <string name="addm_new_bitaxe">НОВЫЙ BITAXE</string>
+    <string name="addm_new_bitaxe_hint">Только распаковали Bitaxe? Задайте его Wi-Fi и пул здесь, а не через страницу его точки доступа.</string>
+    <string name="addm_new_bitaxe_button">Настроить новый Bitaxe</string>
 </resources>
