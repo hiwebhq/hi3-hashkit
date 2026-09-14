@@ -1,6 +1,6 @@
 # Hi3 Hashkit
 
-**Current version: 0.77.6**
+**Current version: 0.78.5**
 
 Hi3 Hashkit is a privacy-first, local-first Android app for monitoring and safely
 controlling your Bitcoin miners. It talks only to the miners on your own network — over
@@ -15,9 +15,13 @@ See `docs/` for architecture, device support, build, and security details, and
 
 All captures below use the app's built-in demo mode (synthetic miners).
 
-| Dashboard | Miner detail | Flow view | Fleet table |
-|---|---|---|---|
-| <img src="docs/screenshots/01-dashboard.png" width="200" alt="Fleet dashboard with hashrate, power, efficiency and per-miner cards"> | <img src="docs/screenshots/03-miner-detail.png" width="200" alt="Miner detail with stylized live render and hashrate history"> | <img src="docs/screenshots/04-flow.png" width="200" alt="Animated Flow view: Bitcoin network, pool and miners pipeline"> | <img src="docs/screenshots/02-fleet-table.png" width="200" alt="Sortable fleet table"> |
+| Dashboard | Miner detail | Flow view |
+|---|---|---|
+| <img src="docs/screenshots/01-dashboard.png" width="200" alt="Fleet dashboard with hashrate, power, efficiency and per-miner cards"> | <img src="docs/screenshots/03-miner-detail.png" width="200" alt="Miner detail with stylized live render and hashrate history"> | <img src="docs/screenshots/04-flow.png" width="200" alt="Animated Flow view: Bitcoin network, pool and miners pipeline"> |
+
+| 3D fleet view | FLIR thermal | Fleet table |
+|---|---|---|
+| <img src="docs/screenshots/08-3d-fleet.png" width="200" alt="3D fleet view: miners racked by location with live per-machine stats"> | <img src="docs/screenshots/09-3d-thermal.png" width="200" alt="FLIR thermal mode: ironbow palette over live chip temps with hottest-miner crosshair"> | <img src="docs/screenshots/02-fleet-table.png" width="200" alt="Sortable fleet table with rack location column"> |
 
 | Energy & profit | Site heatmap | Watchdog rules |
 |---|---|---|
@@ -33,8 +37,9 @@ All captures below use the app's built-in demo mode (synthetic miners).
 - **Live fleet dashboard** — hashrate, temps, power, efficiency and health per miner, with
   fleet totals, trend charts, per-miner sparklines, search, and Large/Medium/Compact/Grid
   layouts.
-- **Sortable fleet table** — a dense, spreadsheet-style view (name·IP·model·hashrate·temp·
-  fan·pool·uptime·J/TH) with tap-to-sort columns and a filter box.
+- **Sortable fleet table** — a dense, spreadsheet-style view (name·IP·location·model·
+  hashrate·temp·fan·pool·uptime·J/TH) with tap-to-sort columns, a filter box, and
+  long-press multi-select for bulk actions.
 - **Per-chip / per-chain health** — for Antminer-class miners, a per-board table with
   hashrate, working/dead chip counts, hardware errors and hottest-chip temp.
 - **Efficiency (J/TH) trend chart** and **statistical anomaly detection** (gradual hashrate
@@ -42,8 +47,14 @@ All captures below use the app's built-in demo mode (synthetic miners).
 - **Profitability & energy** — estimated revenue, power cost, net, BTC/day, kWh/day and
   heat, plus a **Bitcoin network card** (block height, subsidy, next difficulty adjustment
   and halving countdown).
+- **Animated Flow view** — the Bitcoin network → pool → miners pipeline with live share
+  particles, as a single row or a 2×2–8×8 tile grid.
+- **3D fleet view** — orbit the whole fleet in real or virtual racks (2×2–8×8), fans
+  spinning on both ends of every machine with live hashrate and chip temp, a drone-style
+  **Tour** mode, and a one-tap **FLIR thermal mode** (ironbow / white-hot over live chip
+  temps with a crosshair on your hottest miner).
 - **Multiple farms/sites**, a **rack/site layout view**, a **wall / TV kiosk mode**
-  (Small/Medium/Large), a 3D **Flow view**, and a home-screen widget.
+  (Small/Medium/Large), and a home-screen widget.
 
 **Control & automation (where verified)**
 - **Safe controls** — reboot, pool change, fan and firmware-bounded tuning, each with
@@ -68,6 +79,12 @@ All captures below use the app's built-in demo mode (synthetic miners).
 - **Wear OS tile** showing fleet hashrate/status, themed to your app accent.
 
 **Platform & privacy**
+- **7 languages** — English, Spanish, Chinese (Simplified), Russian, German, French and
+  Brazilian Portuguese; pick per-app in Settings → Display (or System Settings → App
+  languages on Android 13+), applied instantly.
+- **Hashkit WiFi kit** (Settings → Hashkit WiFi) — support for the pocket field AP: save
+  the kit passphrase, add the network to your phone, print a Wi-Fi join QR, and verify
+  you're on the miner subnet (with a static-IP fix hint when the site LAN has no DHCP).
 - **Local-first & private** — nothing leaves the device except requests to your configured
   miners and strictly opt-in, off-by-default integrations (see Privacy below).
 - **Encrypted at rest** — per-miner admin passwords/tokens are stored with the Android

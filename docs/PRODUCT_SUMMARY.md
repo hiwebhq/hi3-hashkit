@@ -9,7 +9,7 @@ Antminers. No account. No cloud. No analytics. No ads. It talks only to the mine
 labeled (measured, reported, calculated, or estimated), so an estimate is never dressed up
 as a fact.
 
-**Android 8.0+ · Optional Wear OS companion & Android TV · Sideload and go.**
+**Android 8.0+ · 7 languages · Optional Wear OS companion & Android TV · Sideload and go.**
 
 ---
 
@@ -17,6 +17,9 @@ as a fact.
 - **Auto-discovery** scans your subnet at launch, plus **mDNS/DNS-SD** — or add by IP/CIDR.
 - **Farms & sites**: group miners by location, each with its own subnet and refresh
   interval, and switch between them from the dashboard.
+- **Site Map commissioning** — walk a rack pressing each Antminer's IP Report button to
+  capture slot-by-slot locations — and **Hashkit WiFi kit** support for on-site scanning
+  from a pocket field AP.
 
 ## 📊 Monitoring that tells you the truth
 - **Live fleet dashboard**: hashrate, temps, power, efficiency and health per miner — plus
@@ -31,8 +34,11 @@ as a fact.
 - **Profitability & energy**: revenue/day, power cost, net, BTC/day, kWh/day and heat — plus
   a **Bitcoin network card** (block height, subsidy, next difficulty adjustment and halving
   countdown).
-- A **rack/site layout view**, a **wall / TV kiosk mode** (Small/Medium/Large), a **3D flow
-  view**, and a **home-screen widget**.
+- A **3D fleet view** — orbit your fleet in its racks with live per-machine stats, a
+  drone-style Tour mode, and a one-tap **FLIR thermal mode** — plus an animated **Flow
+  view** (single row or 2×2–8×8 tile grid).
+- A **rack/site layout view** with a live **temperature heatmap**, a **wall / TV kiosk
+  mode** (Small/Medium/Large), and a **home-screen widget**.
 
 ## 🎛️ Control — only where it's verified
 Every control ships only after verification against real firmware. Unverified means

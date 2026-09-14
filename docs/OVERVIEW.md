@@ -6,9 +6,10 @@ No account. No cloud. No telemetry. It talks only to the miners on **your** netw
 (LAN or Tailscale), and every reading is honestly labeled — measured, reported,
 calculated, or estimated — so an estimate is never dressed up as a fact.
 
-**Android 8.0+. Sideload and go.**
+**Android 8.0+. Sideload and go. Speaks 7 languages** — English, Spanish, Chinese
+(Simplified), Russian, German, French and Brazilian Portuguese, switchable per-app.
 
-Current release: **v0.64.0**.
+Current release: **v0.78.5**.
 
 ## 🔍 Find Every Miner, Instantly
 
@@ -16,14 +17,20 @@ Current release: **v0.64.0**.
   by IP/CIDR, or drive the dedicated Network Scan screen yourself.
 - **Farms & sites**: group miners by location, each with its own subnet and refresh
   interval, and flip between them with the dashboard farm switcher.
+- **Site Map commissioning**: walk a rack pressing each Antminer's IP Report button and
+  Hashkit captures slot-by-slot locations (with API enrichment and CSV export).
+- **Hashkit WiFi kit** (Settings → Hashkit WiFi): pocket field-AP support — save the kit
+  passphrase, add the network to your phone, print a join QR, and verify you're on the
+  miner subnet.
 
 ## 📊 Monitoring That Tells You the Truth
 
 - **Live fleet dashboard**: hashrate, temps, power, efficiency, and health per miner —
   plus fleet totals, trend charts, per-miner sparklines, search, and four layout
   densities from Large to Grid.
-- **Sortable fleet table**: a dense, spreadsheet-style view with tap-to-sort columns and
-  a filter box for when you pass a handful of miners.
+- **Sortable fleet table**: a dense, spreadsheet-style view (including each miner's rack
+  location) with tap-to-sort columns, a filter box, and long-press multi-select for bulk
+  actions.
 - **Per-chip / per-chain health** (Antminer-class): a per-board table with hashrate,
   working/dead chip counts, hardware errors and hottest-chip temp — catch a failing board
   before it drags the fleet down.
@@ -31,8 +38,13 @@ Current release: **v0.64.0**.
   gradual hashrate drift or a creeping reject rate a fixed threshold would miss.
 - **Bitcoin network card**: block height, subsidy, next difficulty-adjustment estimate and
   halving countdown.
-- A dedicated **Fleet page**, a **rack/site layout view**, a **wall / TV kiosk mode**
-  (Small/Medium/Large), a slick **3D flow view**, and a **home-screen widget**.
+- An animated **Flow view** — the Bitcoin network → pool → miners pipeline with live
+  share particles, as a single row or a 2×2–8×8 tile grid.
+- A **3D fleet view**: orbit your fleet in real or virtual racks, live hashrate and chip
+  temp painted on every spinning-fan machine, a drone-style **Tour** mode, and a one-tap
+  **FLIR thermal mode** (ironbow / white-hot over live chip temps).
+- A dedicated **Fleet page**, a **rack/site layout view** with a live **temperature
+  heatmap**, a **wall / TV kiosk mode** (Small/Medium/Large), and a **home-screen widget**.
 - **Honest offline/stale states** with a redacted raw-response viewer — never a stale
   number pretending to be live.
 - **Local history** with configurable retention, downsampling, **CSV export**, and full
