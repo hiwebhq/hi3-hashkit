@@ -15,4 +15,7 @@
     <string name="widget_no_miners_yet">Noch keine Miner</string>
     <string name="widget_more_count">+%1$d weitere</string>
     <string name="widget_offline">offline</string>
+    <string name="widget_pick_miner_title">Miner für dieses Widget wählen</string>
+    <string name="widget_pick_miner_empty">Noch keine Miner – füge zuerst einen in Hi3 Hashkit hinzu.</string>
+    <string name="widget_tile_name">Hashrate</string>
 </resources>

@@ -74,7 +74,6 @@
     <ID>LongMethod:LeaderboardScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LeaderboardScreen( onBack: () -&gt; Unit, onMinerClick: (Long) -&gt; Unit, viewModel: DashboardViewModel = hiltViewModel(), )</ID>
     <ID>LongMethod:LogsScreen.kt$@Composable private fun LogAnalysisPanel(viewModel: LogsViewModel, modifier: Modifier = Modifier)</ID>
     <ID>LongMethod:LogsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun LogsScreen( onBack: () -&gt; Unit, viewModel: LogsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:MainActivity.kt$@Composable private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -&gt; Unit)</ID>
     <ID>LongMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:MinerDetailScreen.kt$@Composable private fun NotePhoto(path: String)</ID>
     <ID>LongMethod:MinerDetailScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun MinerDetailScreen( onBack: () -&gt; Unit, onLogs: () -&gt; Unit = {}, onAutotune: () -&gt; Unit = {}, focusTelemetry: Boolean = false, viewModel: MinerDetailViewModel = hiltViewModel(), )</ID>

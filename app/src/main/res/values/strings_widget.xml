@@ -4,6 +4,11 @@
     <!-- Hashkit widget -->
     <string name="widget_online_count">%1$d/%2$d online</string>
 
+    <!-- Single-miner widget + Quick Settings tile -->
+    <string name="widget_pick_miner_title">Choose a miner for this widget</string>
+    <string name="widget_pick_miner_empty">No miners yet — add one in Hi3 Hashkit first.</string>
+    <string name="widget_tile_name">Hashrate</string>
+
     <!-- Compare widget -->
     <string name="widget_hashrate_sources">HASHRATE SOURCES</string>
     <string name="widget_source_local">Local</string>

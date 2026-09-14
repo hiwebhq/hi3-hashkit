@@ -15,4 +15,7 @@
     <string name="widget_no_miners_yet">Пока нет майнеров</string>
     <string name="widget_more_count">+ещё %1$d</string>
     <string name="widget_offline">офлайн</string>
+    <string name="widget_pick_miner_title">Выберите майнер для этого виджета</string>
+    <string name="widget_pick_miner_empty">Майнеров пока нет — сначала добавьте один в Hi3 Hashkit.</string>
+    <string name="widget_tile_name">Хешрейт</string>
 </resources>

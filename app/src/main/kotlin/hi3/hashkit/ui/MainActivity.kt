@@ -106,10 +106,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** A miner to open straight away (widget tap, alert notification); consumed by the nav host. */
+    private val openMinerRequest = kotlinx.coroutines.flow.MutableStateFlow<Long?>(null)
+
+    private fun handleOpenMinerIntent(intent: Intent?) {
+        intent ?: return
+        val id = intent.getLongExtra(EXTRA_OPEN_MINER_ID, -1L)
+        if (id > 0) {
+            openMinerRequest.value = id
+            intent.removeExtra(EXTRA_OPEN_MINER_ID)
+        }
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         handleNfcIntent(intent)
+        handleOpenMinerIntent(intent)
     }
 
     override fun onResume() {
@@ -141,6 +154,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         handleNfcIntent(intent)
+        handleOpenMinerIntent(intent)
         lifecycleScope.launch {
             // Clean up maintenance notes/photos orphaned by past miner deletions.
             withContext(Dispatchers.IO) { minerRepository.sweepOrphanMaintenance() }
@@ -208,6 +222,8 @@ class MainActivity : AppCompatActivity() {
                         )
                         else -> AppNavHost(
                             nfcRouter = nfcRouter,
+                            openMiner = openMinerRequest,
+                            onOpenMinerHandled = { openMinerRequest.value = null },
                             onExit = {
                                 pollingEngine.stop()
                                 finishAndRemoveTask()
@@ -277,6 +293,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        /** Long extra: open this miner's detail on launch (widgets, alert notifications). */
+        const val EXTRA_OPEN_MINER_ID = "hi3.hashkit.OPEN_MINER_ID"
+
         fun canUseAppLock(activity: FragmentActivity): Boolean =
             BiometricManager.from(activity)
                 .canAuthenticate(BIOMETRIC_WEAK or DEVICE_CREDENTIAL) ==
@@ -304,9 +323,26 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+@Suppress("LongMethod") // one composable() route entry per screen
 @Composable
-private fun AppNavHost(nfcRouter: hi3.hashkit.data.nfc.NfcRouter, onExit: () -> Unit) {
+private fun AppNavHost(
+    nfcRouter: hi3.hashkit.data.nfc.NfcRouter,
+    openMiner: kotlinx.coroutines.flow.StateFlow<Long?>,
+    onOpenMinerHandled: () -> Unit,
+    onExit: () -> Unit,
+) {
     val nav = rememberNavController()
+    // Widget tap / alert notification: land on that miner, keeping the dashboard beneath it.
+    val openMinerId by openMiner.collectAsState()
+    LaunchedEffect(openMinerId) {
+        openMinerId?.let { id ->
+            nav.navigate("miner/$id") {
+                popUpTo("dashboard") { inclusive = false }
+                launchSingleTop = true
+            }
+            onOpenMinerHandled()
+        }
+    }
     // A Hi3 Hashkit tag scanned by the OS: a matched tag opens that miner's detail directly (no
     // camera); an unmatched/addable tag falls back to the AR overlay (which handles add / no-match).
     val nfcTarget by nfcRouter.target.collectAsState()

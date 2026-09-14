@@ -61,10 +61,14 @@ class AlertNotifier @Inject constructor(
 
     fun notify(signal: AlertSignal) {
         if (!canNotify()) return
+        // Per-miner request code + action so each notification keeps its own miner extra
+        // (a shared PendingIntent would be overwritten by the next alert).
         val intent = PendingIntent.getActivity(
             context,
-            0,
-            Intent(context, MainActivity::class.java),
+            signal.minerId.toInt(),
+            Intent(context, MainActivity::class.java)
+                .setAction("hi3.hashkit.OPEN_MINER_${signal.minerId}")
+                .putExtra(MainActivity.EXTRA_OPEN_MINER_ID, signal.minerId),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val title = if (signal.active) {

@@ -15,4 +15,7 @@
     <string name="widget_no_miners_yet">还没有矿机</string>
     <string name="widget_more_count">还有 %1$d 台</string>
     <string name="widget_offline">离线</string>
+    <string name="widget_pick_miner_title">为这个小组件选择一台矿机</string>
+    <string name="widget_pick_miner_empty">还没有矿机——请先在 Hi3 Hashkit 中添加。</string>
+    <string name="widget_tile_name">算力</string>
 </resources>

@@ -15,4 +15,7 @@
     <string name="widget_no_miners_yet">Aucun mineur pour l\'instant</string>
     <string name="widget_more_count">+%1$d de plus</string>
     <string name="widget_offline">hors ligne</string>
+    <string name="widget_pick_miner_title">Choisis un mineur pour ce widget</string>
+    <string name="widget_pick_miner_empty">Pas encore de mineur — ajoute-en un dans Hi3 Hashkit d\'abord.</string>
+    <string name="widget_tile_name">Hashrate</string>
 </resources>
