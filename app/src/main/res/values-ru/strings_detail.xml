@@ -228,4 +228,20 @@
     <string name="det_display_hours">%1$d ч</string>
     <string name="det_display_hint">Меняет только маленький экран майнера — на майнинг это не влияет.</string>
     <string name="det_act_display">обновление настроек экрана</string>
+
+    <!-- Cost card (home-miner economics) -->
+    <string name="det_section_cost">ВО ЧТО ОБХОДИТСЯ</string>
+    <string name="det_cost_rate_hint">Укажите тариф на электричество, чтобы увидеть, сколько стоит работа этого майнера.</string>
+    <string name="det_cost_rate_label">Тариф (%1$s за кВт·ч)</string>
+    <string name="det_cost_per_month">≈ %1$s / мес</string>
+    <string name="det_cost_energy_line">%1$s кВт·ч/мес при %2$s %3$s/кВт·ч · ~%4$s BTU/ч тепла</string>
+    <string name="det_cost_earn_line">Майнинг в пуле принёс бы ≈ %1$s/мес → чистыми %2$s/мес</string>
+    <string name="det_cost_needs_market">Включите сложность сети и курс BTC в настройках, чтобы увидеть ожидаемый доход и окупаемость.</string>
+    <string name="det_cost_payback_add_price">Укажите цену покупки (Правка ✎), чтобы узнать, когда он окупится.</string>
+    <string name="det_cost_payback_months">Окупится примерно за %1$d мес.</string>
+    <string name="det_cost_payback_years">Окупится примерно за %1$s лет.</string>
+    <string name="det_cost_payback_never">Не окупится никогда — электричество стоит больше ожидаемого дохода. Считайте это лотерейным билетом.</string>
+    <string name="det_cost_solo_line">Соло: ожидаемое время до блока %1$s — лотерейный билет за %2$s/мес.</string>
+    <string name="det_cost_note">Только оценки: без комиссий пула и транзакций; сложность и курс меняются ежедневно.</string>
+    <string name="det_paid_label">Цена покупки (%1$s, необязательно)</string>
 </resources>

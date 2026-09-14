@@ -166,4 +166,5 @@
     <string name="dash_rescan_too_large">本地网段太大，无法自动扫描；请使用添加 → 扫描。</string>
     <string name="dash_rescan_scanning">正在扫描 %1$d 台主机…</string>
     <string name="dash_rescan_done">重新扫描完成——发现 %1$d 台矿机。</string>
+    <string name="dash_metric_cost_mo">成本/月</string>
 </resources>

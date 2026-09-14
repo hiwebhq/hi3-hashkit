@@ -269,6 +269,22 @@ fun MinerDetailScreen(
                 }
             }
 
+            if (!miner.isDemo || t?.powerW?.value != null) {
+                SectionCard(stringResource(R.string.det_section_cost)) {
+                    CostCard(
+                        powerW = t?.powerW?.value,
+                        hashrateGhs = t?.hashrateGhs?.value,
+                        networkDifficulty = t?.networkDifficulty?.takeIf { it > 0 }
+                            ?: state.settings.networkDifficulty.takeIf { it > 0 },
+                        btcPrice = state.settings.btcPrice.takeIf { it > 0 },
+                        ratePerKwh = state.settings.electricityRatePerKwh,
+                        currency = state.settings.currencyCode,
+                        purchasePrice = miner.purchasePrice,
+                        onSaveRate = viewModel::setElectricityRate,
+                    )
+                }
+            }
+
             SectionCard(stringResource(R.string.det_section_shares_pool)) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -589,10 +605,12 @@ fun MinerDetailScreen(
             miner = miner,
             farms = farms,
             currentFarmId = currentFarmId,
+            currency = state.settings.currencyCode,
             onSave = { name, group, location, notes, tags, expected, overrides, farmId ->
                 viewModel.saveMeta(name, group, location, notes, tags, expected, overrides, farmId)
                 editing = false
             },
+            onSavePurchasePrice = viewModel::setPurchasePrice,
             onDismiss = { editing = false },
         )
     }
@@ -791,13 +809,18 @@ private fun EditMinerDialog(
     miner: hi3.hashkit.domain.model.Miner,
     farms: List<hi3.hashkit.data.db.FarmEntity>,
     currentFarmId: Long?,
+    currency: String,
     onSave: (
         String, String?, String?, String?, String, Double?,
         hi3.hashkit.domain.alerts.AlertOverrides, Long?,
     ) -> Unit,
+    onSavePurchasePrice: (Double?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf(miner.name) }
+    var paid by remember {
+        mutableStateOf(miner.purchasePrice?.let { String.format(java.util.Locale.US, "%.2f", it) } ?: "")
+    }
     var group by remember { mutableStateOf(miner.group ?: "") }
     var location by remember { mutableStateOf(miner.location ?: "") }
     // The farm assignment arrives async (the flow's first frame is null), so follow it
@@ -860,6 +883,12 @@ private fun EditMinerDialog(
                     singleLine = true,
                 )
                 androidx.compose.material3.OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text(stringResource(R.string.det_notes)) })
+                androidx.compose.material3.OutlinedTextField(
+                    value = paid,
+                    onValueChange = { paid = it },
+                    label = { Text(stringResource(R.string.det_paid_label, currency)) },
+                    singleLine = true,
+                )
                 Text(
                     stringResource(R.string.det_alert_overrides_header),
                     style = MaterialTheme.typography.labelSmall,
@@ -886,6 +915,7 @@ private fun EditMinerDialog(
             TextButton(
                 enabled = name.isNotBlank(),
                 onClick = {
+                    onSavePurchasePrice(paid.trim().replace(',', '.').toDoubleOrNull())
                     onSave(
                         name.trim(), group, location, notes, tags, expected.toDoubleOrNull(),
                         hi3.hashkit.domain.alerts.AlertOverrides(

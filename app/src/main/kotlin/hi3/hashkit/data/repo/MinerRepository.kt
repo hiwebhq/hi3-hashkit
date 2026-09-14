@@ -56,6 +56,10 @@ class MinerRepository @Inject constructor(
 
     fun observeMinerEntity(id: Long): Flow<MinerEntity?> = minerDao.observeById(id)
 
+    /** Record (or clear, with null/zero) what the user paid for a miner. */
+    suspend fun setPurchasePrice(minerId: Long, price: Double?) =
+        minerDao.updatePurchasePrice(minerId, price?.takeIf { it > 0 })
+
     suspend fun latestTelemetry(minerId: Long): MinerTelemetry? =
         telemetryDao.latest(minerId)?.toDomain()
 

@@ -93,6 +93,7 @@ private object FailingMinerDao : hi3.hashkit.data.db.MinerDao {
     override suspend fun clearFarm(farmId: Long) = throw UnsupportedOperationException()
     override suspend fun countInFarm(farmId: Long) = throw UnsupportedOperationException()
     override suspend fun updateCredential(id: Long, enc: String?) = throw UnsupportedOperationException()
+    override suspend fun updatePurchasePrice(id: Long, price: Double?) = throw UnsupportedOperationException()
     override suspend fun insertAddress(address: hi3.hashkit.data.db.MinerAddressEntity) = throw UnsupportedOperationException()
     override suspend fun touchAddress(minerId: Long, host: String, seenAt: Long) = throw UnsupportedOperationException()
 }

@@ -166,4 +166,5 @@
     <string name="dash_rescan_too_large">Plage locale trop grande pour l\'analyse auto ; utilisez Ajouter → Scanner.</string>
     <string name="dash_rescan_scanning">Analyse de %1$d hôtes…</string>
     <string name="dash_rescan_done">Nouvelle analyse terminée — %1$d mineur(s) trouvé(s).</string>
+    <string name="dash_metric_cost_mo">Coût/mois</string>
 </resources>

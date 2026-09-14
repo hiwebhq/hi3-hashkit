@@ -86,6 +86,9 @@ interface MinerDao {
     @Query("UPDATE miners SET credentialEnc = :enc WHERE id = :id")
     suspend fun updateCredential(id: Long, enc: String?)
 
+    @Query("UPDATE miners SET purchasePrice = :price WHERE id = :id")
+    suspend fun updatePurchasePrice(id: Long, price: Double?)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAddress(address: MinerAddressEntity)
 

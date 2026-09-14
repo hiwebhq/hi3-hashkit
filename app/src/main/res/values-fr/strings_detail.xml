@@ -228,4 +228,20 @@
     <string name="det_display_hours">%1$d h</string>
     <string name="det_display_hint">Ne modifie que le petit écran du mineur — le minage n\'est pas affecté.</string>
     <string name="det_act_display">mise à jour des réglages de l\'écran</string>
+
+    <!-- Cost card (home-miner economics) -->
+    <string name="det_section_cost">CE QUE ÇA COÛTE</string>
+    <string name="det_cost_rate_hint">Saisis ton tarif d\'électricité pour voir ce que ce mineur coûte à faire tourner.</string>
+    <string name="det_cost_rate_label">Tarif électrique (%1$s par kWh)</string>
+    <string name="det_cost_per_month">≈ %1$s / mois</string>
+    <string name="det_cost_energy_line">%1$s kWh/mois à %2$s %3$s/kWh · ~%4$s BTU/h de chaleur</string>
+    <string name="det_cost_earn_line">En pool, il rapporterait ≈ %1$s/mois → net %2$s/mois</string>
+    <string name="det_cost_needs_market">Active la difficulté du réseau et le prix du BTC dans les réglages pour voir les gains attendus et le retour sur achat.</string>
+    <string name="det_cost_payback_add_price">Indique le prix payé (Modifier ✎) pour savoir quand il sera rentabilisé.</string>
+    <string name="det_cost_payback_months">Rentabilisé en environ %1$d mois.</string>
+    <string name="det_cost_payback_years">Rentabilisé en environ %1$s ans.</string>
+    <string name="det_cost_payback_never">Jamais rentabilisé — l\'électricité coûte plus que les gains attendus. Vois-le comme un ticket de loterie.</string>
+    <string name="det_cost_solo_line">Solo : temps attendu avant un bloc %1$s — un ticket de loterie à %2$s/mois.</string>
+    <string name="det_cost_note">Estimations seulement : hors frais de pool et de transaction ; la difficulté et le prix changent chaque jour.</string>
+    <string name="det_paid_label">Prix payé (%1$s, facultatif)</string>
 </resources>

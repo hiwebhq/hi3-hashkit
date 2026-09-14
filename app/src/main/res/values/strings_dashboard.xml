@@ -76,6 +76,7 @@
     <string name="dash_metric_chip">Chip</string>
     <string name="dash_metric_eff">Eff.</string>
     <string name="dash_metric_uptime">Uptime</string>
+    <string name="dash_metric_cost_mo">Cost/mo</string>
 
     <!-- MMP card -->
     <string name="dash_mmp_header">HI3 MMP FLEET</string>

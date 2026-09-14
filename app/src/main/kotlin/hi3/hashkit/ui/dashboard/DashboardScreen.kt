@@ -408,6 +408,9 @@ fun DashboardScreen(
                             miner = miner,
                             density = state.settings.cardDensity,
                             sparkline = spark[miner.id],
+                            monthlyCost = hi3.hashkit.domain.solo.HomeEconomics.monthlyCost(
+                                miner.lastTelemetry?.powerW?.value, state.settings.electricityRatePerKwh,
+                            )?.let { Units.formatMoney(it, state.settings.currencyCode) },
                             selected = miner.id in state.selection,
                             selectionMode = state.selection.isNotEmpty(),
                             onClick = {
@@ -1246,6 +1249,7 @@ private fun DensitySelector(
     )
 }
 
+@Suppress("LongMethod", "CyclomaticComplexMethod") // one declarative layout per card density
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun MinerCard(
@@ -1256,6 +1260,8 @@ private fun MinerCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     sparkline: List<Double>? = null,
+    /** Pre-formatted monthly electricity cost; null when no rate is set (LARGE cards only). */
+    monthlyCost: String? = null,
 ) {
     val t = miner.lastTelemetry
     val clickMod = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
@@ -1448,6 +1454,12 @@ private fun MinerCard(
                 Metric(stringResource(R.string.dash_metric_chip), Units.formatTemp(t?.chipTempC?.value))
                 Metric(stringResource(R.string.dash_metric_eff), Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
                 Metric(stringResource(R.string.dash_metric_uptime), Units.formatUptime(t?.uptimeSeconds))
+                monthlyCost?.let {
+                    Metric(
+                        stringResource(R.string.dash_metric_cost_mo), it,
+                        source = hi3.hashkit.domain.model.ValueSource.ESTIMATED,
+                    )
+                }
             }
             if ((sparkline?.size ?: 0) >= 2) {
                 Spacer(Modifier.height(8.dp))

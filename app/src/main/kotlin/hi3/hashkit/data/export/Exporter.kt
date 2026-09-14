@@ -125,6 +125,8 @@ class Exporter @Inject constructor(
         val plugOnUrl: String? = null,
         val plugOffUrl: String? = null,
         val plugCutoffTempC: Double? = null,
+        /** Format 3+ (additive): what the user paid, for the payback estimate. */
+        val purchasePrice: Double? = null,
     )
 
     @Serializable
@@ -230,6 +232,7 @@ class Exporter @Inject constructor(
                     plugOnUrl = it.plugOnUrl,
                     plugOffUrl = it.plugOffUrl,
                     plugCutoffTempC = it.plugCutoffTempC,
+                    purchasePrice = it.purchasePrice,
                 )
             },
             schedules = schedules.map {
@@ -331,7 +334,7 @@ class Exporter @Inject constructor(
                         alertVrTempC = m.alertVrTempC, alertRejectPct = m.alertRejectPct,
                         alertsMuted = m.alertsMuted, plugType = m.plugType, plugHost = m.plugHost,
                         plugOnUrl = m.plugOnUrl, plugOffUrl = m.plugOffUrl,
-                        plugCutoffTempC = m.plugCutoffTempC,
+                        plugCutoffTempC = m.plugCutoffTempC, purchasePrice = m.purchasePrice,
                     )
                 )
                 minersAdded++
@@ -351,6 +354,7 @@ class Exporter @Inject constructor(
                         alertsMuted = m.alertsMuted, plugType = m.plugType, plugHost = m.plugHost,
                         plugOnUrl = m.plugOnUrl, plugOffUrl = m.plugOffUrl,
                         plugCutoffTempC = m.plugCutoffTempC,
+                        purchasePrice = m.purchasePrice ?: existing.purchasePrice,
                     ) else updated
                 )
                 minersUpdated++

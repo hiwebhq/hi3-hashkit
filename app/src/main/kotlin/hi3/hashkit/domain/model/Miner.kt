@@ -16,6 +16,8 @@ data class Miner(
     val notes: String? = null,
     val tags: List<String> = emptyList(),
     val expectedHashrateGhs: Double? = null,
+    /** What the user paid for the unit (app currency), for the payback estimate. */
+    val purchasePrice: Double? = null,
     val alertOverrides: hi3.hashkit.domain.alerts.AlertOverrides =
         hi3.hashkit.domain.alerts.AlertOverrides(),
     val isDemo: Boolean = false,

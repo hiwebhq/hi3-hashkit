@@ -66,6 +66,8 @@ data class MinerEntity(
     @androidx.room.ColumnInfo(defaultValue = "NULL") val plugCutoffTempC: Double? = null,
     /** Miner admin password / API token for authenticated controls, encrypted (Keystore). */
     @androidx.room.ColumnInfo(defaultValue = "NULL") val credentialEnc: String? = null,
+    /** What the user paid for the unit, in the app currency — for the payback estimate. */
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val purchasePrice: Double? = null,
 )
 
 @Entity(

@@ -72,8 +72,17 @@ class MinerDetailViewModel @Inject constructor(
     private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     alertDao: AlertDao,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
+
+    /** Inline rate entry on the cost card (same setting as Settings → Energy). */
+    fun setElectricityRate(ratePerKwh: Double) {
+        viewModelScope.launch { settingsRepository.setElectricityRate(ratePerKwh) }
+    }
+
+    fun setPurchasePrice(price: Double?) {
+        viewModelScope.launch { repository.setPurchasePrice(minerId, price) }
+    }
 
     private val minerId: Long = checkNotNull(savedStateHandle["minerId"])
 

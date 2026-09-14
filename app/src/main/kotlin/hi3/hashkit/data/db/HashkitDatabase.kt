@@ -23,7 +23,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         LogLineEntity::class,
         TuneSweepEntity::class,
     ],
-    version = 18,
+    version = 19,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -41,6 +41,14 @@ abstract class HashkitDatabase : RoomDatabase() {
     abstract fun tuneSweepDao(): TuneSweepDao
 
     companion object {
+        /** v18 -> v19: miners.purchasePrice for the home-miner payback estimate (additive). */
+        @Suppress("MagicNumber") // schema versions are inherently literal
+        val MIGRATION_18_19 = object : Migration(18, 19) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `miners` ADD COLUMN `purchasePrice` REAL DEFAULT NULL")
+            }
+        }
+
         /** v17 -> v18: rules.sustainedForMinutes watchdog window (additive). */
         @Suppress("MagicNumber") // schema versions are inherently literal
         val MIGRATION_17_18 = object : Migration(17, 18) {

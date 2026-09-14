@@ -166,4 +166,5 @@
     <string name="dash_rescan_too_large">Локальный диапазон слишком велик для автосканирования; используйте «Добавить → Сканировать».</string>
     <string name="dash_rescan_scanning">Сканирование %1$d хостов…</string>
     <string name="dash_rescan_done">Пересканирование завершено — найдено майнеров: %1$d.</string>
+    <string name="dash_metric_cost_mo">Расход/мес</string>
 </resources>

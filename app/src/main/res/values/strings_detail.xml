@@ -16,6 +16,7 @@
     <string name="det_section_per_chip">PER-CHIP HEALTH</string>
     <string name="det_section_live_telemetry">LIVE TELEMETRY</string>
     <string name="det_section_shares_pool">SHARES &amp; POOL</string>
+    <string name="det_section_cost">WHAT THIS COSTS</string>
     <string name="det_section_live_logs">LIVE LOGS</string>
     <string name="det_section_event_log">EVENT LOG</string>
     <string name="det_section_maintenance">MAINTENANCE LOG</string>
@@ -125,6 +126,21 @@
     <string name="det_display_hours">%1$d h</string>
     <string name="det_display_hint">Changes the miner\'s own little screen only — nothing about mining changes.</string>
     <string name="det_act_display">Updating screen settings</string>
+
+    <!-- Cost card (home-miner economics) -->
+    <string name="det_cost_rate_hint">Enter your electricity rate to see what this miner costs to run.</string>
+    <string name="det_cost_rate_label">Electricity rate (%1$s per kWh)</string>
+    <string name="det_cost_per_month">≈ %1$s / month</string>
+    <string name="det_cost_energy_line">%1$s kWh/month at %2$s %3$s/kWh · ~%4$s BTU/hr of heat</string>
+    <string name="det_cost_earn_line">Pool mining would earn ≈ %1$s/month → net %2$s/month</string>
+    <string name="det_cost_needs_market">Turn on network difficulty and BTC price in Settings to see expected earnings and payback.</string>
+    <string name="det_cost_payback_add_price">Add what you paid (Edit ✎) to see when it pays for itself.</string>
+    <string name="det_cost_payback_months">Pays for itself in about %1$d months.</string>
+    <string name="det_cost_payback_years">Pays for itself in about %1$s years.</string>
+    <string name="det_cost_payback_never">Never pays for itself — power costs exceed expected earnings. Think of it as a lottery ticket.</string>
+    <string name="det_cost_solo_line">Solo: expected time to a block %1$s — a %2$s/month lottery ticket.</string>
+    <string name="det_cost_note">Estimates only: excludes pool and transaction fees; difficulty and price move daily.</string>
+    <string name="det_paid_label">What you paid (%1$s, optional)</string>
 
     <!-- Pool dialog -->
     <string name="det_pool_title">Change primary pool</string>
