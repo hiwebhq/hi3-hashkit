@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.79.4
+
+- CI: GitHub Actions refreshed (checkout v7, cache v6, upload-artifact v7, gradle/actions v6,
+  setup-android v4 with platform-tools only — the legacy SDK "tools" package Google removed
+  had been failing every run). No app changes.
+
 ## 0.79.3
 
 - Build toolchain upgrade: Android Gradle Plugin 9.4 (built-in Kotlin), Gradle 9.7.1,

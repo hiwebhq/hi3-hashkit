@@ -9,7 +9,7 @@ calculated, or estimated — so an estimate is never dressed up as a fact.
 **Android 8.0+. Sideload and go. Speaks 7 languages** — English, Spanish, Chinese
 (Simplified), Russian, German, French and Brazilian Portuguese, switchable per-app.
 
-Current release: **v0.79.3**.
+Current release: **v0.79.4**.
 
 ## 🏠 Made for the Home Miner Too
 
