@@ -7,4 +7,10 @@
     <string name="alerts_active">Активные</string>
     <string name="alerts_resolved">Устранённые</string>
     <string name="alerts_acknowledge">Подтвердить</string>
+    <string name="alerts_selected">Выбрано: %1$d</string>
+    <string name="alerts_select_all">Выбрать все</string>
+    <string name="alerts_delete">Удалить</string>
+    <string name="alerts_clear_all">Очистить все оповещения</string>
+    <string name="alerts_delete_confirm_title">Удалить оповещения?</string>
+    <string name="alerts_delete_confirm_body">Удалить оповещений: %1$d? Это нельзя отменить.</string>
 </resources>

@@ -6,4 +6,10 @@
     <string name="alerts_active">Activas</string>
     <string name="alerts_resolved">Resueltas</string>
     <string name="alerts_acknowledge">Confirmar</string>
+    <string name="alerts_selected">%1$d seleccionadas</string>
+    <string name="alerts_select_all">Seleccionar todo</string>
+    <string name="alerts_delete">Eliminar</string>
+    <string name="alerts_clear_all">Borrar todas las alertas</string>
+    <string name="alerts_delete_confirm_title">¿Eliminar alertas?</string>
+    <string name="alerts_delete_confirm_body">¿Eliminar %1$d alerta(s)? No se puede deshacer.</string>
 </resources>

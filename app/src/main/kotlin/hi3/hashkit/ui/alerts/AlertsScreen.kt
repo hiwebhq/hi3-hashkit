@@ -1,5 +1,6 @@
 package hi3.hashkit.ui.alerts
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +28,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -60,8 +66,17 @@ class AlertsViewModel @Inject constructor(
     fun acknowledgeAll() {
         viewModelScope.launch { alertDao.acknowledgeAll() }
     }
+
+    fun delete(ids: Collection<Long>) {
+        viewModelScope.launch { alertDao.deleteByIds(ids.toList()) }
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch { alertDao.deleteAll() }
+    }
 }
 
+@Suppress("LongMethod") // declarative screen layout: selection-aware scaffold + list + dialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertsScreen(
@@ -69,19 +84,51 @@ fun AlertsScreen(
     viewModel: AlertsViewModel = hiltViewModel(),
 ) {
     val alerts by viewModel.alerts.collectAsStateWithLifecycle()
+    // Long-press starts multi-select; a non-empty selection switches the top bar to
+    // selection actions (select all / delete). Delete with nothing selected = clear all.
+    var selected by remember { mutableStateOf(setOf<Long>()) }
+    var confirmDelete by remember { mutableStateOf(false) }
+    val selectionMode = selected.isNotEmpty()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.alerts_title), fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        if (selectionMode) stringResource(R.string.alerts_selected, selected.size)
+                        else stringResource(R.string.alerts_title),
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
+                    if (selectionMode) {
+                        IconButton(onClick = { selected = emptySet() }) {
+                            Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.common_cancel))
+                        }
+                    } else {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
+                        }
                     }
                 },
                 actions = {
-                    if (alerts.any { !it.acknowledged }) {
+                    if (selectionMode) {
+                        TextButton(onClick = { selected = alerts.map { it.id }.toSet() }) {
+                            Text(stringResource(R.string.alerts_select_all))
+                        }
+                    } else if (alerts.any { !it.acknowledged }) {
                         TextButton(onClick = viewModel::acknowledgeAll) { Text(stringResource(R.string.alerts_ack_all)) }
+                    }
+                    if (alerts.isNotEmpty()) {
+                        IconButton(onClick = { confirmDelete = true }) {
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = stringResource(
+                                    if (selectionMode) R.string.alerts_delete else R.string.alerts_clear_all,
+                                ),
+                                tint = HiBrand.statusOffline,
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = HiBrand.background),
@@ -104,18 +151,58 @@ fun AlertsScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(alerts, key = { it.id }) { alert ->
-                AlertRow(alert, onAcknowledge = { viewModel.acknowledge(alert.id) })
+                AlertRow(
+                    alert,
+                    selected = alert.id in selected,
+                    onAcknowledge = { viewModel.acknowledge(alert.id) },
+                    onToggleSelect = {
+                        selected = if (alert.id in selected) selected - alert.id else selected + alert.id
+                    },
+                    selectionMode = selectionMode,
+                )
             }
         }
     }
+
+    if (confirmDelete) {
+        val count = if (selectionMode) selected.size else alerts.size
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text(stringResource(R.string.alerts_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.alerts_delete_confirm_body, count)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmDelete = false
+                    if (selectionMode) viewModel.delete(selected) else viewModel.deleteAll()
+                    selected = emptySet()
+                }) { Text(stringResource(R.string.alerts_delete), color = HiBrand.statusOffline) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.common_cancel)) }
+            },
+        )
+    }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-private fun AlertRow(alert: AlertEventEntity, onAcknowledge: () -> Unit) {
+private fun AlertRow(
+    alert: AlertEventEntity,
+    selected: Boolean,
+    onAcknowledge: () -> Unit,
+    onToggleSelect: () -> Unit,
+    selectionMode: Boolean,
+) {
     val active = alert.resolvedAtEpochMs == null
     Card(
-        colors = CardDefaults.cardColors(containerColor = HiBrand.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) HiBrand.accent.copy(alpha = 0.16f) else HiBrand.surface,
+        ),
         shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.combinedClickable(
+            onClick = { if (selectionMode) onToggleSelect() },
+            onLongClick = onToggleSelect,
+        ),
     ) {
         Column(Modifier.padding(12.dp)) {
             Row(

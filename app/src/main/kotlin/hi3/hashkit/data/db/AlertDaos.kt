@@ -34,6 +34,12 @@ interface AlertDao {
     @Query("UPDATE alert_events SET acknowledged = 1")
     suspend fun acknowledgeAll()
 
+    @Query("DELETE FROM alert_events WHERE id IN (:ids)")
+    suspend fun deleteByIds(ids: List<Long>)
+
+    @Query("DELETE FROM alert_events")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM alert_states WHERE minerId = :minerId")
     suspend fun state(minerId: Long): AlertStateEntity?
 

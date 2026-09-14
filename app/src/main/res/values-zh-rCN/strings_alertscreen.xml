@@ -6,4 +6,10 @@
     <string name="alerts_active">活动</string>
     <string name="alerts_resolved">已恢复</string>
     <string name="alerts_acknowledge">确认</string>
+    <string name="alerts_selected">已选择 %1$d 项</string>
+    <string name="alerts_select_all">全选</string>
+    <string name="alerts_delete">删除</string>
+    <string name="alerts_clear_all">清除全部警报</string>
+    <string name="alerts_delete_confirm_title">删除警报？</string>
+    <string name="alerts_delete_confirm_body">删除 %1$d 条警报？此操作无法撤销。</string>
 </resources>

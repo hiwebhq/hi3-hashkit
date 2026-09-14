@@ -6,4 +6,10 @@
     <string name="alerts_active">Actives</string>
     <string name="alerts_resolved">Résolues</string>
     <string name="alerts_acknowledge">Acquitter</string>
+    <string name="alerts_selected">%1$d sélectionnée(s)</string>
+    <string name="alerts_select_all">Tout sélectionner</string>
+    <string name="alerts_delete">Supprimer</string>
+    <string name="alerts_clear_all">Effacer toutes les alertes</string>
+    <string name="alerts_delete_confirm_title">Supprimer les alertes ?</string>
+    <string name="alerts_delete_confirm_body">Supprimer %1$d alerte(s) ? Action irréversible.</string>
 </resources>

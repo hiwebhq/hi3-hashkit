@@ -6,4 +6,10 @@
     <string name="alerts_active">Aktiv</string>
     <string name="alerts_resolved">Behoben</string>
     <string name="alerts_acknowledge">Quittieren</string>
+    <string name="alerts_selected">%1$d ausgewählt</string>
+    <string name="alerts_select_all">Alle auswählen</string>
+    <string name="alerts_delete">Löschen</string>
+    <string name="alerts_clear_all">Alle Warnungen löschen</string>
+    <string name="alerts_delete_confirm_title">Warnungen löschen?</string>
+    <string name="alerts_delete_confirm_body">%1$d Warnung(en) löschen? Das kann nicht rückgängig gemacht werden.</string>
 </resources>

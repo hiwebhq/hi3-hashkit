@@ -6,4 +6,10 @@
     <string name="alerts_active">Active</string>
     <string name="alerts_resolved">Resolved</string>
     <string name="alerts_acknowledge">Acknowledge</string>
+    <string name="alerts_selected">%1$d selected</string>
+    <string name="alerts_select_all">Select all</string>
+    <string name="alerts_delete">Delete</string>
+    <string name="alerts_clear_all">Clear all alerts</string>
+    <string name="alerts_delete_confirm_title">Delete alerts?</string>
+    <string name="alerts_delete_confirm_body">Delete %1$d alert(s)? This can\'t be undone.</string>
 </resources>

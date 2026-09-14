@@ -158,6 +158,8 @@ fun DashboardScreen(
                             if (hi3.hashkit.BuildConfig.EASTER_EGG && logoTaps >= 7) {
                                 logoTaps = 0
                                 context.openUrl("https://www.hi3.cc/bh/pay-bitcoin")
+                            } else {
+                                onAbout()
                             }
                         }
                     )
