@@ -260,4 +260,15 @@
     <string name="det_share_days_value">%1$d Tagen</string>
     <string name="det_share_tagline">Mining zu Hause, ehrlich gemessen · Hi3 Hashkit</string>
     <string name="det_maint_nudge">🧹 Die Chip-Temperatur liegt bei gleicher Leistungsaufnahme %1$s über dem Wert von vor einem Monat – Zeit, Lüfter und Kühlkörper zu reinigen.</string>
+
+    <!-- Power modes (Quiet / Normal / Boost) -->
+    <string name="det_mode_header">LEISTUNGSMODUS</string>
+    <string name="det_mode_quiet">Leise</string>
+    <string name="det_mode_normal">Normal</string>
+    <string name="det_mode_boost">Boost</string>
+    <string name="det_mode_hint">Leise = niedrigste freigegebene Frequenz (kühler, leiserer Lüfter). Normal = Werkswert. Boost = zwei freigegebene Stufen über Werk bei Werksspannung. Alles innerhalb der Firmware-Listen.</string>
+    <string name="det_mode_custom_hint">Eigener Tune aktiv. Wähle einen Modus für ein freigegebenes Preset oder behalte deine Werte.</string>
+    <string name="det_quiet_night">Nachts leise</string>
+    <string name="det_quiet_night_hint">Ab 22:00 leise, ab 07:00 wieder Normal, täglich. Zeiten unter Erweitert → Zeitpläne anpassbar.</string>
+    <string name="det_act_mode">Wechsel zu %1$s</string>
 </resources>

@@ -124,4 +124,7 @@
     <string name="bulk_resume">Reprendre le minage</string>
     <string name="bulk_tune">Régler à %1$d MHz @ %2$d mV</string>
 
+    <string name="bulk_mode_quiet">Mode silencieux</string>
+    <string name="bulk_mode_normal">Mode normal</string>
+    <string name="bulk_mode_boost">Mode boost</string>
 </resources>

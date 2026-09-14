@@ -126,4 +126,7 @@
     <string name="bulk_resume">Retomar hashing</string>
     <string name="bulk_tune">Ajustar para %1$d MHz @ %2$d mV</string>
 
+    <string name="bulk_mode_quiet">Modo silencioso</string>
+    <string name="bulk_mode_normal">Modo normal</string>
+    <string name="bulk_mode_boost">Modo turbo</string>
 </resources>

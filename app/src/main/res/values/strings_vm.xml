@@ -125,5 +125,8 @@
     <string name="bulk_pause">Pause hashing</string>
     <string name="bulk_resume">Resume hashing</string>
     <string name="bulk_tune">Tune to %1$d MHz @ %2$d mV</string>
+    <string name="bulk_mode_quiet">Quiet mode</string>
+    <string name="bulk_mode_normal">Normal mode</string>
+    <string name="bulk_mode_boost">Boost mode</string>
 
 </resources>

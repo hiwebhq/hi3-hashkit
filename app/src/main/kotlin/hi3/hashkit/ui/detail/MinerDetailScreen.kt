@@ -579,7 +579,18 @@ fun MinerDetailScreen(
                         },
                         onSetDisplay = viewModel::setDisplay,
                     )
-                    if (state.tuneOptions != null) {
+                    state.tuneOptions?.let { options ->
+                        Spacer(Modifier.height(10.dp))
+                        val quietNight by viewModel.quietNightEnabled.collectAsStateWithLifecycle()
+                        PowerModeRow(
+                            options = options,
+                            currentFrequencyMhz = t?.frequencyMhz?.value?.toInt(),
+                            currentVoltageMv = t?.coreVoltageMv?.value?.toInt(),
+                            busy = state.busyAction != null,
+                            quietNight = quietNight,
+                            onSelect = viewModel::applyPowerMode,
+                            onQuietNight = viewModel::setQuietNight,
+                        )
                         Spacer(Modifier.height(8.dp))
                         androidx.compose.material3.OutlinedButton(
                             onClick = onAutotune,
@@ -785,6 +796,57 @@ private fun NotePhoto(path: String) {
                 }
             }
         }
+    }
+}
+
+/** Quiet / Normal / Boost chips plus the "Quiet at night" switch, all within approved values. */
+@Composable
+private fun PowerModeRow(
+    options: hi3.hashkit.domain.adapter.TuneOptions,
+    currentFrequencyMhz: Int?,
+    currentVoltageMv: Int?,
+    busy: Boolean,
+    quietNight: Boolean,
+    onSelect: (hi3.hashkit.domain.tune.PowerMode) -> Unit,
+    onQuietNight: (Boolean) -> Unit,
+) {
+    val current = hi3.hashkit.domain.tune.PowerModes.modeOf(options, currentFrequencyMhz, currentVoltageMv)
+    Text(
+        stringResource(R.string.det_mode_header),
+        style = MaterialTheme.typography.labelSmall,
+        color = HiBrand.textSecondary,
+    )
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 4.dp)) {
+        listOf(
+            hi3.hashkit.domain.tune.PowerMode.QUIET to stringResource(R.string.det_mode_quiet),
+            hi3.hashkit.domain.tune.PowerMode.NORMAL to stringResource(R.string.det_mode_normal),
+            hi3.hashkit.domain.tune.PowerMode.BOOST to stringResource(R.string.det_mode_boost),
+        ).forEach { (mode, label) ->
+            val point = hi3.hashkit.domain.tune.PowerModes.resolve(options, mode, currentVoltageMv)
+            androidx.compose.material3.FilterChip(
+                selected = current == mode,
+                enabled = !busy && point != null,
+                onClick = { onSelect(mode) },
+                label = { Text(point?.let { "$label · ${it.frequencyMhz} MHz" } ?: label) },
+            )
+        }
+    }
+    Text(
+        if (current == null) stringResource(R.string.det_mode_custom_hint) else stringResource(R.string.det_mode_hint),
+        style = MaterialTheme.typography.labelSmall,
+        color = HiBrand.textSecondary,
+        modifier = Modifier.padding(top = 4.dp),
+    )
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.det_quiet_night), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.det_quiet_night_hint),
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+            )
+        }
+        androidx.compose.material3.Switch(checked = quietNight, onCheckedChange = onQuietNight)
     }
 }
 

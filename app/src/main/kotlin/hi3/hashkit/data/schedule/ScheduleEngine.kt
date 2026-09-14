@@ -83,6 +83,12 @@ object ScheduleDueLogic {
                 val volt = params["voltage"]?.jsonPrimitive?.intOrNull ?: return null
                 BulkAction.SetTune(freq, volt)
             }
+            // Quiet at night / Normal by day: the mode resolves per miner at run time.
+            "power_mode" -> {
+                val name = params?.get("mode")?.jsonPrimitive?.content ?: return null
+                val mode = hi3.hashkit.domain.tune.PowerMode.entries.firstOrNull { it.name == name } ?: return null
+                BulkAction.SetPowerMode(mode)
+            }
             else -> null
         }
     }

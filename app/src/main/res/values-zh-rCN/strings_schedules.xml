@@ -33,4 +33,6 @@
     <string name="sched_hint_plug">插座通/断电会通过局域网切换每台目标矿机已配置的智能插座。未配置插座的矿机会被跳过。可搭配夜间断电、早晨通电实现分时用电控制；每次执行都有记录。</string>
     <string name="sched_hint_tune">分时功耗目标：应用固定的频率/电压预设。峰值电价开始时使用低功耗预设，结束时恢复常规预设。仅接受这些参数的固件（如 Bitaxe/AxeOS）会执行；其余会被跳过。请使用矿机调优器接受的数值。</string>
     <string name="sched_hint_default">分时用电：在峰值电价开始时安排“暂停”、结束时安排“恢复”（暂停需设备支持）。不支持的设备会跳过并说明原因；每次执行都会记入审计日志。</string>
+    <string name="sched_action_power_mode">功耗模式</string>
+    <string name="sched_hint_mode">安静/正常/加速会在运行时按每台矿机自身的批准频率列表解析，因此一个计划可适用于不同型号。没有批准选项的矿机将被跳过。</string>
 </resources>

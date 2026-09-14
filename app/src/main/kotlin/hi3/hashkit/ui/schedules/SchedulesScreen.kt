@@ -220,6 +220,8 @@ private fun ScheduleEditorDialog(
     // Tune params (time-of-use power preset)
     var tuneFreq by rememberSaveable { mutableStateOf("") }
     var tuneVolt by rememberSaveable { mutableStateOf("") }
+    // Power mode params (Quiet / Normal / Boost, resolved per miner)
+    var powerMode by rememberSaveable { mutableStateOf(hi3.hashkit.domain.tune.PowerMode.QUIET.name) }
 
     val timeMinutes = time.split(":").let { parts ->
         val h = parts.getOrNull(0)?.trim()?.toIntOrNull()
@@ -249,6 +251,7 @@ private fun ScheduleEditorDialog(
                         "plug_off" to stringResource(R.string.sched_action_plug_off),
                         "plug_on" to stringResource(R.string.sched_action_plug_on),
                         "apply_tune" to stringResource(R.string.sched_action_tune_preset),
+                        "power_mode" to stringResource(R.string.sched_action_power_mode),
                     ).forEach { (key, text) ->
                         FilterChip(selected = action == key, onClick = { action = key }, label = { Text(text) })
                     }
@@ -273,6 +276,19 @@ private fun ScheduleEditorDialog(
                         OutlinedTextField(value = tuneFreq, onValueChange = { tuneFreq = it }, label = { Text(stringResource(R.string.sched_frequency_mhz)) }, singleLine = true)
                         OutlinedTextField(value = tuneVolt, onValueChange = { tuneVolt = it }, label = { Text(stringResource(R.string.sched_core_voltage_mv)) }, singleLine = true)
                     }
+                    "power_mode" -> Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf(
+                            hi3.hashkit.domain.tune.PowerMode.QUIET to stringResource(R.string.det_mode_quiet),
+                            hi3.hashkit.domain.tune.PowerMode.NORMAL to stringResource(R.string.det_mode_normal),
+                            hi3.hashkit.domain.tune.PowerMode.BOOST to stringResource(R.string.det_mode_boost),
+                        ).forEach { (mode, text) ->
+                            FilterChip(
+                                selected = powerMode == mode.name,
+                                onClick = { powerMode = mode.name },
+                                label = { Text(text) },
+                            )
+                        }
+                    }
                 }
                 OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text(stringResource(R.string.sched_time_label)) }, singleLine = true)
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -292,6 +308,8 @@ private fun ScheduleEditorDialog(
                     stringResource(R.string.sched_hint_plug)
                 } else if (action == "apply_tune") {
                     stringResource(R.string.sched_hint_tune)
+                } else if (action == "power_mode") {
+                    stringResource(R.string.sched_hint_mode)
                 } else {
                     stringResource(R.string.sched_hint_default)
                 }
@@ -320,6 +338,7 @@ private fun ScheduleEditorDialog(
                             put("frequency", tuneFreq.toInt())
                             put("voltage", tuneVolt.toInt())
                         }.toString()
+                        "power_mode" -> buildJsonObject { put("mode", powerMode) }.toString()
                         else -> "{}"
                     }
                     onSave(

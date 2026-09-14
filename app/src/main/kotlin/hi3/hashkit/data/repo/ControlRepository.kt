@@ -140,6 +140,21 @@ class ControlRepository @Inject constructor(
         return result
     }
 
+    /**
+     * Quiet / Normal / Boost: resolve the mode against this device's own approved option
+     * lists and apply it as an ordinary (audited, roll-back-able) tune.
+     */
+    suspend fun applyPowerMode(entity: MinerEntity, mode: hi3.hashkit.domain.tune.PowerMode): ActionResult {
+        val options = runCatching { tuneOptions(entity) }.getOrNull()
+            ?: return ActionResult.Unsupported(
+                "This firmware publishes no approved tune options; modes are unavailable."
+            )
+        val currentVolt = minerRepository.latestTelemetry(entity.id)?.coreVoltageMv?.value?.toInt()
+        val point = hi3.hashkit.domain.tune.PowerModes.resolve(options, mode, currentVolt)
+            ?: return ActionResult.Failure("The firmware's option lists are empty; nothing safe to apply.")
+        return applyTune(entity, point.frequencyMhz, point.coreVoltageMv)
+    }
+
     /** Roll a miner back to the frequency/voltage recorded before its last tune. */
     suspend fun rollbackTune(entity: MinerEntity): ActionResult {
         val adapter = controlAdapter(entity)

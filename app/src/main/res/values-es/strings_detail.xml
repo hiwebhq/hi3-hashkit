@@ -258,4 +258,15 @@
     <string name="det_share_days_value">%1$d días</string>
     <string name="det_share_tagline">Minería en casa, medida con honestidad · Hi3 Hashkit</string>
     <string name="det_maint_nudge">🧹 La temperatura del chip ha subido %1$s respecto a hace un mes con el mismo consumo: toca limpiar el ventilador y el disipador.</string>
+
+    <!-- Power modes (Quiet / Normal / Boost) -->
+    <string name="det_mode_header">MODO DE POTENCIA</string>
+    <string name="det_mode_quiet">Silencioso</string>
+    <string name="det_mode_normal">Normal</string>
+    <string name="det_mode_boost">Turbo</string>
+    <string name="det_mode_hint">Silencioso = frecuencia aprobada más baja (más frío, ventilador más silencioso). Normal = de fábrica. Turbo = dos pasos aprobados por encima con el voltaje de fábrica. Todo dentro de las listas del firmware.</string>
+    <string name="det_mode_custom_hint">Ajuste personalizado en uso. Elige un modo para volver a un preajuste aprobado, o conserva tus valores.</string>
+    <string name="det_quiet_night">Silencio nocturno</string>
+    <string name="det_quiet_night_hint">Silencioso desde las 22:00 y Normal a las 07:00, cada día. Las horas se editan en Avanzado → Programaciones.</string>
+    <string name="det_act_mode">Cambiando a %1$s</string>
 </resources>

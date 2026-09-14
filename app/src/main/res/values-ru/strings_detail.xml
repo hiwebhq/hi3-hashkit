@@ -259,4 +259,15 @@
     <string name="det_share_days_value">%1$d дн.</string>
     <string name="det_share_tagline">Домашний майнинг, честные измерения · Hi3 Hashkit</string>
     <string name="det_maint_nudge">🧹 Температура чипа выросла на %1$s по сравнению с месяцем назад при той же мощности — пора почистить вентилятор и радиатор.</string>
+
+    <!-- Power modes (Quiet / Normal / Boost) -->
+    <string name="det_mode_header">РЕЖИМ МОЩНОСТИ</string>
+    <string name="det_mode_quiet">Тихий</string>
+    <string name="det_mode_normal">Обычный</string>
+    <string name="det_mode_boost">Буст</string>
+    <string name="det_mode_hint">Тихий = самая низкая одобренная частота (холоднее, тише вентилятор). Обычный = заводской. Буст = на два одобренных шага выше при заводском напряжении. Всё в пределах списков прошивки.</string>
+    <string name="det_mode_custom_hint">Сейчас пользовательский тюнинг. Выберите режим, чтобы вернуться к одобренному пресету, или оставьте свои значения.</string>
+    <string name="det_quiet_night">Тихо ночью</string>
+    <string name="det_quiet_night_hint">Тихий режим с 22:00, обычный с 07:00, ежедневно. Время меняется в Дополнительно → Расписания.</string>
+    <string name="det_act_mode">Переключение: %1$s</string>
 </resources>

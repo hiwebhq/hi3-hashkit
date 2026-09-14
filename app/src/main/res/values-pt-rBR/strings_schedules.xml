@@ -33,4 +33,6 @@
     <string name="sched_hint_plug">Ligar/desligar tomada aciona a tomada inteligente configurada de cada minerador-alvo pela LAN. Mineradores sem tomada configurada são pulados. Combine Desligar tomada à noite com Ligar tomada de manhã para controle de energia por tarifa horária; cada execução é registrada.</string>
     <string name="sched_hint_tune">Meta de potência por tarifa horária: aplica um preset fixo de frequência/tensão. Use um preset de baixa potência no início da tarifa de pico e seu preset normal no fim. Só roda em firmware que aceita esses valores (ex.: Bitaxe/AxeOS); os demais são pulados. Use valores que o tuner do seu minerador aceita.</string>
     <string name="sched_hint_default">Tarifa horária: agende Pausar no início da tarifa de pico e Retomar no fim (pausar exige um aparelho com suporte). Aparelhos sem suporte são pulados com um motivo; cada execução é registrada no log de auditoria.</string>
+    <string name="sched_action_power_mode">Modo de potência</string>
+    <string name="sched_hint_mode">Silencioso / Normal / Turbo são resolvidos em cada minerador pela sua própria lista de frequências aprovadas na hora de executar, então um agendamento serve para modelos diferentes. Mineradores sem opções aprovadas são ignorados.</string>
 </resources>

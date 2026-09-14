@@ -55,6 +55,16 @@ sealed interface BulkAction {
         override val labelRes = R.string.bulk_tune
         override val labelArgs: List<Any> get() = listOf(frequencyMhz, coreVoltageMv)
     }
+
+    /** Quiet / Normal / Boost, resolved per miner against its own approved option lists. */
+    data class SetPowerMode(val mode: hi3.hashkit.domain.tune.PowerMode) : BulkAction {
+        override val capability = Capability.APPLY_APPROVED_TUNE
+        override val labelRes = when (mode) {
+            hi3.hashkit.domain.tune.PowerMode.QUIET -> R.string.bulk_mode_quiet
+            hi3.hashkit.domain.tune.PowerMode.NORMAL -> R.string.bulk_mode_normal
+            hi3.hashkit.domain.tune.PowerMode.BOOST -> R.string.bulk_mode_boost
+        }
+    }
 }
 
 data class BulkPlan(
@@ -118,6 +128,7 @@ class FleetControl @Inject constructor(
                     is BulkAction.Power -> controlRepository.powerControl(entity, action.action)
                     is BulkAction.SetTune ->
                         controlRepository.applyTune(entity, action.frequencyMhz, action.coreVoltageMv)
+                    is BulkAction.SetPowerMode -> controlRepository.applyPowerMode(entity, action.mode)
                 }
             }.getOrElse { ActionResult.Failure(it.message ?: "Unexpected error") }
             BulkOutcome(entity.id, entity.name, result)

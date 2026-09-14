@@ -33,4 +33,6 @@
     <string name="sched_hint_plug">Enchufe on/off conmuta por LAN el enchufe inteligente configurado de cada minero objetivo. Los mineros sin enchufe configurado se omiten. Combina un Enchufe off nocturno con un Enchufe on matutino para control por tramos horarios; cada ejecución queda registrada.</string>
     <string name="sched_hint_tune">Objetivo de consumo por tramos: aplica un preajuste fijo de frecuencia/voltaje. Usa un preajuste de bajo consumo al empezar la tarifa punta y tu preajuste normal al terminar. Solo lo ejecuta el firmware que acepta estos valores (p. ej. Bitaxe/AxeOS); el resto se omite. Usa valores que el tuner de tu minero acepte.</string>
     <string name="sched_hint_default">Tramos horarios: programa Pausar al inicio de tu tarifa punta y Reanudar al final (pausar requiere un dispositivo compatible). Los dispositivos no compatibles se omiten con un motivo; cada ejecución queda en el registro de auditoría.</string>
+    <string name="sched_action_power_mode">Modo de potencia</string>
+    <string name="sched_hint_mode">Silencioso / Normal / Turbo se resuelven en cada minero según su propia lista de frecuencias aprobadas al ejecutarse, así que una programación sirve para modelos distintos. Los mineros sin opciones aprobadas se omiten.</string>
 </resources>

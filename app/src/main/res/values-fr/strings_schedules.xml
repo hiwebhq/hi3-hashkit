@@ -33,4 +33,6 @@
     <string name="sched_hint_plug">Prise on/off commute la prise connectée configurée de chaque mineur cible via le LAN. Les mineurs sans prise configurée sont ignorés. Associez une Prise off le soir à une Prise on le matin pour piloter la consommation en heures creuses ; chaque exécution est consignée.</string>
     <string name="sched_hint_tune">Cible de puissance en heures pleines : applique un préréglage fixe fréquence/tension. Utilisez un préréglage basse consommation au début du tarif de pointe et votre préréglage normal à la fin. Seuls les firmwares qui acceptent ces valeurs (p. ex. Bitaxe/AxeOS) l\'exécutent ; les autres sont ignorés. Utilisez des valeurs acceptées par le tuner de votre mineur.</string>
     <string name="sched_hint_default">Heures pleines : programmez Pause au début de votre tarif de pointe et Reprendre à la fin (la pause requiert un appareil compatible). Les appareils non compatibles sont ignorés avec un motif ; chaque exécution est consignée dans le journal d\'audit.</string>
+    <string name="sched_action_power_mode">Mode de puissance</string>
+    <string name="sched_hint_mode">Silencieux / Normal / Boost sont résolus à l\'exécution selon la liste de fréquences approuvées de chaque mineur : une seule planification convient à des modèles différents. Les mineurs sans options approuvées sont ignorés.</string>
 </resources>

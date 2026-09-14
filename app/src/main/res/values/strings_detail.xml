@@ -157,6 +157,17 @@
     <string name="det_cost_note">Estimates only: excludes pool and transaction fees; difficulty and price move daily.</string>
     <string name="det_paid_label">What you paid (%1$s, optional)</string>
 
+    <!-- Power modes (Quiet / Normal / Boost) -->
+    <string name="det_mode_header">POWER MODE</string>
+    <string name="det_mode_quiet">Quiet</string>
+    <string name="det_mode_normal">Normal</string>
+    <string name="det_mode_boost">Boost</string>
+    <string name="det_mode_hint">Quiet = lowest approved frequency (cooler, quieter fan). Normal = stock. Boost = two approved steps above stock at stock voltage. All within the firmware\'s own lists.</string>
+    <string name="det_mode_custom_hint">Running a custom tune. Pick a mode to return to an approved preset, or keep your own values.</string>
+    <string name="det_quiet_night">Quiet at night</string>
+    <string name="det_quiet_night_hint">Quiet from 22:00, back to Normal at 07:00, every day. Times are editable under Advanced → Schedules.</string>
+    <string name="det_act_mode">Switching to %1$s</string>
+
     <!-- Pool dialog -->
     <string name="det_pool_title">Change primary pool</string>
     <string name="det_pool_current">Current: %1$s:%2$d</string>

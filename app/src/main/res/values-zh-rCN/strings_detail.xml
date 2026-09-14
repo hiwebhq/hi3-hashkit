@@ -260,4 +260,15 @@
     <string name="det_share_days_value">%1$d 天</string>
     <string name="det_share_tagline">在家挖矿，诚实计量 · Hi3 Hashkit</string>
     <string name="det_maint_nudge">🧹 与一个月前相比，在相同功耗下芯片温度上升了 %1$s——该清理风扇和散热片了。</string>
+
+    <!-- Power modes (Quiet / Normal / Boost) -->
+    <string name="det_mode_header">功耗模式</string>
+    <string name="det_mode_quiet">安静</string>
+    <string name="det_mode_normal">正常</string>
+    <string name="det_mode_boost">加速</string>
+    <string name="det_mode_hint">安静 = 最低的批准频率（更凉、风扇更静）。正常 = 出厂值。加速 = 在出厂电压下高两档批准频率。均在固件自带列表范围内。</string>
+    <string name="det_mode_custom_hint">当前为自定义调校。选择一个模式可回到批准的预设，或保留你自己的值。</string>
+    <string name="det_quiet_night">夜间安静</string>
+    <string name="det_quiet_night_hint">每天 22:00 切换为安静，07:00 恢复正常。时间可在 高级 → 计划 中修改。</string>
+    <string name="det_act_mode">正在切换到%1$s</string>
 </resources>

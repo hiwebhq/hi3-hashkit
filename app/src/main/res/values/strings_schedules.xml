@@ -21,6 +21,8 @@
     <string name="sched_action_plug_off">Plug off</string>
     <string name="sched_action_plug_on">Plug on</string>
     <string name="sched_action_tune_preset">Tune preset</string>
+    <string name="sched_action_power_mode">Power mode</string>
+    <string name="sched_hint_mode">Quiet / Normal / Boost resolve against each miner\'s own firmware-approved frequency list at run time, so one schedule fits mixed models. Miners without approved options are skipped.</string>
     <string name="sched_stratum_url">Stratum URL</string>
     <string name="sched_port">Port</string>
     <string name="sched_worker">Worker</string>

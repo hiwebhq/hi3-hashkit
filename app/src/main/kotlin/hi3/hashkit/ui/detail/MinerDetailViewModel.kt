@@ -32,6 +32,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.time.Instant
 import javax.inject.Inject
 
@@ -73,6 +75,7 @@ class MinerDetailViewModel @Inject constructor(
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     private val personalBestDao: hi3.hashkit.data.db.PersonalBestDao,
     private val statsCardRenderer: hi3.hashkit.ui.share.StatsCardRenderer,
+    private val scheduleDao: hi3.hashkit.data.db.ScheduleDao,
     alertDao: AlertDao,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
@@ -125,6 +128,64 @@ class MinerDetailViewModel @Inject constructor(
         personalBestDao.observeForMiner(minerId, BESTS_SHOWN)
             .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
 
+
+    /** True while this miner has its pair of "Quiet at night" schedules. */
+    val quietNightEnabled: StateFlow<Boolean> = scheduleDao.observeAll()
+        .map { all -> all.any { it.isQuietNightFor(minerId) } }
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), false)
+
+    fun applyPowerMode(mode: hi3.hashkit.domain.tune.PowerMode) = runAction(
+        appContext.getString(R.string.det_act_mode, modeLabel(mode)),
+    ) {
+        controlRepository.applyPowerMode(it, mode).also { r ->
+            if (r is ActionResult.Success) hasRollback.value = true
+        }
+    }
+
+    /**
+     * Toggle the two per-miner schedules behind "Quiet at night": QUIET at [QUIET_NIGHT_START]
+     * and NORMAL at [QUIET_NIGHT_END], every day. They are ordinary schedules — editable or
+     * deletable under Advanced → Schedules — tagged by label so this switch can find them.
+     */
+    fun setQuietNight(enabled: Boolean) {
+        viewModelScope.launch {
+            val existing = scheduleDao.observeAll().first().filter { it.isQuietNightFor(minerId) }
+            existing.forEach { scheduleDao.delete(it.id) }
+            if (!enabled) return@launch
+            val name = repository.observeMinerEntity(minerId).first()?.name ?: return@launch
+            listOf(
+                hi3.hashkit.domain.tune.PowerMode.QUIET to QUIET_NIGHT_START,
+                hi3.hashkit.domain.tune.PowerMode.NORMAL to QUIET_NIGHT_END,
+            ).forEach { (mode, minuteOfDay) ->
+                scheduleDao.upsert(
+                    hi3.hashkit.data.db.ScheduleEntity(
+                        enabled = true,
+                        label = "$QUIET_NIGHT_LABEL $name",
+                        actionType = "power_mode",
+                        paramsJson = buildJsonObject { put("mode", mode.name) }.toString(),
+                        targetMinerIdsCsv = minerId.toString(),
+                        targetGroup = null,
+                        timeMinutesOfDay = minuteOfDay,
+                        daysOfWeekCsv = java.time.DayOfWeek.entries.joinToString(",") { it.name },
+                        minIntervalMinutes = QUIET_NIGHT_MIN_INTERVAL_MIN,
+                        lastRunAtEpochMs = null,
+                        lastResult = null,
+                    )
+                )
+            }
+        }
+    }
+
+    private fun hi3.hashkit.data.db.ScheduleEntity.isQuietNightFor(id: Long): Boolean =
+        actionType == "power_mode" && label.startsWith(QUIET_NIGHT_LABEL) && targetMinerIdsCsv == id.toString()
+
+    private fun modeLabel(mode: hi3.hashkit.domain.tune.PowerMode): String = appContext.getString(
+        when (mode) {
+            hi3.hashkit.domain.tune.PowerMode.QUIET -> R.string.det_mode_quiet
+            hi3.hashkit.domain.tune.PowerMode.NORMAL -> R.string.det_mode_normal
+            hi3.hashkit.domain.tune.PowerMode.BOOST -> R.string.det_mode_boost
+        },
+    )
 
     /** Dust nudge for this miner (null when temps haven't crept up, or history is too short). */
     val maintenanceFinding: StateFlow<hi3.hashkit.domain.analysis.MaintenanceAdvisor.Finding?> =
@@ -424,6 +485,12 @@ class MinerDetailViewModel @Inject constructor(
         const val HISTORY_WINDOW_MS = 3_600_000L
         private const val BESTS_SHOWN = 5
         private const val DAY_MS = 86_400_000L
+        /** Label prefix that marks the auto-created "Quiet at night" schedule pair. */
+        const val QUIET_NIGHT_LABEL = "Quiet at night:"
+        /** 22:00 → Quiet, 07:00 → Normal. Adjustable afterwards under Advanced → Schedules. */
+        const val QUIET_NIGHT_START = 22 * 60
+        const val QUIET_NIGHT_END = 7 * 60
+        private const val QUIET_NIGHT_MIN_INTERVAL_MIN = 60
 
         /** Sentinel: saveMeta callers that don't touch the farm leave the assignment as-is. */
         const val FARM_UNCHANGED = Long.MIN_VALUE

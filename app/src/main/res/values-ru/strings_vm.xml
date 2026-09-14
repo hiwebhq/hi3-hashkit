@@ -124,4 +124,7 @@
     <string name="bulk_resume">Возобновить хеширование</string>
     <string name="bulk_tune">Тюнинг на %1$d MHz @ %2$d mV</string>
 
+    <string name="bulk_mode_quiet">Тихий режим</string>
+    <string name="bulk_mode_normal">Обычный режим</string>
+    <string name="bulk_mode_boost">Режим буст</string>
 </resources>

@@ -259,4 +259,15 @@
     <string name="det_share_days_value">%1$d jours</string>
     <string name="det_share_tagline">Minage à la maison, mesuré honnêtement · Hi3 Hashkit</string>
     <string name="det_maint_nudge">🧹 La température de la puce a augmenté de %1$s par rapport au mois dernier à consommation égale — il est temps de nettoyer le ventilateur et le dissipateur.</string>
+
+    <!-- Power modes (Quiet / Normal / Boost) -->
+    <string name="det_mode_header">MODE DE PUISSANCE</string>
+    <string name="det_mode_quiet">Silencieux</string>
+    <string name="det_mode_normal">Normal</string>
+    <string name="det_mode_boost">Boost</string>
+    <string name="det_mode_hint">Silencieux = fréquence approuvée la plus basse (plus frais, ventilateur plus discret). Normal = d\'usine. Boost = deux crans approuvés au-dessus, à la tension d\'usine. Toujours dans les listes du firmware.</string>
+    <string name="det_mode_custom_hint">Réglage personnalisé en cours. Choisis un mode pour revenir à un préréglage approuvé, ou garde tes valeurs.</string>
+    <string name="det_quiet_night">Silencieux la nuit</string>
+    <string name="det_quiet_night_hint">Silencieux dès 22:00, retour en Normal à 07:00, chaque jour. Horaires modifiables dans Avancé → Planifications.</string>
+    <string name="det_act_mode">Passage en %1$s</string>
 </resources>

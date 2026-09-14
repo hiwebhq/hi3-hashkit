@@ -126,4 +126,7 @@
     <string name="bulk_resume">恢复挖矿</string>
     <string name="bulk_tune">调优至 %1$d MHz @ %2$d mV</string>
 
+    <string name="bulk_mode_quiet">安静模式</string>
+    <string name="bulk_mode_normal">正常模式</string>
+    <string name="bulk_mode_boost">加速模式</string>
 </resources>
