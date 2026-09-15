@@ -27,7 +27,7 @@ All captures below use the app's built-in demo mode (synthetic miners).
 |---|---|---|
 | <img src="docs/screenshots/05-energy-profit.png" width="200" alt="Per-miner energy cost, efficiency ranking and revenue vs cost"> | <img src="docs/screenshots/06-heatmap.png" width="200" alt="Rack layout colored by live chip temperature"> | <img src="docs/screenshots/07-watchdog-rules.png" width="200" alt="Watchdog automation rule with sustained condition window"> |
 
-🎬 [Watch the 40-second app tour](docs/media/hashkit-tour.mp4)
+🎬 [Watch the 2-minute app overview](docs/media/hashkit-overview.mp4) · [40-second quick tour](docs/media/hashkit-tour.mp4)
 
 ## Key features
 
