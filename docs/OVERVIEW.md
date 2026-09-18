@@ -9,7 +9,7 @@ calculated, or estimated — so an estimate is never dressed up as a fact.
 **Android 8.0+. Sideload and go. Speaks 7 languages** — English, Spanish, Chinese
 (Simplified), Russian, German, French and Brazilian Portuguese, switchable per-app.
 
-Current release: **v0.79.4**.
+Current release: **v0.80.0**.
 
 ## 🏠 Made for the Home Miner Too
 
@@ -148,7 +148,7 @@ on real hardware; 🟡 same firmware/API, pending confirmation on that exact mod
 | **Canaan Avalon Nano 3** ✅ — Nano 3S, Avalon Q, Mini 3 🟡 | Full (temps, fan, wall watts) | Pause/Resume, Reboot |
 | **Braiins BMM 100** (Braiins OS) ✅ | Full (no power sensor) | Pause/Resume |
 | **WhatsMiner M2X–M6X** (BTMiner) 🟡 | Hashrate, shares, pool, chip temp, fans, power\* | — (encrypted token API) |
-| **FutureBit Apollo BTC** (Gen1/Gen2) 🟡 | Hashrate, shares, uptime, pool | — |
+| **FutureBit Apollo II** (Apollo OS, GraphQL) 🟡 | Hashrate, power, board temps, fans, shares, pool | — |
 | **Generic cgminer** (older Antminers, ePIC, Hiveon, and the long tail) 🟡 | Basic monitoring | — |
 
 \* WhatsMiner is implemented against MicroBT's documented BTMiner API and is compat-gated

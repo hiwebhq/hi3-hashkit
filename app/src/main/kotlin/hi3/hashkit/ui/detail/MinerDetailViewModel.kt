@@ -293,6 +293,11 @@ class MinerDetailViewModel @Inject constructor(
             repository.setCredential(minerId, secret)
             lastActionMessage.value = if (secret.isBlank()) appContext.getString(R.string.det_msg_credential_cleared)
             else appContext.getString(R.string.det_msg_credential_saved)
+            // Firmware that needs the credential to read stats (Apollo OS) comes online
+            // right away instead of waiting for the next scheduled poll.
+            repository.observeMinerEntity(minerId).first()?.let { entity ->
+                runCatching { repository.pollMiner(entity) }
+            }
         }
     }
 
@@ -507,7 +512,7 @@ class MinerDetailViewModel @Inject constructor(
     private fun redact(body: String?): String? {
         if (body == null) return null
         return body.replace(
-            Regex("\"([^\"]*(?:User|user|pass|Pass|ssid|SSID)[^\"]*)\"\\s*:\\s*\"[^\"]*\""),
+            Regex("\"([^\"]*(?:User|user|pass|Pass|ssid|SSID|Token|token)[^\"]*)\"\\s*:\\s*\"[^\"]*\""),
             "\"$1\": \"[redacted]\"",
         )
     }

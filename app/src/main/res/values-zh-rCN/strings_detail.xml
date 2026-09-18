@@ -90,9 +90,11 @@
     <string name="det_login_label_totp">TOTP 密钥（base32）</string>
     <string name="det_login_label_bitmain">Root 网页密码</string>
     <string name="det_login_label_vnish">VNish 网页密码</string>
+    <string name="det_login_label_apollo">Apollo 控制面板密码</string>
     <string name="det_login_saved_hint">已保存一条凭据（加密）。输入新凭据以替换，或将其清除。</string>
     <string name="det_login_totp_hint">仅在设备启用了 OTP 时需要：输入注册二维码中的 TOTP 密钥（otpauth://…secret=…）以启用调优/重启。仅加密保存在本设备上。</string>
     <string name="det_login_password_hint">输入矿机的网页密码以启用控制功能。仅加密保存在本设备上。</string>
+    <string name="det_login_apollo_hint">Apollo OS 即使读取统计数据也需要其控制面板密码。输入后即可启用监控。仅加密保存在本设备上。</string>
     <string name="det_clear">清除</string>
 
     <!-- Controls (card + autotuner entry) -->

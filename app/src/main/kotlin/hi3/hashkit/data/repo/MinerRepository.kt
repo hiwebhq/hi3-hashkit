@@ -266,7 +266,14 @@ class MinerRepository @Inject constructor(
             ?: return offlineSample("Adapter ${entity.adapterType} not installed").also {
                 telemetryDao.insert(it.toEntity(entity.id))
             }
-        return when (val result = adapter.getTelemetry(MinerHost(entity.host, entity.port))) {
+        // The saved admin credential rides along: most adapters ignore it, but Apollo OS
+        // needs its dashboard password even to read stats.
+        val host = MinerHost(
+            entity.host,
+            entity.port,
+            entity.credentialEnc?.let { runCatching { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }.getOrNull() },
+        )
+        return when (val result = adapter.getTelemetry(host)) {
             is TelemetryResult.Success -> {
                 val now = System.currentTimeMillis()
                 val telemetry = augmentWithPlugPower(entity, result.telemetry)

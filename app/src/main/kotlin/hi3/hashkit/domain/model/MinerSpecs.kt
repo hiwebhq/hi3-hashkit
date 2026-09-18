@@ -77,6 +77,9 @@ object MinerSpecs {
         "nano 3" to Spec(4_000.0, 140.0),
         "nano3" to Spec(4_000.0, 140.0),
         // --- FutureBit Apollo ---
+        // Apollo II (2024, Apollo OS): ~8 TH/s in balanced mode; eco/turbo differ. Listed
+        // before the bare "apollo" key because specFor() matches by substring, first wins.
+        "apollo ii" to Spec(8_000.0, 300.0),
         "apollo" to Spec(3_800.0, 200.0),
         // --- Braiins Mini Miner ---
         "bmm 101" to Spec(1_000.0, 40.0),

@@ -529,10 +529,13 @@ fun MinerDetailScreen(
             val model = miner.identity.model ?: ""
             val isNerdQaxe = model.contains("NerdQAxe", ignoreCase = true) ||
                 model.contains("NerdAxe", ignoreCase = true)
-            val needsLogin = "vnish" in fw || "bitmain" in fw || isNerdQaxe
+            // Apollo OS needs its dashboard password even to read stats, not just for controls.
+            val isApollo = "apollo" in fw
+            val needsLogin = "vnish" in fw || "bitmain" in fw || isNerdQaxe || isApollo
             val loginLabel = when {
                 isNerdQaxe -> stringResource(R.string.det_login_label_totp)
                 "bitmain" in fw -> stringResource(R.string.det_login_label_bitmain)
+                isApollo -> stringResource(R.string.det_login_label_apollo)
                 else -> stringResource(R.string.det_login_label_vnish)
             }
             if (needsLogin) {
@@ -543,6 +546,7 @@ fun MinerDetailScreen(
                         when {
                             credSet -> stringResource(R.string.det_login_saved_hint)
                             isNerdQaxe -> stringResource(R.string.det_login_totp_hint)
+                            isApollo -> stringResource(R.string.det_login_apollo_hint)
                             else -> stringResource(R.string.det_login_password_hint)
                         },
                         style = MaterialTheme.typography.labelSmall,

@@ -90,9 +90,11 @@
     <string name="det_login_label_totp">TOTP-Secret (Base32)</string>
     <string name="det_login_label_bitmain">Root-Web-Passwort</string>
     <string name="det_login_label_vnish">VNish-Web-Passwort</string>
+    <string name="det_login_label_apollo">Apollo-Dashboard-Passwort</string>
     <string name="det_login_saved_hint">Ein Zugang ist gespeichert (verschlüsselt). Gib einen neuen ein, um ihn zu ersetzen, oder lösche ihn.</string>
     <string name="det_login_totp_hint">Nur nötig, wenn OTP auf dem Gerät aktiv ist: Gib das TOTP-Secret aus dem Registrierungs-QR ein (otpauth://…secret=…), um Tuning/Neustart freizuschalten. Wird nur auf diesem Gerät verschlüsselt gespeichert.</string>
     <string name="det_login_password_hint">Gib das Web-Passwort des Miners ein, um die Steuerung freizuschalten. Wird nur auf diesem Gerät verschlüsselt gespeichert.</string>
+    <string name="det_login_apollo_hint">Apollo OS benötigt sein Dashboard-Passwort schon zum Lesen der Statistiken. Gib es ein, um die Überwachung zu aktivieren. Wird nur auf diesem Gerät verschlüsselt gespeichert.</string>
     <string name="det_clear">Löschen</string>
 
     <!-- Controls (card + autotuner entry) -->

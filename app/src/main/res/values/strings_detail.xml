@@ -123,9 +123,11 @@
     <string name="det_login_label_totp">TOTP secret (base32)</string>
     <string name="det_login_label_bitmain">Root web password</string>
     <string name="det_login_label_vnish">VNish web password</string>
+    <string name="det_login_label_apollo">Apollo dashboard password</string>
     <string name="det_login_saved_hint">A credential is saved (encrypted). Enter a new one to replace it, or clear it.</string>
     <string name="det_login_totp_hint">Only needed if OTP is enabled on the device: enter the TOTP secret from its enrollment QR (otpauth://…secret=…) to enable tune/reboot. Stored encrypted on this device only.</string>
     <string name="det_login_password_hint">Enter the miner\'s web password to enable controls. Stored encrypted on this device only.</string>
+    <string name="det_login_apollo_hint">Apollo OS needs its dashboard password even to read stats. Enter it to enable monitoring. Stored encrypted on this device only.</string>
     <string name="det_clear">Clear</string>
 
     <!-- Controls (card + autotuner entry) -->

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.80.0
+
+- **FutureBit Apollo II / Apollo OS support.** Apollo OS does not expose the cgminer API on
+  the LAN (port 4028 refuses connections by default), so these miners were invisible to the
+  scan. New adapter talks to the Apollo's own GraphQL dashboard API on port 5000: discovery
+  works without credentials (verified live against an Apollo II), and monitoring — hashrate,
+  board power and efficiency, board temps, fan RPM, chip clock, shares, uptime, pool,
+  per-board readings — unlocks once the dashboard password is saved under *Miner login*
+  (stored encrypted; polls now carry the saved credential). Read-only: Apollo's restart /
+  pause / mode / pool mutations are left unverified.
+- Miner login section now appears for Apollo OS miners, with its own hint, in all 7 languages.
+- Saving a miner credential triggers an immediate re-poll.
+- Raw-response viewer also redacts `*token*` fields.
+
 ## 0.79.4
 
 - CI: GitHub Actions refreshed (checkout v7, cache v6, upload-artifact v7, gradle/actions v6,

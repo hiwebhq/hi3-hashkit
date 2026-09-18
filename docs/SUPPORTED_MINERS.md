@@ -34,7 +34,8 @@ need the exact unit that was tested.
 | Canaan Avalon Mini 3 | Canaan · CGMiner 4028 | Full (like Nano 3) | **Pause/Resume, Reboot** | 🟡 |
 | Braiins BMM 100 | Braiins OS / BOSer · CGMiner 4028 | Full (no power sensor → power unavailable) | **Pause/Resume** | ✅ |
 | WhatsMiner M2X/M3X/M5X/M6X | MicroBT BTMiner · 4028 `{"cmd":…}` | Hashrate, shares, uptime, pool, chip temp, fans, power (where reported) | — | 🟡 |
-| FutureBit Apollo BTC (Gen1/Gen2) | cgminer 4028 (via generic path) | Hashrate, shares, uptime, pool | — (HTTP dashboard API unverified) | 🟡 |
+| FutureBit Apollo II / Apollo BTC on Apollo OS | Apollo OS GraphQL on 5000 (`/api/graphql`, dashboard password) | Hashrate, power, efficiency, board temps, fans, chip clock, shares, uptime, pool, per-board | — (restart/pause/mode exist in the API, unverified) | 🟡 |
+| FutureBit Apollo BTC (older firmware with cgminer API on) | cgminer 4028 (via generic path) | Hashrate, shares, uptime, pool | — | 🟡 |
 | Generic cgminer (long tail: older Antminers, ePIC, Hiveon…) | cgminer 4028 | Hashrate, shares, uptime, pool | — | 🟡 |
 | Demo | Synthetic | Full (demo mode only) | — | — |
 
@@ -49,8 +50,15 @@ need the exact unit that was tested.
 - **Anything else that speaks the standard cgminer API on 4028** (older Antminers, ePIC,
   Hiveon, …) gets basic monitoring via the generic fallback, shown as
   "Generic ASIC (cgminer)". Controls stay absent for WhatsMiner (encrypted admin-token
-  API) and FutureBit (HTTP dashboard API unverified) — nothing is claimed until it's
+  API) and FutureBit (Apollo OS control mutations not yet exercised) — nothing is claimed until it's
   verified on hardware or against the vendor's documented API.
+- **FutureBit Apollo (Apollo OS):** the Apollo II does **not** expose the cgminer API on the
+  LAN (port 4028 refuses connections unless "API allow" is switched on in its dashboard), so
+  it is discovered through its own GraphQL API on port 5000. Discovery needs no credentials
+  (verified live on an Apollo II, 2026-09-18), but Apollo OS gates every stat behind a login,
+  so open the miner in Hashkit and save its **dashboard password** under *Miner login* —
+  until then the miner shows OFFLINE with that reason. The stats parser follows the
+  introspected schema and is pending confirmation against a logged-in capture.
 - **Expected hashrate / attainment %** is seeded from a built-in model spec registry
   (public spec-sheet nominals) when neither the device nor the user provides one.
 - **Per-chip / per-chain health** is surfaced for **Antminer-class** miners (stock Bitmain,

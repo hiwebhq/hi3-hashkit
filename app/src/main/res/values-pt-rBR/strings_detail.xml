@@ -90,9 +90,11 @@
     <string name="det_login_label_totp">Segredo TOTP (base32)</string>
     <string name="det_login_label_bitmain">Senha web do root</string>
     <string name="det_login_label_vnish">Senha web do VNish</string>
+    <string name="det_login_label_apollo">Senha do painel do Apollo</string>
     <string name="det_login_saved_hint">Há uma credencial salva (criptografada). Digite uma nova para substituir, ou limpe-a.</string>
     <string name="det_login_totp_hint">Só é necessário se o OTP estiver ativado no aparelho: digite o segredo TOTP do QR de cadastro (otpauth://…secret=…) para habilitar ajuste/reinício. Armazenado criptografado apenas neste aparelho.</string>
     <string name="det_login_password_hint">Digite a senha web do minerador para habilitar os controles. Armazenada criptografada apenas neste aparelho.</string>
+    <string name="det_login_apollo_hint">O Apollo OS precisa da senha do painel até para ler as estatísticas. Digite-a para habilitar o monitoramento. Armazenada criptografada apenas neste aparelho.</string>
     <string name="det_clear">Limpar</string>
 
     <!-- Controls (card + autotuner entry) -->

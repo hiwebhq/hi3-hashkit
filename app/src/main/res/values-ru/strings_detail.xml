@@ -89,9 +89,11 @@
     <string name="det_login_label_totp">Секрет TOTP (base32)</string>
     <string name="det_login_label_bitmain">Пароль веб-интерфейса root</string>
     <string name="det_login_label_vnish">Пароль веб-интерфейса VNish</string>
+    <string name="det_login_label_apollo">Пароль панели Apollo</string>
     <string name="det_login_saved_hint">Учётные данные сохранены (зашифрованы). Введите новые, чтобы заменить, или очистите.</string>
     <string name="det_login_totp_hint">Нужно только если на устройстве включён OTP: введите секрет TOTP из QR регистрации (otpauth://…secret=…), чтобы включить тюнинг/перезагрузку. Хранится в зашифрованном виде только на этом устройстве.</string>
     <string name="det_login_password_hint">Введите веб-пароль майнера, чтобы включить управление. Хранится в зашифрованном виде только на этом устройстве.</string>
+    <string name="det_login_apollo_hint">Apollo OS требует пароль своей панели даже для чтения статистики. Введите его, чтобы включить мониторинг. Хранится в зашифрованном виде только на этом устройстве.</string>
     <string name="det_clear">Очистить</string>
 
     <!-- Controls (card + autotuner entry) -->

@@ -1,6 +1,6 @@
 # Hi3 Hashkit
 
-**Current version: 0.79.4**
+**Current version: 0.80.0**
 
 Hi3 Hashkit is a privacy-first, local-first Android app for monitoring and safely
 controlling your Bitcoin miners. It talks only to the miners on your own network — over
@@ -126,7 +126,8 @@ unverified controls are shown as unsupported, never guessed. Full matrix in
 | VNish (Antminer S21 Pro forks) | Full incl. **wall power** & efficiency | Reboot, Pause/Resume |
 | LuxOS | Basic (hashrate, shares, uptime, pool) | Pause/Resume |
 | WhatsMiner (MicroBT) | Hashrate, shares, temps, fans, power (compat) | — (encrypted token API unverified) |
-| FutureBit / generic cgminer (long tail) | Basic (hashrate, shares, uptime, pool) | — (unverified) |
+| FutureBit Apollo II / Apollo OS (GraphQL, dashboard password) | Hashrate, power, temps, fans, shares, pool | — (unverified) |
+| Generic cgminer (long tail) | Basic (hashrate, shares, uptime, pool) | — (unverified) |
 | Demo | Synthetic (demo mode only) | — |
 
 Miners with no power sensor (e.g. stock Bitmain) get **measured wall power** automatically

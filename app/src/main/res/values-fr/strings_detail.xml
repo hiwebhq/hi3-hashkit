@@ -89,9 +89,11 @@
     <string name="det_login_label_totp">Secret TOTP (base32)</string>
     <string name="det_login_label_bitmain">Mot de passe web root</string>
     <string name="det_login_label_vnish">Mot de passe web VNish</string>
+    <string name="det_login_label_apollo">Mot de passe du tableau de bord Apollo</string>
     <string name="det_login_saved_hint">Un identifiant est enregistré (chiffré). Saisissez-en un nouveau pour le remplacer, ou effacez-le.</string>
     <string name="det_login_totp_hint">Requis uniquement si l\'OTP est activé sur l\'appareil : saisissez le secret TOTP de son QR d\'enrôlement (otpauth://…secret=…) pour activer réglage/redémarrage. Stocké chiffré sur cet appareil uniquement.</string>
     <string name="det_login_password_hint">Saisissez le mot de passe web du mineur pour activer les contrôles. Stocké chiffré sur cet appareil uniquement.</string>
+    <string name="det_login_apollo_hint">Apollo OS exige le mot de passe de son tableau de bord même pour lire les statistiques. Saisissez-le pour activer la surveillance. Stocké chiffré sur cet appareil uniquement.</string>
     <string name="det_clear">Effacer</string>
 
     <!-- Controls (card + autotuner entry) -->

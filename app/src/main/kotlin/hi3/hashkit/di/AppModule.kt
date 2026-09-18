@@ -126,6 +126,11 @@ abstract class AdapterModule {
     @IntoSet
     abstract fun whatsminer(adapter: hi3.hashkit.adapters.cgminer.WhatsMinerAdapter): MinerAdapter
 
+    // FutureBit Apollo OS: GraphQL on 5000 (no cgminer API on the LAN by default).
+    @Binds
+    @IntoSet
+    abstract fun futurebitApollo(adapter: hi3.hashkit.adapters.futurebit.ApolloAdapter): MinerAdapter
+
     @Binds
     @IntoSet
     abstract fun demo(adapter: DemoMinerAdapter): MinerAdapter
