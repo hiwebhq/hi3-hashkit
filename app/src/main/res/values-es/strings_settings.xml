@@ -209,4 +209,12 @@
     <string name="set_qr_not_bare_address">Ese QR no es una dirección de pago simple (parece un URI bitcoin:). Escanea la dirección sola.</string>
     <string name="set_scan_prompt">Escanea el QR de tu dirección de pago</string>
     <string name="set_scan_qr_cd">Escanear código QR</string>
+    <string name="set_section_plugs">ENCHUFES INTELIGENTES</string>
+    <string name="set_kasa_hint">Los enchufes Kasa KP125M / EP25 y Tapo necesitan tu cuenta TP-Link para el inicio de sesión local (los Kasa antiguos como el KP115 no). Solo se usa en tu LAN; no se envía nada a TP-Link.</string>
+    <string name="set_kasa_email">Correo de la cuenta TP-Link</string>
+    <string name="set_kasa_password_hint">Contraseña de la cuenta TP-Link</string>
+    <string name="set_kasa_password_saved">Contraseña TP-Link (guardada — escribe para reemplazar, vacío para borrar)</string>
+    <string name="set_kasa_save_password">Guardar contraseña</string>
+    <string name="set_kasa_replace_password">Reemplazar contraseña</string>
+    <string name="set_kasa_disclosure">La contraseña se guarda cifrada con el Android Keystore y solo se usa para abrir una sesión cifrada con los enchufes de tu red local.</string>
 </resources>

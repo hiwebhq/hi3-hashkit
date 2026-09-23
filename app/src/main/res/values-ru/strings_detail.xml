@@ -289,4 +289,11 @@
     <string name="det_fw_keep_powered">Не выключайте майнер и Wi-Fi.</string>
     <string name="det_fw_done">Обновлено — майнер теперь на %1$s 🎉</string>
     <string name="det_fw_failed">Ошибка обновления: %1$s</string>
+    <string name="det_metric_wall_power">Мощность в розетке</string>
+    <string name="det_metric_board_power">Мощность платы</string>
+    <string name="det_metric_energy_today">Энергия за сегодня</string>
+    <string name="det_metric_energy_total">Итого по розетке</string>
+    <string name="det_plug_find">Найти розетки Kasa</string>
+    <string name="det_plug_discovering">Поиск…</string>
+    <string name="det_plug_found_none">Ни одна розетка Kasa в этой сети не ответила.</string>
 </resources>

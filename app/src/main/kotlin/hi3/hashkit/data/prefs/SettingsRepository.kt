@@ -107,6 +107,10 @@ data class AppSettings(
     val mmpBaseUrl: String = "https://mmp.hi3.cc",
     /** Whether an (encrypted) MMP API key is stored; the key itself is never in this flow. */
     val mmpKeyConfigured: Boolean = false,
+    /** TP-Link (Kasa) account e-mail for KLAP-protocol plugs (KP125M etc.); password is encrypted separately. */
+    val kasaUsername: String = "",
+    /** Whether an (encrypted) TP-Link account password is stored. */
+    val kasaPasswordConfigured: Boolean = false,
     /** Show the solo-mining odds card on the dashboard. */
     val showSoloCard: Boolean = false,
     /** Show the profitability & energy card on the dashboard. */
@@ -228,6 +232,8 @@ class SettingsRepository @Inject constructor(
         val mmpEnabled = booleanPreferencesKey("mmp_enabled")
         val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
         val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
+        val kasaUsername = stringPreferencesKey("kasa_username")
+        val kasaPasswordEnc = stringPreferencesKey("kasa_password_encrypted")
         val showSoloCard = booleanPreferencesKey("show_solo_card")
         val showProfitCard = booleanPreferencesKey("show_profit_card")
         val appLockEnabled = booleanPreferencesKey("app_lock_enabled")
@@ -339,6 +345,8 @@ class SettingsRepository @Inject constructor(
             mmpEnabled = p[Keys.mmpEnabled] ?: false,
             mmpBaseUrl = p[Keys.mmpBaseUrl] ?: "https://mmp.hi3.cc",
             mmpKeyConfigured = !p[Keys.mmpApiKeyEncrypted].isNullOrBlank(),
+            kasaUsername = p[Keys.kasaUsername] ?: "",
+            kasaPasswordConfigured = !p[Keys.kasaPasswordEnc].isNullOrBlank(),
             showSoloCard = p[Keys.showSoloCard] ?: false,
             showProfitCard = p[Keys.showProfitCard] ?: false,
             appLockEnabled = p[Keys.appLockEnabled] ?: false,
@@ -455,6 +463,25 @@ class SettingsRepository @Inject constructor(
         context.dataStore.data.first()[Keys.mmpApiKeyEncrypted]
             ?.takeIf { it.isNotBlank() }
             ?.let { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }
+
+    /** TP-Link (Kasa) account e-mail used for the local KLAP login on newer Kasa plugs. */
+    suspend fun setKasaUsername(value: String) = edit { it[Keys.kasaUsername] = value.trim() }
+
+    /** Store the TP-Link account password encrypted with the Android Keystore; blank clears it. */
+    suspend fun setKasaPassword(plaintext: String) = edit {
+        val trimmed = plaintext.trim()
+        it[Keys.kasaPasswordEnc] =
+            if (trimmed.isEmpty()) "" else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed)
+    }
+
+    /** Decrypted TP-Link credentials for the plug client, or null when not configured. */
+    suspend fun kasaCredentials(): hi3.hashkit.integrations.plug.KasaCredentials? {
+        val p = context.dataStore.data.first()
+        val user = p[Keys.kasaUsername]?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val pw = p[Keys.kasaPasswordEnc]?.takeIf { it.isNotBlank() }
+            ?.let { runCatching { hi3.hashkit.core.KeystoreCrypto.decrypt(it) }.getOrNull() } ?: return null
+        return hi3.hashkit.integrations.plug.KasaCredentials(user, pw)
+    }
     suspend fun setAlertsEnabled(value: Boolean) = edit { it[Keys.alertsEnabled] = value }
     suspend fun setHashrateBelowPercent(value: Double) = edit { it[Keys.thHashBelowPct] = value }
     suspend fun setChipTempThreshold(value: Double) = edit { it[Keys.thChipTempC] = value }

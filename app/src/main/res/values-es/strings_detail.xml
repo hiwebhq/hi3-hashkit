@@ -288,4 +288,11 @@
     <string name="det_fw_keep_powered">Mantén el minero encendido y con Wi-Fi.</string>
     <string name="det_fw_done">Actualizado: el minero ahora ejecuta %1$s 🎉</string>
     <string name="det_fw_failed">Error al actualizar: %1$s</string>
+    <string name="det_metric_wall_power">Potencia en la pared</string>
+    <string name="det_metric_board_power">Potencia de la placa</string>
+    <string name="det_metric_energy_today">Energía hoy</string>
+    <string name="det_metric_energy_total">Total del enchufe</string>
+    <string name="det_plug_find">Buscar enchufes Kasa</string>
+    <string name="det_plug_discovering">Buscando…</string>
+    <string name="det_plug_found_none">Ningún enchufe Kasa respondió en esta red.</string>
 </resources>

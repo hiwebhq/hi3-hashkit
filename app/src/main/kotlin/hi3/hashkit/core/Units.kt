@@ -4,6 +4,9 @@ import java.util.Locale
 
 /** Formatting helpers. Canonical internal units: GH/s, W, °C, J/TH. */
 object Units {
+    /** Above 100 kWh the counter is shown without decimals. */
+    private const val WHOLE_KWH_FROM_WH = 100_000.0
+
 
     /** Format a hashrate given in GH/s with an auto-scaled unit (H/s..EH/s). */
     fun formatHashrate(ghs: Double?): String {
@@ -31,6 +34,14 @@ object Units {
             celsius == null -> "—"
             fahrenheit -> String.format(Locale.US, "%.0f°F", celsius * 9.0 / 5.0 + 32.0)
             else -> String.format(Locale.US, "%.0f°C", celsius)
+        }
+
+    /** Energy in kWh from a watt-hour counter (smart plug meters): 0.09 kWh, 7.08 kWh, 1234 kWh. */
+    fun formatEnergyKwh(wh: Double?): String =
+        when {
+            wh == null -> "—"
+            wh >= WHOLE_KWH_FROM_WH -> String.format(Locale.US, "%.0f kWh", wh / 1000.0)
+            else -> String.format(Locale.US, "%.2f kWh", wh / 1000.0)
         }
 
     fun formatEfficiency(jPerTh: Double?): String =

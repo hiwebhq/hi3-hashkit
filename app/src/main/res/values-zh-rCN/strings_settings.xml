@@ -210,4 +210,12 @@
     <string name="set_qr_not_bare_address">该 QR 不是纯收款地址（看起来是 bitcoin: URI）。请扫描纯地址。</string>
     <string name="set_scan_prompt">扫描你的收款地址 QR</string>
     <string name="set_scan_qr_cd">扫描 QR 码</string>
+    <string name="set_section_plugs">智能插座</string>
+    <string name="set_kasa_hint">Kasa KP125M / EP25 和 Tapo 插座的本地登录需要您的 TP-Link 账户（KP115 等旧款 Kasa 不需要）。仅在局域网内使用，不会向 TP-Link 发送任何数据。</string>
+    <string name="set_kasa_email">TP-Link 账户邮箱</string>
+    <string name="set_kasa_password_hint">TP-Link 账户密码</string>
+    <string name="set_kasa_password_saved">TP-Link 密码（已保存 — 输入以替换，留空以清除）</string>
+    <string name="set_kasa_save_password">保存密码</string>
+    <string name="set_kasa_replace_password">替换密码</string>
+    <string name="set_kasa_disclosure">密码通过 Android Keystore 加密保存，仅用于与本地网络中的插座建立加密会话。</string>
 </resources>

@@ -76,9 +76,30 @@ class MinerRepository @Inject constructor(
 
     private val lastRawPrune = java.util.concurrent.atomic.AtomicLong(0)
 
-    private companion object {
-        const val RAW_PRUNE_EVERY_MS = 10L * 60_000L
-        const val RAW_RETENTION_MS = 3_600_000L
+    companion object {
+        private const val RAW_PRUNE_EVERY_MS = 10L * 60_000L
+        private const val RAW_RETENTION_MS = 3_600_000L
+
+        /** Pure merge of a plug reading into a telemetry sample (see [augmentWithPlugPower]). */
+        fun applyPlugReading(
+            telemetry: MinerTelemetry,
+            reading: hi3.hashkit.integrations.plug.PlugReading,
+        ): MinerTelemetry {
+            val wall = reading.powerW?.takeIf { it > 0.0 }
+            val withEnergy = telemetry.copy(
+                plugEnergyTodayWh = reading.energyTodayWh ?: telemetry.plugEnergyTodayWh,
+                plugEnergyTotalWh = reading.energyTotalWh ?: telemetry.plugEnergyTotalWh,
+            )
+            if (wall == null) return withEnergy
+            return withEnergy.copy(
+                wallPowerW = Sourced.measured(wall),
+                boardPowerW = if (telemetry.powerW.value != null) telemetry.powerW else telemetry.boardPowerW,
+                powerW = Sourced.measured(wall),
+                efficiencyJTh = Sourced.calculated(
+                    hi3.hashkit.core.Units.efficiencyJTh(wall, telemetry.hashrateGhs.value)
+                ),
+            )
+        }
     }
 
     /** Keep only ~1h of raw API bodies (diagnostics, not history); throttled to every 10 min
@@ -302,27 +323,22 @@ class MinerRepository @Inject constructor(
     }
 
     /**
-     * When a miner doesn't report its own power (e.g. stock Bitmain) but has a *metering*
-     * smart plug configured, fill power from the plug's measured wall watts — turning
-     * estimated efficiency/cost into measured. Miners that report their own power are left
-     * untouched, and plugs that don't meter simply return null (no change).
+     * Enrich a poll with the miner's metering smart plug, when one is configured:
+     *  - wall watts become the effective [MinerTelemetry.powerW] (they include PSU and fan
+     *    losses, so efficiency, cost and fleet totals reflect what the meter bills), with
+     *    the miner's own figure preserved in [MinerTelemetry.boardPowerW];
+     *  - the plug's energy counters ride along for the detail card and history.
+     * Plugs that don't meter, or aren't reachable, simply return null (no change).
      */
     private suspend fun augmentWithPlugPower(entity: MinerEntity, telemetry: MinerTelemetry): MinerTelemetry {
-        if (telemetry.powerW.value != null) return telemetry
         val client = smartPlugClient ?: return telemetry
         val type = hi3.hashkit.integrations.plug.PlugType.fromName(entity.plugType) ?: return telemetry
-        val watts = client.readPowerW(
+        val reading = client.readMeter(
             hi3.hashkit.integrations.plug.SmartPlugClient.Plug(
                 type, entity.plugHost, entity.plugOnUrl, entity.plugOffUrl,
             )
         ) ?: return telemetry
-        if (watts <= 0.0) return telemetry
-        return telemetry.copy(
-            powerW = Sourced.measured(watts),
-            efficiencyJTh = Sourced.calculated(
-                hi3.hashkit.core.Units.efficiencyJTh(watts, telemetry.hashrateGhs.value)
-            ),
-        )
+        return applyPlugReading(telemetry, reading)
     }
 
     private fun offlineSample(@Suppress("UNUSED_PARAMETER") cause: String): MinerTelemetry =

@@ -65,10 +65,13 @@ need the exact unit that was tested.
   VNish) that report it — per-board hashrate, working/dead chip counts, hardware errors and
   hottest-chip temp — parsed only from fields present in real captures (`chain_rate/acn/acs/
   hw`, `temp_chip`).
-- **Measured wall power via metering plugs:** for a miner that doesn't report its own power
-  (e.g. **stock Bitmain**, **Braiins BMM 100**), configuring a metering smart plug
-  (Tasmota/Shelly/Kasa energy monitor) fills in **measured** watts and efficiency over the
-  LAN.
+- **Measured wall power via metering plugs:** a metering smart plug (Tasmota, Shelly, Kasa
+  KP115 over the legacy LAN protocol, Kasa KP125M/EP25/Tapo over KLAP with the TP-Link
+  account saved in Settings) supplies **measured** wall watts for any miner — they become the
+  effective power for efficiency, cost and fleet totals, with the miner's own board figure
+  kept alongside. The plug's energy counters (today / lifetime) are shown and stored too.
+  Miners that don't report power (e.g. **stock Bitmain**, **Braiins BMM 100**) get their
+  watts from the plug entirely.
 - **Bitaxe auto-tuner** sweeps only firmware-approved frequencies, under a chip-temp ceiling,
   and optimizes for efficiency or hashrate — no invented tune values; original setpoint is
   restored and applying the winner is a separate tap.

@@ -24,7 +24,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         TuneSweepEntity::class,
         PersonalBestEntity::class,
     ],
-    version = 20,
+    version = 21,
     exportSchema = true,
 )
 abstract class HashkitDatabase : RoomDatabase() {
@@ -45,6 +45,15 @@ abstract class HashkitDatabase : RoomDatabase() {
     companion object {
         /** v19 -> v20: personal_bests record book (additive). */
         @Suppress("MagicNumber") // schema versions are inherently literal
+        /** v20 -> v21: smart-plug metering columns on telemetry samples (additive). */
+        val MIGRATION_20_21 = object : Migration(20, 21) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                for (col in listOf("wallPowerW", "boardPowerW", "plugEnergyTodayWh", "plugEnergyTotalWh")) {
+                    db.execSQL("ALTER TABLE `telemetry_samples` ADD COLUMN `$col` REAL DEFAULT NULL")
+                }
+            }
+        }
+
         val MIGRATION_19_20 = object : Migration(19, 20) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(

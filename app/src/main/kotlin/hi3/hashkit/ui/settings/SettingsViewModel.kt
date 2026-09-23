@@ -160,6 +160,8 @@ class SettingsViewModel @Inject constructor(
     fun setMmpEnabled(v: Boolean) = viewModelScope.launch { repo.setMmpEnabled(v) }
     fun setMmpBaseUrl(v: String) = viewModelScope.launch { repo.setMmpBaseUrl(v) }
     fun setMmpApiKey(v: String) = viewModelScope.launch { repo.setMmpApiKey(v) }
+    fun setKasaUsername(v: String) = viewModelScope.launch { repo.setKasaUsername(v) }
+    fun setKasaPassword(v: String) = viewModelScope.launch { repo.setKasaPassword(v) }
     fun setHi3PoolEnabled(v: Boolean) = viewModelScope.launch { repo.setHi3PoolEnabled(v) }
     fun setHi3PoolBaseUrl(v: String) = viewModelScope.launch { repo.setHi3PoolBaseUrl(v) }
     fun setAutoBackupFolder(v: String) = viewModelScope.launch { repo.setAutoBackupFolderUri(v) }

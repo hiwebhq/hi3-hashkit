@@ -290,4 +290,11 @@
     <string name="det_fw_keep_powered">Mantenha o minerador ligado e no Wi-Fi.</string>
     <string name="det_fw_done">Atualizado — o minerador agora roda %1$s 🎉</string>
     <string name="det_fw_failed">Falha na atualização: %1$s</string>
+    <string name="det_metric_wall_power">Potência na tomada</string>
+    <string name="det_metric_board_power">Potência da placa</string>
+    <string name="det_metric_energy_today">Energia hoje</string>
+    <string name="det_metric_energy_total">Total da tomada</string>
+    <string name="det_plug_find">Encontrar tomadas Kasa</string>
+    <string name="det_plug_discovering">Procurando…</string>
+    <string name="det_plug_found_none">Nenhuma tomada Kasa respondeu nesta rede.</string>
 </resources>

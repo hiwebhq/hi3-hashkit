@@ -71,6 +71,7 @@ class MinerDetailViewModel @Inject constructor(
     private val pollingEngine: PollingEngine,
     private val exporter: hi3.hashkit.data.export.Exporter,
     private val smartPlugClient: hi3.hashkit.integrations.plug.SmartPlugClient,
+    private val kasaDiscovery: hi3.hashkit.integrations.plug.KasaDiscovery,
     private val maintenanceDao: hi3.hashkit.data.db.MaintenanceDao,
     private val farmRepository: hi3.hashkit.data.repo.FarmRepository,
     private val personalBestDao: hi3.hashkit.data.db.PersonalBestDao,
@@ -304,6 +305,19 @@ class MinerDetailViewModel @Inject constructor(
     fun saveSmartPlug(type: hi3.hashkit.integrations.plug.PlugType?, host: String, onUrl: String, offUrl: String, cutoffC: Double?) {
         viewModelScope.launch {
             repository.setSmartPlug(minerId, type?.name, host, onUrl, offUrl, cutoffC)
+        }
+    }
+
+    /** Kasa plugs found by the last broadcast discovery (null until the user asks). */
+    val foundPlugs = MutableStateFlow<List<hi3.hashkit.integrations.plug.KasaDiscovery.Found>?>(null)
+    val discoveringPlugs = MutableStateFlow(false)
+
+    fun discoverPlugs() {
+        if (discoveringPlugs.value) return
+        viewModelScope.launch {
+            discoveringPlugs.value = true
+            foundPlugs.value = runCatching { kasaDiscovery.discover() }.getOrDefault(emptyList())
+            discoveringPlugs.value = false
         }
     }
 

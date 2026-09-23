@@ -290,4 +290,11 @@
     <string name="det_fw_keep_powered">请保持矿机通电并连接 Wi-Fi。</string>
     <string name="det_fw_done">已更新——矿机现在运行 %1$s 🎉</string>
     <string name="det_fw_failed">更新失败：%1$s</string>
+    <string name="det_metric_wall_power">墙插功率</string>
+    <string name="det_metric_board_power">主板功率</string>
+    <string name="det_metric_energy_today">今日电量</string>
+    <string name="det_metric_energy_total">插座累计</string>
+    <string name="det_plug_find">查找 Kasa 插座</string>
+    <string name="det_plug_discovering">搜索中…</string>
+    <string name="det_plug_found_none">此网络中没有 Kasa 插座响应。</string>
 </resources>

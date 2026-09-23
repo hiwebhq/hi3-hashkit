@@ -117,6 +117,10 @@ fun MinerTelemetry.toEntity(minerId: Long): TelemetrySampleEntity = TelemetrySam
     poolPort = poolPort,
     workerName = workerName,
     usingFallbackPool = usingFallbackPool,
+    wallPowerW = wallPowerW.value,
+    boardPowerW = boardPowerW.value,
+    plugEnergyTodayWh = plugEnergyTodayWh,
+    plugEnergyTotalWh = plugEnergyTotalWh,
 )
 
 fun TelemetrySampleEntity.toDomain(): MinerTelemetry {
@@ -131,6 +135,10 @@ fun TelemetrySampleEntity.toDomain(): MinerTelemetry {
         expectedHashrateGhs = Sourced.reported(expectedHashrateGhs),
         powerW = sourced(powerW, powerSource),
         efficiencyJTh = Sourced.calculated(efficiencyJTh),
+        wallPowerW = Sourced.measured(wallPowerW),
+        boardPowerW = Sourced.reported(boardPowerW),
+        plugEnergyTodayWh = plugEnergyTodayWh,
+        plugEnergyTotalWh = plugEnergyTotalWh,
         chipTempC = Sourced.measured(chipTempC),
         vrTempC = Sourced.measured(vrTempC),
         fans = runCatching {

@@ -210,4 +210,12 @@
     <string name="set_qr_not_bare_address">Dieser QR ist keine reine Auszahlungsadresse (sieht nach einer bitcoin:-URI aus). Scanne die bloße Adresse.</string>
     <string name="set_scan_prompt">Scanne den QR deiner Auszahlungsadresse</string>
     <string name="set_scan_qr_cd">QR-Code scannen</string>
+    <string name="set_section_plugs">SMARTE STECKDOSEN</string>
+    <string name="set_kasa_hint">Kasa KP125M / EP25 und Tapo brauchen für die lokale Anmeldung dein TP-Link-Konto (ältere Kasa wie die KP115 nicht). Nur im LAN verwendet; nichts wird an TP-Link gesendet.</string>
+    <string name="set_kasa_email">TP-Link-Konto (E-Mail)</string>
+    <string name="set_kasa_password_hint">TP-Link-Kontopasswort</string>
+    <string name="set_kasa_password_saved">TP-Link-Passwort (gespeichert — eingeben zum Ersetzen, leer zum Löschen)</string>
+    <string name="set_kasa_save_password">Passwort speichern</string>
+    <string name="set_kasa_replace_password">Passwort ersetzen</string>
+    <string name="set_kasa_disclosure">Das Passwort wird mit dem Android Keystore verschlüsselt gespeichert und nur genutzt, um eine verschlüsselte Sitzung mit Steckdosen in deinem lokalen Netz zu öffnen.</string>
 </resources>

@@ -210,4 +210,12 @@
     <string name="set_qr_not_bare_address">Esse QR não é um endereço de pagamento puro (parece uma URI bitcoin:). Escaneie o endereço simples.</string>
     <string name="set_scan_prompt">Escaneie o QR do seu endereço de pagamento</string>
     <string name="set_scan_qr_cd">Escanear código QR</string>
+    <string name="set_section_plugs">TOMADAS INTELIGENTES</string>
+    <string name="set_kasa_hint">Tomadas Kasa KP125M / EP25 e Tapo precisam da sua conta TP-Link para o login local (Kasa antigas como a KP115 não). Usado apenas na sua LAN; nada é enviado à TP-Link.</string>
+    <string name="set_kasa_email">E-mail da conta TP-Link</string>
+    <string name="set_kasa_password_hint">Senha da conta TP-Link</string>
+    <string name="set_kasa_password_saved">Senha TP-Link (salva — digite para substituir, em branco para limpar)</string>
+    <string name="set_kasa_save_password">Salvar senha</string>
+    <string name="set_kasa_replace_password">Substituir senha</string>
+    <string name="set_kasa_disclosure">A senha é armazenada criptografada com o Android Keystore e usada apenas para abrir uma sessão criptografada com as tomadas da sua rede local.</string>
 </resources>

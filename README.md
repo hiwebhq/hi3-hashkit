@@ -1,6 +1,6 @@
 # Hi3 Hashkit
 
-**Current version: 0.80.0**
+**Current version: 0.81.0**
 
 Hi3 Hashkit is a privacy-first, local-first Android app for monitoring and safely
 controlling your Bitcoin miners. It talks only to the miners on your own network — over
@@ -130,8 +130,10 @@ unverified controls are shown as unsupported, never guessed. Full matrix in
 | Generic cgminer (long tail) | Basic (hashrate, shares, uptime, pool) | — (unverified) |
 | Demo | Synthetic (demo mode only) | — |
 
-Miners with no power sensor (e.g. stock Bitmain) get **measured wall power** automatically
-when a metering smart plug (Tasmota/Shelly/Kasa) is configured for them.
+A metering smart plug (Tasmota/Shelly/Kasa — incl. KP125M/Tapo via your TP-Link account)
+supplies **measured wall power** that drives efficiency and cost for any miner, plus its
+today/lifetime energy counters; miners with no power sensor (e.g. stock Bitmain) get their
+watts from it entirely.
 
 ## Requirements
 

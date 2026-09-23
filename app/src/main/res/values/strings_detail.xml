@@ -290,4 +290,11 @@
     <string name="det_act_fan_manual">setting fan to %1$d%%</string>
     <string name="det_act_applying_tune">applying %1$d MHz / %2$d mV</string>
     <string name="det_act_rollback">rolling back tune</string>
+    <string name="det_metric_wall_power">Wall power</string>
+    <string name="det_metric_board_power">Board power</string>
+    <string name="det_metric_energy_today">Energy today</string>
+    <string name="det_metric_energy_total">Plug total</string>
+    <string name="det_plug_find">Find Kasa plugs</string>
+    <string name="det_plug_discovering">Searching…</string>
+    <string name="det_plug_found_none">No Kasa plugs answered on this network.</string>
 </resources>

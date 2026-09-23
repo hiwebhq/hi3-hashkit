@@ -210,4 +210,12 @@
     <string name="set_qr_not_bare_address">That QR isn\'t a bare payout address (looks like a bitcoin: URI). Scan the plain address.</string>
     <string name="set_scan_prompt">Scan your payout-address QR</string>
     <string name="set_scan_qr_cd">Scan QR code</string>
+    <string name="set_section_plugs">SMART PLUGS</string>
+    <string name="set_kasa_hint">Kasa KP125M / EP25 and Tapo plugs need your TP-Link account for their local login (older Kasa like the KP115 do not). Used only on your LAN; nothing is sent to TP-Link.</string>
+    <string name="set_kasa_email">TP-Link account e-mail</string>
+    <string name="set_kasa_password_hint">TP-Link account password</string>
+    <string name="set_kasa_password_saved">TP-Link password (saved — enter to replace, blank to clear)</string>
+    <string name="set_kasa_save_password">Save password</string>
+    <string name="set_kasa_replace_password">Replace password</string>
+    <string name="set_kasa_disclosure">The password is stored encrypted with the Android Keystore and used only to open an encrypted session with plugs on your local network.</string>
 </resources>

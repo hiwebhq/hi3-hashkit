@@ -9,7 +9,7 @@ calculated, or estimated — so an estimate is never dressed up as a fact.
 **Android 8.0+. Sideload and go. Speaks 7 languages** — English, Spanish, Chinese
 (Simplified), Russian, German, French and Brazilian Portuguese, switchable per-app.
 
-Current release: **v0.80.0**.
+Current release: **v0.81.0**.
 
 ## 🏠 Made for the Home Miner Too
 
@@ -92,8 +92,11 @@ unsupported, never guessed.
   kWh/day — even heat output in BTU/hr. BTC price via opt-in mempool.space fetch or
   manual entry, clearly labeled an estimate.
 - **Measured wall power from metering plugs**: a Tasmota/Shelly/Kasa energy plug supplies
-  true watts for miners that don't report their own (e.g. stock Bitmain) — turning
-  estimated efficiency into measured.
+  true wall watts (PSU and fan losses included) that drive efficiency, cost and fleet
+  totals; the miner's own board figure stays visible beside it, and the plug's energy
+  counters (today / lifetime kWh) show on the detail card and persist in history. Newer
+  Kasa plugs (KP125M, EP25, Tapo) use their local KLAP login with your TP-Link account;
+  legacy Kasa (KP115) and Tasmota/Shelly need nothing. One tap finds Kasa plugs on the LAN.
 - **Auto-recover offline miners** (opt-in): a miner goes dark past your threshold, Hashkit
   power-cycles its smart plug or reboots it — once, with a cooldown, every attempt audited.
 - **Smart-plug over-temp safety cutoff**: per-miner via Tasmota, Shelly, Kasa, or generic

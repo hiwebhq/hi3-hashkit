@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
@@ -58,6 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hi3.hashkit.R
 import hi3.hashkit.core.Units
+import hi3.hashkit.domain.model.ValueSource
 import hi3.hashkit.ui.components.Metric
 import hi3.hashkit.ui.components.StatusBadge
 import hi3.hashkit.ui.theme.HiBrand
@@ -262,7 +264,25 @@ fun MinerDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                 ) {
-                    Metric(stringResource(R.string.det_metric_power), Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
+                    // With a metering plug, wall watts are the effective power (and drive
+                    // efficiency/cost); the miner's own figure stays visible as board power.
+                    val wall = t?.wallPowerW?.value
+                    if (wall != null) {
+                        Metric(
+                            stringResource(R.string.det_metric_wall_power),
+                            Units.formatPower(wall),
+                            source = t.wallPowerW.source,
+                        )
+                        t.boardPowerW.value?.let { board ->
+                            Metric(
+                                stringResource(R.string.det_metric_board_power),
+                                Units.formatPower(board),
+                                source = t.boardPowerW.source,
+                            )
+                        }
+                    } else {
+                        Metric(stringResource(R.string.det_metric_power), Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
+                    }
                     Metric(stringResource(R.string.det_metric_efficiency), Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
                     Metric(stringResource(R.string.det_metric_chip_temp), Units.formatTemp(t?.chipTempC?.value, state.settings.useFahrenheit))
                     Metric(stringResource(R.string.det_metric_vr_temp), Units.formatTemp(t?.vrTempC?.value, state.settings.useFahrenheit))
@@ -281,6 +301,20 @@ fun MinerDetailScreen(
                         )
                     }
                     Metric(stringResource(R.string.det_metric_uptime), Units.formatUptime(t?.uptimeSeconds))
+                    t?.plugEnergyTodayWh?.let { wh ->
+                        Metric(
+                            stringResource(R.string.det_metric_energy_today),
+                            Units.formatEnergyKwh(wh),
+                            source = ValueSource.MEASURED,
+                        )
+                    }
+                    t?.plugEnergyTotalWh?.let { wh ->
+                        Metric(
+                            stringResource(R.string.det_metric_energy_total),
+                            Units.formatEnergyKwh(wh),
+                            source = ValueSource.MEASURED,
+                        )
+                    }
                 }
             }
 
@@ -621,10 +655,15 @@ fun MinerDetailScreen(
 
             SectionCard(stringResource(R.string.det_section_plug)) {
                 val plug by viewModel.plug.collectAsStateWithLifecycle()
+                val foundPlugs by viewModel.foundPlugs.collectAsStateWithLifecycle()
+                val discovering by viewModel.discoveringPlugs.collectAsStateWithLifecycle()
                 SmartPlugCard(
                     plug = plug,
                     onSave = viewModel::saveSmartPlug,
                     onTest = viewModel::testPlug,
+                    foundPlugs = foundPlugs,
+                    discovering = discovering,
+                    onDiscover = viewModel::discoverPlugs,
                 )
             }
 
@@ -1120,10 +1159,14 @@ private fun lastReadingLabel(ts: Instant?): String {
 }
 
 @Composable
+@Suppress("LongMethod", "CyclomaticComplexMethod") // declarative form: type picker, fields, discovery chips, buttons
 private fun SmartPlugCard(
     plug: hi3.hashkit.ui.detail.PlugConfig,
     onSave: (hi3.hashkit.integrations.plug.PlugType?, String, String, String, Double?) -> Unit,
     onTest: (Boolean) -> Unit,
+    foundPlugs: List<hi3.hashkit.integrations.plug.KasaDiscovery.Found>? = null,
+    discovering: Boolean = false,
+    onDiscover: () -> Unit = {},
 ) {
     val types = hi3.hashkit.integrations.plug.PlugType.entries
     var type by remember(plug.type) { mutableStateOf(plug.type) }
@@ -1161,6 +1204,30 @@ private fun SmartPlugCard(
                 androidx.compose.material3.OutlinedTextField(value = onUrl, onValueChange = { onUrl = it }, label = { Text(stringResource(R.string.det_on_url)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
             }
             else -> androidx.compose.material3.OutlinedTextField(value = host, onValueChange = { host = it }, label = { Text(stringResource(R.string.det_plug_host)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        }
+        if (type == hi3.hashkit.integrations.plug.PlugType.KASA) {
+            // Broadcast discovery (UDP 20002 + 9999) lists the Kasa plugs on this network;
+            // tapping one fills in its address.
+            androidx.compose.material3.OutlinedButton(onClick = onDiscover, enabled = !discovering) {
+                Text(stringResource(if (discovering) R.string.det_plug_discovering else R.string.det_plug_find))
+            }
+            if (foundPlugs != null && foundPlugs.isEmpty()) {
+                Text(
+                    stringResource(R.string.det_plug_found_none),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+            foundPlugs?.forEach { found ->
+                val label = listOfNotNull(found.alias ?: found.model, found.ip).joinToString(" · ")
+                androidx.compose.material3.AssistChip(
+                    onClick = { host = found.ip },
+                    label = { Text(label) },
+                    leadingIcon = if (host == found.ip) {
+                        { Icon(androidx.compose.material.icons.Icons.Filled.Check, contentDescription = null) }
+                    } else null,
+                )
+            }
         }
         if (type != null) {
             androidx.compose.material3.OutlinedTextField(value = cutoff, onValueChange = { cutoff = it }, label = { Text(stringResource(R.string.det_plug_cutoff)) }, singleLine = true, modifier = Modifier.fillMaxWidth())

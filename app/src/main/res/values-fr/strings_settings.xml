@@ -210,4 +210,12 @@
     <string name="set_qr_not_bare_address">Ce QR n\'est pas une adresse de paiement brute (on dirait un URI bitcoin:). Scannez l\'adresse simple.</string>
     <string name="set_scan_prompt">Scannez le QR de votre adresse de paiement</string>
     <string name="set_scan_qr_cd">Scanner le code QR</string>
+    <string name="set_section_plugs">PRISES CONNECTÉES</string>
+    <string name="set_kasa_hint">Les prises Kasa KP125M / EP25 et Tapo nécessitent votre compte TP-Link pour la connexion locale (les anciennes Kasa comme la KP115 non). Utilisé uniquement sur votre LAN ; rien n\'est envoyé à TP-Link.</string>
+    <string name="set_kasa_email">E-mail du compte TP-Link</string>
+    <string name="set_kasa_password_hint">Mot de passe du compte TP-Link</string>
+    <string name="set_kasa_password_saved">Mot de passe TP-Link (enregistré — saisir pour remplacer, vide pour effacer)</string>
+    <string name="set_kasa_save_password">Enregistrer le mot de passe</string>
+    <string name="set_kasa_replace_password">Remplacer le mot de passe</string>
+    <string name="set_kasa_disclosure">Le mot de passe est stocké chiffré avec l\'Android Keystore et sert uniquement à ouvrir une session chiffrée avec les prises de votre réseau local.</string>
 </resources>

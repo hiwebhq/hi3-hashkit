@@ -290,4 +290,11 @@
     <string name="det_fw_keep_powered">Miner eingeschaltet und im WLAN lassen.</string>
     <string name="det_fw_done">Aktualisiert – der Miner läuft jetzt mit %1$s 🎉</string>
     <string name="det_fw_failed">Update fehlgeschlagen: %1$s</string>
+    <string name="det_metric_wall_power">Leistung an der Steckdose</string>
+    <string name="det_metric_board_power">Board-Leistung</string>
+    <string name="det_metric_energy_today">Energie heute</string>
+    <string name="det_metric_energy_total">Steckdose gesamt</string>
+    <string name="det_plug_find">Kasa-Steckdosen suchen</string>
+    <string name="det_plug_discovering">Suche…</string>
+    <string name="det_plug_found_none">Keine Kasa-Steckdose hat in diesem Netz geantwortet.</string>
 </resources>

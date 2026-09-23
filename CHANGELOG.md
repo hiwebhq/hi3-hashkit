@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.81.0
+
+- **Smart-plug metering everywhere.** A metering plug's wall watts now drive efficiency,
+  cost and fleet totals for every miner (not just those without a power sensor); the
+  miner's own figure stays on the detail card as "Board power" next to "Wall power".
+- **Plug energy counters** — today's and lifetime kWh from the plug — on the detail card
+  and stored with every sample (DB v21).
+- **Newer Kasa plugs (KP125M, EP25, Tapo).** These speak TP-Link's KLAP protocol instead of
+  the legacy port; save your TP-Link account under Settings → Smart plugs and both metering
+  and the safety cutoff work on them. Legacy Kasa (KP115), Tasmota and Shelly unchanged.
+- **Find Kasa plugs** button in the plug card: broadcast discovery lists the plugs on your
+  LAN, tap one to fill in its address.
+
 ## 0.80.0
 
 - **FutureBit Apollo II / Apollo OS support.** Apollo OS does not expose the cgminer API on

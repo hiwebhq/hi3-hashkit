@@ -117,6 +117,11 @@ data class TelemetrySampleEntity(
     val poolPort: Int?,
     val workerName: String?,
     val usingFallbackPool: Boolean?,
+    /** Metering smart plug: wall watts, the miner's own watts, and the plug's energy counters (Wh). */
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val wallPowerW: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val boardPowerW: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugEnergyTodayWh: Double? = null,
+    @androidx.room.ColumnInfo(defaultValue = "NULL") val plugEnergyTotalWh: Double? = null,
 )
 
 /** Aggregated performance at one observed (frequency, voltage) point (not a table). */

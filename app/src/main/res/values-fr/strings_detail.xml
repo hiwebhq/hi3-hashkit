@@ -289,4 +289,11 @@
     <string name="det_fw_keep_powered">Laisse le mineur alimenté et connecté au Wi-Fi.</string>
     <string name="det_fw_done">Mis à jour — le mineur tourne maintenant en %1$s 🎉</string>
     <string name="det_fw_failed">Échec de la mise à jour : %1$s</string>
+    <string name="det_metric_wall_power">Puissance à la prise</string>
+    <string name="det_metric_board_power">Puissance carte</string>
+    <string name="det_metric_energy_today">Énergie aujourd\'hui</string>
+    <string name="det_metric_energy_total">Total prise</string>
+    <string name="det_plug_find">Rechercher des prises Kasa</string>
+    <string name="det_plug_discovering">Recherche…</string>
+    <string name="det_plug_found_none">Aucune prise Kasa n\'a répondu sur ce réseau.</string>
 </resources>

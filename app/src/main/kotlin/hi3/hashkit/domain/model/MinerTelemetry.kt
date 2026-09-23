@@ -40,8 +40,20 @@ data class MinerTelemetry(
     val hashrateGhs: Sourced<Double> = Sourced.unavailable(),
     val expectedHashrateGhs: Sourced<Double> = Sourced.unavailable(),
 
+    /**
+     * Effective power used for efficiency, cost and fleet totals: the metering smart plug's
+     * wall watts when one is configured (PSU/fan losses included), else the miner's own figure.
+     */
     val powerW: Sourced<Double> = Sourced.unavailable(),
     val efficiencyJTh: Sourced<Double> = Sourced.unavailable(),
+
+    /** Wall power measured by the miner's metering smart plug, when configured. */
+    val wallPowerW: Sourced<Double> = Sourced.unavailable(),
+    /** The miner's own reported power, kept for display when wall power overrides [powerW]. */
+    val boardPowerW: Sourced<Double> = Sourced.unavailable(),
+    /** Smart plug energy counters: since the plug's local midnight, and its lifetime total. Wh. */
+    val plugEnergyTodayWh: Double? = null,
+    val plugEnergyTotalWh: Double? = null,
 
     val chipTempC: Sourced<Double> = Sourced.unavailable(),
     val vrTempC: Sourced<Double> = Sourced.unavailable(),

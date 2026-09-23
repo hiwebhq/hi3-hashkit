@@ -312,6 +312,45 @@ fun SettingsScreen(
                 )
             }
 
+            Section(stringResource(R.string.set_section_plugs)) {
+                Text(
+                    stringResource(R.string.set_kasa_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+                NumberRow(stringResource(R.string.set_kasa_email), settings.kasaUsername) {
+                    viewModel.setKasaUsername(it)
+                }
+                var kasaPw by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = kasaPw,
+                    onValueChange = { kasaPw = it },
+                    label = {
+                        Text(
+                            if (settings.kasaPasswordConfigured) stringResource(R.string.set_kasa_password_saved)
+                            else stringResource(R.string.set_kasa_password_hint),
+                        )
+                    },
+                    singleLine = true,
+                    visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                androidx.compose.material3.TextButton(onClick = {
+                    viewModel.setKasaPassword(kasaPw)
+                    kasaPw = ""
+                }) {
+                    Text(
+                        if (settings.kasaPasswordConfigured) stringResource(R.string.set_kasa_replace_password)
+                        else stringResource(R.string.set_kasa_save_password)
+                    )
+                }
+                Text(
+                    stringResource(R.string.set_kasa_disclosure),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HiBrand.textSecondary,
+                )
+            }
+
             Section(stringResource(R.string.set_section_mmp)) {
                 ToggleRow(
                     stringResource(R.string.set_mmp_title),

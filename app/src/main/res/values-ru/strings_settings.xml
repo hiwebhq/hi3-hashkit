@@ -210,4 +210,12 @@
     <string name="set_qr_not_bare_address">Этот QR — не просто адрес выплат (похоже на bitcoin:-URI). Отсканируйте сам адрес.</string>
     <string name="set_scan_prompt">Отсканируйте QR своего адреса выплат</string>
     <string name="set_scan_qr_cd">Сканировать QR-код</string>
+    <string name="set_section_plugs">УМНЫЕ РОЗЕТКИ</string>
+    <string name="set_kasa_hint">Розеткам Kasa KP125M / EP25 и Tapo для локального входа нужна ваша учётная запись TP-Link (старым Kasa вроде KP115 — нет). Используется только в вашей сети; в TP-Link ничего не отправляется.</string>
+    <string name="set_kasa_email">E-mail учётной записи TP-Link</string>
+    <string name="set_kasa_password_hint">Пароль учётной записи TP-Link</string>
+    <string name="set_kasa_password_saved">Пароль TP-Link (сохранён — введите для замены, пусто для удаления)</string>
+    <string name="set_kasa_save_password">Сохранить пароль</string>
+    <string name="set_kasa_replace_password">Заменить пароль</string>
+    <string name="set_kasa_disclosure">Пароль хранится в зашифрованном виде в Android Keystore и используется только для открытия зашифрованной сессии с розетками в вашей локальной сети.</string>
 </resources>
