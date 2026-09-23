@@ -200,6 +200,21 @@ class SmartPlugClient @Inject constructor(
     }
 
     /**
+     * The nickname a KLAP Kasa plug carries in the Kasa app (`get_device_info.nickname`,
+     * base64-encoded UTF-8), or null without a saved TP-Link account / on any failure.
+     */
+    suspend fun kasaNickname(host: String): String? {
+        val h = privateHost(host) ?: return null
+        val creds = settings.kasaCredentials() ?: return null
+        val r = withContext(Dispatchers.IO) { klapRequest(h, creds, KlapClient.method("get_device_info")) }
+        if (r !is KlapClient.Result.Ok) return null
+        klapHosts[h] = true
+        return Regex("\"nickname\"\s*:\s*\"([^\"]*)\"").find(r.raw)?.groupValues?.get(1)
+            ?.let { encoded -> runCatching { String(java.util.Base64.getDecoder().decode(encoded), Charsets.UTF_8) }.getOrNull() }
+            ?.trim()?.takeIf { it.isNotEmpty() }
+    }
+
+    /**
      * KLAP request that tolerates a capitalized e-mail: the plug hashes the account name
      * byte for byte, and phone keyboards like to capitalize the first letter.
      */

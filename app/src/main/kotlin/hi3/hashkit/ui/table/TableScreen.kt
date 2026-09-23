@@ -69,7 +69,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import javax.inject.Inject
 
-enum class SortColumn { NAME, IP, LOCATION, MODEL, HASHRATE, TEMP, POOL, UPTIME, EFFICIENCY, FREQUENCY, VOLTAGE }
+enum class SortColumn { NAME, IP, LOCATION, MODEL, HASHRATE, TEMP, POOL, UPTIME, POWER, EFFICIENCY, FREQUENCY, VOLTAGE }
 
 data class TableState(
     val miners: List<Miner> = emptyList(),
@@ -188,6 +188,7 @@ class TableViewModel @Inject constructor(
                 SortColumn.TEMP -> compareBy { it.lastTelemetry?.chipTempC?.value ?: -1.0 }
                 SortColumn.POOL -> compareBy { (it.lastTelemetry?.poolUrl ?: "").lowercase() }
                 SortColumn.UPTIME -> compareBy { it.lastTelemetry?.uptimeSeconds ?: -1L }
+                SortColumn.POWER -> compareBy { it.lastTelemetry?.powerW?.value ?: -1.0 }
                 SortColumn.EFFICIENCY -> compareBy { it.lastTelemetry?.efficiencyJTh?.value ?: Double.MAX_VALUE }
                 SortColumn.FREQUENCY -> compareBy { it.lastTelemetry?.frequencyMhz?.value ?: -1.0 }
                 SortColumn.VOLTAGE -> compareBy { it.lastTelemetry?.coreVoltageMv?.value ?: -1.0 }
@@ -222,6 +223,7 @@ private val COLUMNS = listOf(
     Col(R.string.table_col_fan, SortColumn.NAME, 74, sortable = false),
     Col(R.string.table_col_pool, SortColumn.POOL, 150),
     Col(R.string.table_col_uptime, SortColumn.UPTIME, 92),
+    Col(R.string.table_col_power, SortColumn.POWER, 84),
     Col(R.string.table_col_jth, SortColumn.EFFICIENCY, 78),
     Col(R.string.table_col_mhz, SortColumn.FREQUENCY, 74),
     Col(R.string.table_col_mv, SortColumn.VOLTAGE, 74),
@@ -484,6 +486,9 @@ private fun TableRow(
         fan,
         t?.poolUrl?.substringAfter("//")?.ifBlank { "—" } ?: "—",
         Units.formatUptime(t?.uptimeSeconds),
+        // Wall watts from a metering plug when present (marked ⚡), else the miner's own figure.
+        t?.wallPowerW?.value?.let { "%.0f ⚡".format(it) }
+            ?: t?.powerW?.value?.let { "%.0f".format(it) } ?: "—",
         t?.efficiencyJTh?.value?.let { "%.1f".format(it) } ?: "—",
         // Not all firmwares report tune values (Avalon/Antminer-class don't) — show "—".
         t?.frequencyMhz?.value?.let { "%.0f".format(it) } ?: "—",

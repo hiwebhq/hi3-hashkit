@@ -23,6 +23,9 @@ import hi3.hashkit.domain.model.MinerCapabilities
 import hi3.hashkit.domain.model.MinerTelemetry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.SharingStarted
@@ -339,7 +342,22 @@ class MinerDetailViewModel @Inject constructor(
         if (discoveringPlugs.value) return
         viewModelScope.launch {
             discoveringPlugs.value = true
-            foundPlugs.value = runCatching { kasaDiscovery.discover() }.getOrDefault(emptyList())
+            val found = runCatching { kasaDiscovery.discover() }.getOrDefault(emptyList())
+            foundPlugs.value = found
+            // Newer plugs only reveal their Kasa nickname after the KLAP login: fetch those
+            // concurrently (a few at a time) and update the list as they arrive.
+            val gate = kotlinx.coroutines.sync.Semaphore(NICKNAME_CONCURRENCY)
+            found.filter { it.klap && it.alias == null }.map { plug ->
+                kotlinx.coroutines.async {
+                    gate.withPermit {
+                        smartPlugClient.kasaNickname(plug.ip)?.let { name ->
+                            foundPlugs.value = foundPlugs.value?.map {
+                                if (it.ip == plug.ip) it.copy(alias = name) else it
+                            }
+                        }
+                    }
+                }
+            }.awaitAll()
             discoveringPlugs.value = false
         }
     }
@@ -556,6 +574,7 @@ class MinerDetailViewModel @Inject constructor(
 
     companion object {
         const val HISTORY_WINDOW_MS = 3_600_000L
+        private const val NICKNAME_CONCURRENCY = 4
         private const val BESTS_SHOWN = 5
         private const val DAY_MS = 86_400_000L
         /** Label prefix that marks the auto-created "Quiet at night" schedule pair. */

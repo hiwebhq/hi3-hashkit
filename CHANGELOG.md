@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.82.0
+
+- **Find Kasa plugs shows nicknames.** With the TP-Link account saved, discovery logs in to
+  each newer plug and lists its Kasa name ("Hi3-BitAxe 1201 · 10.0.0.11"), so matching plugs
+  to miners no longer needs the IP.
+- **Fleet table: W column** — wall watts from the metering plug when present (marked ⚡),
+  else the miner's own power; sortable.
+
 ## 0.81.2
 
 - Smart plugs: the TP-Link e-mail field no longer auto-capitalizes, and a plug that rejects

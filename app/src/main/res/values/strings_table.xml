@@ -20,6 +20,7 @@
     <string name="table_col_pool">Pool</string>
     <string name="table_col_uptime">Uptime</string>
     <!-- Unit-only headers: kept as resources for uniform rendering, but not translatable. -->
+    <string name="table_col_power" translatable="false">W</string>
     <string name="table_col_jth" translatable="false">J/TH</string>
     <string name="table_col_mhz" translatable="false">MHz</string>
     <string name="table_col_mv" translatable="false">mV</string>
