@@ -169,4 +169,6 @@
     <string name="dash_metric_cost_mo">Расход/мес</string>
     <string name="dash_card_bests">Личные рекорды</string>
     <string name="dash_bests_header">ЛИЧНЫЕ РЕКОРДЫ</string>
+    <string name="dash_metric_wall_power">Мощность в розетке</string>
+    <string name="dash_metric_board_power">Мощность платы</string>
 </resources>

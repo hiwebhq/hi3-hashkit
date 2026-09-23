@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.82.1
+
+- Dashboard: miner cards show **Wall power** (with the miner's board figure beside it on the
+  full card, ⚡ on the compact lines) when a metering plug is configured.
+
 ## 0.82.0
 
 - **Find Kasa plugs shows nicknames.** With the TP-Link account saved, discovery logs in to

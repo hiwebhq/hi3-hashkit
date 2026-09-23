@@ -1369,7 +1369,7 @@ private fun MinerCard(
                     Text(
                         listOfNotNull(
                             Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
-                            Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
+                            wallAwarePower(t),
                             t?.uptimeSeconds?.let { stringResource(R.string.dash_up_prefix, Units.formatUptime(it)) },
                         ).joinToString(" · ").ifEmpty { stringResource(R.string.dash_no_telemetry) },
                         style = MaterialTheme.typography.labelSmall,
@@ -1410,7 +1410,7 @@ private fun MinerCard(
                         color = HiBrand.textSecondary,
                     )
                     Text(
-                        Units.formatPower(t?.powerW?.value),
+                        wallAwarePower(t) ?: "—",
                         style = MaterialTheme.typography.bodySmall,
                         color = HiBrand.textSecondary,
                     )
@@ -1444,7 +1444,7 @@ private fun MinerCard(
                     Spacer(Modifier.height(2.dp))
                     Text(
                         listOfNotNull(
-                            Units.formatPower(t?.powerW?.value).takeIf { it != "—" },
+                            wallAwarePower(t),
                             Units.formatTemp(t?.chipTempC?.value).takeIf { it != "—" },
                             Units.formatEfficiency(t?.efficiencyJTh?.value).takeIf { it != "—" },
                             t?.uptimeSeconds?.let { stringResource(R.string.dash_up_prefix, Units.formatUptime(it)) },
@@ -1517,7 +1517,23 @@ private fun MinerCard(
                     Units.formatHashrate(t?.hashrateGhs?.value),
                     valueColor = HiBrand.accent,
                 )
-                Metric(stringResource(R.string.dash_metric_power), Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
+                val wall = t?.wallPowerW?.value
+                if (wall != null) {
+                    Metric(
+                        stringResource(R.string.dash_metric_wall_power),
+                        Units.formatPower(wall),
+                        source = t.wallPowerW.source,
+                    )
+                    t.boardPowerW.value?.let { board ->
+                        Metric(
+                            stringResource(R.string.dash_metric_board_power),
+                            Units.formatPower(board),
+                            source = t.boardPowerW.source,
+                        )
+                    }
+                } else {
+                    Metric(stringResource(R.string.dash_metric_power), Units.formatPower(t?.powerW?.value), source = t?.powerW?.source)
+                }
                 Metric(stringResource(R.string.dash_metric_chip), Units.formatTemp(t?.chipTempC?.value))
                 Metric(stringResource(R.string.dash_metric_eff), Units.formatEfficiency(t?.efficiencyJTh?.value), source = t?.efficiencyJTh?.source)
                 Metric(stringResource(R.string.dash_metric_uptime), Units.formatUptime(t?.uptimeSeconds))
@@ -1596,4 +1612,11 @@ private fun EmptyState(onAddMiner: () -> Unit, onEnableDemo: () -> Unit) {
             }
         }
     }
+}
+
+/** Power for a card line: wall watts from a metering plug carry the ⚡ mark; null when unknown. */
+private fun wallAwarePower(t: hi3.hashkit.domain.model.MinerTelemetry?): String? {
+    val wall = t?.wallPowerW?.value
+    if (wall != null) return "⚡ " + Units.formatPower(wall)
+    return Units.formatPower(t?.powerW?.value).takeIf { it != "—" }
 }

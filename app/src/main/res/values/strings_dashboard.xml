@@ -169,4 +169,6 @@
     <string name="dash_rescan_too_large">Local range too large to auto-scan; use Add → Scan.</string>
     <string name="dash_rescan_scanning">Scanning %1$d hosts…</string>
     <string name="dash_rescan_done">Rescan done — %1$d miner(s) found.</string>
+    <string name="dash_metric_wall_power">Wall power</string>
+    <string name="dash_metric_board_power">Board power</string>
 </resources>

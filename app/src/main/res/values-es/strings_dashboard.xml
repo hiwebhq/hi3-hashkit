@@ -168,4 +168,6 @@
     <string name="dash_metric_cost_mo">Coste/mes</string>
     <string name="dash_card_bests">Récords personales</string>
     <string name="dash_bests_header">RÉCORDS PERSONALES</string>
+    <string name="dash_metric_wall_power">Potencia en la pared</string>
+    <string name="dash_metric_board_power">Potencia de la placa</string>
 </resources>

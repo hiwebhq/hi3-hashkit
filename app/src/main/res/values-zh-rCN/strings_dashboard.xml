@@ -169,4 +169,6 @@
     <string name="dash_metric_cost_mo">成本/月</string>
     <string name="dash_card_bests">个人最佳</string>
     <string name="dash_bests_header">个人最佳</string>
+    <string name="dash_metric_wall_power">墙插功率</string>
+    <string name="dash_metric_board_power">主板功率</string>
 </resources>
