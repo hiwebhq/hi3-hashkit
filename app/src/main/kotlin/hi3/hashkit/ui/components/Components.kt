@@ -102,14 +102,23 @@ fun Metric(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = HiBrand.textSecondary)
+            Text(
+                label,
+                style = MaterialTheme.typography.labelSmall,
+                color = HiBrand.textSecondary,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
             source?.let { SourceTag(it) }
         }
+        // A metric is one line tall by design: cards must not grow when a label is long.
         Text(
             value,
             style = MaterialTheme.typography.titleMedium,
             color = valueColor,
             fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
         )
     }
 }

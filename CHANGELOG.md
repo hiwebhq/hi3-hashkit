@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.82.3
+
+- Dashboard fleet summary keeps its height: the metrics row scrolls sideways instead of
+  wrapping, and metric labels/values are single-line everywhere.
+
 ## 0.82.2
 
 - Dashboard fleet summary: shows **Wall power** when every live miner is on a metering plug,

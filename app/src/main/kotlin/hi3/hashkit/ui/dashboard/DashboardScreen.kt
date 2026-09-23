@@ -809,7 +809,12 @@ private fun FleetSummary(
                 }
             }
             Spacer(Modifier.height(6.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+            // Scrolls sideways so extra metrics (wall power) never squeeze the others into
+            // wrapped, taller cells.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+            ) {
                 FleetPowerMetrics(totals)
                 Metric(stringResource(R.string.dash_metric_efficiency), Units.formatEfficiency(totals?.fleetEfficiencyJTh))
                 Metric(stringResource(R.string.dash_metric_hottest), Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
