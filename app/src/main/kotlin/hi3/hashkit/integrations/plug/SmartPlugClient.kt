@@ -210,7 +210,9 @@ class SmartPlugClient @Inject constructor(
         if (r !is KlapClient.Result.Ok) return null
         klapHosts[h] = true
         return Regex("\"nickname\"\s*:\s*\"([^\"]*)\"").find(r.raw)?.groupValues?.get(1)
-            ?.let { encoded -> runCatching { String(java.util.Base64.getDecoder().decode(encoded), Charsets.UTF_8) }.getOrNull() }
+            ?.let { encoded ->
+                runCatching { String(java.util.Base64.getDecoder().decode(encoded), Charsets.UTF_8) }.getOrNull()
+            }
             ?.trim()?.takeIf { it.isNotEmpty() }
     }
 
