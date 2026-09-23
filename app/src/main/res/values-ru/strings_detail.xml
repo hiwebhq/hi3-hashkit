@@ -296,4 +296,7 @@
     <string name="det_plug_find">Найти розетки Kasa</string>
     <string name="det_plug_discovering">Поиск…</string>
     <string name="det_plug_found_none">Ни одна розетка Kasa в этой сети не ответила.</string>
+    <string name="det_test_meter">Считать счётчик</string>
+    <string name="det_msg_meter_ok">Счётчик розетки: %1$s сейчас · сегодня %2$s · всего %3$s</string>
+    <string name="det_msg_meter_failed">Не удалось считать счётчик: %1$s</string>
 </resources>

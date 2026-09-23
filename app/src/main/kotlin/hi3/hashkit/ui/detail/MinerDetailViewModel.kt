@@ -305,6 +305,29 @@ class MinerDetailViewModel @Inject constructor(
     fun saveSmartPlug(type: hi3.hashkit.integrations.plug.PlugType?, host: String, onUrl: String, offUrl: String, cutoffC: Double?) {
         viewModelScope.launch {
             repository.setSmartPlug(minerId, type?.name, host, onUrl, offUrl, cutoffC)
+            // Metering plugs feed the next sample; poll now so wall power shows without waiting.
+            repository.observeMinerEntity(minerId).first()?.let { entity ->
+                runCatching { repository.pollMiner(entity) }
+            }
+        }
+    }
+
+    /** Read the plug's meter once and report the values, or exactly why it failed. */
+    fun testMeter() {
+        viewModelScope.launch {
+            val p = plug.value
+            val type = p.type ?: return@launch
+            val plugCfg = hi3.hashkit.integrations.plug.SmartPlugClient.Plug(type, p.host, p.onUrl, p.offUrl)
+            lastActionMessage.value = when (val r = smartPlugClient.readMeterDetailed(plugCfg)) {
+                is hi3.hashkit.integrations.plug.SmartPlugClient.MeterResult.Reading -> appContext.getString(
+                    R.string.det_msg_meter_ok,
+                    hi3.hashkit.core.Units.formatPower(r.reading.powerW),
+                    hi3.hashkit.core.Units.formatEnergyKwh(r.reading.energyTodayWh),
+                    hi3.hashkit.core.Units.formatEnergyKwh(r.reading.energyTotalWh),
+                )
+                is hi3.hashkit.integrations.plug.SmartPlugClient.MeterResult.Failure ->
+                    appContext.getString(R.string.det_msg_meter_failed, r.reason)
+            }
         }
     }
 

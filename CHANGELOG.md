@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.81.1
+
+- Plug card: **Read meter** button reports the plug's live watts and energy, or the exact
+  reason the read failed (legacy port silent, TP-Link account missing or rejected, plug
+  without an energy monitor). Saving a plug now polls the miner immediately.
+
 ## 0.81.0
 
 - **Smart-plug metering everywhere.** A metering plug's wall watts now drive efficiency,

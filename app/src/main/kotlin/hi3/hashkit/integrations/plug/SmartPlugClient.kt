@@ -111,6 +111,24 @@ class SmartPlugClient @Inject constructor(
     /** Instantaneous active power (watts) from a metering plug, or null. See [readMeter]. */
     suspend fun readPowerW(plug: Plug): Double? = readMeter(plug)?.powerW
 
+    /** Outcome of a meter read with the reason when it fails (for the plug card's diagnostic). */
+    sealed interface MeterResult {
+        data class Reading(val reading: PlugReading) : MeterResult
+        data class Failure(val reason: String) : MeterResult
+    }
+
+    /** Like [readMeter], but says why nothing came back. */
+    suspend fun readMeterDetailed(plug: Plug): MeterResult = withContext(Dispatchers.IO) {
+        val host = privateHost(plug.host)
+        when {
+            plug.type == PlugType.WEBHOOK -> MeterResult.Failure("Webhook plugs have no meter.")
+            host == null -> MeterResult.Failure("No plug address, or it is not a private/LAN address.")
+            plug.type == PlugType.KASA -> kasaMeterDetailed(host)
+            else -> readMeter(plug)?.let { MeterResult.Reading(it) }
+                ?: MeterResult.Failure("Plug did not answer its metering endpoint (no energy monitor, or unreachable).")
+        }
+    }
+
     /**
      * Read the plug's meter: active power plus its energy counters. Null when the plug
      * type can't meter, isn't reachable, or (Kasa KLAP) no TP-Link account is saved.
@@ -152,14 +170,32 @@ class SmartPlugClient @Inject constructor(
         }
     }
 
-    private suspend fun kasaMeter(host: String): PlugReading? {
+    private suspend fun kasaMeter(host: String): PlugReading? =
+        (kasaMeterDetailed(host) as? MeterResult.Reading)?.reading
+
+    private suspend fun kasaMeterDetailed(host: String): MeterResult {
         if (klapHosts[host] != true) {
-            kasaExchange(host, """{"emeter":{"get_realtime":{}}}""")?.let { return parseKasaRealtime(it) }
+            kasaExchange(host, """{"emeter":{"get_realtime":{}}}""")?.let { reply ->
+                return parseKasaRealtime(reply)?.let { MeterResult.Reading(it) }
+                    ?: MeterResult.Failure("Legacy Kasa plug answered but has no energy monitor: $reply")
+            }
         }
-        val creds = settings.kasaCredentials() ?: return null
+        val creds = settings.kasaCredentials()
+            ?: return MeterResult.Failure(
+                "Plug did not answer the legacy Kasa port; newer Kasa (KP125M/Tapo) need your " +
+                    "TP-Link account under Settings → Smart plugs.",
+            )
         return when (val r = klap.request(host, creds, KlapClient.method("get_energy_usage"))) {
-            is KlapClient.Result.Ok -> { klapHosts[host] = true; parseKasaEnergyUsage(r.raw) }
-            else -> null
+            is KlapClient.Result.Ok -> {
+                klapHosts[host] = true
+                parseKasaEnergyUsage(r.raw)?.let { MeterResult.Reading(it) }
+                    ?: MeterResult.Failure("KLAP plug answered without power fields: ${r.raw}")
+            }
+            KlapClient.Result.AuthFailed -> MeterResult.Failure(
+                "Plug rejected the TP-Link account (handshake) — check e-mail/password, " +
+                    "and that this plug is in that Kasa account.",
+            )
+            is KlapClient.Result.Error -> MeterResult.Failure("KLAP request failed: ${r.cause}")
         }
     }
 

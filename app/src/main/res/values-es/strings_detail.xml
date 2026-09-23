@@ -295,4 +295,7 @@
     <string name="det_plug_find">Buscar enchufes Kasa</string>
     <string name="det_plug_discovering">Buscando…</string>
     <string name="det_plug_found_none">Ningún enchufe Kasa respondió en esta red.</string>
+    <string name="det_test_meter">Leer medidor</string>
+    <string name="det_msg_meter_ok">Medidor del enchufe: %1$s ahora · hoy %2$s · total %3$s</string>
+    <string name="det_msg_meter_failed">Falló la lectura del medidor: %1$s</string>
 </resources>

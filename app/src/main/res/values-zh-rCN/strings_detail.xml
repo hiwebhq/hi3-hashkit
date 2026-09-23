@@ -297,4 +297,7 @@
     <string name="det_plug_find">查找 Kasa 插座</string>
     <string name="det_plug_discovering">搜索中…</string>
     <string name="det_plug_found_none">此网络中没有 Kasa 插座响应。</string>
+    <string name="det_test_meter">读取电表</string>
+    <string name="det_msg_meter_ok">插座电表：当前 %1$s · 今日 %2$s · 累计 %3$s</string>
+    <string name="det_msg_meter_failed">读取插座电表失败：%1$s</string>
 </resources>

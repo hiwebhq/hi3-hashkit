@@ -297,4 +297,7 @@
     <string name="det_plug_find">Kasa-Steckdosen suchen</string>
     <string name="det_plug_discovering">Suche…</string>
     <string name="det_plug_found_none">Keine Kasa-Steckdose hat in diesem Netz geantwortet.</string>
+    <string name="det_test_meter">Zähler lesen</string>
+    <string name="det_msg_meter_ok">Steckdosen-Zähler: %1$s jetzt · heute %2$s · gesamt %3$s</string>
+    <string name="det_msg_meter_failed">Zähler konnte nicht gelesen werden: %1$s</string>
 </resources>

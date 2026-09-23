@@ -297,4 +297,7 @@
     <string name="det_plug_find">Find Kasa plugs</string>
     <string name="det_plug_discovering">Searching…</string>
     <string name="det_plug_found_none">No Kasa plugs answered on this network.</string>
+    <string name="det_test_meter">Read meter</string>
+    <string name="det_msg_meter_ok">Plug meter: %1$s now · today %2$s · total %3$s</string>
+    <string name="det_msg_meter_failed">Plug meter read failed: %1$s</string>
 </resources>

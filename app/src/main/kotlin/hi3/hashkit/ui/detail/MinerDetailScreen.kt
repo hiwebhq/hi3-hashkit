@@ -661,6 +661,7 @@ fun MinerDetailScreen(
                     plug = plug,
                     onSave = viewModel::saveSmartPlug,
                     onTest = viewModel::testPlug,
+                    onTestMeter = viewModel::testMeter,
                     foundPlugs = foundPlugs,
                     discovering = discovering,
                     onDiscover = viewModel::discoverPlugs,
@@ -1164,6 +1165,7 @@ private fun SmartPlugCard(
     plug: hi3.hashkit.ui.detail.PlugConfig,
     onSave: (hi3.hashkit.integrations.plug.PlugType?, String, String, String, Double?) -> Unit,
     onTest: (Boolean) -> Unit,
+    onTestMeter: () -> Unit = {},
     foundPlugs: List<hi3.hashkit.integrations.plug.KasaDiscovery.Found>? = null,
     discovering: Boolean = false,
     onDiscover: () -> Unit = {},
@@ -1237,6 +1239,11 @@ private fun SmartPlugCard(
             if (type != null) {
                 androidx.compose.material3.OutlinedButton(onClick = { onTest(false) }) { Text(stringResource(R.string.det_test_off)) }
                 androidx.compose.material3.OutlinedButton(onClick = { onTest(true) }) { Text(stringResource(R.string.det_test_on)) }
+            }
+        }
+        if (type != null && type != hi3.hashkit.integrations.plug.PlugType.WEBHOOK) {
+            androidx.compose.material3.OutlinedButton(onClick = onTestMeter) {
+                Text(stringResource(R.string.det_test_meter))
             }
         }
     }

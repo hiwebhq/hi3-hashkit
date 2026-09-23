@@ -297,4 +297,7 @@
     <string name="det_plug_find">Encontrar tomadas Kasa</string>
     <string name="det_plug_discovering">Procurando…</string>
     <string name="det_plug_found_none">Nenhuma tomada Kasa respondeu nesta rede.</string>
+    <string name="det_test_meter">Ler medidor</string>
+    <string name="det_msg_meter_ok">Medidor da tomada: %1$s agora · hoje %2$s · total %3$s</string>
+    <string name="det_msg_meter_failed">Falha ao ler o medidor: %1$s</string>
 </resources>

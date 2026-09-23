@@ -296,4 +296,7 @@
     <string name="det_plug_find">Rechercher des prises Kasa</string>
     <string name="det_plug_discovering">Recherche…</string>
     <string name="det_plug_found_none">Aucune prise Kasa n\'a répondu sur ce réseau.</string>
+    <string name="det_test_meter">Lire le compteur</string>
+    <string name="det_msg_meter_ok">Compteur de la prise : %1$s actuellement · aujourd\'hui %2$s · total %3$s</string>
+    <string name="det_msg_meter_failed">Échec de lecture du compteur : %1$s</string>
 </resources>
