@@ -164,7 +164,7 @@ class SmartPlugClient @Inject constructor(
         if (klapHosts[host] != true && kasaSetRelay(host, on)) return true
         val creds = settings.kasaCredentials() ?: return false
         val body = KlapClient.method("set_device_info", "{\"device_on\":$on}")
-        return when (klap.request(host, creds, body)) {
+        return when (klapRequest(host, creds, body)) {
             is KlapClient.Result.Ok -> { klapHosts[host] = true; true }
             else -> false
         }
@@ -185,7 +185,7 @@ class SmartPlugClient @Inject constructor(
                 "Plug did not answer the legacy Kasa port; newer Kasa (KP125M/Tapo) need your " +
                     "TP-Link account under Settings → Smart plugs.",
             )
-        return when (val r = klap.request(host, creds, KlapClient.method("get_energy_usage"))) {
+        return when (val r = klapRequest(host, creds, KlapClient.method("get_energy_usage"))) {
             is KlapClient.Result.Ok -> {
                 klapHosts[host] = true
                 parseKasaEnergyUsage(r.raw)?.let { MeterResult.Reading(it) }
@@ -197,6 +197,17 @@ class SmartPlugClient @Inject constructor(
             )
             is KlapClient.Result.Error -> MeterResult.Failure("KLAP request failed: ${r.cause}")
         }
+    }
+
+    /**
+     * KLAP request that tolerates a capitalized e-mail: the plug hashes the account name
+     * byte for byte, and phone keyboards like to capitalize the first letter.
+     */
+    private fun klapRequest(host: String, creds: KasaCredentials, body: String): KlapClient.Result {
+        val first = klap.request(host, creds, body)
+        val lowered = creds.username.trim().lowercase()
+        if (first != KlapClient.Result.AuthFailed || lowered == creds.username) return first
+        return klap.request(host, creds.copy(username = lowered), body)
     }
 
     /** Kasa local protocol: 4-byte length prefix + autokey-XOR-encrypted JSON on TCP 9999. */

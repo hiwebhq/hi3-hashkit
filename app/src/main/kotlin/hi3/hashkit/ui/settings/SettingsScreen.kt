@@ -318,9 +318,20 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.labelSmall,
                     color = HiBrand.textSecondary,
                 )
-                NumberRow(stringResource(R.string.set_kasa_email), settings.kasaUsername) {
-                    viewModel.setKasaUsername(it)
-                }
+                var kasaEmail by remember(settings.kasaUsername) { mutableStateOf(settings.kasaUsername) }
+                OutlinedTextField(
+                    value = kasaEmail,
+                    onValueChange = { kasaEmail = it; viewModel.setKasaUsername(it) },
+                    label = { Text(stringResource(R.string.set_kasa_email)) },
+                    singleLine = true,
+                    // The plug hashes the e-mail byte for byte: keep the keyboard from capitalizing it.
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Email,
+                        capitalization = androidx.compose.ui.text.input.KeyboardCapitalization.None,
+                        autoCorrectEnabled = false,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
                 var kasaPw by remember { mutableStateOf("") }
                 OutlinedTextField(
                     value = kasaPw,

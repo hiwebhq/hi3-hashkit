@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.81.2
+
+- Smart plugs: the TP-Link e-mail field no longer auto-capitalizes, and a plug that rejects
+  the account is retried with the e-mail lowercased (the plug hashes it byte for byte).
+
 ## 0.81.1
 
 - Plug card: **Read meter** button reports the plug's live watts and energy, or the exact
