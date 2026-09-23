@@ -347,17 +347,19 @@ class MinerDetailViewModel @Inject constructor(
             // Newer plugs only reveal their Kasa nickname after the KLAP login: fetch those
             // concurrently (a few at a time) and update the list as they arrive.
             val gate = kotlinx.coroutines.sync.Semaphore(NICKNAME_CONCURRENCY)
-            found.filter { it.klap && it.alias == null }.map { plug ->
-                kotlinx.coroutines.async {
-                    gate.withPermit {
-                        smartPlugClient.kasaNickname(plug.ip)?.let { name ->
-                            foundPlugs.value = foundPlugs.value?.map {
-                                if (it.ip == plug.ip) it.copy(alias = name) else it
+            kotlinx.coroutines.coroutineScope {
+                found.filter { it.klap && it.alias == null }.map { plug ->
+                    async {
+                        gate.withPermit {
+                            smartPlugClient.kasaNickname(plug.ip)?.let { name ->
+                                foundPlugs.value = foundPlugs.value?.map {
+                                    if (it.ip == plug.ip) it.copy(alias = name) else it
+                                }
                             }
                         }
                     }
-                }
-            }.awaitAll()
+                }.awaitAll()
+            }
             discoveringPlugs.value = false
         }
     }

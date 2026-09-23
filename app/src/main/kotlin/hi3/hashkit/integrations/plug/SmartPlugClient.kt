@@ -209,7 +209,7 @@ class SmartPlugClient @Inject constructor(
         val r = withContext(Dispatchers.IO) { klapRequest(h, creds, KlapClient.method("get_device_info")) }
         if (r !is KlapClient.Result.Ok) return null
         klapHosts[h] = true
-        return Regex("\"nickname\"\s*:\s*\"([^\"]*)\"").find(r.raw)?.groupValues?.get(1)
+        return Regex("\"nickname\"\\s*:\\s*\"([^\"]*)\"").find(r.raw)?.groupValues?.get(1)
             ?.let { encoded ->
                 runCatching { String(java.util.Base64.getDecoder().decode(encoded), Charsets.UTF_8) }.getOrNull()
             }
