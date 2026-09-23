@@ -171,4 +171,5 @@
     <string name="dash_bests_header">ЛИЧНЫЕ РЕКОРДЫ</string>
     <string name="dash_metric_wall_power">Мощность в розетке</string>
     <string name="dash_metric_board_power">Мощность платы</string>
+    <string name="dash_metric_wall_power_partial">Мощность в розетке (%1$d/%2$d)</string>
 </resources>

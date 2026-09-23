@@ -171,4 +171,5 @@
     <string name="dash_bests_header">PERSÖNLICHE BESTWERTE</string>
     <string name="dash_metric_wall_power">Leistung an der Steckdose</string>
     <string name="dash_metric_board_power">Board-Leistung</string>
+    <string name="dash_metric_wall_power_partial">Leistung an der Steckdose (%1$d/%2$d)</string>
 </resources>

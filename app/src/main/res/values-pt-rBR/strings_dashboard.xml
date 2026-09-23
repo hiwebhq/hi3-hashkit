@@ -171,4 +171,5 @@
     <string name="dash_bests_header">RECORDES PESSOAIS</string>
     <string name="dash_metric_wall_power">Potência na tomada</string>
     <string name="dash_metric_board_power">Potência da placa</string>
+    <string name="dash_metric_wall_power_partial">Potência na tomada (%1$d/%2$d)</string>
 </resources>

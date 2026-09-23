@@ -171,4 +171,5 @@
     <string name="dash_rescan_done">Rescan done — %1$d miner(s) found.</string>
     <string name="dash_metric_wall_power">Wall power</string>
     <string name="dash_metric_board_power">Board power</string>
+    <string name="dash_metric_wall_power_partial">Wall power (%1$d/%2$d)</string>
 </resources>

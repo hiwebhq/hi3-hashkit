@@ -810,7 +810,7 @@ private fun FleetSummary(
             }
             Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Metric(stringResource(R.string.dash_metric_power), Units.formatPower(totals?.totalMeasuredPowerW))
+                FleetPowerMetrics(totals)
                 Metric(stringResource(R.string.dash_metric_efficiency), Units.formatEfficiency(totals?.fleetEfficiencyJTh))
                 Metric(stringResource(R.string.dash_metric_hottest), Units.formatTemp(totals?.hottestChipC, state.settings.useFahrenheit))
                 totals?.dailyCost?.let { cost ->
@@ -1619,4 +1619,24 @@ private fun wallAwarePower(t: hi3.hashkit.domain.model.MinerTelemetry?): String?
     val wall = t?.wallPowerW?.value
     if (wall != null) return "⚡ " + Units.formatPower(wall)
     return Units.formatPower(t?.powerW?.value).takeIf { it != "—" }
+}
+
+/**
+ * Fleet power: when every live miner is on a metering plug the total *is* wall power;
+ * otherwise the fleet total plus the metered subset, so the two are never confused.
+ */
+@Composable
+private fun FleetPowerMetrics(totals: FleetTotals?) {
+    val metered = totals?.wallMeteredCount ?: 0
+    if (totals != null && metered > 0 && metered == totals.liveCount) {
+        Metric(stringResource(R.string.dash_metric_wall_power), Units.formatPower(totals.wallPowerW))
+        return
+    }
+    Metric(stringResource(R.string.dash_metric_power), Units.formatPower(totals?.totalMeasuredPowerW))
+    if (totals != null && metered > 0) {
+        Metric(
+            stringResource(R.string.dash_metric_wall_power_partial, metered, totals.liveCount),
+            Units.formatPower(totals.wallPowerW),
+        )
+    }
 }

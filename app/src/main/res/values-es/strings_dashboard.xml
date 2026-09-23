@@ -170,4 +170,5 @@
     <string name="dash_bests_header">RÉCORDS PERSONALES</string>
     <string name="dash_metric_wall_power">Potencia en la pared</string>
     <string name="dash_metric_board_power">Potencia de la placa</string>
+    <string name="dash_metric_wall_power_partial">Potencia en la pared (%1$d/%2$d)</string>
 </resources>

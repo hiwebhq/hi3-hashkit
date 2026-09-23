@@ -171,4 +171,5 @@
     <string name="dash_bests_header">个人最佳</string>
     <string name="dash_metric_wall_power">墙插功率</string>
     <string name="dash_metric_board_power">主板功率</string>
+    <string name="dash_metric_wall_power_partial">墙插功率（%1$d/%2$d）</string>
 </resources>

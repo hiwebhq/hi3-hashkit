@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.82.2
+
+- Dashboard fleet summary: shows **Wall power** when every live miner is on a metering plug,
+  or the fleet total plus "Wall power (n/m)" for the metered subset.
+
 ## 0.82.1
 
 - Dashboard: miner cards show **Wall power** (with the miner's board figure beside it on the
