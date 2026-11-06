@@ -46,6 +46,8 @@ class WebhookNotifier @Inject constructor(
         if (type == WebhookType.NONE) return
         // Only push active alerts by default — recoveries stay in-app to avoid noise.
         if (!signal.active) return
+        // Decrypted just-in-time; never part of the settings flow or any backup.
+        val webhookToken = settingsRepository.webhookToken().orEmpty()
         val title = "Hi3 Hashkit: ${signal.minerName}"
         val text = signal.message
         withContext(Dispatchers.IO) {
@@ -60,13 +62,18 @@ class WebhookNotifier @Inject constructor(
                     }
                     WebhookType.GOTIFY -> {
                         val base = s.webhookUrl.trim().removeSuffix("/")
-                        val token = s.webhookToken.trim()
-                        val url = "$base/message?token=$token".toHttpUrlOrNull() ?: return@runCatching
+                        val token = webhookToken.trim()
+                        if (token.isEmpty()) return@runCatching
+                        // Token travels in a header (Gotify's X-Gotify-Key), not the URL, so it
+                        // never lands in proxy/server access logs.
+                        val url = "$base/message".toHttpUrlOrNull() ?: return@runCatching
                         val body = """{"title":${jsonStr(title)},"message":${jsonStr(text)},"priority":5}"""
-                        Request.Builder().url(url).post(body.toRequestBody(jsonMedia)).build()
+                        Request.Builder().url(url)
+                            .header("X-Gotify-Key", token)
+                            .post(body.toRequestBody(jsonMedia)).build()
                     }
                     WebhookType.TELEGRAM -> {
-                        val token = s.webhookToken.trim()
+                        val token = webhookToken.trim()
                         val chat = s.webhookTarget.trim()
                         if (token.isEmpty() || chat.isEmpty()) return@runCatching
                         val body = """{"chat_id":${jsonStr(chat)},"text":${jsonStr("$title\n$text")}}"""

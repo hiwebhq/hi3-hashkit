@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.83.0
+
+Security hardening release (independent audit, 2026-11-06).
+
+- **Secrets:** the Gotify/Telegram token, pool access token and Hashkit AP passphrase are now
+  stored encrypted in the Android Keystore like every other credential (existing plaintext
+  values migrate automatically on first launch). Settings show write-only fields for them.
+- **Backups never contain credentials:** a name-pattern policy (`BackupKeyPolicy`) excludes
+  every token/password/passphrase key from export *and* restore — including the weekly
+  auto-backup — instead of a hand-maintained list.
+- **Self-update / firmware update:** downloads only from `github.com` /
+  `githubusercontent.com` or true subdomains (lookalike hosts refused), never follow an
+  https→http redirect, must match the release manifest's size, and the APK's signing
+  certificate is verified against the installed app's **before** it reaches the installer.
+- **Web dashboard + /metrics:** binds only to the device's private LAN/Tailscale addresses
+  (never all interfaces), refuses non-private clients, optional bearer token
+  (`Authorization: Bearer` / `?token=`), request-size caps and a worker pool.
+- **MQTT:** the broker host must be a private/Tailscale address (same rule as miners).
+- **Gotify:** token sent in the `X-Gotify-Key` header instead of the URL.
+- **Dependencies:** OkHttp 5.5.1 (blocks the eight compromised eMudhra intermediates,
+  CVE-2026-111943).
+- **Build & CI:** signing config read from `~/.config/hi3/` (outside the repo tree);
+  `./gradlew releaseChecksum` emits `app-release.apk.sha256`; Gradle wrapper checksum
+  pinned; every GitHub Action pinned to a commit SHA; wrapper validation step; read-only
+  workflow token by default.
+
 ## 0.82.3
 
 - Dashboard fleet summary keeps its height: the metrics row scrolls sideways instead of

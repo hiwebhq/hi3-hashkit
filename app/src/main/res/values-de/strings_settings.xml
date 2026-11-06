@@ -80,7 +80,7 @@
 
     <!-- Local web server -->
     <string name="set_web_server_title">Web-Dashboard + /metrics bereitstellen</string>
-    <string name="set_web_server_subtitle">Startet einen lokalen, schreibgeschützten Webserver: ein HTML-Flotten-Dashboard für jeden Browser oder TV im LAN, plus einen Prometheus-/metrics-Endpunkt für Grafana. Ohne Auth — nur für privates LAN/Tailnet.</string>
+    <string name="set_web_server_subtitle">Startet einen lokalen, schreibgeschützten Webserver: ein HTML-Flotten-Dashboard für jeden Browser oder TV im LAN plus einen Prometheus-/metrics-Endpunkt für Grafana. Lauscht nur auf den privaten LAN/Tailscale-Adressen dieses Geräts; unten ein Token setzen, um es bei jeder Anfrage zu verlangen.</string>
     <string name="set_web_server_port">Port</string>
     <string name="set_web_server_hint">Bei geöffneter App: Dashboard unter http://&lt;geräte-ip>:%1$d/ und Metriken unter /metrics. Schreibgeschützt (nur GET); zeigt Gesamtwerte + Daten pro Miner, keine Steuerung.</string>
 
@@ -218,4 +218,9 @@
     <string name="set_kasa_save_password">Passwort speichern</string>
     <string name="set_kasa_replace_password">Passwort ersetzen</string>
     <string name="set_kasa_disclosure">Das Passwort wird mit dem Android Keystore verschlüsselt gespeichert und nur genutzt, um eine verschlüsselte Sitzung mit Steckdosen in deinem lokalen Netz zu öffnen.</string>
+    <string name="set_web_server_token">Scrape-Token (optional)</string>
+    <string name="set_web_server_token_hint">Ist ein Token gesetzt, senden Scraper Authorization: Bearer &lt;token> und Browser hängen ?token=&lt;token> an die URL an. Leer lassen für ein offenes, nur im LAN erreichbares Dashboard.</string>
+    <string name="set_secret_saved_label">%1$s (gespeichert – zum Ersetzen eingeben, leer zum Löschen)</string>
+    <string name="set_secret_save">Speichern</string>
+    <string name="set_secret_replace">Ersetzen</string>
 </resources>

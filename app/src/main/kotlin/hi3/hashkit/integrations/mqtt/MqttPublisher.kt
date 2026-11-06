@@ -1,6 +1,7 @@
 package hi3.hashkit.integrations.mqtt
 
 import hi3.hashkit.data.prefs.SettingsRepository
+import hi3.hashkit.discovery.MinerHostValidator
 import hi3.hashkit.domain.model.Miner
 import hi3.hashkit.domain.model.MinerStatus
 import kotlinx.serialization.json.add
@@ -33,6 +34,9 @@ class MqttPublisher @Inject constructor(
     suspend fun publish(miners: List<Miner>) {
         val s = settingsRepository.current()
         if (!s.mqttEnabled || s.mqttHost.isBlank()) return
+        // No TLS in this client, and the CONNECT packet carries the broker password — so the
+        // broker must be on the LAN/tailnet, same rule as miners, plugs and Home Assistant.
+        if (!MinerHostValidator.resolvesToAllowed(s.mqttHost.trim())) return
         val real = miners.filter { !it.isDemo }
         val base = s.mqttBaseTopic
         val password = settingsRepository.mqttPassword()

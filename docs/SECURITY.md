@@ -29,8 +29,9 @@ In this build:
    The only user data transmitted is the configured address/subaccount/account (and, for
    Braiins, your read-only access token in the header) in the request. No miner telemetry, local IPs, or
    worker passwords are sent. Public pool hosts must be HTTPS; plain HTTP is accepted
-   only toward private/Tailscale addresses (local stage instances). Disabling the
-   toggle stops all pool requests immediately.
+   only toward private/Tailscale addresses (local stage instances). The access token is
+   stored encrypted in the Android Keystore (`KeystoreCrypto`) and is never written to a
+   backup. Disabling the toggle stops all pool requests immediately.
 
 4. **Optional, off by default — Hi3 MMP:** while "Hi3 MMP fleet view" is enabled in
    Settings, the app sends read-only GETs (`/api/v1/fleet/summary`,
@@ -75,7 +76,9 @@ on the LAN, and is never logged, exported, or sent anywhere else.
    endpoint you specify**, containing the miner name, alert type and message — no
    telemetry, addresses, or credentials. This is a deliberate outbound push to a
    destination you choose (so, unlike miner traffic, it may be a public host); nothing is
-   sent while the push service is set to Off.
+   sent while the push service is set to Off. The Gotify/Telegram token is stored encrypted
+   in the Android Keystore, sent in a header (Gotify `X-Gotify-Key`) or the Telegram API
+   path, and never written to a backup.
 
 8. **Paired Wear OS watch (local, no internet):** if you have the companion watch app
    installed on a paired Wear OS device, the phone publishes a small **fleet summary** —
@@ -92,16 +95,19 @@ on the LAN, and is never logged, exported, or sent anywhere else.
    configure, once per poll while the app is open. It's a one-way publish (the app never
    subscribes), and the broker password is stored encrypted in the Android Keystore.
    Intended for a local broker (e.g. Home Assistant's Mosquitto add-on); no TLS is used, so
-   point it at a broker on your LAN/tailnet. Optional Home Assistant discovery publishes
-   retained config topics so entities auto-appear.
+   the broker host **must** be a private/Tailscale address — the same `MinerHostValidator`
+   rule as miners, and the app refuses to publish otherwise. Optional Home Assistant
+   discovery publishes retained config topics so entities auto-appear.
 
 10. **Optional, off by default — local web server (Advanced):** if you enable it, the app
     runs a tiny local HTTP server (on a port you choose, default 9184) that answers **only**
     `GET /` (a read-only HTML fleet dashboard) and `GET /metrics` (Prometheus format) with
-    the same aggregate/per-miner data shown in-app. It's read-only, accepts no input beyond
-    the request line, serves no files, exposes no controls, and has no auth, so it is meant
-    for a private LAN/tailnet only — expose it no further. It runs only while the app is open
-    and the toggle is on.
+    the same aggregate/per-miner data shown in-app. It binds **only to this device's private
+    LAN/Tailscale addresses** (never all interfaces, so nothing is exposed on mobile data or a
+    public hotspot), refuses clients outside private ranges, and accepts an optional bearer
+    token (`Authorization: Bearer …` or `?token=`) that, once set, every request must carry.
+    Request size is capped and connections are handled on a small pool. It's read-only, serves
+    no files, exposes no controls, and runs only while the app is open and the toggle is on.
 
 11. **On-demand — pool speed test (Advanced):** when you tap "Run speed test", the app
     makes a few TCP connections to the stratum host:port of each pool your fleet already
@@ -238,13 +244,36 @@ Reviewed and confirmed:
 
 ## CI & dependency scanning
 
-`.github/workflows/ci.yml` runs the unit tests and a debug build on every push/PR and
-submits the resolved Gradle dependency graph to GitHub, so Dependabot flags CVEs in
-direct and transitive dependencies. `.github/dependabot.yml` opens weekly security and
-version-update PRs. These activate automatically once the repository is pushed to
-GitHub; until then, dependency review remains the manual pinned-version audit above.
+`.github/workflows/ci.yml` validates the Gradle wrapper, runs detekt, the unit tests and a
+debug build on every push/PR, and submits the resolved Gradle dependency graph to GitHub.
+Every action is pinned to a full commit SHA and the workflow token is read-only by default.
+`.github/dependabot.yml` opens weekly version-update PRs (Gradle + Actions).
+
+**Dependabot *alerts* are a repository setting, not a workflow step** — the submitted graph
+does nothing until *Settings → Code security → Dependabot alerts* (and *security updates*)
+are switched on. The 2026-11-06 audit found them off; they must stay on. Verify with
+`gh api -i repos/hiwebhq/hi3-hashkit/vulnerability-alerts` (204 = enabled).
+
+## Release signing & update integrity
+
+- The release keystore and `keystore.properties` live **outside the project tree**
+  (`~/.config/hi3/`, mode 600; or `$HI3_KEYSTORE_PROPERTIES`) so no sync/backup of the repo
+  folder can carry them. See docs/BUILD.md.
+- `./gradlew releaseChecksum` writes `app-release.apk.sha256`; publish it beside the APK on
+  every GitHub release.
+- The in-app self-updater only downloads over HTTPS from `github.com` /
+  `githubusercontent.com` or true subdomains (`UpdateHosts`), refuses https→http redirects,
+  requires the file to match the release manifest's size, and **verifies the APK is signed
+  with this app's own certificate before** handing it to PackageInstaller. The AxeOS
+  firmware downloader applies the same host/redirect rules.
 
 ## Known gaps (tracked)
 
 - Backups are plaintext JSON unless a passphrase is set at export (then AES-256-GCM
-  via PBKDF2 — see BackupCrypto).
+  via PBKDF2 — see BackupCrypto). **No credential of any kind is ever written to a backup**
+  (`BackupKeyPolicy` excludes Keystore blobs and anything named like a token/password/
+  passphrase); the weekly auto-backup is therefore safe to land in a cloud folder but still
+  contains miner addresses and worker names.
+- Gradle dependency verification (`verification-metadata.xml`) is not enabled; wrapper
+  validation and SHA-pinned actions are. Branch protection on `main` is an owner-side
+  setting (ruleset "Protect") that must be set to *active*.

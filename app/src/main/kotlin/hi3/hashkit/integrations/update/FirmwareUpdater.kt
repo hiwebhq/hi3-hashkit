@@ -130,16 +130,20 @@ class FirmwareUpdater @Inject constructor(
         fileName: String,
         onProgress: (Float) -> Unit,
     ): File? {
-        val hostName = runCatching { java.net.URI(asset.url).host }.getOrNull().orEmpty()
-        val trusted = hostName.endsWith("github.com") || hostName.endsWith("githubusercontent.com")
-        if (!asset.url.startsWith("https://") || !trusted) return null
+        if (!UpdateHosts.isTrustedUrl(asset.url)) return null
         val dir = File(context.cacheDir, UPDATES_DIR).apply { mkdirs() }
         val out = File(dir, fileName)
         val ok = withContext(Dispatchers.IO) {
             runCatching {
-                okHttpClient.newBuilder().callTimeout(0, TimeUnit.SECONDS).build()
+                okHttpClient.newBuilder()
+                    .callTimeout(0, TimeUnit.SECONDS)
+                    .followSslRedirects(false) // never follow a redirect down to cleartext
+                    .build()
                     .newCall(Request.Builder().url(asset.url).get().build()).execute().use { resp ->
                         val body = resp.body?.takeIf { resp.isSuccessful } ?: return@use false
+                        if (!resp.request.url.isHttps || !UpdateHosts.isTrustedHost(resp.request.url.host)) {
+                            return@use false
+                        }
                         val total = body.contentLength().takeIf { it > 0 } ?: asset.sizeBytes.takeIf { it > 0 }
                         body.byteStream().use { input ->
                             out.outputStream().use { output -> copyWithProgress(input, output, total, onProgress) }

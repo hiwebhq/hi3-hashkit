@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -18,6 +19,8 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,6 +43,14 @@ class AppUpdater @Inject constructor(
     /** Repo that publishes the app's signed release APKs. */
     private val repo = "hiwebhq/hi3-hashkit"
     private val json = Json { ignoreUnknownKeys = true }
+
+    /** Download client: an https→http redirect is refused outright (cleartext is allowed app-wide for miners). */
+    private val downloadClient: OkHttpClient by lazy {
+        okHttpClient.newBuilder()
+            .followSslRedirects(false)
+            .callTimeout(0, java.util.concurrent.TimeUnit.SECONDS) // APK download; read timeout still applies
+            .build()
+    }
 
     data class UpdateInfo(
         val latestVersion: String,
@@ -89,40 +100,62 @@ class AppUpdater @Inject constructor(
 
     /**
      * Download the APK to app-private cache, reporting progress 0..1. Returns the file, or
-     * null on failure. Only downloads from HTTPS GitHub hosts.
+     * null on failure. Only downloads from HTTPS GitHub hosts ([UpdateHosts]); when the release
+     * manifest gave a size ([expectedSize] > 0) the file must match it exactly; and the result
+     * must be signed with this app's own certificate ([ApkSignature.matchesInstalled]).
      */
-    suspend fun download(url: String, onProgress: (Float) -> Unit): File? {
-        if (!enabled) return null
-        val host = runCatching { java.net.URI(url).host }.getOrNull().orEmpty()
-        if (!url.startsWith("https://") || !(host.endsWith("github.com") || host.endsWith("githubusercontent.com"))) {
-            return null
-        }
+    suspend fun download(url: String, expectedSize: Long = 0L, onProgress: (Float) -> Unit): File? {
+        if (!enabled || !UpdateHosts.isTrustedUrl(url)) return null
         return withContext(Dispatchers.IO) {
-            runCatching {
-                val dir = File(context.cacheDir, "updates").apply { mkdirs() }
-                // Fresh file each time; clear any stale downloads.
-                dir.listFiles()?.forEach { it.delete() }
-                val out = File(dir, "hashkit-update.apk")
-                okHttpClient.newCall(Request.Builder().url(url).get().build()).execute().use { resp ->
-                    if (!resp.isSuccessful) return@use null
-                    val body = resp.body ?: return@use null
-                    val total = body.contentLength().takeIf { it > 0 }
-                    body.byteStream().use { input ->
-                        out.outputStream().use { output ->
-                            val buf = ByteArray(64 * 1024)
-                            var read: Int
-                            var downloaded = 0L
-                            while (input.read(buf).also { read = it } != -1) {
-                                output.write(buf, 0, read)
-                                downloaded += read
-                                if (total != null) onProgress((downloaded.toFloat() / total).coerceIn(0f, 1f))
-                            }
-                        }
-                    }
-                    out
+            val dir = File(context.cacheDir, "updates").apply { mkdirs() }
+            // Fresh file each time; clear any stale downloads.
+            dir.listFiles()?.forEach { it.delete() }
+            val out = File(dir, "hashkit-update.apk")
+            val streamed = runCatching {
+                downloadClient.newCall(Request.Builder().url(url).get().build()).execute().use { resp ->
+                    acceptable(resp, expectedSize) && streamBody(resp.body, out, expectedSize, onProgress)
                 }
-            }.getOrNull()
+            }.getOrDefault(false)
+            val sizeOk = expectedSize <= 0 || out.length() == expectedSize
+            if (streamed && sizeOk && ApkSignature.matchesInstalled(context, out)) out else { out.delete(); null }
         }
+    }
+
+    /** 2xx, final hop (after redirects) still an HTTPS GitHub host, declared length consistent with the manifest. */
+    private fun acceptable(resp: Response, expectedSize: Long): Boolean {
+        if (!resp.isSuccessful) return false
+        val finalUrl = resp.request.url
+        if (!finalUrl.isHttps || !UpdateHosts.isTrustedHost(finalUrl.host)) return false
+        val declared = resp.body.contentLength()
+        return expectedSize <= 0 || declared <= 0 || declared == expectedSize
+    }
+
+    /** Copies the body to [out], aborting (false) as soon as it exceeds [expectedSize]. */
+    private fun streamBody(body: ResponseBody, out: File, expectedSize: Long, onProgress: (Float) -> Unit): Boolean {
+        val total = body.contentLength().takeIf { it > 0 } ?: expectedSize.takeIf { it > 0 }
+        return body.byteStream().use { input ->
+            out.outputStream().use { output -> copyLimited(input, output, expectedSize, total, onProgress) }
+        }
+    }
+
+    private fun copyLimited(
+        input: java.io.InputStream,
+        output: java.io.OutputStream,
+        limit: Long,
+        total: Long?,
+        onProgress: (Float) -> Unit,
+    ): Boolean {
+        val buf = ByteArray(DOWNLOAD_BUFFER_BYTES)
+        var downloaded = 0L
+        var read = input.read(buf)
+        while (read != -1) {
+            output.write(buf, 0, read)
+            downloaded += read
+            if (limit > 0 && downloaded > limit) return false
+            if (total != null) onProgress((downloaded.toFloat() / total).coerceIn(0f, 1f))
+            read = input.read(buf)
+        }
+        return true
     }
 
     /** Whether the user has granted this app the "install unknown apps" permission. */
@@ -143,6 +176,11 @@ class AppUpdater @Inject constructor(
     suspend fun startInstall(apk: File) {
         if (!enabled) return
         withContext(Dispatchers.IO) {
+            if (!ApkSignature.matchesInstalled(context, apk)) {
+                apk.delete()
+                installEvents.value = InstallEvent.Failed("Update rejected: the APK is not signed with this app's key.")
+                return@withContext
+            }
             runCatching {
                 val installer = context.packageManager.packageInstaller
                 val params = PackageInstaller.SessionParams(
@@ -180,10 +218,44 @@ class AppUpdater @Inject constructor(
     }
 
     companion object {
+        private const val DOWNLOAD_BUFFER_BYTES = 64 * 1024
+
         /**
          * Install-session outcomes, posted by [UpdateResultReceiver]. Static because the
          * manifest-registered receiver is instantiated by the system outside Hilt's graph.
          */
         val installEvents = MutableStateFlow<InstallEvent?>(null)
+    }
+}
+
+/**
+ * Signing-certificate comparison between an APK on disk and the installed app. Android enforces
+ * the same rule at install time; checking first means a tampered or foreign file is never handed
+ * to PackageInstaller (and never gets the unattended-install path).
+ */
+internal object ApkSignature {
+
+    fun matchesInstalled(context: Context, apk: File): Boolean = runCatching {
+        val pm = context.packageManager
+        val ours = digests(pm.getPackageInfo(context.packageName, flags()))
+        val theirs = digests(pm.getPackageArchiveInfo(apk.path, flags()) ?: return false)
+        ours.isNotEmpty() && ours == theirs
+    }.getOrDefault(false)
+
+    @Suppress("DEPRECATION")
+    private fun flags(): Int =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) PackageManager.GET_SIGNING_CERTIFICATES
+        else PackageManager.GET_SIGNATURES
+
+    @Suppress("DEPRECATION")
+    private fun digests(info: android.content.pm.PackageInfo): Set<String> {
+        val sigs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val si = info.signingInfo ?: return emptySet()
+            if (si.hasMultipleSigners()) si.apkContentsSigners else si.signingCertificateHistory
+        } else {
+            info.signatures
+        } ?: return emptySet()
+        val md = java.security.MessageDigest.getInstance("SHA-256")
+        return sigs.map { sig -> md.digest(sig.toByteArray()).joinToString("") { "%02x".format(it) } }.toSet()
     }
 }

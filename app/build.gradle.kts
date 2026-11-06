@@ -1,3 +1,4 @@
+import java.security.MessageDigest
 import java.util.Properties
 
 plugins {
@@ -19,11 +20,17 @@ detekt {
     source.setFrom(files("src/main/kotlin"))
 }
 
-// Release signing: reads keystore.properties at the repo root when present (both the
-// properties file and the keystore itself are gitignored — never commit either).
+// Release signing. The keystore and its passwords live OUTSIDE the project tree so a
+// workstation backup/sync of the repo folder can never carry them: first $HI3_KEYSTORE_PROPERTIES,
+// then ~/.config/hi3/keystore.properties, then (legacy) the repo root. `storeFile` is resolved
+// relative to the properties file. Keep both files mode 600; never commit either.
+val keystorePropsFile: File? = listOfNotNull(
+    System.getenv("HI3_KEYSTORE_PROPERTIES")?.let { File(it) },
+    File(System.getProperty("user.home"), ".config/hi3/keystore.properties"),
+    rootProject.file("keystore.properties"),
+).firstOrNull { it.isFile }
 val keystoreProps = Properties().apply {
-    val f = rootProject.file("keystore.properties")
-    if (f.exists()) f.inputStream().use { load(it) }
+    keystorePropsFile?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -34,8 +41,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 37
-        versionCode = 148
-        versionName = "0.82.3"
+        versionCode = 149
+        versionName = "0.83.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -55,7 +62,9 @@ android {
     signingConfigs {
         if (keystoreProps.isNotEmpty()) {
             create("release") {
-                storeFile = rootProject.file(keystoreProps.getProperty("storeFile"))
+                storeFile = File(keystoreProps.getProperty("storeFile")).let { f ->
+                    if (f.isAbsolute) f else File(keystorePropsFile!!.parentFile, f.path)
+                }
                 storePassword = keystoreProps.getProperty("storePassword")
                 keyAlias = keystoreProps.getProperty("keyAlias")
                 keyPassword = keystoreProps.getProperty("keyPassword")
@@ -95,6 +104,22 @@ android {
         unitTests {
             isIncludeAndroidResources = true // Robolectric needs merged resources
         }
+    }
+}
+
+// Release integrity: write app-release.apk.sha256 next to the APK so the checksum can be
+// published as a release asset (`./gradlew releaseChecksum`).
+tasks.register("releaseChecksum") {
+    dependsOn("assembleRelease")
+    val apk = layout.buildDirectory.file("outputs/apk/release/app-release.apk")
+    val out = layout.buildDirectory.file("outputs/apk/release/app-release.apk.sha256")
+    outputs.file(out)
+    doLast {
+        val bytes = apk.get().asFile.readBytes()
+        val digest = MessageDigest.getInstance("SHA-256").digest(bytes)
+        val hex = digest.joinToString("") { b -> "%02x".format(b) }
+        out.get().asFile.writeText("$hex  ${apk.get().asFile.name}\n")
+        println("SHA-256 $hex  ${apk.get().asFile.name}")
     }
 }
 

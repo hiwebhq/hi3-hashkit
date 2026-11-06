@@ -80,7 +80,7 @@
 
     <!-- Local web server -->
     <string name="set_web_server_title">Exposer le tableau de bord web + /metrics</string>
-    <string name="set_web_server_subtitle">Lance un serveur web local en lecture seule : un tableau de bord HTML de la flotte accessible depuis tout navigateur ou TV du LAN, plus un point d\'accès Prometheus /metrics pour Grafana. Sans authentification — réservé à un LAN/tailnet privé.</string>
+    <string name="set_web_server_subtitle">Lance un serveur web local en lecture seule : un tableau de bord HTML de la flotte ouvrable depuis tout navigateur ou TV du LAN, plus un point de terminaison Prometheus /metrics pour Grafana. N\'écoute que sur les adresses privées LAN/Tailscale de cet appareil ; définissez un jeton ci-dessous pour l\'exiger à chaque requête.</string>
     <string name="set_web_server_port">Port</string>
     <string name="set_web_server_hint">Quand l\'app est ouverte : tableau de bord sur http://&lt;ip-de-cet-appareil>:%1$d/ et métriques sur /metrics. Lecture seule (GET uniquement) ; expose les totaux + données par mineur, aucun contrôle.</string>
 
@@ -218,4 +218,9 @@
     <string name="set_kasa_save_password">Enregistrer le mot de passe</string>
     <string name="set_kasa_replace_password">Remplacer le mot de passe</string>
     <string name="set_kasa_disclosure">Le mot de passe est stocké chiffré avec l\'Android Keystore et sert uniquement à ouvrir une session chiffrée avec les prises de votre réseau local.</string>
+    <string name="set_web_server_token">Jeton de scrape (facultatif)</string>
+    <string name="set_web_server_token_hint">Quand un jeton est défini, les scrapers envoient Authorization: Bearer &lt;token> et les navigateurs ajoutent ?token=&lt;token> à l\'URL. Laissez vide pour un tableau de bord ouvert, LAN uniquement.</string>
+    <string name="set_secret_saved_label">%1$s (enregistré — saisir pour remplacer, vide pour effacer)</string>
+    <string name="set_secret_save">Enregistrer</string>
+    <string name="set_secret_replace">Remplacer</string>
 </resources>

@@ -304,8 +304,9 @@ fun SettingsScreen(
 
             Section("HASHKIT WIFI") {
                 val wifiFarms by viewModel.farms.collectAsStateWithLifecycle()
+                val apPassphrase by viewModel.hashkitApPassphrase.collectAsStateWithLifecycle()
                 HashkitWifiSection(
-                    passphrase = settings.hashkitApPassphrase,
+                    passphrase = apPassphrase,
                     farmSubnets = wifiFarms.map { it.subnetsCsv },
                     onSavePassphrase = viewModel::setHashkitApPassphrase,
                     onNetworkScan = onNetworkScan,
@@ -412,8 +413,16 @@ fun SettingsScreen(
                         NumberRow(stringResource(R.string.set_web_server_port), settings.prometheusPort.toString()) {
                             it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
                         }
+                        NumberRow(stringResource(R.string.set_web_server_token), settings.prometheusToken) {
+                            viewModel.setPrometheusToken(it)
+                        }
                         Text(
                             stringResource(R.string.set_web_server_hint, settings.prometheusPort),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = HiBrand.textSecondary,
+                        )
+                        Text(
+                            stringResource(R.string.set_web_server_token_hint),
                             style = MaterialTheme.typography.labelSmall,
                             color = HiBrand.textSecondary,
                         )
@@ -556,10 +565,10 @@ fun SettingsScreen(
                             value = settings.hi3PoolPayoutAddress,
                             onChange = { viewModel.setHi3PoolPayoutAddress(it) },
                         )
-                        NumberRow(
+                        SecretRow(
                             if (settings.poolType.usesToken) stringResource(R.string.set_pool_access_token)
                             else stringResource(R.string.set_pool_api_token),
-                            settings.poolApiToken,
+                            configured = settings.poolApiTokenConfigured,
                         ) { viewModel.setPoolApiToken(it) }
                     }
                 }
@@ -589,10 +598,14 @@ fun SettingsScreen(
                         NumberRow(stringResource(R.string.set_push_ntfy_url), settings.webhookUrl) { viewModel.setWebhookUrl(it) }
                     hi3.hashkit.data.alerts.WebhookType.GOTIFY -> {
                         NumberRow(stringResource(R.string.set_push_gotify_url), settings.webhookUrl) { viewModel.setWebhookUrl(it) }
-                        NumberRow(stringResource(R.string.set_push_gotify_token), settings.webhookToken) { viewModel.setWebhookToken(it) }
+                        SecretRow(stringResource(R.string.set_push_gotify_token), settings.webhookTokenConfigured) {
+                            viewModel.setWebhookToken(it)
+                        }
                     }
                     hi3.hashkit.data.alerts.WebhookType.TELEGRAM -> {
-                        NumberRow(stringResource(R.string.set_push_telegram_token), settings.webhookToken) { viewModel.setWebhookToken(it) }
+                        SecretRow(stringResource(R.string.set_push_telegram_token), settings.webhookTokenConfigured) {
+                            viewModel.setWebhookToken(it)
+                        }
                         NumberRow(stringResource(R.string.set_push_telegram_chat), settings.webhookTarget) { viewModel.setWebhookTarget(it) }
                     }
                     hi3.hashkit.data.alerts.WebhookType.GENERIC ->
@@ -1116,6 +1129,35 @@ private fun IntervalRow(label: String, currentMs: Long, onSelect: (Long) -> Unit
 private fun ActionRow(label: String, onClick: () -> Unit) {
     androidx.compose.material3.OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Text(label)
+    }
+}
+
+/**
+ * Write-only entry for a stored credential: the saved value is never read back into the UI
+ * (it lives Keystore-encrypted), so the field shows a "saved" label and only sends on Save.
+ * Blank + Save clears the secret.
+ */
+@Composable
+private fun SecretRow(label: String, configured: Boolean, onSave: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it },
+        label = {
+            Text(if (configured) stringResource(R.string.set_secret_saved_label, label) else label)
+        },
+        singleLine = true,
+        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+        modifier = Modifier.fillMaxWidth(),
+    )
+    androidx.compose.material3.TextButton(onClick = {
+        onSave(text.trim())
+        text = ""
+    }) {
+        Text(
+            if (configured) stringResource(R.string.set_secret_replace)
+            else stringResource(R.string.set_secret_save)
+        )
     }
 }
 

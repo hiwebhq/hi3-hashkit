@@ -79,7 +79,7 @@
 
     <!-- Local web server -->
     <string name="set_web_server_title">Exponer panel web + /metrics</string>
-    <string name="set_web_server_subtitle">Ejecuta un servidor web local de solo lectura: un panel HTML de flota que cualquier navegador o TV de la LAN puede abrir, más un endpoint Prometheus /metrics para Grafana. Sin autenticación — solo para una LAN/tailnet privada.</string>
+    <string name="set_web_server_subtitle">Ejecuta un servidor web local de solo lectura: un panel HTML de la flota que cualquier navegador o TV de la LAN puede abrir, más un endpoint Prometheus /metrics para Grafana. Solo escucha en las direcciones privadas LAN/Tailscale de este dispositivo; define un token abajo para exigirlo en cada petición.</string>
     <string name="set_web_server_port">Puerto</string>
     <string name="set_web_server_hint">Con la app abierta: panel en http://&lt;ip-de-este-dispositivo>:%1$d/ y métricas en /metrics. Solo lectura (solo GET); expone totales + datos por minero, sin controles.</string>
 
@@ -217,4 +217,9 @@
     <string name="set_kasa_save_password">Guardar contraseña</string>
     <string name="set_kasa_replace_password">Reemplazar contraseña</string>
     <string name="set_kasa_disclosure">La contraseña se guarda cifrada con el Android Keystore y solo se usa para abrir una sesión cifrada con los enchufes de tu red local.</string>
+    <string name="set_web_server_token">Token de scrape (opcional)</string>
+    <string name="set_web_server_token_hint">Con un token definido, los scrapers envían Authorization: Bearer &lt;token> y los navegadores añaden ?token=&lt;token> a la URL. Déjalo vacío para un panel abierto solo en la LAN.</string>
+    <string name="set_secret_saved_label">%1$s (guardado — escribe para reemplazar, vacío para borrar)</string>
+    <string name="set_secret_save">Guardar</string>
+    <string name="set_secret_replace">Reemplazar</string>
 </resources>

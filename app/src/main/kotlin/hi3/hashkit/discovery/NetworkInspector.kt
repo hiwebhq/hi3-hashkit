@@ -25,6 +25,21 @@ class NetworkInspector @Inject constructor(
             .filter { MinerHostValidator.isAllowedIp(it) && !it.startsWith("100.") && !it.startsWith("169.254.") }
     }.getOrDefault(emptyList())
 
+    /**
+     * Every private IPv4 address this device holds right now — LAN *and* Tailscale (CGNAT),
+     * never link-local or public. These are the only interfaces a local listener (the
+     * optional web dashboard / Prometheus endpoint) may bind to.
+     */
+    fun localBindAddresses(): List<String> = runCatching {
+        NetworkInterface.getNetworkInterfaces().toList()
+            .filter { it.isUp && !it.isLoopback }
+            .flatMap { nic -> nic.inetAddresses.toList() }
+            .filterIsInstance<Inet4Address>()
+            .mapNotNull { it.hostAddress }
+            .filter { MinerHostValidator.isAllowedIp(it) && !it.startsWith("169.254.") && !it.startsWith("127.") }
+            .distinct()
+    }.getOrDefault(emptyList())
+
     /** Default scan target: the /24 of the first LAN address, if any. */
     fun defaultScanCidr(): SubnetUtils.Cidr? =
         localPrivateAddresses().firstOrNull()?.let { SubnetUtils.slash24Of(it) }

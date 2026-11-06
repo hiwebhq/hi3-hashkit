@@ -87,8 +87,8 @@ data class AppSettings(
     val fleet3dRackSize: Int = 4,
     /** Miner tile columns on the Flow view: 0 = classic single row, else 2..8 (NxN grid). */
     val flowGridCols: Int = 0,
-    /** Passphrase of the Hashkit field-kit Wi-Fi AP (SSID Hi3-Hashkit). */
-    val hashkitApPassphrase: String = "",
+    /** Whether a (Keystore-encrypted) passphrase for the Hashkit field-kit AP is stored. */
+    val hashkitApPassphraseConfigured: Boolean = false,
     /** SAF tree URI weekly auto-backups are written to; blank = auto-backup off. */
     val autoBackupFolderUri: String = "",
     /** When the last auto-backup was written (epoch ms); 0 = never. */
@@ -100,8 +100,8 @@ data class AppSettings(
     val hi3PoolPayoutAddress: String = "",
     /** Which pool the stats come from. */
     val poolType: hi3.hashkit.integrations.hi3.PoolType = hi3.hashkit.integrations.hi3.PoolType.HI3,
-    /** Optional read-only API key / watcher token, for pools that require one. */
-    val poolApiToken: String = "",
+    /** Whether a (Keystore-encrypted) read-only pool API key / access token is stored. */
+    val poolApiTokenConfigured: Boolean = false,
     /** Hi3 MMP integration — OPT-IN; nothing is contacted while false. */
     val mmpEnabled: Boolean = false,
     val mmpBaseUrl: String = "https://mmp.hi3.cc",
@@ -134,7 +134,8 @@ data class AppSettings(
     /** Push alerts to a user webhook (ntfy/Gotify/Telegram/generic) so they arrive when closed. */
     val webhookType: hi3.hashkit.data.alerts.WebhookType = hi3.hashkit.data.alerts.WebhookType.NONE,
     val webhookUrl: String = "",
-    val webhookToken: String = "",
+    /** Whether a (Keystore-encrypted) Gotify/Telegram token is stored; the value never enters this flow. */
+    val webhookTokenConfigured: Boolean = false,
     val webhookTarget: String = "",
     /** Quiet hours: suppress alert notifications (events are still recorded) in a daily window. */
     val quietHoursEnabled: Boolean = false,
@@ -157,6 +158,8 @@ data class AppSettings(
     /** Prometheus /metrics endpoint (Advanced feature) — OPT-IN; off by default. */
     val prometheusEnabled: Boolean = false,
     val prometheusPort: Int = 9184,
+    /** Optional bearer token scrapers/browsers must present (`Authorization: Bearer` or `?token=`). */
+    val prometheusToken: String = "",
     /**
      * Solar-surplus mining (Advanced). Reads grid-export/surplus watts from a local Home
      * Assistant sensor over its REST API. The long-lived token is stored encrypted; only
@@ -221,14 +224,18 @@ class SettingsRepository @Inject constructor(
         val pinnedFarmId = longPreferencesKey("pinned_farm_id")
         val fleet3dRackSize = intPreferencesKey("fleet3d_rack_size")
         val flowGridCols = intPreferencesKey("flow_grid_cols")
-        val hashkitApPassphrase = stringPreferencesKey("hashkit_ap_passphrase")
+        /** Legacy plaintext key; migrated into [hashkitApPassphraseEnc] on first launch. */
+        val hashkitApPassphraseLegacy = stringPreferencesKey("hashkit_ap_passphrase")
+        val hashkitApPassphraseEnc = stringPreferencesKey("hashkit_ap_passphrase_enc")
         val autoBackupFolderUri = stringPreferencesKey("auto_backup_folder_uri")
         val autoBackupLastMs = longPreferencesKey("auto_backup_last_ms")
         val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
         val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
         val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
         val poolType = stringPreferencesKey("pool_type")
-        val poolApiToken = stringPreferencesKey("pool_api_token")
+        /** Legacy plaintext key; migrated into [poolApiTokenEnc] on first launch. */
+        val poolApiTokenLegacy = stringPreferencesKey("pool_api_token")
+        val poolApiTokenEnc = stringPreferencesKey("pool_api_token_enc")
         val mmpEnabled = booleanPreferencesKey("mmp_enabled")
         val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
         val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
@@ -251,7 +258,9 @@ class SettingsRepository @Inject constructor(
         val thCooldownMin = longPreferencesKey("th_cooldown_min")
         val webhookType = stringPreferencesKey("webhook_type")
         val webhookUrl = stringPreferencesKey("webhook_url")
-        val webhookToken = stringPreferencesKey("webhook_token")
+        /** Legacy plaintext key; migrated into [webhookTokenEnc] on first launch. */
+        val webhookTokenLegacy = stringPreferencesKey("webhook_token")
+        val webhookTokenEnc = stringPreferencesKey("webhook_token_enc")
         val webhookTarget = stringPreferencesKey("webhook_target")
         val quietHoursEnabled = booleanPreferencesKey("quiet_hours_enabled")
         val quietStartMinute = intPreferencesKey("quiet_start_minute")
@@ -268,6 +277,7 @@ class SettingsRepository @Inject constructor(
         val mqttHaDiscovery = booleanPreferencesKey("mqtt_ha_discovery")
         val prometheusEnabled = booleanPreferencesKey("prometheus_enabled")
         val prometheusPort = intPreferencesKey("prometheus_port")
+        val prometheusToken = stringPreferencesKey("prometheus_token")
         val haBaseUrl = stringPreferencesKey("ha_base_url")
         val haEntityId = stringPreferencesKey("ha_entity_id")
         val haTokenEnc = stringPreferencesKey("ha_token_enc")
@@ -334,14 +344,16 @@ class SettingsRepository @Inject constructor(
             pinnedFarmId = p[Keys.pinnedFarmId] ?: -1,
             fleet3dRackSize = p[Keys.fleet3dRackSize] ?: 4,
             flowGridCols = p[Keys.flowGridCols] ?: 0,
-            hashkitApPassphrase = p[Keys.hashkitApPassphrase] ?: "",
+            hashkitApPassphraseConfigured =
+                !p[Keys.hashkitApPassphraseEnc].isNullOrBlank() || !p[Keys.hashkitApPassphraseLegacy].isNullOrBlank(),
             autoBackupFolderUri = p[Keys.autoBackupFolderUri] ?: "",
             autoBackupLastMs = p[Keys.autoBackupLastMs] ?: 0,
             hi3PoolEnabled = p[Keys.hi3PoolEnabled] ?: false,
             hi3PoolBaseUrl = p[Keys.hi3PoolBaseUrl] ?: "https://pool.hi3.cc",
             hi3PoolPayoutAddress = p[Keys.hi3PoolPayoutAddress] ?: "",
             poolType = hi3.hashkit.integrations.hi3.PoolType.fromName(p[Keys.poolType]),
-            poolApiToken = p[Keys.poolApiToken] ?: "",
+            poolApiTokenConfigured =
+                !p[Keys.poolApiTokenEnc].isNullOrBlank() || !p[Keys.poolApiTokenLegacy].isNullOrBlank(),
             mmpEnabled = p[Keys.mmpEnabled] ?: false,
             mmpBaseUrl = p[Keys.mmpBaseUrl] ?: "https://mmp.hi3.cc",
             mmpKeyConfigured = !p[Keys.mmpApiKeyEncrypted].isNullOrBlank(),
@@ -368,7 +380,8 @@ class SettingsRepository @Inject constructor(
             ),
             webhookType = hi3.hashkit.data.alerts.WebhookType.fromName(p[Keys.webhookType]),
             webhookUrl = p[Keys.webhookUrl] ?: "",
-            webhookToken = p[Keys.webhookToken] ?: "",
+            webhookTokenConfigured =
+                !p[Keys.webhookTokenEnc].isNullOrBlank() || !p[Keys.webhookTokenLegacy].isNullOrBlank(),
             webhookTarget = p[Keys.webhookTarget] ?: "",
             quietHoursEnabled = p[Keys.quietHoursEnabled] ?: false,
             quietStartMinute = (p[Keys.quietStartMinute] ?: 22 * 60).coerceIn(0, 1439),
@@ -385,6 +398,7 @@ class SettingsRepository @Inject constructor(
             mqttHomeAssistantDiscovery = p[Keys.mqttHaDiscovery] ?: true,
             prometheusEnabled = p[Keys.prometheusEnabled] ?: false,
             prometheusPort = (p[Keys.prometheusPort] ?: 9184).coerceIn(1024, 65535),
+            prometheusToken = p[Keys.prometheusToken] ?: "",
             homeAssistantBaseUrl = p[Keys.haBaseUrl] ?: "",
             homeAssistantEntityId = p[Keys.haEntityId] ?: "",
             homeAssistantTokenConfigured = !p[Keys.haTokenEnc].isNullOrBlank(),
@@ -428,7 +442,15 @@ class SettingsRepository @Inject constructor(
     suspend fun setFleet3dRackSize(value: Int) = edit { it[Keys.fleet3dRackSize] = value.coerceIn(2, 8) }
     suspend fun setFlowGridCols(value: Int) =
         edit { it[Keys.flowGridCols] = if (value == 0) 0 else value.coerceIn(2, 8) }
-    suspend fun setHashkitApPassphrase(value: String) = edit { it[Keys.hashkitApPassphrase] = value.trim() }
+    /** Store the Hashkit AP passphrase encrypted with the Android Keystore; blank clears it. */
+    suspend fun setHashkitApPassphrase(value: String) = edit {
+        it[Keys.hashkitApPassphraseEnc] = encryptOrBlank(value)
+        it.remove(Keys.hashkitApPassphraseLegacy)
+    }
+
+    /** Decrypt the Hashkit AP passphrase on demand (the Wi-Fi join UI needs the plaintext). */
+    suspend fun hashkitApPassphrase(): String? =
+        readSecret(Keys.hashkitApPassphraseEnc, Keys.hashkitApPassphraseLegacy)
     suspend fun setAutoBackupFolderUri(value: String) = edit { it[Keys.autoBackupFolderUri] = value.trim() }
     suspend fun setAutoBackupLastMs(value: Long) = edit { it[Keys.autoBackupLastMs] = value }
     suspend fun setConfirmBeforeExit(value: Boolean) = edit { it[Keys.confirmBeforeExit] = value }
@@ -438,7 +460,14 @@ class SettingsRepository @Inject constructor(
     suspend fun setHi3PoolBaseUrl(value: String) = edit { it[Keys.hi3PoolBaseUrl] = value.trim() }
     suspend fun setHi3PoolPayoutAddress(value: String) = edit { it[Keys.hi3PoolPayoutAddress] = value.trim() }
     suspend fun setPoolType(value: hi3.hashkit.integrations.hi3.PoolType) = edit { it[Keys.poolType] = value.name }
-    suspend fun setPoolApiToken(value: String) = edit { it[Keys.poolApiToken] = value.trim() }
+    /** Store the pool API key / access token encrypted with the Android Keystore; blank clears it. */
+    suspend fun setPoolApiToken(value: String) = edit {
+        it[Keys.poolApiTokenEnc] = encryptOrBlank(value)
+        it.remove(Keys.poolApiTokenLegacy)
+    }
+
+    /** Decrypt the pool token on demand; never surfaced through the settings flow. */
+    suspend fun poolApiToken(): String? = readSecret(Keys.poolApiTokenEnc, Keys.poolApiTokenLegacy)
     suspend fun setMmpEnabled(value: Boolean) = edit { it[Keys.mmpEnabled] = value }
     suspend fun setMmpBaseUrl(value: String) = edit { it[Keys.mmpBaseUrl] = value.trim() }
     suspend fun setShowSoloCard(value: Boolean) = edit { it[Keys.showSoloCard] = value }
@@ -490,7 +519,14 @@ class SettingsRepository @Inject constructor(
     suspend fun setCooldownMinutes(value: Long) = edit { it[Keys.thCooldownMin] = value }
     suspend fun setWebhookType(value: hi3.hashkit.data.alerts.WebhookType) = edit { it[Keys.webhookType] = value.name }
     suspend fun setWebhookUrl(value: String) = edit { it[Keys.webhookUrl] = value.trim() }
-    suspend fun setWebhookToken(value: String) = edit { it[Keys.webhookToken] = value.trim() }
+    /** Store the Gotify/Telegram token encrypted with the Android Keystore; blank clears it. */
+    suspend fun setWebhookToken(value: String) = edit {
+        it[Keys.webhookTokenEnc] = encryptOrBlank(value)
+        it.remove(Keys.webhookTokenLegacy)
+    }
+
+    /** Decrypt the webhook token on demand; never surfaced through the settings flow. */
+    suspend fun webhookToken(): String? = readSecret(Keys.webhookTokenEnc, Keys.webhookTokenLegacy)
     suspend fun setWebhookTarget(value: String) = edit { it[Keys.webhookTarget] = value.trim() }
 
     /** Store the advanced-feature unlock code (validated on read into [AppSettings.advancedUnlocked]). */
@@ -509,6 +545,7 @@ class SettingsRepository @Inject constructor(
     suspend fun setMqttHaDiscovery(value: Boolean) = edit { it[Keys.mqttHaDiscovery] = value }
     suspend fun setPrometheusEnabled(value: Boolean) = edit { it[Keys.prometheusEnabled] = value }
     suspend fun setPrometheusPort(value: Int) = edit { it[Keys.prometheusPort] = value.coerceIn(1024, 65535) }
+    suspend fun setPrometheusToken(value: String) = edit { it[Keys.prometheusToken] = value.trim() }
 
     // Solar-surplus / Home Assistant
     suspend fun setHomeAssistantBaseUrl(value: String) = edit { it[Keys.haBaseUrl] = value.trim() }
@@ -551,16 +588,66 @@ class SettingsRepository @Inject constructor(
         context.dataStore.edit { block(it) }
     }
 
+    // ------------------------------------------------------------- secrets ----
+
+    private fun encryptOrBlank(plaintext: String): String {
+        val trimmed = plaintext.trim()
+        return if (trimmed.isEmpty()) "" else hi3.hashkit.core.KeystoreCrypto.encrypt(trimmed)
+    }
+
+    /**
+     * The decrypted secret under [enc], falling back to a not-yet-migrated plaintext [legacy]
+     * value (see [migrateLegacyPlaintextSecrets]). Null when neither is set or the blob is unreadable.
+     */
+    private suspend fun readSecret(
+        enc: androidx.datastore.preferences.core.Preferences.Key<String>,
+        legacy: androidx.datastore.preferences.core.Preferences.Key<String>,
+    ): String? {
+        val p = context.dataStore.data.first()
+        p[enc]?.takeIf { it.isNotBlank() }?.let { blob ->
+            return runCatching { hi3.hashkit.core.KeystoreCrypto.decrypt(blob) }.getOrNull()
+        }
+        return p[legacy]?.trim()?.takeIf { it.isNotEmpty() }
+    }
+
+    /**
+     * One-time upgrade for installs that stored the webhook token, pool token or Hashkit AP
+     * passphrase as plaintext DataStore strings (≤0.82.x): re-encrypt each into its `*_enc`
+     * key with the Android Keystore and delete the plaintext. Safe to call on every launch.
+     */
+    suspend fun migrateLegacyPlaintextSecrets() {
+        val pairs = listOf(
+            Keys.webhookTokenLegacy to Keys.webhookTokenEnc,
+            Keys.poolApiTokenLegacy to Keys.poolApiTokenEnc,
+            Keys.hashkitApPassphraseLegacy to Keys.hashkitApPassphraseEnc,
+        )
+        val current = context.dataStore.data.first()
+        if (pairs.none { (legacy, _) -> !current[legacy].isNullOrBlank() }) return
+        edit { p ->
+            for ((legacy, enc) in pairs) {
+                val plain = p[legacy]?.trim().orEmpty()
+                if (plain.isEmpty()) continue
+                if (p[enc].isNullOrBlank()) {
+                    runCatching { hi3.hashkit.core.KeystoreCrypto.encrypt(plain) }
+                        .onSuccess { blob -> p[enc] = blob }
+                        .onFailure { return@edit } // Keystore unavailable right now; retry next launch
+                }
+                p.remove(legacy)
+            }
+        }
+    }
+
     // ------------------------------------------------------------- config backup ----
 
     /**
      * Every stored setting as a type-tagged string ("b:", "i:", "l:", "f:", "d:", "s:"),
-     * for the config backup. Keystore-encrypted secrets are device-bound and excluded;
-     * activeFarmId is a database row id that wouldn't survive a restore.
+     * for the config backup. Credentials of any kind are excluded by [BackupKeyPolicy]
+     * (Keystore blobs are device-bound; nothing else secret is stored); activeFarmId is a
+     * database row id that wouldn't survive a restore.
      */
     suspend fun exportForBackup(): Map<String, String> =
         context.dataStore.data.first().asMap().entries
-            .filter { (k, _) -> k.name !in BACKUP_EXCLUDED_KEYS }
+            .filter { (k, _) -> !BackupKeyPolicy.isExcluded(k.name) }
             .mapNotNull { (k, v) ->
                 val tagged = when (v) {
                     is Boolean -> "b:$v"
@@ -577,7 +664,7 @@ class SettingsRepository @Inject constructor(
     /** Write settings captured by [exportForBackup] back; unknown/garbled entries are skipped. */
     suspend fun importFromBackup(entries: Map<String, String>) = edit { p ->
         for ((name, tagged) in entries) {
-            if (name in BACKUP_EXCLUDED_KEYS) continue
+            if (BackupKeyPolicy.isExcluded(name)) continue
             val value = tagged.substringAfter(':', "")
             runCatching {
                 when (tagged.substringBefore(':', "")) {
@@ -598,8 +685,3 @@ const val POLL_INTERVAL_MIN_MS = 5_000L
 const val POLL_INTERVAL_MAX_MS = 86_400_000L
 private const val CURRENCY_CODE_MAX = 6
 
-private val BACKUP_EXCLUDED_KEYS = setOf(
-    "mmp_api_key_encrypted", "mqtt_password_enc", "ha_token_enc", // device-bound Keystore blobs
-    "active_farm_id", "pinned_farm_id", // DB row ids, not portable
-    "auto_backup_folder_uri", "auto_backup_last_ms", // SAF grant is device-bound
-)

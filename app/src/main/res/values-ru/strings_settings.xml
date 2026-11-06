@@ -80,7 +80,7 @@
 
     <!-- Local web server -->
     <string name="set_web_server_title">Веб-дашборд + /metrics</string>
-    <string name="set_web_server_subtitle">Локальный веб-сервер только для чтения: HTML-дашборд парка, открываемый любым браузером или ТВ в LAN, плюс Prometheus-эндпоинт /metrics для Grafana. Без авторизации — только для приватной LAN/tailnet.</string>
+    <string name="set_web_server_subtitle">Запускает локальный веб-сервер только для чтения: HTML-панель парка, которую откроет любой браузер или ТВ в локальной сети, плюс эндпоинт Prometheus /metrics для Grafana. Слушает только на приватных адресах LAN/Tailscale этого устройства; задайте токен ниже, чтобы требовать его при каждом запросе.</string>
     <string name="set_web_server_port">Порт</string>
     <string name="set_web_server_hint">Пока приложение открыто: дашборд на http://&lt;ip-этого-устройства>:%1$d/ и метрики на /metrics. Только чтение (лишь GET); отдаёт итоги и данные по майнерам, без управления.</string>
 
@@ -218,4 +218,9 @@
     <string name="set_kasa_save_password">Сохранить пароль</string>
     <string name="set_kasa_replace_password">Заменить пароль</string>
     <string name="set_kasa_disclosure">Пароль хранится в зашифрованном виде в Android Keystore и используется только для открытия зашифрованной сессии с розетками в вашей локальной сети.</string>
+    <string name="set_web_server_token">Токен для сбора (необязательно)</string>
+    <string name="set_web_server_token_hint">Если токен задан, сборщики передают Authorization: Bearer &lt;token>, а браузеры добавляют ?token=&lt;token> к URL. Оставьте пустым для открытой панели только в локальной сети.</string>
+    <string name="set_secret_saved_label">%1$s (сохранено — введите для замены, пусто для удаления)</string>
+    <string name="set_secret_save">Сохранить</string>
+    <string name="set_secret_replace">Заменить</string>
 </resources>

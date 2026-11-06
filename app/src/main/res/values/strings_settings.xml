@@ -80,7 +80,7 @@
 
     <!-- Local web server -->
     <string name="set_web_server_title">Expose web dashboard + /metrics</string>
-    <string name="set_web_server_subtitle">Run a local, read-only web server: an HTML fleet dashboard any browser or TV on the LAN can open, plus a Prometheus /metrics endpoint for Grafana. No auth — for a private LAN/tailnet only.</string>
+    <string name="set_web_server_subtitle">Run a local, read-only web server: an HTML fleet dashboard any browser or TV on the LAN can open, plus a Prometheus /metrics endpoint for Grafana. Binds only to this device\'s private LAN/Tailscale addresses; set a token below to require it on every request.</string>
     <string name="set_web_server_port">Port</string>
     <string name="set_web_server_hint">While the app is open: dashboard at http://&lt;this-device-ip>:%1$d/ and metrics at /metrics. Read-only (GET only); exposes totals + per-miner data, no controls.</string>
 
@@ -218,4 +218,9 @@
     <string name="set_kasa_save_password">Save password</string>
     <string name="set_kasa_replace_password">Replace password</string>
     <string name="set_kasa_disclosure">The password is stored encrypted with the Android Keystore and used only to open an encrypted session with plugs on your local network.</string>
+    <string name="set_web_server_token">Scrape token (optional)</string>
+    <string name="set_web_server_token_hint">When a token is set, scrapers send Authorization: Bearer &lt;token> and browsers add ?token=&lt;token> to the URL. Leave blank for an open, LAN-only dashboard.</string>
+    <string name="set_secret_saved_label">%1$s (saved — enter to replace, blank to clear)</string>
+    <string name="set_secret_save">Save</string>
+    <string name="set_secret_replace">Replace</string>
 </resources>

@@ -80,7 +80,7 @@
 
     <!-- Local web server -->
     <string name="set_web_server_title">开放 Web 仪表盘 + /metrics</string>
-    <string name="set_web_server_subtitle">运行一个本地只读 Web 服务器：局域网内任何浏览器或电视都能打开的 HTML 机队仪表盘，外加供 Grafana 使用的 Prometheus /metrics 端点。无认证——仅限私有局域网/tailnet 使用。</string>
+    <string name="set_web_server_subtitle">运行一个本地只读 Web 服务器：局域网内任何浏览器或电视都能打开的 HTML 矿机面板，以及供 Grafana 使用的 Prometheus /metrics 端点。仅绑定本设备的私有 LAN/Tailscale 地址；在下方设置令牌即可要求每次请求都携带。</string>
     <string name="set_web_server_port">端口</string>
     <string name="set_web_server_hint">应用打开期间：仪表盘位于 http://&lt;本机-IP>:%1$d/，指标位于 /metrics。只读（仅 GET）；提供总量和单机数据，无控制功能。</string>
 
@@ -218,4 +218,9 @@
     <string name="set_kasa_save_password">保存密码</string>
     <string name="set_kasa_replace_password">替换密码</string>
     <string name="set_kasa_disclosure">密码通过 Android Keystore 加密保存，仅用于与本地网络中的插座建立加密会话。</string>
+    <string name="set_web_server_token">抓取令牌（可选）</string>
+    <string name="set_web_server_token_hint">设置令牌后，抓取器需发送 Authorization: Bearer &lt;token>，浏览器需在 URL 后加 ?token=&lt;token>。留空则为仅限局域网的开放面板。</string>
+    <string name="set_secret_saved_label">%1$s（已保存 — 输入以替换，留空以清除）</string>
+    <string name="set_secret_save">保存</string>
+    <string name="set_secret_replace">替换</string>
 </resources>

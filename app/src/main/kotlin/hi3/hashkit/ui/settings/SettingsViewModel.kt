@@ -96,7 +96,7 @@ class SettingsViewModel @Inject constructor(
         }
         updateStatus.value = UpdateStatus.Downloading(0f)
         viewModelScope.launch {
-            val file = appUpdater.download(info.apkUrl) { p ->
+            val file = appUpdater.download(info.apkUrl, info.sizeBytes) { p ->
                 updateStatus.value = UpdateStatus.Downloading(p)
             }
             if (file == null) {
@@ -197,6 +197,16 @@ class SettingsViewModel @Inject constructor(
     val uiState: StateFlow<SettingsUiState> = repo.settings
         .map { SettingsUiState(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+
+    /**
+     * The Hashkit AP passphrase, decrypted on demand for the Wi-Fi join/QR controls only
+     * (it is the one stored secret the UI must actually use, not just set).
+     */
+    val hashkitApPassphrase: StateFlow<String> = repo.settings
+        .map { if (it.hashkitApPassphraseConfigured) repo.hashkitApPassphrase().orEmpty() else "" }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "")
+
+    fun setPrometheusToken(v: String) = viewModelScope.launch { repo.setPrometheusToken(v) }
 
     fun setBackgroundMonitoring(enabled: Boolean) = viewModelScope.launch {
         repo.setBackgroundMonitoring(enabled)
