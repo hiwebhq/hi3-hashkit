@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.83.1
+
+- Version bump only; no functional changes since 0.83.0.
+
 ## 0.83.0
 
 Security hardening release (independent audit, 2026-11-06).
