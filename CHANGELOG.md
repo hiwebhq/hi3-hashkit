@@ -1,5 +1,56 @@
 # Changelog
 
+## 0.84.0
+
+Security hardening release (independent audit, 2026-11-07). No new features.
+
+- **Backup restore is now treated as untrusted input.** Only settings the app declares are
+  written, each strictly as its declared type (a crafted file can no longer crash-loop the app
+  or inject unknown keys). An integration's endpoint (MMP / pool / webhook / Home Assistant /
+  MQTT host) is left unchanged by a restore while a credential for it is already stored on the
+  device, so a tampered backup can't point a stored token at someone else's server; the restore
+  summary lists any endpoint it did or didn't change. Restored schedules and rules arrive
+  **disabled** for review (a restored schedule has no per-miner targets, so it would otherwise
+  act on the whole fleet on the next poll), and unknown schedule actions are dropped.
+- **Network boundary enforced on the connected socket.** Every cleartext (`http://`, `ws://`)
+  request is re-checked against the address OkHttp actually connected to and aborted before
+  any bytes are sent if it isn't private/Tailscale — closing the DNS-rebinding / split-answer
+  gap for hostname targets. Hostnames must now resolve *only* to allowed addresses. Raw TCP
+  clients (CGMiner API, MQTT, legacy Kasa) connect to the vetted address, not the name. The
+  shared HTTP client no longer follows redirects (the GitHub downloaders keep following
+  https→https). As a consequence a public webhook or plug-webhook URL must be HTTPS.
+- **Stratum probes (Flow latency, Pool speed test)** only touch stratum-plausible ports
+  (443 or ≥1024), connect to the resolved address, and cap the reply line at 4 KiB — a
+  compromised miner's `stratumURL` can no longer aim the phone at SSH/SMTP/printers or feed it
+  an endless line.
+- **Local web dashboard / `/metrics`:** binds by *transport* (Wi-Fi, Ethernet, Tailscale VPN —
+  never a cellular CGNAT address or an unknown 100.64/10 interface), answers only to its own
+  bound IP in the `Host` header (DNS-rebinding guard, HTTP 421), enforces a 5 s deadline for
+  the whole request head and a bounded work queue. The scrape token is now stored
+  Keystore-encrypted with a write-only Settings field (existing tokens migrate on launch).
+- **App lock:** applied on the first Activity of every process (previously skipped when
+  Android restored the task with saved state after killing the backgrounded app); relock
+  timer uses the monotonic clock so winding the wall clock back can't defeat it.
+- **Backups:** `user:pass@` and `?token=`-style credentials are stripped from exported webhook
+  and plug URLs; the encrypted-backup PBKDF2 iteration count read from a file is clamped
+  (100k–2M).
+- **Updates:** when GitHub publishes an asset `digest`, the APK and firmware images must match
+  it (in addition to size + APK signer checks); firmware download is capped at the manifest
+  size or 16 MiB; APK at the manifest size or 64 MiB.
+- **Raw firmware responses** are redacted (SSID, passwords, tokens, workers) *before* they are
+  written to the 1-hour raw-response table, not only on display; miner log lines now also
+  redact Wi-Fi SSIDs and passwords (previously only wallets).
+- **Alert notifications:** the Reboot quick-action requires device unlock (API 31+) and alert
+  content is hidden on the lock screen.
+- **Misc:** IP-report (UDP 14235) listener ignores and never echoes datagrams from non-LAN
+  sources; Bitaxe provisioning keeps the home Wi-Fi password out of saved-instance state;
+  hostname adds no longer fail with a swallowed `NetworkOnMainThreadException`; Keystore key
+  generation is synchronized; unused `updates/` FileProvider path removed; zxing core forced to
+  3.5.4 (the QR wrapper pins 3.4.1); `gradle/actions` CI pin points at the tag's commit.
+- **Docs:** `docs/SECURITY.md` corrected to match the code; the 0.83.0 note below
+  mis-attributed CVE-2026-111943 (a Go `crypto/x509` CVE) to OkHttp — OkHttp 5.5.1 adds a
+  denylist for the eight compromised eMudhra intermediates disclosed by Mozilla; it has no CVE.
+
 ## 0.83.1
 
 - Version bump only; no functional changes since 0.83.0.

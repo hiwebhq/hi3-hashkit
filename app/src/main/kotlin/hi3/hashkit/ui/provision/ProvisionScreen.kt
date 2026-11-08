@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -178,7 +179,9 @@ private fun SetupForm(
     onCancel: () -> Unit,
 ) {
     var ssid by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    // Not rememberSaveable: the home Wi-Fi password must not be parcelled into saved-instance
+    // state (held by system_server, survives process death). It lives only in this field.
+    var password by remember { mutableStateOf("") }
     var hostname by rememberSaveable { mutableStateOf(info?.identity?.hostname ?: "") }
     var poolUrl by rememberSaveable { mutableStateOf(info?.telemetry?.poolUrl ?: "") }
     var poolPort by rememberSaveable { mutableStateOf(info?.telemetry?.poolPort?.toString() ?: "3333") }

@@ -219,6 +219,9 @@
     <string name="set_kasa_replace_password">Remplacer le mot de passe</string>
     <string name="set_kasa_disclosure">Le mot de passe est stocké chiffré avec l\'Android Keystore et sert uniquement à ouvrir une session chiffrée avec les prises de votre réseau local.</string>
     <string name="set_web_server_token">Jeton de scrape (facultatif)</string>
+    <string name="set_web_server_token_saved">Jeton de collecte (enregistré — saisir pour remplacer, vide pour effacer)</string>
+    <string name="set_web_server_token_save">Enregistrer le jeton</string>
+    <string name="set_web_server_token_replace">Remplacer le jeton</string>
     <string name="set_web_server_token_hint">Quand un jeton est défini, les scrapers envoient Authorization: Bearer &lt;token> et les navigateurs ajoutent ?token=&lt;token> à l\'URL. Laissez vide pour un tableau de bord ouvert, LAN uniquement.</string>
     <string name="set_secret_saved_label">%1$s (enregistré — saisir pour remplacer, vide pour effacer)</string>
     <string name="set_secret_save">Enregistrer</string>

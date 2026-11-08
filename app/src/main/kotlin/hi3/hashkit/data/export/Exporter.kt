@@ -7,6 +7,7 @@ import hi3.hashkit.data.db.MinerDao
 import hi3.hashkit.data.db.ScheduleDao
 import hi3.hashkit.data.db.ScheduleEntity
 import hi3.hashkit.data.db.TelemetryDao
+import hi3.hashkit.data.prefs.BackupKeyPolicy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -241,8 +242,10 @@ class Exporter @Inject constructor(
                     alertsMuted = it.alertsMuted,
                     plugType = it.plugType,
                     plugHost = it.plugHost,
-                    plugOnUrl = it.plugOnUrl,
-                    plugOffUrl = it.plugOffUrl,
+                    // Generic plug webhooks are often written with user:pass@ or ?auth= — never
+                    // let that leave the device in a (possibly plaintext) backup.
+                    plugOnUrl = it.plugOnUrl?.let(BackupKeyPolicy::sanitizeUrl),
+                    plugOffUrl = it.plugOffUrl?.let(BackupKeyPolicy::sanitizeUrl),
                     plugCutoffTempC = it.plugCutoffTempC,
                     purchasePrice = it.purchasePrice,
                 )
@@ -379,16 +382,23 @@ class Exporter @Inject constructor(
                 minersUpdated++
             }
         }
+        // Schedules and rules are restored DISABLED. A restored schedule has no per-miner ids
+        // (they don't survive a restore) so it would apply to the whole fleet; a tampered file
+        // could otherwise re-point every miner's pool or cut power on the next poll with no
+        // confirmation. The user reviews and re-enables them in Schedules / Rules.
+        var schedulesAdded = 0
         for (s in backup.schedules) {
+            if (s.actionType !in hi3.hashkit.data.schedule.ScheduleDueLogic.KNOWN_ACTIONS) continue
             scheduleDao.upsert(
                 ScheduleEntity(
-                    enabled = s.enabled, label = s.label, actionType = s.actionType,
+                    enabled = false, label = s.label, actionType = s.actionType,
                     paramsJson = s.paramsJson, targetMinerIdsCsv = "",
                     targetGroup = s.targetGroup, timeMinutesOfDay = s.timeMinutesOfDay,
                     daysOfWeekCsv = s.daysOfWeekCsv, minIntervalMinutes = s.minIntervalMinutes,
                     lastRunAtEpochMs = null, lastResult = null,
                 )
             )
+            schedulesAdded++
         }
         // Address book, rules, settings (format 3+); duplicates skipped on repeat restores.
         var poolsAdded = 0
@@ -413,7 +423,7 @@ class Exporter @Inject constructor(
             ) continue
             ruleDao.upsert(
                 hi3.hashkit.data.db.RuleEntity(
-                    enabled = r.enabled, label = r.label, conditionType = r.conditionType,
+                    enabled = false, label = r.label, conditionType = r.conditionType,
                     threshold = r.threshold, actionType = r.actionType, targetGroup = r.targetGroup,
                     minIntervalMinutes = r.minIntervalMinutes, lastFiredAtEpochMs = null,
                     lastResult = null, sustainedForMinutes = r.sustainedForMinutes,
@@ -421,7 +431,8 @@ class Exporter @Inject constructor(
             )
             rulesAdded++
         }
-        if (backup.settings.isNotEmpty()) settingsRepository.importFromBackup(backup.settings)
+        val settingsNotes =
+            if (backup.settings.isNotEmpty()) settingsRepository.importFromBackup(backup.settings) else emptyList()
         // Maintenance notes (format 2+): re-attach by stableKey; skip duplicates so a repeated
         // restore doesn't multiply notes. Photos are re-materialized into app-private storage.
         var notesAdded = 0
@@ -463,11 +474,12 @@ class Exporter @Inject constructor(
             }
         }
         "Restored: $minersAdded miners added, $minersUpdated updated; " +
-            "${backup.schedules.size} schedules, $notesAdded maintenance notes, " +
-            "$bestsAdded personal bests, " +
-            "${backup.farms.size} farms, $poolsAdded pools, $rulesAdded rules" +
+            "$schedulesAdded schedules and $rulesAdded rules (imported DISABLED — review and re-enable), " +
+            "$notesAdded maintenance notes, $bestsAdded personal bests, " +
+            "${backup.farms.size} farms, $poolsAdded pools" +
             (if (backup.settings.isNotEmpty()) " and app settings" else "") +
-            " imported (identity re-verifies on next poll)."
+            " imported (identity re-verifies on next poll)." +
+            (if (settingsNotes.isEmpty()) "" else "\n" + settingsNotes.joinToString("\n") { "• $it" })
     }
 
     // -------------------------------------------------------------- ops report ----

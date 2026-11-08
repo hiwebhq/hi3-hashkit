@@ -31,8 +31,11 @@ class MqttClient @Inject constructor() {
         messages: List<Message>,
         connectTimeoutMs: Int = 4000,
     ): Boolean = runCatching {
+        // The CONNECT packet carries the broker password in clear, so the broker must be a
+        // private/Tailscale address — and we connect to the vetted address, not the hostname.
+        val address = hi3.hashkit.discovery.MinerHostValidator.resolveAllowed(host) ?: return false
         Socket().use { socket ->
-            socket.connect(InetSocketAddress(host, port), connectTimeoutMs)
+            socket.connect(InetSocketAddress(address, port), connectTimeoutMs)
             socket.soTimeout = connectTimeoutMs
             val out = socket.getOutputStream()
             val din = DataInputStream(socket.getInputStream())

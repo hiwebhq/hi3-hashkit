@@ -42,12 +42,12 @@ class CgMinerApi @Inject constructor() {
 
     private suspend fun exchange(host: String, port: Int, payload: String): CgResult =
         withContext(Dispatchers.IO) {
-            if (!MinerHostValidator.resolvesToAllowed(host)) {
-                return@withContext CgResult(null, "Refused: $host is not a private/Tailscale address")
-            }
+            // Connect to the vetted address, not the hostname: a second resolution could differ.
+            val address = MinerHostValidator.resolveAllowed(host)
+                ?: return@withContext CgResult(null, "Refused: $host is not a private/Tailscale address")
             runCatching {
                 Socket().use { socket ->
-                    socket.connect(InetSocketAddress(host, port), CONNECT_TIMEOUT_MS)
+                    socket.connect(InetSocketAddress(address, port), CONNECT_TIMEOUT_MS)
                     socket.soTimeout = READ_TIMEOUT_MS
                     socket.getOutputStream().write(payload.toByteArray())
                     socket.getOutputStream().flush()

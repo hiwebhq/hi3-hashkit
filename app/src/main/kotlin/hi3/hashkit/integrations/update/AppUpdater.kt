@@ -47,6 +47,7 @@ class AppUpdater @Inject constructor(
     /** Download client: an https→http redirect is refused outright (cleartext is allowed app-wide for miners). */
     private val downloadClient: OkHttpClient by lazy {
         okHttpClient.newBuilder()
+            .followRedirects(true) // GitHub release assets 302 to *.githubusercontent.com; final hop re-validated
             .followSslRedirects(false)
             .callTimeout(0, java.util.concurrent.TimeUnit.SECONDS) // APK download; read timeout still applies
             .build()
@@ -59,6 +60,8 @@ class AppUpdater @Inject constructor(
         val sizeBytes: Long,
         val releaseUrl: String,
         val isNewer: Boolean,
+        /** GitHub's published `sha256:` asset digest (lowercase hex), when the API returned one. */
+        val sha256: String? = null,
     )
 
     val enabled: Boolean get() = BuildConfig.SELF_UPDATE
@@ -92,6 +95,7 @@ class AppUpdater @Inject constructor(
                         sizeBytes = size,
                         releaseUrl = releaseUrl,
                         isNewer = FirmwareUpdateChecker.isNewer(tag, currentVersion),
+                        sha256 = FirmwareUpdateChecker.parseSha256Digest(asset["digest"]?.jsonPrimitive?.content),
                     )
                 }
             }.getOrNull()
@@ -104,20 +108,31 @@ class AppUpdater @Inject constructor(
      * manifest gave a size ([expectedSize] > 0) the file must match it exactly; and the result
      * must be signed with this app's own certificate ([ApkSignature.matchesInstalled]).
      */
-    suspend fun download(url: String, expectedSize: Long = 0L, onProgress: (Float) -> Unit): File? {
+    suspend fun download(
+        url: String,
+        expectedSize: Long = 0L,
+        expectedSha256: String? = null,
+        onProgress: (Float) -> Unit,
+    ): File? {
         if (!enabled || !UpdateHosts.isTrustedUrl(url)) return null
         return withContext(Dispatchers.IO) {
             val dir = File(context.cacheDir, "updates").apply { mkdirs() }
             // Fresh file each time; clear any stale downloads.
             dir.listFiles()?.forEach { it.delete() }
             val out = File(dir, "hashkit-update.apk")
+            // With no manifest size, still refuse to stream more than any plausible APK.
+            val limit = expectedSize.takeIf { it > 0 } ?: MAX_APK_BYTES
             val streamed = runCatching {
                 downloadClient.newCall(Request.Builder().url(url).get().build()).execute().use { resp ->
-                    acceptable(resp, expectedSize) && streamBody(resp.body, out, expectedSize, onProgress)
+                    acceptable(resp, expectedSize) && streamBody(resp.body, out, limit, onProgress)
                 }
             }.getOrDefault(false)
             val sizeOk = expectedSize <= 0 || out.length() == expectedSize
-            if (streamed && sizeOk && ApkSignature.matchesInstalled(context, out)) out else { out.delete(); null }
+            // GitHub's per-asset digest, when published, must match before the signer check runs.
+            val hashOk = expectedSha256 == null ||
+                runCatching { FirmwareUpdateChecker.sha256Hex(out) == expectedSha256 }.getOrDefault(false)
+            val intact = streamed && sizeOk && hashOk
+            if (intact && ApkSignature.matchesInstalled(context, out)) out else { out.delete(); null }
         }
     }
 
@@ -131,10 +146,11 @@ class AppUpdater @Inject constructor(
     }
 
     /** Copies the body to [out], aborting (false) as soon as it exceeds [expectedSize]. */
-    private fun streamBody(body: ResponseBody, out: File, expectedSize: Long, onProgress: (Float) -> Unit): Boolean {
-        val total = body.contentLength().takeIf { it > 0 } ?: expectedSize.takeIf { it > 0 }
+    private fun streamBody(body: ResponseBody, out: File, limit: Long, onProgress: (Float) -> Unit): Boolean {
+        // Progress denominator: declared length, else the manifest size (never the hard ceiling).
+        val total = body.contentLength().takeIf { it > 0 } ?: limit.takeIf { it in 1 until MAX_APK_BYTES }
         return body.byteStream().use { input ->
-            out.outputStream().use { output -> copyLimited(input, output, expectedSize, total, onProgress) }
+            out.outputStream().use { output -> copyLimited(input, output, limit, total, onProgress) }
         }
     }
 
@@ -219,6 +235,8 @@ class AppUpdater @Inject constructor(
 
     companion object {
         private const val DOWNLOAD_BUFFER_BYTES = 64 * 1024
+        /** Hard ceiling when the release manifest gives no size (the APK is ~7 MB). */
+        private const val MAX_APK_BYTES = 64L * 1024 * 1024
 
         /**
          * Install-session outcomes, posted by [UpdateResultReceiver]. Static because the

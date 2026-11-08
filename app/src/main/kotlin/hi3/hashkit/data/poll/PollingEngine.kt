@@ -174,7 +174,8 @@ class PollingEngine @Inject constructor(
         // Prometheus /metrics endpoint (Advanced feature): start/stop to match settings.
         runCatching {
             val serve = settings.prometheusEnabled && settings.advancedUnlocked
-            prometheusServer.apply(enabled = serve, port = settings.prometheusPort, token = settings.prometheusToken)
+            val token = if (serve) settingsRepository.prometheusToken().orEmpty() else ""
+            prometheusServer.apply(enabled = serve, port = settings.prometheusPort, token = token)
         }
         runCatching { ipMoveRecovery.maybeRecover() }
         runCatching { autoBackupManager.maybeRun() }

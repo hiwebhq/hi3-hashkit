@@ -35,10 +35,15 @@ class ConnectivityProbe @Inject constructor(
     /** TCP-connect latency to host:port in ms, or null if unreachable within [timeoutMs]. */
     suspend fun tcpLatencyMs(host: String, port: Int, timeoutMs: Int = 4000): Long? =
         withContext(Dispatchers.IO) {
-            if (host.isBlank() || port !in 1..65535) return@withContext null
+            // host:port typically comes from a miner's own telemetry (stratumURL) — untrusted.
+            // Stratum ports only, and connect to the resolved address rather than the name.
+            if (host.isBlank() || !hi3.hashkit.integrations.poolspeed.StratumTarget.isAllowedPort(port)) {
+                return@withContext null
+            }
+            val address = hi3.hashkit.integrations.poolspeed.StratumTarget.resolve(host) ?: return@withContext null
             runCatching {
                 val start = System.nanoTime()
-                Socket().use { it.connect(InetSocketAddress(host, port), timeoutMs) }
+                Socket().use { it.connect(InetSocketAddress(address, port), timeoutMs) }
                 (System.nanoTime() - start) / 1_000_000
             }.getOrNull()
         }

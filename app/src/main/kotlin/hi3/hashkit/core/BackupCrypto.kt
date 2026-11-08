@@ -22,6 +22,9 @@ object BackupCrypto {
 
     private const val PREFIX = "HI3ENC1:"
     private const val ITERATIONS = 210_000
+    /** Accepted range on decrypt: never below what we ever wrote, never a CPU-exhausting value. */
+    private const val MIN_ITERATIONS = 100_000
+    private const val MAX_ITERATIONS = 2_000_000
     private const val KEY_BITS = 256
 
     fun isEncrypted(content: String): Boolean = content.trimStart().startsWith(PREFIX)
@@ -42,7 +45,10 @@ object BackupCrypto {
         val parts = envelope.trim().removePrefix(PREFIX).split(":")
         require(parts.size == 4)
         val d = Base64.getDecoder()
+        // The file names its own iteration count; clamp so a hostile file can neither weaken the
+        // KDF to one round nor pin the CPU for minutes on restore.
         val iter = parts[0].toInt()
+        require(iter in MIN_ITERATIONS..MAX_ITERATIONS)
         val salt = d.decode(parts[1]); val iv = d.decode(parts[2]); val ct = d.decode(parts[3])
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.DECRYPT_MODE, deriveKey(passphrase, salt, iter), GCMParameterSpec(128, iv))

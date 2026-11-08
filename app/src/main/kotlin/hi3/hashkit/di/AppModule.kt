@@ -31,6 +31,13 @@ object AppModule {
         .connectTimeout(3, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .callTimeout(8, TimeUnit.SECONDS)
+        // No API this client talks to legitimately redirects, and a redirect from a LAN device
+        // could carry headers/bodies (miner passwords, OTP codes) to another host. The two
+        // GitHub downloaders opt back in on their own derived clients.
+        .followRedirects(false)
+        .followSslRedirects(false)
+        // Enforce the private-address rule on the *connected* socket for every cleartext call.
+        .addNetworkInterceptor(hi3.hashkit.discovery.PrivateCleartextInterceptor)
         .build()
 
     @Provides

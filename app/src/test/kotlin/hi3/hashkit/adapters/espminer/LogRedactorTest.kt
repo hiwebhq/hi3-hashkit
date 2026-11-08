@@ -26,6 +26,17 @@ class LogRedactorTest {
     }
 
     @Test
+    fun `redacts wifi ssid and passwords in esp-idf style lines`() {
+        assertEquals(
+            "I (1234) wifi_station: connecting to ap [ssid] password:[redacted]",
+            LogRedactor.clean("I (1234) wifi_station: connecting to ap SSID:HomeNet5G password:hunter2"),
+        )
+        assertEquals("wifi: connected to [ssid], channel 6", LogRedactor.clean("wifi: connected to HomeNet5G, channel 6"))
+        assertEquals("ssid: \"[ssid]\"", LogRedactor.clean("ssid: \"FarmWiFi\""))
+        assertEquals("pass=[redacted] ok", LogRedactor.clean("pass=s3cret! ok"))
+    }
+
+    @Test
     fun `ordinary lines pass through untouched`() {
         val line = "I (785486741) power_management: Temperature 0: 64.94 C"
         assertEquals(line, LogRedactor.clean(line))

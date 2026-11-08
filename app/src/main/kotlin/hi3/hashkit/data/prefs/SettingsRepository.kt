@@ -1,6 +1,8 @@
 package hi3.hashkit.data.prefs
 
 import android.content.Context
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -158,8 +160,12 @@ data class AppSettings(
     /** Prometheus /metrics endpoint (Advanced feature) — OPT-IN; off by default. */
     val prometheusEnabled: Boolean = false,
     val prometheusPort: Int = 9184,
-    /** Optional bearer token scrapers/browsers must present (`Authorization: Bearer` or `?token=`). */
-    val prometheusToken: String = "",
+    /**
+     * Whether an (encrypted) bearer token is set for the local web server. Scrapers/browsers
+     * must then present it (`Authorization: Bearer` or `?token=`); the value itself is
+     * Keystore-encrypted and never enters this flow.
+     */
+    val prometheusTokenConfigured: Boolean = false,
     /**
      * Solar-surplus mining (Advanced). Reads grid-export/surplus watts from a local Home
      * Assistant sensor over its REST API. The long-lived token is stored encrypted; only
@@ -196,97 +202,111 @@ class SettingsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private object Keys {
-        val useFahrenheit = booleanPreferencesKey("use_fahrenheit")
-        val demoMode = booleanPreferencesKey("demo_mode")
-        val pollIntervalMs = longPreferencesKey("poll_interval_ms")
-        val backgroundMonitoring = booleanPreferencesKey("background_monitoring")
-        val electricityRate = doublePreferencesKey("electricity_rate")
-        val currencyCode = stringPreferencesKey("currency_code")
-        val networkDifficulty = doublePreferencesKey("network_difficulty")
-        val difficultyAutoFetch = booleanPreferencesKey("difficulty_auto_fetch")
-        val btcPriceAutoFetch = booleanPreferencesKey("btc_price_auto_fetch")
-        val btcPrice = doublePreferencesKey("btc_price")
-        val retentionDays = intPreferencesKey("retention_days")
-        val extraSubnets = stringPreferencesKey("extra_subnets")
-        val autoScanOnStartup = booleanPreferencesKey("auto_scan_on_startup")
-        val firmwareUpdateCheck = booleanPreferencesKey("firmware_update_check")
-        val safetyServiceEnabled = booleanPreferencesKey("safety_service_enabled")
-        val autoRecoverEnabled = booleanPreferencesKey("auto_recover_enabled")
-        val autoRecoverAfterMin = longPreferencesKey("auto_recover_after_min")
-        val activeFarmId = longPreferencesKey("active_farm_id")
-        val cardDensity = stringPreferencesKey("card_density")
-        val inventoryTagType = stringPreferencesKey("inventory_tag_type")
-        val confirmBeforeExit = booleanPreferencesKey("confirm_before_exit")
-        val pplnsSeeded = booleanPreferencesKey("pplns_seeded")
-        val publicPoolsSeeded = booleanPreferencesKey("public_pools_seeded")
-        val hashRentalUrl = stringPreferencesKey("hash_rental_url")
-        val dashboardCardOrder = stringPreferencesKey("dashboard_card_order")
-        val pinnedFarmId = longPreferencesKey("pinned_farm_id")
-        val fleet3dRackSize = intPreferencesKey("fleet3d_rack_size")
-        val flowGridCols = intPreferencesKey("flow_grid_cols")
+        /**
+         * Every key's backup type tag ("b","i","l","f","d","s"), filled as the keys below are
+         * declared. [importFromBackup] only writes names that are registered here, and only
+         * with their declared type — a restored file can neither add unknown keys nor change a
+         * key's type (which would crash every later read of it).
+         */
+        val registry = LinkedHashMap<String, Char>()
+        private fun bool(name: String) = booleanPreferencesKey(name).also { registry[name] = 'b' }
+        private fun int(name: String) = intPreferencesKey(name).also { registry[name] = 'i' }
+        private fun long(name: String) = longPreferencesKey(name).also { registry[name] = 'l' }
+        private fun double(name: String) = doublePreferencesKey(name).also { registry[name] = 'd' }
+        private fun string(name: String) = stringPreferencesKey(name).also { registry[name] = 's' }
+        val useFahrenheit = bool("use_fahrenheit")
+        val demoMode = bool("demo_mode")
+        val pollIntervalMs = long("poll_interval_ms")
+        val backgroundMonitoring = bool("background_monitoring")
+        val electricityRate = double("electricity_rate")
+        val currencyCode = string("currency_code")
+        val networkDifficulty = double("network_difficulty")
+        val difficultyAutoFetch = bool("difficulty_auto_fetch")
+        val btcPriceAutoFetch = bool("btc_price_auto_fetch")
+        val btcPrice = double("btc_price")
+        val retentionDays = int("retention_days")
+        val extraSubnets = string("extra_subnets")
+        val autoScanOnStartup = bool("auto_scan_on_startup")
+        val firmwareUpdateCheck = bool("firmware_update_check")
+        val safetyServiceEnabled = bool("safety_service_enabled")
+        val autoRecoverEnabled = bool("auto_recover_enabled")
+        val autoRecoverAfterMin = long("auto_recover_after_min")
+        val activeFarmId = long("active_farm_id")
+        val cardDensity = string("card_density")
+        val inventoryTagType = string("inventory_tag_type")
+        val confirmBeforeExit = bool("confirm_before_exit")
+        val pplnsSeeded = bool("pplns_seeded")
+        val publicPoolsSeeded = bool("public_pools_seeded")
+        val hashRentalUrl = string("hash_rental_url")
+        val dashboardCardOrder = string("dashboard_card_order")
+        val pinnedFarmId = long("pinned_farm_id")
+        val fleet3dRackSize = int("fleet3d_rack_size")
+        val flowGridCols = int("flow_grid_cols")
         /** Legacy plaintext key; migrated into [hashkitApPassphraseEnc] on first launch. */
-        val hashkitApPassphraseLegacy = stringPreferencesKey("hashkit_ap_passphrase")
-        val hashkitApPassphraseEnc = stringPreferencesKey("hashkit_ap_passphrase_enc")
-        val autoBackupFolderUri = stringPreferencesKey("auto_backup_folder_uri")
-        val autoBackupLastMs = longPreferencesKey("auto_backup_last_ms")
-        val hi3PoolEnabled = booleanPreferencesKey("hi3_pool_enabled")
-        val hi3PoolBaseUrl = stringPreferencesKey("hi3_pool_base_url")
-        val hi3PoolPayoutAddress = stringPreferencesKey("hi3_pool_payout_address")
-        val poolType = stringPreferencesKey("pool_type")
+        val hashkitApPassphraseLegacy = string("hashkit_ap_passphrase")
+        val hashkitApPassphraseEnc = string("hashkit_ap_passphrase_enc")
+        val autoBackupFolderUri = string("auto_backup_folder_uri")
+        val autoBackupLastMs = long("auto_backup_last_ms")
+        val hi3PoolEnabled = bool("hi3_pool_enabled")
+        val hi3PoolBaseUrl = string("hi3_pool_base_url")
+        val hi3PoolPayoutAddress = string("hi3_pool_payout_address")
+        val poolType = string("pool_type")
         /** Legacy plaintext key; migrated into [poolApiTokenEnc] on first launch. */
-        val poolApiTokenLegacy = stringPreferencesKey("pool_api_token")
-        val poolApiTokenEnc = stringPreferencesKey("pool_api_token_enc")
-        val mmpEnabled = booleanPreferencesKey("mmp_enabled")
-        val mmpBaseUrl = stringPreferencesKey("mmp_base_url")
-        val mmpApiKeyEncrypted = stringPreferencesKey("mmp_api_key_encrypted")
-        val kasaUsername = stringPreferencesKey("kasa_username")
-        val kasaPasswordEnc = stringPreferencesKey("kasa_password_encrypted")
-        val showSoloCard = booleanPreferencesKey("show_solo_card")
-        val showProfitCard = booleanPreferencesKey("show_profit_card")
-        val appLockEnabled = booleanPreferencesKey("app_lock_enabled")
-        val themeMode = stringPreferencesKey("theme_mode")
-        val themeColor = stringPreferencesKey("theme_color")
-        val wallSize = stringPreferencesKey("wall_size")
-        val wallColumns = intPreferencesKey("wall_columns")
-        val wallShowTrend = booleanPreferencesKey("wall_show_trend")
-        val onboardingComplete = booleanPreferencesKey("onboarding_complete")
-        val alertsEnabled = booleanPreferencesKey("alerts_enabled")
-        val thHashBelowPct = doublePreferencesKey("th_hash_below_pct")
-        val thChipTempC = doublePreferencesKey("th_chip_temp_c")
-        val thVrTempC = doublePreferencesKey("th_vr_temp_c")
-        val thRejectPct = doublePreferencesKey("th_reject_pct")
-        val thCooldownMin = longPreferencesKey("th_cooldown_min")
-        val webhookType = stringPreferencesKey("webhook_type")
-        val webhookUrl = stringPreferencesKey("webhook_url")
+        val poolApiTokenLegacy = string("pool_api_token")
+        val poolApiTokenEnc = string("pool_api_token_enc")
+        val mmpEnabled = bool("mmp_enabled")
+        val mmpBaseUrl = string("mmp_base_url")
+        val mmpApiKeyEncrypted = string("mmp_api_key_encrypted")
+        val kasaUsername = string("kasa_username")
+        val kasaPasswordEnc = string("kasa_password_encrypted")
+        val showSoloCard = bool("show_solo_card")
+        val showProfitCard = bool("show_profit_card")
+        val appLockEnabled = bool("app_lock_enabled")
+        val themeMode = string("theme_mode")
+        val themeColor = string("theme_color")
+        val wallSize = string("wall_size")
+        val wallColumns = int("wall_columns")
+        val wallShowTrend = bool("wall_show_trend")
+        val onboardingComplete = bool("onboarding_complete")
+        val alertsEnabled = bool("alerts_enabled")
+        val thHashBelowPct = double("th_hash_below_pct")
+        val thChipTempC = double("th_chip_temp_c")
+        val thVrTempC = double("th_vr_temp_c")
+        val thRejectPct = double("th_reject_pct")
+        val thCooldownMin = long("th_cooldown_min")
+        val webhookType = string("webhook_type")
+        val webhookUrl = string("webhook_url")
         /** Legacy plaintext key; migrated into [webhookTokenEnc] on first launch. */
-        val webhookTokenLegacy = stringPreferencesKey("webhook_token")
-        val webhookTokenEnc = stringPreferencesKey("webhook_token_enc")
-        val webhookTarget = stringPreferencesKey("webhook_target")
-        val quietHoursEnabled = booleanPreferencesKey("quiet_hours_enabled")
-        val quietStartMinute = intPreferencesKey("quiet_start_minute")
-        val quietEndMinute = intPreferencesKey("quiet_end_minute")
-        val digestEnabled = booleanPreferencesKey("digest_enabled")
-        val digestHour = intPreferencesKey("digest_hour")
-        val lastDigestSentEpochMs = longPreferencesKey("last_digest_sent_ms")
-        val mqttEnabled = booleanPreferencesKey("mqtt_enabled")
-        val mqttHost = stringPreferencesKey("mqtt_host")
-        val mqttPort = intPreferencesKey("mqtt_port")
-        val mqttUsername = stringPreferencesKey("mqtt_username")
-        val mqttPasswordEnc = stringPreferencesKey("mqtt_password_enc")
-        val mqttBaseTopic = stringPreferencesKey("mqtt_base_topic")
-        val mqttHaDiscovery = booleanPreferencesKey("mqtt_ha_discovery")
-        val prometheusEnabled = booleanPreferencesKey("prometheus_enabled")
-        val prometheusPort = intPreferencesKey("prometheus_port")
-        val prometheusToken = stringPreferencesKey("prometheus_token")
-        val haBaseUrl = stringPreferencesKey("ha_base_url")
-        val haEntityId = stringPreferencesKey("ha_entity_id")
-        val haTokenEnc = stringPreferencesKey("ha_token_enc")
-        val solarResumeWatts = doublePreferencesKey("solar_resume_watts")
-        val solarCurtailWatts = doublePreferencesKey("solar_curtail_watts")
-        val octopusRegion = stringPreferencesKey("octopus_region")
-        val priceResumePence = doublePreferencesKey("price_resume_pence")
-        val priceCurtailPence = doublePreferencesKey("price_curtail_pence")
-        val advancedUnlockCode = stringPreferencesKey("advanced_unlock_code")
+        val webhookTokenLegacy = string("webhook_token")
+        val webhookTokenEnc = string("webhook_token_enc")
+        val webhookTarget = string("webhook_target")
+        val quietHoursEnabled = bool("quiet_hours_enabled")
+        val quietStartMinute = int("quiet_start_minute")
+        val quietEndMinute = int("quiet_end_minute")
+        val digestEnabled = bool("digest_enabled")
+        val digestHour = int("digest_hour")
+        val lastDigestSentEpochMs = long("last_digest_sent_ms")
+        val mqttEnabled = bool("mqtt_enabled")
+        val mqttHost = string("mqtt_host")
+        val mqttPort = int("mqtt_port")
+        val mqttUsername = string("mqtt_username")
+        val mqttPasswordEnc = string("mqtt_password_enc")
+        val mqttBaseTopic = string("mqtt_base_topic")
+        val mqttHaDiscovery = bool("mqtt_ha_discovery")
+        val prometheusEnabled = bool("prometheus_enabled")
+        val prometheusPort = int("prometheus_port")
+        /** Legacy plaintext key; migrated into [prometheusTokenEnc] on first launch. */
+        val prometheusTokenLegacy = string("prometheus_token")
+        val prometheusTokenEnc = string("prometheus_token_enc")
+        val haBaseUrl = string("ha_base_url")
+        val haEntityId = string("ha_entity_id")
+        val haTokenEnc = string("ha_token_enc")
+        val solarResumeWatts = double("solar_resume_watts")
+        val solarCurtailWatts = double("solar_curtail_watts")
+        val octopusRegion = string("octopus_region")
+        val priceResumePence = double("price_resume_pence")
+        val priceCurtailPence = double("price_curtail_pence")
+        val advancedUnlockCode = string("advanced_unlock_code")
     }
 
     companion object {
@@ -398,7 +418,8 @@ class SettingsRepository @Inject constructor(
             mqttHomeAssistantDiscovery = p[Keys.mqttHaDiscovery] ?: true,
             prometheusEnabled = p[Keys.prometheusEnabled] ?: false,
             prometheusPort = (p[Keys.prometheusPort] ?: 9184).coerceIn(1024, 65535),
-            prometheusToken = p[Keys.prometheusToken] ?: "",
+            prometheusTokenConfigured =
+                !p[Keys.prometheusTokenEnc].isNullOrBlank() || !p[Keys.prometheusTokenLegacy].isNullOrBlank(),
             homeAssistantBaseUrl = p[Keys.haBaseUrl] ?: "",
             homeAssistantEntityId = p[Keys.haEntityId] ?: "",
             homeAssistantTokenConfigured = !p[Keys.haTokenEnc].isNullOrBlank(),
@@ -545,7 +566,14 @@ class SettingsRepository @Inject constructor(
     suspend fun setMqttHaDiscovery(value: Boolean) = edit { it[Keys.mqttHaDiscovery] = value }
     suspend fun setPrometheusEnabled(value: Boolean) = edit { it[Keys.prometheusEnabled] = value }
     suspend fun setPrometheusPort(value: Int) = edit { it[Keys.prometheusPort] = value.coerceIn(1024, 65535) }
-    suspend fun setPrometheusToken(value: String) = edit { it[Keys.prometheusToken] = value.trim() }
+    /** Store the local web server's bearer token encrypted with the Android Keystore; blank clears it. */
+    suspend fun setPrometheusToken(value: String) = edit {
+        it[Keys.prometheusTokenEnc] = encryptOrBlank(value)
+        it.remove(Keys.prometheusTokenLegacy)
+    }
+
+    /** Decrypt the web-server token on demand (the server compares it per request). */
+    suspend fun prometheusToken(): String? = readSecret(Keys.prometheusTokenEnc, Keys.prometheusTokenLegacy)
 
     // Solar-surplus / Home Assistant
     suspend fun setHomeAssistantBaseUrl(value: String) = edit { it[Keys.haBaseUrl] = value.trim() }
@@ -620,6 +648,7 @@ class SettingsRepository @Inject constructor(
             Keys.webhookTokenLegacy to Keys.webhookTokenEnc,
             Keys.poolApiTokenLegacy to Keys.poolApiTokenEnc,
             Keys.hashkitApPassphraseLegacy to Keys.hashkitApPassphraseEnc,
+            Keys.prometheusTokenLegacy to Keys.prometheusTokenEnc,
         )
         val current = context.dataStore.data.first()
         if (pairs.none { (legacy, _) -> !current[legacy].isNullOrBlank() }) return
@@ -655,27 +684,79 @@ class SettingsRepository @Inject constructor(
                     is Long -> "l:$v"
                     is Float -> "f:$v"
                     is Double -> "d:$v"
-                    is String -> "s:$v"
+                    // URLs may carry user:pass@ or ?token= — strip those before they leave the device.
+                    is String -> "s:" + if (k.name in BackupKeyPolicy.urlKeys) BackupKeyPolicy.sanitizeUrl(v) else v
                     else -> null // Set<String> etc. — not used by this app's settings
                 }
                 tagged?.let { k.name to it }
             }.toMap()
 
-    /** Write settings captured by [exportForBackup] back; unknown/garbled entries are skipped. */
-    suspend fun importFromBackup(entries: Map<String, String>) = edit { p ->
-        for ((name, tagged) in entries) {
-            if (BackupKeyPolicy.isExcluded(name)) continue
-            val value = tagged.substringAfter(':', "")
-            runCatching {
-                when (tagged.substringBefore(':', "")) {
-                    "b" -> p[booleanPreferencesKey(name)] = value.toBoolean()
-                    "i" -> p[intPreferencesKey(name)] = value.toInt()
-                    "l" -> p[longPreferencesKey(name)] = value.toLong()
-                    "f" -> p[androidx.datastore.preferences.core.floatPreferencesKey(name)] = value.toFloat()
-                    "d" -> p[doublePreferencesKey(name)] = value.toDouble()
-                    "s" -> p[stringPreferencesKey(name)] = value
-                }
+    /**
+     * Write settings captured by [exportForBackup] back. The file is untrusted input:
+     *  - only keys declared in [Keys] are written, each strictly as its declared type
+     *    (an unknown name or a type mismatch is dropped, not stored);
+     *  - credentials are never read from a backup ([BackupKeyPolicy.isExcluded]);
+     *  - an integration's endpoint (MMP / pool / webhook / HA / MQTT host) is **not** changed
+     *    while a credential for that integration is already stored on this device — otherwise
+     *    a tampered backup could point the stored token at an attacker's server.
+     *
+     * Returns human-readable notes about endpoint changes that were applied or held back, so
+     * the restore summary can show them.
+     */
+    suspend fun importFromBackup(entries: Map<String, String>): List<String> {
+        val notes = mutableListOf<String>()
+        val before = context.dataStore.data.first()
+        edit { p ->
+            for ((name, tagged) in entries) {
+                val (tag, value) = vetBackupEntry(name, tagged, before, notes) ?: continue
+                writeTyped(p, name, tag, value)
             }
+        }
+        return notes
+    }
+
+    /** One backup entry → (declared type tag, decoded value), or null when it must not be written. */
+    private fun vetBackupEntry(
+        name: String,
+        tagged: String,
+        before: Preferences,
+        notes: MutableList<String>,
+    ): Pair<Char, Any>? {
+        val expected = Keys.registry[name]?.takeUnless { BackupKeyPolicy.isExcluded(name) } ?: return null
+        val decoded = BackupKeyPolicy.decodeTagged(tagged, expected) ?: return null
+        val guard = BackupKeyPolicy.endpointGuard[name]
+        if (guard != null && !endpointChangeAllowed(guard, name, decoded, before, notes)) return null
+        return expected to decoded
+    }
+
+    /** False when the backup would change an endpoint whose credential is already stored here. */
+    private fun endpointChangeAllowed(
+        guard: BackupKeyPolicy.EndpointGuard,
+        name: String,
+        decoded: Any,
+        before: Preferences,
+        notes: MutableList<String>,
+    ): Boolean {
+        val current = before.asMap().entries.firstOrNull { it.key.name == name }?.value
+        if (decoded == current) return true
+        val secretStored = guard.secretKeys.any { !before[stringPreferencesKey(it)].isNullOrBlank() }
+        if (secretStored) {
+            notes += "${guard.label} endpoint kept as configured on this device (backup wanted $decoded)"
+            return false
+        }
+        notes += "${guard.label} endpoint set from backup: $decoded"
+        return true
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun writeTyped(p: MutablePreferences, name: String, tag: Char, value: Any) {
+        when (tag) {
+            'b' -> p[booleanPreferencesKey(name)] = value as Boolean
+            'i' -> p[intPreferencesKey(name)] = value as Int
+            'l' -> p[longPreferencesKey(name)] = value as Long
+            'f' -> p[androidx.datastore.preferences.core.floatPreferencesKey(name)] = value as Float
+            'd' -> p[doublePreferencesKey(name)] = value as Double
+            's' -> p[stringPreferencesKey(name)] = value as String
         }
     }
 

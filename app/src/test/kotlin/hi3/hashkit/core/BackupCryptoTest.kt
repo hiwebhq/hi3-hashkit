@@ -42,6 +42,15 @@ class BackupCryptoTest {
     }
 
     @Test
+    fun `iteration count outside the accepted range is refused`() {
+        val enc = BackupCrypto.encrypt(payload, "pw")
+        val parts = enc.removePrefix("HI3ENC1:").split(":")
+        // A file that names 1 iteration (weakened KDF) or 50M (CPU exhaustion) is rejected outright.
+        assertNull(BackupCrypto.decrypt("HI3ENC1:1:${parts[1]}:${parts[2]}:${parts[3]}", "pw"))
+        assertNull(BackupCrypto.decrypt("HI3ENC1:50000000:${parts[1]}:${parts[2]}:${parts[3]}", "pw"))
+    }
+
+    @Test
     fun `corrupt envelope returns null instead of throwing`() {
         assertNull(BackupCrypto.decrypt("HI3ENC1:210000:garbage", "pw"))
         assertNull(BackupCrypto.decrypt("HI3ENC1:not:a:valid:envelope", "pw"))

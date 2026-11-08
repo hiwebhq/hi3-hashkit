@@ -96,6 +96,11 @@ object ScheduleDueLogic {
     /** Plug actions drive the miner's configured smart plug directly, not a miner control API. */
     fun isPlugAction(schedule: ScheduleEntity): Boolean =
         schedule.actionType == "plug_on" || schedule.actionType == "plug_off"
+
+    /** Every action type this engine understands; anything else in a restored backup is dropped. */
+    val KNOWN_ACTIONS: Set<String> = setOf(
+        "reboot", "pause", "resume", "set_pool", "set_fan", "apply_tune", "power_mode", "plug_on", "plug_off",
+    )
 }
 
 /**

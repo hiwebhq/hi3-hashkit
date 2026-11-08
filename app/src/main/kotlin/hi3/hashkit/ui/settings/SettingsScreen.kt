@@ -413,8 +413,29 @@ fun SettingsScreen(
                         NumberRow(stringResource(R.string.set_web_server_port), settings.prometheusPort.toString()) {
                             it.toIntOrNull()?.let { v -> viewModel.setPrometheusPort(v) }
                         }
-                        NumberRow(stringResource(R.string.set_web_server_token), settings.prometheusToken) {
-                            viewModel.setPrometheusToken(it)
+                        // Write-only: the token is Keystore-encrypted and never read back into the UI.
+                        var scrapeToken by remember { mutableStateOf("") }
+                        OutlinedTextField(
+                            value = scrapeToken,
+                            onValueChange = { scrapeToken = it },
+                            label = {
+                                Text(
+                                    if (settings.prometheusTokenConfigured) stringResource(R.string.set_web_server_token_saved)
+                                    else stringResource(R.string.set_web_server_token),
+                                )
+                            },
+                            singleLine = true,
+                            visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        androidx.compose.material3.TextButton(onClick = {
+                            viewModel.setPrometheusToken(scrapeToken)
+                            scrapeToken = ""
+                        }) {
+                            Text(
+                                if (settings.prometheusTokenConfigured) stringResource(R.string.set_web_server_token_replace)
+                                else stringResource(R.string.set_web_server_token_save)
+                            )
                         }
                         Text(
                             stringResource(R.string.set_web_server_hint, settings.prometheusPort),

@@ -79,14 +79,20 @@ class AddMinerViewModel @Inject constructor(
     fun addManual() {
         val host = _state.value.manualHost.trim()
         if (host.isEmpty()) return
-        if (!MinerHostValidator.resolvesToAllowed(host)) {
-            _state.value = _state.value.copy(
-                manualMessage = appContext.getString(R.string.vm_add_private_only),
-            )
-            return
-        }
         _state.value = _state.value.copy(manualBusy = true, manualMessage = null)
         viewModelScope.launch {
+            // Hostnames (Tailscale MagicDNS, .local) need a DNS lookup — off the main thread, or
+            // Android throws NetworkOnMainThreadException and every hostname add fails.
+            val allowed = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                MinerHostValidator.resolvesToAllowed(host)
+            }
+            if (!allowed) {
+                _state.value = _state.value.copy(
+                    manualBusy = false,
+                    manualMessage = appContext.getString(R.string.vm_add_private_only),
+                )
+                return@launch
+            }
             val result = repository.addByHost(host)
             val message = when (result) {
                 is AddMinerResult.Added -> appContext.getString(R.string.vm_add_added)

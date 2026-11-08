@@ -59,10 +59,13 @@ class PoolSpeedTester @Inject constructor(
      */
     private suspend fun stratumSubscribeMs(host: String, port: Int, timeoutMs: Int = 4000): Long? =
         withContext(Dispatchers.IO) {
-            if (host.isBlank() || port !in 1..65535) return@withContext null
+            // Pool hosts come from miner telemetry / the address book: stratum ports only, and
+            // connect to the resolved address so the probe can't be aimed at arbitrary services.
+            if (host.isBlank() || !StratumTarget.isAllowedPort(port)) return@withContext null
+            val address = StratumTarget.resolve(host) ?: return@withContext null
             runCatching {
                 Socket().use { s ->
-                    s.connect(InetSocketAddress(host, port), timeoutMs)
+                    s.connect(InetSocketAddress(address, port), timeoutMs)
                     s.soTimeout = timeoutMs
                     val start = System.nanoTime()
                     s.getOutputStream().apply {
@@ -70,7 +73,8 @@ class PoolSpeedTester @Inject constructor(
                         write('\n'.code)
                         flush()
                     }
-                    val line = s.getInputStream().bufferedReader().readLine()
+                    // Bounded read: a hostile pool must not be able to feed an endless line.
+                    val line = StratumTarget.readLineCapped(s.getInputStream())
                     if (line.isNullOrBlank() || "\"id\"" !in line && "\"method\"" !in line && "\"result\"" !in line && "\"error\"" !in line) {
                         null
                     } else {

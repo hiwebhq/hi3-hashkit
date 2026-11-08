@@ -20,6 +20,8 @@ object KeystoreCrypto {
     private const val KEY_ALIAS = "hi3-secrets"
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
 
+    /** Synchronized so two first-time callers (startup migration + a UI save) can't each generate a key. */
+    @Synchronized
     private fun key(): SecretKey {
         val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         (store.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }

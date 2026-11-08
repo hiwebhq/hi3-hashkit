@@ -186,9 +186,16 @@ class MainActivity : AppCompatActivity() {
                     settingsRepository.setPublicPoolsSeeded(true)
                 }
             }
-            if (savedInstanceState == null && settings.appLockEnabled) {
-                appLockManager.lockOnLaunch()
-                showUnlockPrompt()
+            // Lock on the first Activity creation in this *process* — not only when there is no
+            // saved state. After Android kills the backgrounded process and restores the task,
+            // savedInstanceState is non-null but the lock singleton is brand new (unlocked).
+            if (!appLockManager.launchHandled) {
+                if (settings.appLockEnabled) {
+                    appLockManager.lockOnLaunch()
+                    showUnlockPrompt()
+                } else {
+                    appLockManager.markLaunchHandled()
+                }
             }
             // Kick off the local-subnet scan at launch so miners are discovered while the
             // user reads the dashboard — but never behind the lock screen or onboarding.

@@ -219,6 +219,9 @@
     <string name="set_kasa_replace_password">Substituir senha</string>
     <string name="set_kasa_disclosure">A senha é armazenada criptografada com o Android Keystore e usada apenas para abrir uma sessão criptografada com as tomadas da sua rede local.</string>
     <string name="set_web_server_token">Token de scrape (opcional)</string>
+    <string name="set_web_server_token_saved">Token de coleta (salvo — digite para substituir, vazio para apagar)</string>
+    <string name="set_web_server_token_save">Salvar token</string>
+    <string name="set_web_server_token_replace">Substituir token</string>
     <string name="set_web_server_token_hint">Com um token definido, os scrapers enviam Authorization: Bearer &lt;token> e os navegadores adicionam ?token=&lt;token> à URL. Deixe em branco para um painel aberto somente na LAN.</string>
     <string name="set_secret_saved_label">%1$s (salvo — digite para substituir, vazio para limpar)</string>
     <string name="set_secret_save">Salvar</string>

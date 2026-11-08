@@ -566,13 +566,7 @@ class MinerDetailViewModel @Inject constructor(
     }
 
     /** Redact credential-bearing fields before showing raw firmware responses. */
-    private fun redact(body: String?): String? {
-        if (body == null) return null
-        return body.replace(
-            Regex("\"([^\"]*(?:User|user|pass|Pass|ssid|SSID|Token|token)[^\"]*)\"\\s*:\\s*\"[^\"]*\""),
-            "\"$1\": \"[redacted]\"",
-        )
-    }
+    private fun redact(body: String?): String? = hi3.hashkit.data.logs.RawRedactor.redact(body)
 
     companion object {
         const val HISTORY_WINDOW_MS = 3_600_000L

@@ -96,7 +96,7 @@ class SettingsViewModel @Inject constructor(
         }
         updateStatus.value = UpdateStatus.Downloading(0f)
         viewModelScope.launch {
-            val file = appUpdater.download(info.apkUrl, info.sizeBytes) { p ->
+            val file = appUpdater.download(info.apkUrl, info.sizeBytes, info.sha256) { p ->
                 updateStatus.value = UpdateStatus.Downloading(p)
             }
             if (file == null) {

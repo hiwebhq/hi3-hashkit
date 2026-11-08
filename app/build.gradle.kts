@@ -41,8 +41,8 @@ android {
         applicationId = "hi3.hashkit"
         minSdk = 26
         targetSdk = 37
-        versionCode = 150
-        versionName = "0.83.1"
+        versionCode = 151
+        versionName = "0.84.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -166,6 +166,7 @@ dependencies {
 
     // Offline QR scanning for payout-address entry (no Google dependency, on-device).
     implementation(libs.zxing.android.embedded)
+    implementation(libs.zxing.core) // overrides the wrapper's transitive core 3.4.1
 
     // Wearable Data Layer: publish a small fleet summary to a paired Wear OS tile.
     implementation(libs.play.services.wearable)

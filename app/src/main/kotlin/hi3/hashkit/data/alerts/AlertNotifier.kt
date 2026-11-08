@@ -87,10 +87,15 @@ class AlertNotifier @Inject constructor(
             .setAutoCancel(true)
         // Quick-actions on active alerts: reboot the miner or acknowledge, straight from here.
         if (signal.active) {
+            // Rebooting hardware from the shade must not be possible on a locked phone: hide
+            // the content on the lock screen and (API 31+) require device unlock for the action.
+            builder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
             builder.addAction(
-                0,
-                context.getString(R.string.common_reboot),
-                actionIntent(signal, id, AlertActionReceiver.ACTION_REBOOT),
+                NotificationCompat.Action.Builder(
+                    null,
+                    context.getString(R.string.common_reboot),
+                    actionIntent(signal, id, AlertActionReceiver.ACTION_REBOOT),
+                ).setAuthenticationRequired(true).build(),
             )
             builder.addAction(
                 0,

@@ -25,6 +25,9 @@ androidxJunit = "1.3.0"
 espresso = "3.7.0"
 robolectric = "4.17"
 zxingEmbedded = "4.3.0"
+# zxing-android-embedded 4.3.0 (last release 2021) pins core 3.4.1; force the current core for
+# its hostile-input fixes (pathological QR detection time, AIOOBE in RGBLuminanceSource).
+zxingCore = "3.5.4"
 playServicesWearable = "20.0.1"
 wearComposeMaterial = "1.6.2"
 wearTiles = "1.6.2"
@@ -72,6 +75,7 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingEmbedded" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxingCore" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearComposeMaterial" }

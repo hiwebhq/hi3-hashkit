@@ -70,8 +70,17 @@ object LogRedactor {
     // Bech32 and base58 Bitcoin addresses (20+ chars) and worker suffixes after them.
     private val wallet = Regex("\\b(bc1[a-z0-9]{20,}|[13][a-km-zA-HJ-NP-Z1-9]{24,})(\\.[\\w-]+)?")
 
-    fun clean(line: String): String =
-        wallet.replace(ansi.replace(line, "").trimEnd()) { m ->
+    // ESP-IDF Wi-Fi driver lines name the network: `ssid: MyNet`, `SSID="MyNet"`,
+    // `connected to MyNet`, `connecting to ap SSID:MyNet password:...`.
+    private val ssid = Regex("(?i)\\b(ssid\\s*[:=]\\s*\"?|connect(?:ed|ing) to (?:ap )?)([^\\s\",]+)")
+    private val password = Regex("(?i)\\b(pass(?:word|wd|phrase)?\\s*[:=]\\s*\"?)([^\\s\",]+)")
+
+    fun clean(line: String): String {
+        val stripped = ansi.replace(line, "").trimEnd()
+        val noWallet = wallet.replace(stripped) { m ->
             "[wallet]" + (m.groupValues[2].takeIf { it.isNotEmpty() } ?: "")
         }
+        val noSsid = ssid.replace(noWallet) { m -> m.groupValues[1] + "[ssid]" }
+        return password.replace(noSsid) { m -> m.groupValues[1] + "[redacted]" }
+    }
 }

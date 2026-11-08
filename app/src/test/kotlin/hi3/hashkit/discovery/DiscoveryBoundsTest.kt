@@ -33,6 +33,38 @@ class MinerHostValidatorTest {
         assertFalse(MinerHostValidator.isAllowedIp(""))
         assertFalse(MinerHostValidator.isAllowedIp("pool.example.com"))
     }
+
+    @Test
+    fun `only strict dotted-quad literals count as IP literals`() {
+        // Kotlin's toIntOrNull accepts these, Bionic's inet_pton does not — they must NOT be
+        // treated as allowed literals (they would go to DNS as hostnames instead).
+        assertNull(MinerHostValidator.parseIpv4("010.0.0.1"))
+        assertNull(MinerHostValidator.parseIpv4("10.0.0.+1"))
+        assertNull(MinerHostValidator.parseIpv4("0x0a.0.0.1"))
+        assertNull(MinerHostValidator.parseIpv4("10.0.1"))
+        assertNull(MinerHostValidator.parseIpv4("10.0.0.1."))
+        assertFalse(MinerHostValidator.isAllowedIp("010.0.0.1"))
+        assertEquals(listOf(10, 0, 0, 203), MinerHostValidator.parseIpv4("10.0.0.203")!!.toList())
+    }
+
+    @Test
+    fun `resolved addresses are judged by bytes and v6 fails closed`() {
+        assertTrue(MinerHostValidator.isAllowedAddress(java.net.InetAddress.getByName("192.168.1.42")))
+        assertTrue(MinerHostValidator.isAllowedAddress(java.net.InetAddress.getByName("100.100.1.1")))
+        assertFalse(MinerHostValidator.isAllowedAddress(java.net.InetAddress.getByName("203.0.113.9")))
+        assertFalse(MinerHostValidator.isAllowedAddress(java.net.InetAddress.getByName("::1")))
+        assertFalse(MinerHostValidator.isAllowedAddress(java.net.InetAddress.getByName("::ffff:10.0.0.1").let {
+            // Java normalises v4-mapped to Inet4Address; force a real v6 instance for the check.
+            java.net.Inet6Address.getByAddress(null, ByteArray(16).also { b -> b[15] = 1 }, null)
+        }))
+    }
+
+    @Test
+    fun `resolveAllowed short-circuits literals without DNS`() {
+        assertEquals("10.0.0.203", MinerHostValidator.resolveAllowed("10.0.0.203")!!.hostAddress)
+        assertNull(MinerHostValidator.resolveAllowed("8.8.8.8"))
+        assertNull(MinerHostValidator.resolveAllowed(""))
+    }
 }
 
 class SubnetUtilsTest {

@@ -47,8 +47,11 @@ data class PlugReading(
  *    TP-Link account (see [KlapClient]) — `set_device_info`, `get_energy_usage`
  *  - Webhook: GET the user-supplied on/off URL
  *
- * Only private LAN / Tailscale hosts are allowed. The safety monitor calls [turnOff] only;
- * turning a miner back on is always a manual action.
+ * Tasmota/Shelly/Kasa hosts must be private LAN / Tailscale addresses. A generic webhook URL
+ * may name any host the user chooses, but cleartext `http://` is only ever sent to a private
+ * address (enforced on the connected socket by PrivateCleartextInterceptor) — a public plug
+ * endpoint must be HTTPS. The safety monitor calls [turnOff] only; turning a miner back on
+ * is always a manual action.
  */
 @Singleton
 class SmartPlugClient @Inject constructor(
@@ -230,8 +233,9 @@ class SmartPlugClient @Inject constructor(
     /** Kasa local protocol: 4-byte length prefix + autokey-XOR-encrypted JSON on TCP 9999. */
     private fun kasaSetRelay(host: String, on: Boolean): Boolean = runCatching {
         val payload = """{"system":{"set_relay_state":{"state":${if (on) 1 else 0}}}}"""
+        val address = MinerHostValidator.resolveAllowed(host) ?: return false
         Socket().use { socket ->
-            socket.connect(InetSocketAddress(host, KASA_LEGACY_PORT), KASA_TIMEOUT_MS)
+            socket.connect(InetSocketAddress(address, KASA_LEGACY_PORT), KASA_TIMEOUT_MS)
             socket.soTimeout = KASA_TIMEOUT_MS
             socket.getOutputStream().apply { write(kasaEncrypt(payload)); flush() }
             // Read the length-prefixed reply so the plug commits the command.
@@ -244,8 +248,9 @@ class SmartPlugClient @Inject constructor(
 
     /** Send an encrypted Kasa command and return the decrypted JSON reply, or null. */
     private fun kasaExchange(host: String, payload: String): String? = runCatching {
+        val address = MinerHostValidator.resolveAllowed(host) ?: return null
         Socket().use { socket ->
-            socket.connect(InetSocketAddress(host, KASA_LEGACY_PORT), KASA_TIMEOUT_MS)
+            socket.connect(InetSocketAddress(address, KASA_LEGACY_PORT), KASA_TIMEOUT_MS)
             socket.soTimeout = KASA_TIMEOUT_MS
             socket.getOutputStream().apply { write(kasaEncrypt(payload)); flush() }
             val din = DataInputStream(socket.getInputStream())

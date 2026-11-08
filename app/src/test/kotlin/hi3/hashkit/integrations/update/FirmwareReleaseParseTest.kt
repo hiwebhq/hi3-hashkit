@@ -29,6 +29,24 @@ class FirmwareReleaseParseTest {
     }
 
     @Test
+    fun `reads the published sha256 digest when GitHub provides one`() {
+        val hex = "a".repeat(64)
+        val body = v2151.replace("\"name\":\"esp-miner.bin\",", "\"name\":\"esp-miner.bin\",\"digest\":\"sha256:$hex\",")
+        assertEquals(hex, FirmwareUpdateChecker.parseRelease(body)!!.firmware!!.sha256)
+        assertNull(FirmwareUpdateChecker.parseRelease(v2151)!!.firmware!!.sha256) // absent → no check, as before
+        assertEquals(hex, FirmwareUpdateChecker.parseSha256Digest("SHA256:${hex.uppercase()}"))
+        assertNull(FirmwareUpdateChecker.parseSha256Digest("sha512:$hex"))
+        assertNull(FirmwareUpdateChecker.parseSha256Digest("sha256:tooshort"))
+        assertNull(FirmwareUpdateChecker.parseSha256Digest(null))
+    }
+
+    @Test
+    fun `sha256Hex matches a known vector`() {
+        val f = java.io.File.createTempFile("hashkit", ".bin").apply { writeText("abc"); deleteOnExit() }
+        assertEquals("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", FirmwareUpdateChecker.sha256Hex(f))
+    }
+
+    @Test
     fun `older releases also expose the separate web-UI image`() {
         val body = v2151.replace(
             "\"assets\":[",

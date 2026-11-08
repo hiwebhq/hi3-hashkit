@@ -12,7 +12,6 @@ import java.net.ServerSocket
 import java.net.Socket
 import java.time.Instant
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.concurrent.thread
@@ -65,9 +64,12 @@ class PrometheusServer @Inject constructor(
 
     @Synchronized
     private fun start(port: Int, addresses: List<String>) {
-        val exec = Executors.newFixedThreadPool(WORKERS) { r ->
-            Thread(r, "prometheus-worker").apply { isDaemon = true }
-        }
+        // Bounded queue: once WORKERS connections are being served and QUEUE more are waiting,
+        // further accepts are rejected (and closed) instead of piling up without limit.
+        val exec = java.util.concurrent.ThreadPoolExecutor(
+            WORKERS, WORKERS, 0L, java.util.concurrent.TimeUnit.MILLISECONDS,
+            java.util.concurrent.LinkedBlockingQueue(QUEUE),
+        ) { r -> Thread(r, "prometheus-worker").apply { isDaemon = true } }
         pool = exec
         val bound = addresses.mapNotNull { addr ->
             runCatching {
@@ -113,10 +115,15 @@ class PrometheusServer @Inject constructor(
             respond(out, "403 Forbidden", TEXT, "Forbidden.\n")
             return
         }
-        val req = HttpRequestReader.read(socket.getInputStream(), MAX_LINE, MAX_HEADERS)
+        val deadline = System.nanoTime() + HEAD_DEADLINE_MS * NANOS_PER_MS
+        val req = HttpRequestReader.read(socket.getInputStream(), MAX_LINE, MAX_HEADERS, deadline)
         when {
-            req == null -> respond(out, "431 Request Header Fields Too Large", TEXT, "Request too large.\n")
+            req == null -> respond(out, "431 Request Header Fields Too Large", TEXT, "Request too large or too slow.\n")
             req.method != "GET" -> respond(out, "405 Method Not Allowed", TEXT, "GET only.\n")
+            // DNS-rebinding guard: a web page can only reach this server through a name it
+            // controls; we answer solely to our own bound IP literals (HTTP/1.0 may omit Host).
+            req.host != null && req.host !in boundAddresses ->
+                respond(out, "421 Misdirected Request", TEXT, "Use the dashboard's IP address.\n")
             !authorized(req.authorization, req.query) -> respond(
                 out, "401 Unauthorized", TEXT, "Unauthorized.\n",
                 extraHeaders = "WWW-Authenticate: Bearer realm=\"hi3-hashkit\"\r\n",
@@ -172,8 +179,12 @@ class PrometheusServer @Inject constructor(
     private companion object {
         const val TEXT = "text/plain; charset=utf-8"
         const val WORKERS = 4
+        const val QUEUE = 16
         const val BACKLOG = 16
         const val SOCKET_TIMEOUT_MS = 3_000
+        /** Whole request head (request line + headers) must arrive within this long. */
+        const val HEAD_DEADLINE_MS = 5_000L
+        const val NANOS_PER_MS = 1_000_000L
         const val MAX_LINE = 8 * 1024
         const val MAX_HEADERS = 64
     }
@@ -197,28 +208,50 @@ internal object PrometheusAuth {
 
 /** Minimal, size-capped HTTP/1.1 request-head parser for the embedded server. */
 internal object HttpRequestReader {
-    class Req(val method: String?, val path: String, val query: String, val authorization: String?)
+    class Req(
+        val method: String?,
+        val path: String,
+        val query: String,
+        val authorization: String?,
+        /** The `Host` header's host part (port stripped, lowercase), or null when absent. */
+        val host: String? = null,
+    )
 
-    /** Request line + headers; null when a line or the header count exceeds the caps (or EOF). */
-    fun read(input: InputStream, maxLine: Int, maxHeaders: Int): Req? {
-        val requestLine = readLine(input, maxLine) ?: return null
+    /**
+     * Request line + headers; null when a line, the header count, or the total time to read the
+     * head exceeds the caps (or EOF). The deadline is what defeats a slow-drip client: the
+     * socket's per-read timeout alone resets on every byte.
+     */
+    fun read(input: InputStream, maxLine: Int, maxHeaders: Int, deadlineNanos: Long = Long.MAX_VALUE): Req? {
+        val requestLine = readLine(input, maxLine, deadlineNanos) ?: return null
         var authorization: String? = null
+        var host: String? = null
         var headerLines = 0
         while (true) {
-            val line = readLine(input, maxLine) ?: return null
+            val line = readLine(input, maxLine, deadlineNanos) ?: return null
             if (line.isEmpty()) break
             if (++headerLines > maxHeaders) return null
             if (line.startsWith("authorization:", ignoreCase = true)) authorization = line.substringAfter(':').trim()
+            if (line.startsWith("host:", ignoreCase = true)) host = hostPart(line.substringAfter(':').trim())
         }
         val parts = requestLine.split(" ")
         val target = parts.getOrNull(1) ?: ""
-        return Req(parts.getOrNull(0), target.substringBefore('?'), target.substringAfter('?', ""), authorization)
+        return Req(parts.getOrNull(0), target.substringBefore('?'), target.substringAfter('?', ""), authorization, host)
     }
 
-    /** One CRLF/LF-terminated line as ISO-8859-1, or null when it exceeds [max] bytes or EOF hits first. */
-    private fun readLine(input: InputStream, max: Int): String? {
+    /** `10.0.0.5:9184` → `10.0.0.5`; `[::1]:9184` → `::1`; lowercase; empty → null. */
+    fun hostPart(headerValue: String): String? {
+        val v = headerValue.trim().lowercase()
+        if (v.isEmpty()) return null
+        if (v.startsWith("[")) return v.substringAfter('[').substringBefore(']').ifEmpty { null }
+        return v.substringBefore(':').ifEmpty { null }
+    }
+
+    /** One CRLF/LF-terminated line as ISO-8859-1, or null when it exceeds [max] bytes, the deadline passes, or EOF. */
+    private fun readLine(input: InputStream, max: Int, deadlineNanos: Long): String? {
         val buf = java.io.ByteArrayOutputStream()
         while (true) {
+            if (System.nanoTime() > deadlineNanos) return null
             val b = input.read()
             if (b == -1) return if (buf.size() == 0) null else buf.toString("ISO-8859-1").trimEnd('\r')
             if (b == '\n'.code) return buf.toString("ISO-8859-1").trimEnd('\r')

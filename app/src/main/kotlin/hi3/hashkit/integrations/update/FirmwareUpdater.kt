@@ -137,6 +137,7 @@ class FirmwareUpdater @Inject constructor(
             runCatching {
                 okHttpClient.newBuilder()
                     .callTimeout(0, TimeUnit.SECONDS)
+                    .followRedirects(true) // GitHub assets redirect to *.githubusercontent.com; final hop re-validated
                     .followSslRedirects(false) // never follow a redirect down to cleartext
                     .build()
                     .newCall(Request.Builder().url(asset.url).get().build()).execute().use { resp ->
@@ -145,23 +146,40 @@ class FirmwareUpdater @Inject constructor(
                             return@use false
                         }
                         val total = body.contentLength().takeIf { it > 0 } ?: asset.sizeBytes.takeIf { it > 0 }
+                        // Never stream more than the manifest says (or a hard ceiling when it doesn't say).
+                        val limit = asset.sizeBytes.takeIf { it > 0 } ?: MAX_IMAGE_BYTES
                         body.byteStream().use { input ->
-                            out.outputStream().use { output -> copyWithProgress(input, output, total, onProgress) }
+                            out.outputStream().use { output ->
+                                copyWithProgress(input, output, total, limit, onProgress)
+                            }
                         }
-                        true
                     }
             }.getOrDefault(false)
         }
-        val sizeOk = out.length() >= MIN_IMAGE_BYTES && (asset.sizeBytes <= 0 || out.length() == asset.sizeBytes)
-        return out.takeIf { ok && sizeOk }
+        return out.takeIf { ok && verifyImage(out, asset) }
     }
 
+    /**
+     * Size must be plausible and equal the manifest's when it gives one; when GitHub publishes
+     * the asset digest, the bytes must match it — a size check alone can't tell a swapped
+     * image from the real one.
+     */
+    private fun verifyImage(file: File, asset: FirmwareUpdateChecker.Asset): Boolean {
+        val length = file.length()
+        if (length < MIN_IMAGE_BYTES) return false
+        if (asset.sizeBytes > 0 && length != asset.sizeBytes) return false
+        val expected = asset.sha256 ?: return true
+        return runCatching { FirmwareUpdateChecker.sha256Hex(file) == expected }.getOrDefault(false)
+    }
+
+    /** Copies up to [limit] bytes; returns false (truncated download is discarded) when the body exceeds it. */
     private fun copyWithProgress(
         input: java.io.InputStream,
         output: java.io.OutputStream,
         total: Long?,
+        limit: Long,
         onProgress: (Float) -> Unit,
-    ) {
+    ): Boolean {
         val buf = ByteArray(DOWNLOAD_CHUNK)
         var downloaded = 0L
         while (true) {
@@ -169,8 +187,10 @@ class FirmwareUpdater @Inject constructor(
             if (n < 0) break
             output.write(buf, 0, n)
             downloaded += n
+            if (downloaded > limit) return false
             if (total != null) onProgress((downloaded.toFloat() / total).coerceIn(0f, 1f))
         }
+        return true
     }
 
     /** Poll the miner until it answers again (it reboots after every image), up to [REBOOT_WAIT_MS]. */
@@ -209,6 +229,8 @@ class FirmwareUpdater @Inject constructor(
         private const val DOWNLOAD_CHUNK = 64 * 1024
         /** Anything smaller than this is not an ESP32 firmware image. */
         private const val MIN_IMAGE_BYTES = 200 * 1024L
+        /** Ceiling when the release manifest carries no size: ESP32 OTA images are a few MB at most. */
+        private const val MAX_IMAGE_BYTES = 16 * 1024 * 1024L
         private const val REBOOT_GRACE_MS = 8_000L
         private const val REBOOT_POLL_MS = 4_000L
         private const val REBOOT_WAIT_MS = 150_000L

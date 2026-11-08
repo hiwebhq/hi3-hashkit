@@ -33,7 +33,8 @@ class FirmwareUpdateChecker @Inject constructor(
     private val okHttpClient: OkHttpClient,
     private val settingsRepository: SettingsRepository,
 ) {
-    data class Asset(val name: String, val url: String, val sizeBytes: Long)
+    /** [sha256] is the lowercase hex digest GitHub publishes per asset (`digest: "sha256:…"`), when present. */
+    data class Asset(val name: String, val url: String, val sizeBytes: Long, val sha256: String? = null)
 
     data class Release(
         val tag: String,
@@ -91,7 +92,10 @@ class FirmwareUpdateChecker @Inject constructor(
                 val a = el.jsonObject
                 val name = a["name"]?.jsonPrimitive?.content ?: return@mapNotNull null
                 val url = a["browser_download_url"]?.jsonPrimitive?.content ?: return@mapNotNull null
-                Asset(name, url, a["size"]?.jsonPrimitive?.content?.toLongOrNull() ?: 0L)
+                Asset(
+                    name, url, a["size"]?.jsonPrimitive?.content?.toLongOrNull() ?: 0L,
+                    sha256 = parseSha256Digest(a["digest"]?.jsonPrimitive?.content),
+                )
             }.orEmpty()
             return Release(
                 tag = tag,
@@ -99,6 +103,30 @@ class FirmwareUpdateChecker @Inject constructor(
                 firmware = assets.firstOrNull { it.name.equals(FIRMWARE_ASSET, ignoreCase = true) },
                 www = assets.firstOrNull { it.name.equals(WWW_ASSET, ignoreCase = true) },
             )
+        }
+
+        /** `"sha256:<64 hex>"` → lowercase hex, or null for anything else (other algorithms, absent, garbled). */
+        fun parseSha256Digest(digest: String?): String? {
+            val hex = digest?.trim()?.takeIf { it.startsWith("sha256:", ignoreCase = true) }
+                ?.substringAfter(':')?.lowercase() ?: return null
+            return hex.takeIf { it.length == SHA256_HEX_LENGTH && it.all { c -> c in '0'..'9' || c in 'a'..'f' } }
+        }
+
+        private const val SHA256_HEX_LENGTH = 64
+        private const val HASH_BUFFER_BYTES = 64 * 1024
+
+        /** Lowercase hex SHA-256 of [file]'s contents. */
+        fun sha256Hex(file: java.io.File): String {
+            val md = java.security.MessageDigest.getInstance("SHA-256")
+            file.inputStream().use { input ->
+                val buf = ByteArray(HASH_BUFFER_BYTES)
+                while (true) {
+                    val n = input.read(buf)
+                    if (n < 0) break
+                    md.update(buf, 0, n)
+                }
+            }
+            return md.digest().joinToString("") { "%02x".format(it) }
         }
 
         /** Only AxeOS/ESP-Miner devices have a verified release feed. */

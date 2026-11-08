@@ -72,11 +72,12 @@ plaintext is decrypted just-in-time only to authenticate a control request to th
 on the LAN, and is never logged, exported, or sent anywhere else.
 
 7. **Optional, off by default — alert webhook:** if you configure a push service (ntfy,
-   Gotify, Telegram, or a generic URL), an active alert triggers one HTTPS POST to **the
+   Gotify, Telegram, or a generic URL), an active alert triggers one POST to **the
    endpoint you specify**, containing the miner name, alert type and message — no
    telemetry, addresses, or credentials. This is a deliberate outbound push to a
-   destination you choose (so, unlike miner traffic, it may be a public host); nothing is
-   sent while the push service is set to Off. The Gotify/Telegram token is stored encrypted
+   destination you choose (so, unlike miner traffic, it may be a public host) — but a public
+   host **must be HTTPS**: plain `http://` is only ever sent to a private/Tailscale address
+   (enforced on the connected socket). Nothing is sent while the push service is set to Off. The Gotify/Telegram token is stored encrypted
    in the Android Keystore, sent in a header (Gotify `X-Gotify-Key`) or the Telegram API
    path, and never written to a backup.
 
@@ -102,12 +103,16 @@ on the LAN, and is never logged, exported, or sent anywhere else.
 10. **Optional, off by default — local web server (Advanced):** if you enable it, the app
     runs a tiny local HTTP server (on a port you choose, default 9184) that answers **only**
     `GET /` (a read-only HTML fleet dashboard) and `GET /metrics` (Prometheus format) with
-    the same aggregate/per-miner data shown in-app. It binds **only to this device's private
-    LAN/Tailscale addresses** (never all interfaces, so nothing is exposed on mobile data or a
-    public hotspot), refuses clients outside private ranges, and accepts an optional bearer
-    token (`Authorization: Bearer …` or `?token=`) that, once set, every request must carry.
-    Request size is capped and connections are handled on a small pool. It's read-only, serves
-    no files, exposes no controls, and runs only while the app is open and the toggle is on.
+    the same aggregate/per-miner data shown in-app. It binds **only to this device's Wi-Fi,
+    Ethernet and Tailscale (VPN) private addresses** — chosen by transport, so a carrier's
+    CGNAT cellular address is never bound and nothing is exposed on mobile data — refuses
+    clients outside private ranges, answers only when the `Host` header names one of its own
+    bound IPs (DNS-rebinding guard), and accepts an optional bearer token
+    (`Authorization: Bearer …` or `?token=`, stored Keystore-encrypted) that, once set, every
+    request must carry. Request-head size and time are capped and connections are handled on
+    a small bounded pool. It's read-only, serves no files, exposes no controls, and runs only
+    while the app is open and the toggle is on. On guest/hotel Wi-Fi the dashboard is reachable
+    by other guests unless a token is set — set one if you use it away from home.
 
 11. **On-demand — pool speed test (Advanced):** when you tap "Run speed test", the app
     makes a few TCP connections to the stratum host:port of each pool your fleet already
@@ -196,26 +201,42 @@ the app (locked in by a request-payload test).
 
 Miner firmware (ESP-Miner et al.) serves plain HTTP with no TLS option, so cleartext
 must be permitted. Android's network security config cannot whitelist IP ranges, so the
-enforceable boundary is in code: `MinerHostValidator` refuses any connection to a
-non-private address (checked again at request time, including after DNS resolution of
-hostnames), and discovery refuses public CIDRs and ranges wider than /22. HTTPS with
-system trust anchors remains the default for any future non-miner traffic.
+enforceable boundary is in code, in two layers:
+
+1. **Pre-check** — `MinerHostValidator.resolveAllowed` accepts an IPv4 literal in a private /
+   CGNAT / link-local range, or a hostname whose A records *all* fall in those ranges (one
+   public record alongside a private one is treated as hostile). Raw TCP clients (CGMiner API,
+   MQTT, legacy Kasa) connect to the vetted `InetAddress`, never to the name.
+2. **Connected-socket check** — `PrivateCleartextInterceptor`, an OkHttp *network* interceptor
+   on the shared client, inspects the address the socket actually connected to for every
+   `http://` / `ws://` request and aborts before any bytes are sent if it is not private.
+   This is what defeats DNS rebinding and short-TTL flips for hostname targets. HTTPS requests
+   are not restricted (public hosts must use TLS). The shared client does not follow redirects.
+
+Discovery refuses public CIDRs and ranges wider than /22. HTTPS with system trust anchors is
+required for all non-miner traffic to public hosts, including webhooks and plug webhooks.
 
 ## Data handling
 
 - Telemetry history is stored locally in Room; deleting a miner deletes its data;
   uninstalling the app deletes everything.
-- Raw firmware responses are retained ~1 hour for diagnostics only.
-- The raw-response viewer redacts credential-bearing fields (worker/wallet, Wi-Fi SSID)
-  before display.
+- Raw firmware responses are retained ~1 hour for diagnostics only, and credential-bearing
+  fields (worker/wallet, Wi-Fi SSID/password, tokens) are redacted **before they are stored**
+  (`RawRedactor`), not just before display. Miner log lines are likewise redacted (wallets,
+  SSIDs, passwords) before storage and export (`LogRedactor`).
 - Committed test fixtures are redacted (MACs, SSIDs, wallets, pool hosts replaced).
 - No secrets are committed: signing keys, `local.properties`, and keystores are
   gitignored. Keystore-backed credential encryption ships with the first feature that
   stores a credential (Canaan auth, Phase 3).
 
-## Phase 5 security & permission review (2026-09-06)
+## Phase 5 security & permission review (2026-09-06) — historical
 
-Reviewed and confirmed:
+Snapshot of the 2026-09-06 state; several bullets are superseded (permissions have grown with
+features, `allowBackup` is now **off**, and credentials *are* stored — Keystore-encrypted). Kept
+for the record; the current state is described in the sections above and in the 2026-11-07
+audit section below.
+
+Reviewed and confirmed at the time:
 
 - **Permissions are minimal**: INTERNET, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE,
   POST_NOTIFICATIONS (runtime, contextual). No location, camera, storage, contacts,
@@ -267,13 +288,48 @@ are switched on. The 2026-11-06 audit found them off; they must stay on. Verify 
   with this app's own certificate before** handing it to PackageInstaller. The AxeOS
   firmware downloader applies the same host/redirect rules.
 
+## Independent audit (2026-11-07) — what changed in 0.84.0
+
+A second independent read-only audit re-derived every claim in this document from code,
+resolved the full release dependency tree against GHSA/OSV/NVD/KEV, and verified the
+published `v0.83.0` APK (checksum, v2 signature, manifest). No Critical findings; the three
+High findings and most Medium/Low findings were fixed in 0.84.0 (see CHANGELOG):
+
+- Restore trusted the backup file wholesale (settings allow-list, endpoint guard, schedules
+  and rules disabled on import, typed decode).
+- The network boundary was a pre-flight check only (connected-socket interceptor, vetted
+  address for raw sockets, no redirects, hostnames must resolve only to allowed addresses).
+- Miner-reported stratum hosts were probed without limits (port policy, bounded read).
+- Web dashboard bound by address range rather than transport; no `Host` check; token
+  plaintext at rest.
+- App lock skipped after process death with saved state; wall-clock relock timer.
+- Raw responses and log lines stored unredacted; firmware/APK had no content-hash check.
+
+Still open (owner-side or product decisions): require pull requests + passing CI in the
+`main` ruleset; confirm Dependabot alerts / secret scanning are on (admin-only settings);
+replace the checksum-style advanced-feature unlock code with a signed license; add a
+passphrase option for the weekly auto-backup; gate the exported widget-config activity behind
+the app lock; confirm-before-apply for IP-move recovery. Build-classpath transitives pulled by
+AGP (BouncyCastle 1.80.2, commons-lang3 3.16.0, guava 33.4.0, jdom2 2.0.6) carry open CVEs
+that affect only the build machine; Dependabot's bumps for two of them failed and should be
+pinned on the buildscript classpath when AGP allows.
+
 ## Known gaps (tracked)
 
 - Backups are plaintext JSON unless a passphrase is set at export (then AES-256-GCM
-  via PBKDF2 — see BackupCrypto). **No credential of any kind is ever written to a backup**
-  (`BackupKeyPolicy` excludes Keystore blobs and anything named like a token/password/
-  passphrase); the weekly auto-backup is therefore safe to land in a cloud folder but still
-  contains miner addresses and worker names.
+  via PBKDF2 — see BackupCrypto; the iteration count a file names is clamped on restore).
+  **No credential of any kind is ever written to a backup** (`BackupKeyPolicy` excludes
+  Keystore blobs and anything named like a token/password/passphrase, and strips `user:pass@`
+  / `?token=` from exported webhook and plug URLs). The weekly auto-backup is **always
+  plaintext** and still contains miner addresses, worker names (payout addresses), Tailscale
+  subnets and webhook/plug URLs (an ntfy topic URL is itself the credential), so the cloud
+  folder it lands in should be private. Adding a passphrase option for the auto-backup is
+  tracked.
+- **Restore treats the file as untrusted input**: only declared settings are written, each as
+  its declared type; endpoint URLs/hosts are not changed while a credential for that
+  integration is already stored; schedules and rules arrive disabled; unknown schedule actions
+  are dropped. Miner hosts and plug URLs are restored as-is but are re-validated at request
+  time by the network boundary.
 - Gradle dependency verification (`verification-metadata.xml`) is not enabled; wrapper
   validation and SHA-pinned actions are. Branch protection on `main` is an owner-side
   setting (ruleset "Protect") that must be set to *active*.

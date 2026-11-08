@@ -43,6 +43,21 @@ class AppLockManagerTest {
     }
 
     @Test
+    fun `a fresh process has not handled launch until an activity decides`() {
+        // After Android kills and recreates the process (savedInstanceState != null) the
+        // singleton is new: the activity must still apply the launch lock exactly once.
+        val lock = AppLockManager()
+        assertFalse(lock.launchHandled)
+        lock.lockOnLaunch()
+        assertTrue(lock.launchHandled)
+        assertTrue(lock.locked.value)
+        val disabled = AppLockManager()
+        disabled.markLaunchHandled()
+        assertTrue(disabled.launchHandled)
+        assertFalse(disabled.locked.value)
+    }
+
+    @Test
     fun `first background timestamp wins across repeated stop events`() {
         val lock = AppLockManager()
         lock.unlock()

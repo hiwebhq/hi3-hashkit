@@ -305,7 +305,8 @@ class MinerRepository @Inject constructor(
                             minerId = entity.id,
                             timestampEpochMs = now,
                             endpoint = "/api/system/info",
-                            body = result.rawResponse,
+                            // Redact credential-like fields before they touch disk (not just on display).
+                            body = hi3.hashkit.data.logs.RawRedactor.redact(result.rawResponse).orEmpty(),
                         )
                     )
                 }

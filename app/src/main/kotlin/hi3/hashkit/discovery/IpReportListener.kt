@@ -77,7 +77,11 @@ class IpReportListener @Inject constructor(
                     socket.receive(pkt)
                     val text = String(pkt.data, pkt.offset, pkt.length, Charsets.US_ASCII)
                     val report = parseIpReport(text)
-                    if (report != null) {
+                    // The socket is bound to the wildcard address (broadcasts aren't delivered to a
+                    // unicast-bound socket), so filter by sender instead: only LAN/tailnet sources
+                    // count, and only those are ever echoed — never a spoofed public address.
+                    val fromLan = pkt.address?.let { MinerHostValidator.isAllowedAddress(it) } == true
+                    if (report != null && fromLan) {
                         if (sendAck) {
                             runCatching {
                                 socket.send(DatagramPacket(pkt.data, pkt.offset, pkt.length, pkt.address, pkt.port))
